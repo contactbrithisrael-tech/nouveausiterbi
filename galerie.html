@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Galerie — Rite Brith Israël</title>
+  <style>
+    :root { --or:#c9a84c; --fond:#0d0d0d; --fond2:#141414; --fond3:#1a1a1a; --texte:#e8e0d0; --gris:#888; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { background:var(--fond); color:var(--texte); font-family:'Georgia',serif; }
+
+    .header { text-align:center; padding:3rem 1rem 2rem; border-bottom:1px solid rgba(201,168,76,.25); }
+    .header__badge { display:inline-block; border:1px solid var(--or); color:var(--or); font-size:.7rem; letter-spacing:.2em; padding:.35rem .9rem; margin-bottom:1.2rem; text-transform:uppercase; }
+    .header__titre { font-size:2rem; font-variant:small-caps; letter-spacing:.15em; color:var(--or); }
+    .sep { width:60px; height:1px; background:var(--or); margin:1rem auto; opacity:.5; }
+
+    .galerie { max-width:1100px; margin:0 auto; padding:3rem 1.5rem; }
+
+    /* SECTION */
+    .gal-section { margin-bottom:3.5rem; }
+    .gal-section__titre { font-variant:small-caps; letter-spacing:.12em; color:var(--or); font-size:1.1rem; margin-bottom:1.2rem; border-left:3px solid var(--or); padding-left:.8rem; }
+
+    /* GRILLES */
+    .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; }
+    .grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:1.2rem; }
+    .grid-4 { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; }
+    @media (max-width:800px) { .grid-3,.grid-4 { grid-template-columns:1fr 1fr; } }
+    @media (max-width:500px) { .grid-2,.grid-3,.grid-4 { grid-template-columns:1fr; } }
+
+    /* CARTES IMAGE */
+    .img-card { background:var(--fond3); border:1px solid rgba(201,168,76,.2); overflow:hidden; cursor:pointer; transition:border-color .25s, transform .2s; }
+    .img-card:hover { border-color:var(--or); transform:translateY(-3px); }
+    .img-card img { width:100%; display:block; object-fit:cover; }
+    .img-card.portrait img { max-height:420px; object-fit:cover; object-position:top; }
+    .img-card.carre img { height:280px; object-fit:cover; }
+    .img-card__legende { padding:.7rem 1rem; font-size:.75rem; color:var(--gris); font-style:italic; letter-spacing:.05em; }
+
+    /* LIGHTBOX */
+    .lightbox { display:none; position:fixed; inset:0; background:rgba(0,0,0,.92); z-index:999; align-items:center; justify-content:center; padding:1.5rem; }
+    .lightbox.open { display:flex; }
+    .lightbox img { max-width:90vw; max-height:88vh; object-fit:contain; border:1px solid rgba(201,168,76,.3); }
+    .lightbox__close { position:fixed; top:1rem; right:1.5rem; color:var(--or); font-size:2rem; cursor:pointer; z-index:1000; line-height:1; }
+    .lightbox__legende { position:fixed; bottom:1rem; left:50%; transform:translateX(-50%); color:var(--gris); font-size:.8rem; font-style:italic; text-align:center; }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header__badge">✡ Rite Brith Israël</div>
+  <h1 class="header__titre">Galerie</h1>
+  <div class="sep"></div>
+</div>
+
+<div class="galerie">
+
+  <!-- LOGOS & SCEAUX -->
+  <div class="gal-section">
+    <div class="gal-section__titre">Logos &amp; Sceaux du Rite</div>
+    <div class="grid-3">
+      <div class="img-card carre" onclick="ouvrir(this)">
+        <img id="gx-sc-logo" src="" alt="Suprême Conseil — Sceau officiel" data-legende="Suprême Conseil Mondial du Rite Brith Israël — Sceau officiel">
+        <div class="img-card__legende">Suprême Conseil Mondial — Sceau officiel</div>
+      </div>
+      <div class="img-card carre" onclick="ouvrir(this)">
+        <img id="gx-logo-arch" src="" alt="Arche Brith Israel" data-legende="Arche du Temple — Brith Israel">
+        <div class="img-card__legende">Arche du Temple — Brith Israël</div>
+      </div>
+      <div class="img-card carre" onclick="ouvrir(this)">
+        <img id="gx-symbol" src="" alt="Symboles maçonniques RBI" data-legende="Symboles maçonniques du Rite Brith Israël">
+        <div class="img-card__legende">Symboles maçonniques du Rite</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ARBRE DE VIE & KABBALE -->
+  <div class="gal-section">
+    <div class="gal-section__titre">Arbre de Vie &amp; Kabbale</div>
+    <div class="grid-2">
+      <div class="img-card" onclick="ouvrir(this)">
+        <img id="gx-kabbalah" src="" alt="Arbre de Vie — Temple RBI" data-legende="Arbre de Vie, Temple et 10 Sephiroth — Rite Brith Israël">
+        <div class="img-card__legende">Arbre de Vie, Temple et 10 Sephiroth</div>
+      </div>
+      <div class="img-card portrait" onclick="ouvrir(this)">
+        <img id="gx-tome1a" src="" alt="Tome I — Les Fondations de l'Alliance" data-legende="Tome I — Les Fondations de l'Alliance · Rite Brith Israël">
+        <div class="img-card__legende">Tome I — Les Fondations de l'Alliance</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PUBLICATIONS -->
+  <div class="gal-section">
+    <div class="gal-section__titre">Publications du Rite</div>
+    <div class="grid-2">
+      <div class="img-card portrait" onclick="ouvrir(this)">
+        <img id="gx-tome1b" src="" alt="Tome I — Fondements et Grades Symboliques" data-legende="Tome I — Fondements et Grades Symboliques · Mickaël DARMON">
+        <div class="img-card__legende">Tome I — Fondements et Grades Symboliques</div>
+      </div>
+      <div class="img-card portrait" onclick="ouvrir(this)">
+        <img id="gx-tome2" src="" alt="Tome II — Les Loges de Perfection" data-legende="Tome II — Les Loges de Perfection · 4e au 10e Degré · À paraître">
+        <div class="img-card__legende">Tome II — Les Loges de Perfection <em>(à paraître)</em></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="fermer()">
+  <span class="lightbox__close" onclick="fermer()">✕</span>
+  <img id="lb-img" src="" alt="">
+  <div class="lightbox__legende" id="lb-legende"></div>
+</div>
+
+<script src="assets/images-extra.js"></script>
+<script>
+  window.addEventListener('load', function() {
+    if (!window.IMGX) return;
+    document.getElementById('gx-sc-logo').src   = IMGX.SC_LOGO;
+    document.getElementById('gx-logo-arch').src  = IMGX.LOGO_ARCH;
+    document.getElementById('gx-symbol').src     = IMGX.SYMBOL_TOOLS;
+    document.getElementById('gx-kabbalah').src   = IMGX.KABBALAH_COMP;
+    document.getElementById('gx-tome1a').src     = IMGX.TOME1_COVER_A;
+    document.getElementById('gx-tome1b').src     = IMGX.TOME1_COVER_B;
+    document.getElementById('gx-tome2').src      = IMGX.TOME2_COVER;
+  });
+
+  function ouvrir(card) {
+    var img = card.querySelector('img');
+    document.getElementById('lb-img').src = img.src;
+    document.getElementById('lb-legende').textContent = img.dataset.legende || '';
+    document.getElementById('lightbox').classList.add('open');
+  }
+  function fermer() {
+    document.getElementById('lightbox').classList.remove('open');
+  }
+  document.addEventListener('keydown', function(e) { if (e.key === 'Escape') fermer(); });
+</script>
+</body>
+</html>

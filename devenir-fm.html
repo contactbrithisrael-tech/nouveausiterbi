@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Devenir Franc-Maçon — Rite Brith Israël</title>
+  <style>
+    :root {
+      --or:    #c9a84c;
+      --or2:   #e8c96a;
+      --fond:  #0d0d0d;
+      --fond2: #141414;
+      --fond3: #1a1a1a;
+      --texte: #e8e0d0;
+      --gris:  #888;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--fond); color: var(--texte); font-family: 'Georgia', serif; min-height: 100vh; }
+
+    /* ── HERO ── */
+    .hero { text-align: center; padding: 4rem 1.5rem 3rem; background: radial-gradient(ellipse at center, rgba(201,168,76,.06) 0%, transparent 70%); border-bottom: 1px solid rgba(201,168,76,.2); }
+    .hero__etoile { font-size: 2.5rem; margin-bottom: 1rem; display: block; }
+    .hero__titre { font-size: 2.4rem; font-variant: small-caps; letter-spacing: .15em; color: var(--or); margin-bottom: .6rem; }
+    .hero__sous { font-size: 1rem; color: var(--gris); font-style: italic; margin-bottom: 1.5rem; }
+    .hero__intro { max-width: 700px; margin: 0 auto; font-size: 1rem; line-height: 1.85; color: var(--texte); }
+    .sep { width: 60px; height: 1px; background: var(--or); margin: 1.5rem auto; opacity: .5; }
+
+    /* ── PARCOURS ── */
+    .parcours { max-width: 860px; margin: 0 auto; padding: 3.5rem 1.5rem; }
+    .bloc-titre { text-align: center; font-variant: small-caps; letter-spacing: .15em; color: var(--or); font-size: 1.5rem; margin-bottom: .5rem; }
+
+    .etapes { display: flex; flex-direction: column; margin-top: 2.5rem; position: relative; }
+    .etapes::before { content: ''; position: absolute; left: 36px; top: 0; bottom: 0; width: 1px; background: linear-gradient(to bottom, var(--or), rgba(201,168,76,.1)); }
+    .etape { display: flex; gap: 1.5rem; padding-bottom: 2.5rem; position: relative; }
+    .etape__num { min-width: 72px; height: 72px; border: 1px solid var(--or); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; color: var(--or); background: var(--fond); flex-shrink: 0; position: relative; z-index: 1; }
+    .etape__contenu { flex: 1; padding-top: .8rem; }
+    .etape__titre { font-variant: small-caps; color: var(--or); letter-spacing: .1em; font-size: 1.05rem; margin-bottom: .5rem; }
+    .etape__desc { font-size: .9rem; line-height: 1.8; color: var(--texte); }
+    .etape__note { display: inline-block; margin-top: .6rem; font-size: .78rem; font-style: italic; color: var(--gris); background: rgba(201,168,76,.07); border-left: 2px solid var(--or); padding: .4rem .8rem; }
+
+    /* ── DURÉE ── */
+    .duree-bloc { max-width: 860px; margin: 0 auto; padding: 0 1.5rem 3rem; }
+    .duree-cadre { background: var(--fond3); border: 1px solid rgba(201,168,76,.3); padding: 2rem; text-align: center; }
+    .duree-cadre__chiffre { font-size: 2.5rem; font-variant: small-caps; color: var(--or); letter-spacing: .1em; }
+    .duree-cadre__label { font-size: .85rem; color: var(--gris); margin-top: .3rem; font-style: italic; }
+    .duree-cadre p { margin-top: 1rem; font-size: .9rem; line-height: 1.7; }
+
+    /* ── FORMULAIRE ── */
+    .formulaire-section { background: var(--fond2); border-top: 1px solid rgba(201,168,76,.15); border-bottom: 1px solid rgba(201,168,76,.15); padding: 3.5rem 1.5rem; }
+    .formulaire-inner { max-width: 900px; margin: 0 auto; }
+    .form-titre { text-align: center; font-variant: small-caps; letter-spacing: .15em; color: var(--or); font-size: 1.5rem; margin-bottom: .4rem; }
+    .form-sous { text-align: center; font-style: italic; color: var(--gris); margin-bottom: 2rem; font-size: .9rem; }
+
+    .form-section-titre { background: rgba(201,168,76,.08); border-left: 3px solid var(--or); color: var(--or); font-variant: small-caps; letter-spacing: .12em; font-size: .92rem; padding: .6rem 1rem; margin: 2rem 0 1.2rem; }
+
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
+    .form-full { grid-column: 1 / -1; }
+    .form-third { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+    @media (max-width: 600px) { .form-third { grid-template-columns: 1fr; } }
+
+    label { display: block; font-size: .75rem; letter-spacing: .09em; text-transform: uppercase; color: var(--or); margin-bottom: .35rem; }
+    input[type="text"], input[type="email"], input[type="tel"], input[type="date"], textarea, select {
+      width: 100%; background: var(--fond3); border: 1px solid rgba(201,168,76,.3); color: var(--texte);
+      padding: .65rem .85rem; font-family: 'Georgia', serif; font-size: .88rem; outline: none; transition: border-color .2s;
+    }
+    input:focus, textarea:focus, select:focus { border-color: var(--or); }
+    select option { background: var(--fond3); }
+    textarea { resize: vertical; min-height: 130px; }
+
+    .checkrow { display: flex; flex-wrap: wrap; gap: .7rem 1.3rem; margin-top: .3rem; }
+    .checkrow label { display: flex; align-items: center; gap: .4rem; text-transform: none; letter-spacing: 0; font-size: .88rem; cursor: pointer; color: var(--texte); }
+    .checkrow input { width: auto; accent-color: var(--or); }
+
+    /* UPLOAD */
+    .upload-zone { border: 1px dashed rgba(201,168,76,.4); padding: 1.2rem; text-align: center; cursor: pointer; transition: border-color .2s; background: var(--fond3); }
+    .upload-zone:hover { border-color: var(--or); }
+    .upload-zone input[type="file"] { display: none; }
+    .upload-zone__label { font-size: .82rem; color: var(--gris); cursor: pointer; }
+    .upload-zone__label span { color: var(--or); text-decoration: underline; }
+    .upload-info { background: rgba(201,168,76,.06); border-left: 2px solid var(--or); padding: .6rem 1rem; font-size: .8rem; font-style: italic; color: var(--gris); line-height: 1.6; margin-bottom: .7rem; }
+
+    /* BOUTONS */
+    .btn { display: inline-block; padding: .8rem 2rem; font-size: .78rem; letter-spacing: .15em; text-transform: uppercase; font-family: 'Georgia', serif; cursor: pointer; transition: all .25s; border: none; }
+    .btn-or { background: var(--or); color: var(--fond); }
+    .btn-or:hover { background: var(--or2); }
+    .btn-dl { display: inline-flex; align-items: center; gap: .5rem; padding: .65rem 1.3rem; border: 1px solid var(--or); color: var(--or); font-size: .75rem; letter-spacing: .1em; text-transform: uppercase; text-decoration: none; transition: all .2s; font-family: 'Georgia', serif; }
+    .btn-dl:hover { background: var(--or); color: var(--fond); }
+
+    .form-footer { margin-top: 2rem; text-align: center; display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
+    .obligatoire { font-size: .75rem; color: var(--gris); font-style: italic; text-align: right; margin-bottom: 1rem; }
+
+    .msg-success { display: none; text-align: center; padding: 2.5rem; border: 1px solid var(--or); color: var(--or); font-style: italic; margin-top: 2rem; line-height: 1.8; }
+    .msg-success.visible { display: block; }
+
+    .confidentialite { text-align: center; font-size: .75rem; color: var(--gris); font-style: italic; max-width: 600px; margin: 2rem auto 0; line-height: 1.7; }
+
+    /* FAQ */
+    .faq { max-width: 860px; margin: 0 auto; padding: 3.5rem 1.5rem; }
+    .faq__item { border-bottom: 1px solid rgba(201,168,76,.15); padding: 1.4rem 0; }
+    .faq__question { color: var(--or); font-size: .95rem; margin-bottom: .6rem; font-variant: small-caps; letter-spacing: .06em; }
+    .faq__reponse { font-size: .88rem; line-height: 1.8; }
+
+    /* GADLU BOX */
+    .gadlu-box { background: rgba(201,168,76,.06); border: 1px solid rgba(201,168,76,.25); padding: 1.2rem 1.5rem; margin: .8rem 0; font-size: .88rem; line-height: 1.8; }
+    .gadlu-box strong { color: var(--or); }
+
+    /* CTA */
+    .cta-contact { text-align: center; padding: 3rem 1.5rem 4rem; background: radial-gradient(ellipse at center, rgba(201,168,76,.05) 0%, transparent 70%); }
+    .cta-contact p { font-size: .95rem; line-height: 1.8; color: var(--gris); margin-bottom: 1.2rem; font-style: italic; }
+    .cta-contact a { color: var(--or); text-decoration: none; }
+    .cta-contact a:hover { text-decoration: underline; }
+
+    /* TELECHARGEMENTS PDF */
+    .dl-section { max-width: 860px; margin: 0 auto; padding: 0 1.5rem 3rem; }
+    .dl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+    @media (max-width: 600px) { .dl-grid { grid-template-columns: 1fr; } }
+    .dl-card { background: var(--fond3); border: 1px solid rgba(201,168,76,.25); padding: 1.5rem; display: flex; gap: 1.2rem; align-items: center; transition: border-color .2s; }
+    .dl-card:hover { border-color: var(--or); }
+    .dl-card__icone { font-size: 2rem; flex-shrink: 0; }
+    .dl-card__titre { color: var(--or); font-variant: small-caps; letter-spacing: .08em; margin-bottom: .3rem; font-size: .9rem; }
+    .dl-card__desc { font-size: .78rem; color: var(--gris); line-height: 1.5; margin-bottom: .8rem; }
+
+    .sep-section { border: none; border-top: 1px solid rgba(201,168,76,.1); margin: 1.5rem 0; }
+  </style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <span class="hero__etoile">✡</span>
+  <h1 class="hero__titre">Devenir Franc-Maçon</h1>
+  <p class="hero__sous">Au sein du Rite Brith Israël</p>
+  <div class="sep"></div>
+  <p class="hero__intro">
+    La Franc-Maçonnerie n'est pas une décision que l'on prend à la légère.
+    C'est un engagement sur un chemin initiatique, une démarche de l'âme
+    autant qu'une fraternité vivante. Le Rite Brith Israël, ancré dans
+    la tradition hébraïque et kabbalistique, accueille celles et ceux
+    qui cherchent la Lumière avec sincérité, humilité et persévérance.
+  </p>
+</div>
+
+
+<!-- PARCOURS -->
+<div class="parcours">
+  <h2 class="bloc-titre">Le Chemin vers l'Initiation</h2>
+  <div class="sep"></div>
+
+  <div class="etapes">
+    <div class="etape">
+      <div class="etape__num">①</div>
+      <div class="etape__contenu">
+        <div class="etape__titre">Dépôt de votre demande</div>
+        <div class="etape__desc">
+          Vous remplissez le formulaire de recueil de renseignements ci-dessous.
+          Vous y joignez une photo d'identité, un extrait de casier judiciaire vierge (Bulletin n°3)
+          et exposez vos motivations, votre démarche et vos valeurs.
+        </div>
+        <span class="etape__note">Tous les renseignements fournis sont strictement confidentiels.</span>
+      </div>
+    </div>
+    <div class="etape">
+      <div class="etape__num">②</div>
+      <div class="etape__contenu">
+        <div class="etape__titre">Entretien téléphonique</div>
+        <div class="etape__desc">
+          Suite à réception de votre dossier, un membre du Suprême Conseil ou un Officier désigné
+          vous contactera par téléphone. Cet entretien est l'occasion d'échanger librement sur votre démarche,
+          vos questions, votre parcours de vie et votre vision de la Franc-Maçonnerie.
+          Il n'y a pas de bonne ou mauvaise réponse — seulement la vérité de votre chemin.
+        </div>
+        <span class="etape__note">Délai habituel : 2 à 4 semaines après réception du dossier.</span>
+      </div>
+    </div>
+    <div class="etape">
+      <div class="etape__num">③</div>
+      <div class="etape__contenu">
+        <div class="etape__titre">Les trois enquêtes maçonniques</div>
+        <div class="etape__desc">
+          Trois enquêtes sont diligentées par des membres de la Loge à laquelle vous seriez affilié.
+          Chaque enquêteur vous rencontrera individuellement et rédigera son rapport avant de voter.
+          <br><br>
+          <strong style="color:var(--or);">Les trois votes sont indépendants et doivent être favorables.</strong>
+          Un seul vote négatif suffit à suspendre la procédure.
+        </div>
+        <span class="etape__note">Les enquêteurs sont des Frères ou Sœurs de confiance — jamais vos proches.</span>
+      </div>
+    </div>
+    <div class="etape">
+      <div class="etape__num">④</div>
+      <div class="etape__contenu">
+        <div class="etape__titre">Vote de la Loge</div>
+        <div class="etape__desc">
+          Une fois les trois enquêtes favorables remises au Vénérable Maître,
+          la candidature est présentée en Loge. Les membres votent à bulletin secret.
+          La décision de la Loge est souveraine.
+        </div>
+      </div>
+    </div>
+    <div class="etape">
+      <div class="etape__num">⑤</div>
+      <div class="etape__contenu">
+        <div class="etape__titre">Le Passage sous le Bandeau</div>
+        <div class="etape__desc">
+          Si le vote est favorable, vous êtes convié à une Tenue solennelle pour votre passage sous le bandeau —
+          première étape du voyage initiatique. C'est votre rencontre avec la Loge dans l'obscurité symbolique,
+          avant la Lumière.
+        </div>
+        <span class="etape__note">Vous serez informé en temps voulu des modalités pratiques.</span>
+      </div>
+    </div>
+    <div class="etape">
+      <div class="etape__num">✡</div>
+      <div class="etape__contenu">
+        <div class="etape__titre">L'Initiation</div>
+        <div class="etape__desc">
+          Après le passage sous bandeau, si la Loge vote favorablement votre réception,
+          vous serez initié au 1° Degré du Rite Brith Israël lors d'une Tenue solennelle.
+          Vous entrez alors dans la Fraternité et commencez votre travail sur l'Arbre de Vie.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- DURÉE -->
+<div class="duree-bloc">
+  <div class="duree-cadre">
+    <div style="font-size:2rem;margin-bottom:.8rem;">⏳</div>
+    <div class="duree-cadre__chiffre">12 à 18 mois</div>
+    <div class="duree-cadre__label">entre la demande et l'initiation</div>
+    <p>Ce délai n'est pas un obstacle — c'est une invitation à la patience et à la maturation.
+    La Franc-Maçonnerie ne se conquiert pas, elle se mérite.
+    Ce temps est celui de votre préparation intérieure autant que de la procédure formelle.</p>
+  </div>
+</div>
+
+
+<!-- TÉLÉCHARGEMENTS -->
+<div class="dl-section">
+  <h2 class="bloc-titre" style="margin-bottom:.5rem;">Documents à télécharger</h2>
+  <div class="sep"></div>
+  <div class="dl-grid">
+    <div class="dl-card">
+      <div class="dl-card__icone">📋</div>
+      <div>
+        <div class="dl-card__titre">Fiche Individuelle d'Adhésion</div>
+        <div class="dl-card__desc">Formulaire officiel du Suprême Conseil — à imprimer, compléter et signer.</div>
+        <a href="Fiche_Individuelle_Adhesion_RBI.pdf" download class="btn-dl">⬇ Télécharger PDF</a>
+      </div>
+    </div>
+    <div class="dl-card">
+      <div class="dl-card__icone">🏛️</div>
+      <div>
+        <div class="dl-card__titre">Demande de Patente de Constitution</div>
+        <div class="dl-card__desc">Pour constituer une Loge sous l'autorité du Suprême Conseil — 3 signatures requises.</div>
+        <a href="Formulaire_Demande_Patente_BI.pdf" download class="btn-dl">⬇ Télécharger PDF</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- FORMULAIRE DE CANDIDATURE -->
+<div class="formulaire-section">
+  <div class="formulaire-inner">
+
+    <h2 class="form-titre">Formulaire de Recueil de Renseignements</h2>
+    <p class="form-sous">Première étape de votre démarche — toutes les informations sont strictement confidentielles.</p>
+
+    <form id="form-candidature" onsubmit="soumettreCandidature(event)">
+      <p class="obligatoire">* Champs obligatoires</p>
+
+      <!-- ÉTAT CIVIL -->
+      <div class="form-section-titre">I. État Civil</div>
+      <div style="margin-bottom:1rem;">
+        <label>Civilité</label>
+        <div class="checkrow">
+          <label><input type="radio" name="civilite" value="Mme"> Mme.</label>
+          <label><input type="radio" name="civilite" value="M"> M.</label>
+          <label><input type="radio" name="civilite" value="Autre"> Autre</label>
+        </div>
+      </div>
+      <div class="form-grid">
+        <div><label>Prénom *</label><input type="text" name="prenom" required></div>
+        <div><label>Nom *</label><input type="text" name="nom" required></div>
+        <div><label>Date de naissance *</label><input type="date" name="ddn" required></div>
+        <div><label>Lieu de naissance</label><input type="text" name="lieu_naissance"></div>
+        <div><label>Nationalité</label><input type="text" name="nationalite" value="Française"></div>
+        <div>
+          <label>Situation familiale</label>
+          <select name="situation">
+            <option value="">— Sélectionner —</option>
+            <option>Célibataire</option>
+            <option>Marié(e)</option>
+            <option>Pacsé(e)</option>
+            <option>Divorcé(e)</option>
+            <option>Veuf/Veuve</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- COORDONNÉES -->
+      <div class="form-section-titre">II. Coordonnées</div>
+      <div class="form-grid">
+        <div class="form-full"><label>Adresse postale *</label><input type="text" name="adresse" required></div>
+        <div><label>Code postal *</label><input type="text" name="cp" required></div>
+        <div><label>Ville *</label><input type="text" name="ville" required></div>
+        <div><label>Téléphone *</label><input type="tel" name="telephone" required></div>
+        <div><label>Email *</label><input type="email" name="email" required></div>
+      </div>
+
+      <!-- PARCOURS -->
+      <div class="form-section-titre">III. Parcours Personnel &amp; Professionnel</div>
+      <div class="form-grid">
+        <div><label>Profession *</label><input type="text" name="profession" required></div>
+        <div>
+          <label>Niveau d'études</label>
+          <select name="etudes">
+            <option value="">— Sélectionner —</option>
+            <option>Brevet / CAP / BEP</option>
+            <option>Baccalauréat</option>
+            <option>Bac +2 / +3</option>
+            <option>Bac +4 / +5</option>
+            <option>Doctorat</option>
+          </select>
+        </div>
+        <div class="form-full"><label>Engagements associatifs, humanitaires ou culturels</label>
+          <textarea name="engagements" style="min-height:80px;" placeholder="Associations, bénévolat, engagements civiques, pratiques culturelles ou spirituelles…"></textarea>
+        </div>
+      </div>
+
+      <!-- DÉMARCHES ANTÉRIEURES -->
+      <div class="form-section-titre">IV. Démarches antérieures</div>
+      <div class="form-grid">
+        <div class="form-full">
+          <label>Avez-vous déjà effectué des démarches en vue d'entrer en Franc-Maçonnerie ? Si oui, lesquelles ?</label>
+          <textarea name="demarches_anterieures" style="min-height:120px;" placeholder="Ex. : prise de contact avec une Loge, rencontre avec un Frère ou une Sœur, participation à une conférence, lecture, demande auprès d'une autre obédience… Précisez les suites données et les raisons pour lesquelles votre démarche n'a pas abouti, si applicable."></textarea>
+        </div>
+        <div class="form-full">
+          <label>Connaissez-vous personnellement un membre du Rite Brith Israël ?</label>
+          <div class="checkrow" style="margin-bottom:.8rem;">
+            <label><input type="radio" name="connait_membre" value="oui"> Oui</label>
+            <label><input type="radio" name="connait_membre" value="non"> Non</label>
+          </div>
+        </div>
+        <div class="form-full">
+          <label>Comment avez-vous connu le Rite Brith Israël ?</label>
+          <textarea name="comment" style="min-height:80px;" placeholder="Bouche à oreille, site internet, réseaux sociaux, traité d'amitié avec une obédience, presse maçonnique…"></textarea>
+        </div>
+      </div>
+
+      <!-- MOTIVATIONS -->
+      <div class="form-section-titre">V. Lettre de Motivation</div>
+      <div class="form-grid">
+        <div class="form-full">
+          <label>Pourquoi souhaitez-vous entrer en Franc-Maçonnerie et rejoindre le Rite Brith Israël ? *</label>
+          <textarea name="motivations" style="min-height:220px;" required
+            placeholder="Exposez librement votre démarche : pourquoi la Franc-Maçonnerie ? Pourquoi le Rite Brith Israël spécifiquement ? Quelles valeurs portez-vous ? Quelle est votre relation au principe créateur, à la spiritualité, à la fraternité ? Qu'espérez-vous construire et apporter dans cette fraternité ?
+
+Il n'y a pas de bonne ou mauvaise réponse — seulement la sincérité de votre démarche."></textarea>
+        </div>
+      </div>
+
+      <!-- PIÈCES JOINTES -->
+      <div class="form-section-titre">VI. Pièces à joindre</div>
+
+      <div class="form-grid">
+        <div class="form-full">
+          <label>Photo d'identité récente * (JPG ou PNG — max 5 Mo)</label>
+          <div class="upload-zone" onclick="document.getElementById('photo-cand').click()">
+            <input type="file" id="photo-cand" name="photo" accept="image/*" required onchange="afficherNomFichier(this,'nm-photo')">
+            <div class="upload-zone__label">
+              <span>Choisir un fichier</span> ou glisser-déposer<br>
+              <small id="nm-photo" style="color:var(--or);display:block;margin-top:.4rem;"></small>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-full">
+          <label>Extrait de casier judiciaire vierge — Bulletin n°3 * (PDF ou image — max 10 Mo)</label>
+          <div class="upload-info">
+            Le Bulletin n°3 est gratuit et peut être obtenu en ligne sur <strong style="color:var(--or);">service-public.fr</strong>
+            (rubrique "Demande de casier judiciaire"). Délai habituel : 3 à 7 jours.
+          </div>
+          <div class="upload-zone" onclick="document.getElementById('casier-cand').click()">
+            <input type="file" id="casier-cand" name="casier" accept=".pdf,image/*" required onchange="afficherNomFichier(this,'nm-casier')">
+            <div class="upload-zone__label">
+              <span>Choisir un fichier</span> ou glisser-déposer<br>
+              <small id="nm-casier" style="color:var(--or);display:block;margin-top:.4rem;"></small>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-full">
+          <label>Document complémentaire (facultatif — CV, lettre manuscrite, autre — PDF — max 10 Mo)</label>
+          <div class="upload-zone" onclick="document.getElementById('doc-comp').click()">
+            <input type="file" id="doc-comp" name="doc_complementaire" accept=".pdf,.doc,.docx" onchange="afficherNomFichier(this,'nm-doc')">
+            <div class="upload-zone__label">
+              <span>Choisir un fichier</span> ou glisser-déposer<br>
+              <small id="nm-doc" style="color:var(--or);display:block;margin-top:.4rem;"></small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ENGAGEMENTS -->
+      <div class="form-section-titre">VII. Engagements</div>
+      <div class="form-grid">
+        <div class="form-full">
+          <label style="display:flex;align-items:flex-start;gap:.5rem;text-transform:none;letter-spacing:0;font-size:.88rem;cursor:pointer;line-height:1.6;">
+            <input type="checkbox" name="engagement" style="width:auto;margin-top:.2rem;" required>
+            <span>Je déclare sur l'honneur que les informations fournies sont exactes et sincères.
+            Je comprends que cette démarche est engageante, que le processus peut durer entre 12 et 18 mois,
+            et que toute décision de la Loge est définitive.</span>
+          </label>
+        </div>
+        <div class="form-full" style="margin-top:.7rem;">
+          <label style="display:flex;align-items:flex-start;gap:.5rem;text-transform:none;letter-spacing:0;font-size:.88rem;cursor:pointer;line-height:1.6;">
+            <input type="checkbox" name="rgpd" style="width:auto;margin-top:.2rem;" required>
+            <span>J'autorise le Rite Brith Israël à traiter mes données personnelles dans le cadre strict de ma demande. Ces données ne seront jamais communiquées à des tiers.</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="form-footer">
+        <button type="submit" class="btn btn-or">Envoyer ma candidature</button>
+        <a href="Fiche_Individuelle_Adhesion_RBI.pdf" download class="btn-dl">⬇ Fiche PDF à imprimer</a>
+      </div>
+    </form>
+
+    <div class="msg-success" id="msg-candidature">
+      ✡ Votre candidature a bien été reçue.<br><br>
+      Un membre du Suprême Conseil vous contactera par téléphone dans les prochaines semaines
+      pour un premier échange informel. Prenez ce temps pour approfondir votre réflexion.<br><br>
+      <em>À la Gloire du Grand Architecte de l'Univers.</em>
+    </div>
+
+    <p class="confidentialite">
+      Toutes les informations transmises sont strictement confidentielles.<br>
+      Elles sont traitées exclusivement par le Secrétariat du Suprême Conseil Mondial du Rite Brith Israël.<br>
+      Contact : <a href="mailto:contact.brith.israel@gmail.com" style="color:var(--or);">contact.brith.israel@gmail.com</a>
+    </p>
+  </div>
+</div>
+
+
+<!-- FAQ -->
+<div class="faq">
+  <h2 class="bloc-titre">Questions fréquentes</h2>
+  <div class="sep"></div>
+
+  <div class="faq__item">
+    <div class="faq__question">Faut-il croire en Dieu pour rejoindre le Rite Brith Israël ?</div>
+    <div class="faq__reponse">
+      <div class="gadlu-box">
+        Le Rite Brith Israël requiert la croyance en un <strong>principe créateur</strong> — désigné sous le vocable universel de
+        <strong>Grand Architecte de l'Univers (G∴A∴D∴L∴U∴)</strong>. Ce principe transcendant est reconnu par chacun
+        selon sa propre tradition, sa religion ou ses convictions spirituelles : Dieu, HaShem, Allah, l'Être Suprême,
+        la Force créatrice de l'Univers… chacun s'y retrouve selon son chemin, sans qu'aucune confession ne soit imposée.
+      </div>
+      En revanche, <strong style="color:var(--or);">un athée déclaré ne peut adhérer au Rite Brith Israël.</strong>
+      La croyance en un principe créateur n'est pas une formalité — elle est le socle même de notre démarche initiatique,
+      fondée sur la Tradition hébraïque, la Kabbale et l'Arbre de Vie.
+      Elle conditionne le sens profond de tous les rituels et du travail symbolique pratiqué en Loge.
+    </div>
+  </div>
+
+  <div class="faq__item">
+    <div class="faq__question">Le Rite Brith Israël est-il réservé aux hommes ?</div>
+    <div class="faq__reponse">
+      Non. Le Rite Brith Israël est un Rite <strong style="color:var(--or);">mixte</strong>, ouvert aux Frères et aux Sœurs sans distinction.
+      Cette mixité est un choix fondateur, conforme aux valeurs d'universalité et d'égalité qui nous guident.
+    </div>
+  </div>
+
+  <div class="faq__item">
+    <div class="faq__question">Avez-vous déjà effectué des démarches pour entrer en Franc-Maçonnerie ?</div>
+    <div class="faq__reponse">
+      Cette question vous est posée dans le formulaire de candidature. Elle n'a rien de discriminant —
+      elle permet simplement de mieux comprendre votre parcours, votre connaissance du monde maçonnique
+      et les raisons qui vous amènent spécifiquement au Rite Brith Israël. Des démarches antérieures,
+      qu'elles aient abouti ou non, sont tout à fait recevables.
+    </div>
+  </div>
+
+  <div class="faq__item">
+    <div class="faq__question">Y a-t-il une cotisation ?</div>
+    <div class="faq__reponse">
+      Oui. Des cotisations annuelles sont demandées pour couvrir les frais de fonctionnement de la Loge
+      et du Suprême Conseil. Leur montant est fixé par la Loge d'appartenance et communiqué lors de l'entretien téléphonique.
+    </div>
+  </div>
+
+  <div class="faq__item">
+    <div class="faq__question">Où se tiennent les Tenues du Rite Brith Israël ?</div>
+    <div class="faq__reponse">
+      Les Loges et Ateliers du Rite se tiennent dans plusieurs villes de France et à l'international.
+      La localisation vous sera communiquée lors de l'entretien téléphonique, en fonction de votre lieu de résidence.
+    </div>
+  </div>
+
+  <div class="faq__item">
+    <div class="faq__question">Combien de temps dure le processus d'initiation ?</div>
+    <div class="faq__reponse">
+      Entre <strong style="color:var(--or);">12 et 18 mois</strong> en règle générale, entre le dépôt de votre dossier et votre initiation.
+      Ce délai comprend l'instruction du dossier, l'entretien téléphonique, les trois enquêtes, le vote de la Loge,
+      le passage sous le bandeau, et la tenue d'initiation. Il peut varier selon les circonstances.
+    </div>
+  </div>
+
+</div>
+
+
+<!-- CTA CONTACT -->
+<div class="cta-contact">
+  <div class="sep"></div>
+  <p>Une question avant de vous lancer ? Écrivez-nous.</p>
+  <p><a href="mailto:contact.brith.israel@gmail.com">contact.brith.israel@gmail.com</a></p>
+  <p style="font-size:.8rem;margin-top:.5rem;">
+    <a href="https://www.facebook.com/profile.php?id=61586037824874" target="_blank" rel="noopener">Facebook — Suprême Conseil Rite Brith Israël</a>
+  </p>
+</div>
+
+
+<script>
+  function afficherNomFichier(input, labelId) {
+    var el = document.getElementById(labelId);
+    if (el && input.files && input.files[0]) {
+      el.textContent = '✓ ' + input.files[0].name;
+    }
+  }
+
+  function soumettreCandidature(e) {
+    e.preventDefault();
+    // TODO: connecter à un backend (Formspree, Netlify Forms, EmailJS…)
+    document.getElementById('form-candidature').style.display = 'none';
+    var msg = document.getElementById('msg-candidature');
+    msg.classList.add('visible');
+    window.scrollTo({ top: msg.offsetTop - 100, behavior: 'smooth' });
+  }
+</script>
+
+</body>
+</html>
