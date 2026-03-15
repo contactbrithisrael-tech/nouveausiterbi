@@ -177,7 +177,13 @@ var RBI_CONFIG = {
           "de saint jean",
           "saint jean",
           "du saint jean",
-          "de chez saint jean"
+          "de chez saint jean",
+          "loge de saint jean",
+          "loge saint jean",
+          "loge de st jean",
+          "loge st jean",
+          "de la loge saint jean",
+          "de la loge st jean"
         ]
       },
       {
@@ -190,7 +196,11 @@ var RBI_CONFIG = {
           "3", "5", "7",
           "3 5 7", "3 5 et 7",
           "trois cinq sept",
-          "trois cinq et sept"
+          "trois cinq et sept",
+          "7 ans et plus", "sept ans et plus",
+          "7 et plus", "sept et plus",
+          "plus de 7", "plus de sept",
+          "3ans", "5ans", "7ans"
         ]
       }
     ],

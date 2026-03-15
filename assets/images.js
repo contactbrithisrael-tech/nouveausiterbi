@@ -74,7 +74,6 @@
     setImg('photo-jourdan',    IMG.PHOTO_JOURDAN);
 
     /* Livres */
-    setTimeout(function() {
     setImg('book-alliance', IMG.BOOK_ALLIANCE);
     setImg('book-guide',    IMG.BOOK_GUIDE);
 
@@ -83,7 +82,6 @@
     var b2 = document.getElementById('book-guide');
     if (b1) b1.dataset.back = IMG.BOOK_ALLIANCE_4E || '';
     if (b2) b2.dataset.back = IMG.BOOK_GUIDE_4E || '';
-    }, 300);
 
     /* PDFs tuilage */
     var cfgPdfs = window.RBI_CONFIG && window.RBI_CONFIG.tuilage && window.RBI_CONFIG.tuilage.pdfs;
