@@ -122,12 +122,23 @@
     .dl-card__desc { font-size: .78rem; color: var(--gris); line-height: 1.5; margin-bottom: .8rem; }
 
     .sep-section { border: none; border-top: 1px solid rgba(201,168,76,.1); margin: 1.5rem 0; }
+  
+    .header-logo {
+      width: 90px;
+      height: 90px;
+      object-fit: contain;
+      margin: 0 auto 1rem;
+      display: block;
+      opacity: .92;
+    }
+
   </style>
 </head>
 <body>
 
 <!-- HERO -->
 <div class="hero">
+  <img id="header-seal" class="header-logo" src="" alt="Sceau RBI">
   <span class="hero__etoile">✡</span>
   <h1 class="hero__titre">Devenir Franc-Maçon</h1>
   <p class="hero__sous">Au sein du Rite Brith Israël</p>
@@ -441,7 +452,7 @@ Il n'y a pas de bonne ou mauvaise réponse — seulement la sincérité de votre
     <p class="confidentialite">
       Toutes les informations transmises sont strictement confidentielles.<br>
       Elles sont traitées exclusivement par le Secrétariat du Suprême Conseil Mondial du Rite Brith Israël.<br>
-      Contact : <a href="mailto:contact.brith.israel@gmail.com" style="color:var(--or);">contact.brith.israel@gmail.com</a>
+      Contact : <a href="/cdn-cgi/l/email-protection#1c7f7372687d7f68327e6e75687432756f6e7d79705c7b717d7570327f7371" style="color:var(--or);"><span class="__cf_email__" data-cfemail="086b67667c696b7c266a7a617c6026617b7a696d64486f65696164266b6765">[email&#160;protected]</span></a>
     </p>
   </div>
 </div>
@@ -518,30 +529,15 @@ Il n'y a pas de bonne ou mauvaise réponse — seulement la sincérité de votre
 <div class="cta-contact">
   <div class="sep"></div>
   <p>Une question avant de vous lancer ? Écrivez-nous.</p>
-  <p><a href="mailto:contact.brith.israel@gmail.com">contact.brith.israel@gmail.com</a></p>
+  <p><a href="/cdn-cgi/l/email-protection#aecdc1c0dacfcdda80ccdcc7dac680c7dddccfcbc2eec9c3cfc7c280cdc1c3"><span class="__cf_email__" data-cfemail="a4c7cbcad0c5c7d08ac6d6cdd0cc8acdd7d6c5c1c8e4c3c9c5cdc88ac7cbc9">[email&#160;protected]</span></a></p>
   <p style="font-size:.8rem;margin-top:.5rem;">
     <a href="https://www.facebook.com/profile.php?id=61586037824874" target="_blank" rel="noopener">Facebook — Suprême Conseil Rite Brith Israël</a>
   </p>
 </div>
 
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
   function afficherNomFichier(input, labelId) {
     var el = document.getElementById(labelId);
     if (el && input.files && input.files[0]) {
-      el.textContent = '✓ ' + input.files[0].name;
-    }
-  }
-
-  function soumettreCandidature(e) {
-    e.preventDefault();
-    // TODO: connecter à un backend (Formspree, Netlify Forms, EmailJS…)
-    document.getElementById('form-candidature').style.display = 'none';
-    var msg = document.getElementById('msg-candidature');
-    msg.classList.add('visible');
-    window.scrollTo({ top: msg.offsetTop - 100, behavior: 'smooth' });
-  }
-</script>
-
-</body>
-</html>
+      el.textContent = '✓ ' + input.files[0

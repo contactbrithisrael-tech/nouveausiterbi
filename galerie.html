@@ -41,11 +41,22 @@
     .lightbox img { max-width:90vw; max-height:88vh; object-fit:contain; border:1px solid rgba(201,168,76,.3); }
     .lightbox__close { position:fixed; top:1rem; right:1.5rem; color:var(--or); font-size:2rem; cursor:pointer; z-index:1000; line-height:1; }
     .lightbox__legende { position:fixed; bottom:1rem; left:50%; transform:translateX(-50%); color:var(--gris); font-size:.8rem; font-style:italic; text-align:center; }
+  
+    .header-logo {
+      width: 90px;
+      height: 90px;
+      object-fit: contain;
+      margin: 0 auto 1rem;
+      display: block;
+      opacity: .92;
+    }
+
   </style>
 </head>
 <body>
 
 <div class="header">
+  <img id="header-seal" class="header-logo" src="" alt="Sceau RBI">
   <div class="header__badge">✡ Rite Brith Israël</div>
   <h1 class="header__titre">Galerie</h1>
   <div class="sep"></div>
@@ -134,6 +145,20 @@
     document.getElementById('lightbox').classList.remove('open');
   }
   document.addEventListener('keydown', function(e) { if (e.key === 'Escape') fermer(); });
+</script>
+<script>
+  // Inject header seal on all pages
+  (function() {
+    var el = document.getElementById('header-seal');
+    if (!el) return;
+    if (window.IMG && IMG.SCEAU_RBI) { el.src = IMG.SCEAU_RBI; return; }
+    if (window.IMGX && IMGX.SC_LOGO) { el.src = IMGX.SC_LOGO; return; }
+    // fallback: try on load
+    window.addEventListener('load', function() {
+      if (window.IMG && IMG.SCEAU_RBI) el.src = IMG.SCEAU_RBI;
+      else if (window.IMGX && IMGX.SC_LOGO) el.src = IMGX.SC_LOGO;
+    });
+  })();
 </script>
 </body>
 </html>
