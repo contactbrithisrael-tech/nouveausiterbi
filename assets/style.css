@@ -84,7 +84,7 @@ ul { list-style: none; }
 .banner__text { display: inline-block; font-family: var(--font-sous); font-size: 0.72rem; letter-spacing: 0.25em; color: var(--or); border: 1px solid rgba(201,168,76,0.35); padding: 0.4rem 1.5rem; animation: fade-up 2s ease forwards; opacity: 0; }
 
 .hero__seal     { margin-bottom: 2.5rem; animation: fade-up 1.5s ease forwards; opacity: 0; }
-.hero__seal-img { width: 220px; height: 220px; object-fit: contain; border-radius: 50%; filter: drop-shadow(0 0 30px rgba(201,168,76,0.4)); margin: 0 auto; }
+.hero__seal-img { width: 260px; height: 260px; object-fit: contain; border-radius: 0; filter: drop-shadow(0 0 30px rgba(201,168,76,0.4)); margin: 0 auto; display: block; }
 .hero__seal-img[src=""] { display: none; }
 
 .hero__title    { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem; opacity: 0; animation: fade-up 1.8s ease forwards; animation-delay: 0.3s; }
