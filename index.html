@@ -97,5 +97,54 @@
 <script src="assets/app.js"></script>
 <script src="assets/images.js"></script>
 
+
+<!-- ── LECTEUR MUSICAL ── -->
+<div id="music-player" style="
+  position:fixed; bottom:1.2rem; right:1.2rem; z-index:999;
+  background:rgba(13,13,13,.92); border:1px solid rgba(201,168,76,.4);
+  padding:.7rem 1rem; display:flex; align-items:center; gap:.8rem;
+  font-family:Georgia,serif; backdrop-filter:blur(6px);
+  box-shadow:0 4px 20px rgba(0,0,0,.5);
+">
+  <iframe id="yt-player"
+    src="https://www.youtube.com/embed/gBY6-s9bmGM?list=RDgBY6-s9bmGM&enablejsapi=1&autoplay=0&controls=0"
+    width="0" height="0" frameborder="0" allow="autoplay" style="display:none;">
+  </iframe>
+  <span style="font-size:1.1rem;">🎵</span>
+  <span style="color:#c9a84c;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;">Musique du Rite</span>
+  <button id="music-toggle" onclick="toggleMusic()" style="
+    background:var(--or,#c9a84c);border:none;color:#0d0d0d;
+    padding:.3rem .8rem;font-size:.75rem;letter-spacing:.1em;
+    text-transform:uppercase;font-family:Georgia,serif;cursor:pointer;
+  ">▶ Play</button>
+  <button onclick="document.getElementById('music-player').style.display='none'" style="
+    background:transparent;border:none;color:#888;font-size:1rem;cursor:pointer;
+  ">✕</button>
+</div>
+<script>
+  var playing = false;
+  var player;
+  function onYouTubeIframeAPIReady() {
+    player = new YT.Player('yt-player', {
+      videoId: 'gBY6-s9bmGM',
+      playerVars: { listType:'playlist', list:'RDgBY6-s9bmGM', autoplay:0, controls:0 }
+    });
+  }
+  function toggleMusic() {
+    if (!player) return;
+    if (playing) {
+      player.pauseVideo();
+      document.getElementById('music-toggle').textContent = '▶ Play';
+    } else {
+      player.playVideo();
+      document.getElementById('music-toggle').textContent = '⏸ Pause';
+    }
+    playing = !playing;
+  }
+  var tag = document.createElement('script');
+  tag.src = "https://www.youtube.com/iframe_api";
+  document.head.appendChild(tag);
+</script>
+
 </body>
 </html>
