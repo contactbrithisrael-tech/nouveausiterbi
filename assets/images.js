@@ -58,7 +58,7 @@
     btn.style.display = '';
   }
 
-  document.addEventListener('DOMContentLoaded', function () {
+  window.addEventListener('load', function () {
 
     /* Sceau */
     setImg('nav-logo',  IMG.SCEAU_RBI);
