@@ -241,7 +241,8 @@
         el('span', { class: 'tuilage__success-icon', text: cfg.succes.icone }),
         el('h3',   { text: cfg.succes.titre }),
         el('p',    { text: cfg.succes.message }),
-        el('div',  { class: 'tuilage__docs', id: 'tuilage-docs' }, pdfBtns)
+        el('div',  { class: 'tuilage__docs', id: 'tuilage-docs' }, pdfBtns),
+        el('a', { class: 'btn btn--primary', href: 'espace-membres.html', text: '✡ Accéder à l\'Espace Membres' })
       ])
     ]);
 
