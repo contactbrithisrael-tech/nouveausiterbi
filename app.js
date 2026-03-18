@@ -373,27 +373,6 @@
       text:  cfg.email
     }));
     block.appendChild(el('a', {
-      href: cfg.facebook.url, target: '_blank', rel: 'noopener',
-      class: 'btn btn--outline', text: cfg.facebook.label
-    }));
-    block.appendChild(el('a', {
-      href: cfg.traites.url, class: 'btn btn--primary', text: cfg.traites.label
-    }));
-  }
-    var cfg = C.contact;
-    var t = $('contact-titre'); if (t) t.textContent = cfg.titre;
-    var i = $('contact-intro'); if (i) i.textContent = cfg.intro;
-
-    var block = $('contact-block');
-    if (!block) return;
-    block.innerHTML = '';
-
-    block.appendChild(el('a', {
-      href:  'mailto:' + cfg.email,
-      class: 'contact-block__email',
-      text:  cfg.email
-    }));
-    block.appendChild(el('a', {
       href:   cfg.facebook.url,
       target: '_blank', rel: 'noopener',
       class:  'btn btn--outline',
