@@ -360,10 +360,10 @@
     if (retryBtn) retryBtn.addEventListener('click', resetTuilage);
   }
 
-  /* ════════════════════════════════════════════════
+/* ════════════════════════════════════════════════
      7. CONTACT
   ════════════════════════════════════════════════ */
-function buildContact() {
+  function buildContact() {
     var cfg = C.contact;
     var t = $('contact-titre'); if (t) t.textContent = cfg.titre;
     var i = $('contact-intro'); if (i) i.textContent = cfg.intro;
@@ -372,7 +372,6 @@ function buildContact() {
     if (!block) return;
     block.innerHTML = '';
 
-    // Email + Facebook + Traités (inchangés)
     block.appendChild(el('a', {
       href:  'mailto:' + cfg.email,
       class: 'contact-block__email',
@@ -385,39 +384,7 @@ function buildContact() {
     block.appendChild(el('a', {
       href: cfg.traites.url, class: 'btn btn--primary', text: cfg.traites.label
     }));
-
-    // Formulaire Devenir FM
-    var form = document.createElement('form');
-    form.action  = 'https://formspree.io/f/mgonpbnp';
-    form.method  = 'POST';
-    form.className = 'contact-form';
-    form.innerHTML =
-      '<h3 class="contact-form__titre">Demande d\'affiliation</h3>' +
-      '<input type="text"   name="nom"       placeholder="Nom & Prénom *"  required class="tuilage__input">' +
-      '<input type="email"  name="email"     placeholder="Email *"         required class="tuilage__input">' +
-      '<input type="text"   name="ville"     placeholder="Ville"                    class="tuilage__input">' +
-      '<textarea            name="message"   placeholder="Votre message…"  rows="4" class="tuilage__input"></textarea>' +
-      '<button type="submit" class="btn btn--primary">Envoyer ma demande</button>' +
-      '<p class="contact-form__merci" style="display:none;color:#c9a84c;margin-top:1rem;">✅ Message envoyé — nous vous répondrons rapidement.</p>';
-
-    // Confirmation après envoi
-    form.addEventListener('submit', function(e) {
-      e.preventDefault();
-      var data = new FormData(form);
-      fetch(form.action, {
-        method: 'POST', body: data,
-        headers: { 'Accept': 'application/json' }
-      }).then(function(r) {
-        if (r.ok) {
-          form.querySelector('.contact-form__merci').style.display = 'block';
-          form.reset();
-        }
-      });
-    });
-
-    block.appendChild(form);
   }
-
   /* ════════════════════════════════════════════════
      8. FOOTER
   ════════════════════════════════════════════════ */
