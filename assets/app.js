@@ -384,7 +384,12 @@
     block.appendChild(el('a', {
       href: cfg.traites.url, class: 'btn btn--primary', text: cfg.traites.label
     }));
-  }
+  block.appendChild(el('a', {
+      href: 'https://forms.gle/G6mB3CpbLfmGzE219',
+      target: '_blank', rel: 'noopener',
+      class: 'btn btn--cta',
+      text: '✡ Devenir Franc-Maçon'
+    }));
   /* ════════════════════════════════════════════════
      8. FOOTER
   ════════════════════════════════════════════════ */
