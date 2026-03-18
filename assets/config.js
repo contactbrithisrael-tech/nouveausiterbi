@@ -31,7 +31,7 @@ var RBI_CONFIG = {
      PAGE : HERO (section d'accueil)
   ────────────────────────────────────────────── */
   hero: {
-    bandeau:   "A∴L∴G∴G∴A∴D∴L∴A∴U∴ — ב∴ס∴ד∴",
+    bandeau:   "A∴L∴G∴G∴A∴D∴L'∴U∴ — ב∴ס∴ד∴",
     titre_fr:  "Rite Brith Israël",
     titre_he:  "ברית ישראל",
     subtitle:  "Rite Maçonnique Kabbalistique de 33 degrés.",
