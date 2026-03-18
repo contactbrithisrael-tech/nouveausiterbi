@@ -73,9 +73,9 @@ var RBI_CONFIG = {
     membres: [
       /* ── Souverain Grand Commandeur ── */
       {
-        nom:    "Mickaël DARMON",
-        grade:  "33°",
-        titre:  "Souverain Grand Commandeur — T∴I∴F∴",
+        nom:    "T∴I∴F∴ Mickaël DARMON",
+        grade:  "33°-96°",
+        titre:  "Souverain Grand Commandeur",
         role:   "Fondateur et Grand Maître",
         img_id: "photo-darmon",   // ID injecté par images.js
         rang:   "sgc"
