@@ -85,7 +85,7 @@ var RBI_CONFIG = {
         nom:    "Jean-Michel RAUX",
         grade:  "32°",
         titre:  "Grand Maître Adjoint",
-        role:   "Lieutenant SGC — Trésorier",
+        role:   "Lieutenant Souverain Grand Commandeur —  Grand Trésorier",
         img_id: "photo-raux",
         rang:   "gma"
       },
@@ -93,7 +93,7 @@ var RBI_CONFIG = {
         nom:    "Martine HABERT",
         grade:  "32°",
         titre:  "Grand Maître Adjoint",
-        role:   "Secrétaire",
+        role:   " Grand Secrétaire",
         img_id: "photo-habert",
         rang:   "gma"
       },
@@ -101,7 +101,7 @@ var RBI_CONFIG = {
         nom:    "Jean-Louis CARILLO",
         grade:  "32°",
         titre:  "Grand Maître Adjoint",
-        role:   "Expert",
+        role:   "Grand Expert",
         img_id: "photo-carillo",
         rang:   "gma"
       },
@@ -109,24 +109,24 @@ var RBI_CONFIG = {
       {
         nom:    "Didier BUHLER",
         grade:  "32°",
-        titre:  "Adjoint au Grand Maître",
-        role:   "Chancelier",
+        titre:  "Assistant Grand Maître",
+        role:   " Grand Chancelier",
         img_id: "photo-buhler",
         rang:   "agm"
       },
       {
         nom:    "Laurent NOTARIANNI",
         grade:  "32°",
-        titre:  "Adjoint au Grand Maître",
-        role:   "Orateur",
+        titre:  "Assistant Grand Maître",
+        role:   " Grand Orateur",
         img_id: "photo-notarianni",
         rang:   "agm"
       },
       {
         nom:    "Pierre JOURDAN",
         grade:  "32°",
-        titre:  "Adjoint au Grand Maître",
-        role:   "Hospitalier",
+        titre:  "Assistant Grand Maître",
+        role:   " Grand Hospitalier",
         img_id: "photo-jourdan",
         rang:   "agm"
       }
