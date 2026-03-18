@@ -45,7 +45,7 @@ var RBI_CONFIG = {
   ────────────────────────────────────────────── */
   rite: {
     titre: "Le Rite Brith Israël",
-    intro: "Fondé par le T∴I∴F∴ Mickaël DARMON, le Rite Brith Israël est un Rite Maçonnique Kabbalistique de 33 degrés puisant ses sources dans la Tradition Hébraïque, la Kabbale et la Franc-Maçonnerie universelle. Son nom honore la mémoire d'Israël DARMON, pilier spirituel et inspirateur du Rite.",
+    intro: "Fondé par le T∴I∴F∴ Mickaël DARMON 33e, le Rite Brith Israël est un Rite Maçonnique Kabbalistique en 33 degrés puisant ses sources dans la Tradition Hébraïque, la Kabbale et la Franc-Maçonnerie universelle. Son nom honore la mémoire d'Israël DARMON, pilier spirituel et inspirateur du Rite.",
     cartes: [
       {
         icone: "✡",
