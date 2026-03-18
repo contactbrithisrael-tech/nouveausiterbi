@@ -7,7 +7,7 @@
   --or-light:   #E8C96A;
   --or-dark:    #9A7535;
   --noir:       #080808;
-  --noir-2:     #111111;
+  --noir-2:     #0d0d0d;
   --noir-3:     #1a1a1a;
   --blanc:      #F5F0E8;
   --gris:       #888;
@@ -110,7 +110,7 @@ ul { list-style: none; }
 
 /* ─── SECTIONS ────────────────────────────────── */
 .section              { padding: 5rem 2rem; }
-.section--dark        { background: var(--noir-2); }
+.section--dark        { background: #0d0d0d; }
 .section--gold-border { background: var(--noir); border-top: 1px solid rgba(201,168,76,0.2); border-bottom: 1px solid rgba(201,168,76,0.2); }
 .section--tuilage     { background: var(--noir-3); }
 .container            { max-width: 1100px; margin: 0 auto; }
@@ -136,7 +136,7 @@ ul { list-style: none; }
 
 .chef-card__photo-wrap { width: 100px; height: 100px; border-radius: 50%; margin: 0 auto 1.25rem; position: relative; overflow: hidden; border: 2px solid rgba(201,168,76,0.35); }
 .chef-card--sgc .chef-card__photo-wrap { width: 120px; height: 120px; border-color: var(--or); box-shadow: 0 0 20px rgba(201,168,76,0.3); }
-.chef-card__photo { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.chef-card__photo { width: 100%; height: 100%; object-fit: cover; object-position: top; border-radius: 50%; }
 .chef-card__photo[src=""] { display: none; }
 .chef-card__photo-placeholder { position: absolute; inset: 0; background: var(--noir-3); display: flex; align-items: center; justify-content: center; font-family: var(--font-titre); font-size: 2rem; color: var(--or); }
 .chef-card__photo:not([src=""]) + .chef-card__photo-placeholder { display: none; }
@@ -196,7 +196,7 @@ ul { list-style: none; }
 .contact-block__email:hover { background: rgba(201,168,76,0.08); border-color: var(--or); }
 
 /* ─── FOOTER ──────────────────────────────────── */
-.footer { background: var(--noir-2); border-top: 1px solid rgba(201,168,76,0.15); padding: 2.5rem 2rem; text-align: center; }
+.footer { background: #0d0d0d; border-top: 1px solid rgba(201,168,76,0.15); padding: 2.5rem 2rem; text-align: center; }
 .footer__logo-text { font-family: var(--font-corps); font-size: 1.4rem; color: var(--or); direction: rtl; margin-bottom: 0.5rem; letter-spacing: 0.1em; }
 .footer__line      { font-family: var(--font-sous); font-size: 0.78rem; color: var(--gris); letter-spacing: 0.1em; margin-bottom: 0.25rem; }
 .footer__line--sm  { font-size: 0.7rem; color: #555; }
@@ -225,7 +225,7 @@ ul { list-style: none; }
 /* ─── LIGHTBOX CHEFS ──────────────────────── */
 #chef-lightbox { position: fixed; inset: 0; z-index: 2000; display: flex; align-items: center; justify-content: center; }
 .lb-overlay    { position: absolute; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(4px); }
-.lb-box        { position: relative; z-index: 1; background: var(--noir-2); border: 1px solid rgba(201,168,76,0.3); border-radius: 12px; padding: 2rem; max-width: 420px; width: 90%; text-align: center; animation: fade-up 0.3s ease; }
+.lb-box        { position: relative; z-index: 1; background: #0d0d0d; border: 1px solid rgba(201,168,76,0.3); border-radius: 12px; padding: 2rem; max-width: 420px; width: 90%; text-align: center; animation: fade-up 0.3s ease; }
 .lb-close      { position: absolute; top: 0.75rem; right: 0.75rem; background: none; border: none; color: var(--gris); font-size: 1.2rem; cursor: pointer; transition: color 0.2s; }
 .lb-close:hover{ color: var(--or); }
 .lb-img        { width: 200px; height: 200px; object-fit: cover; object-position: top; border-radius: 50%; border: 3px solid var(--or); margin: 0 auto 1.5rem; display: block; filter: drop-shadow(0 0 20px rgba(201,168,76,0.3)); }
@@ -234,12 +234,9 @@ ul { list-style: none; }
 .lb-titre      { font-size: 0.9rem; color: #aaa; font-style: italic; margin-bottom: 0.4rem; }
 .lb-role       { font-family: var(--font-sous); font-size: 0.78rem; color: var(--or-dark); text-transform: uppercase; letter-spacing: 0.1em; }
 
-/* ─── PHOTO CADRAGE ───────────────────────── */
-.chef-card__photo { width: 100%; height: 100%; object-fit: cover; object-position: top; border-radius: 50%; }
-
 /* ─── LIGHTBOX LIVRE ──────────────────────── */
 #book-lightbox       { position: fixed; inset: 0; z-index: 2000; display: flex; align-items: center; justify-content: center; padding: 1rem; }
-.lb-book-box         { position: relative; z-index: 1; background: var(--noir-2); border: 1px solid rgba(201,168,76,0.3); border-radius: 12px; padding: 2rem; max-width: 860px; width: 95%; text-align: center; animation: fade-up 0.3s ease; max-height: 90vh; overflow-y: auto; }
+.lb-book-box         { position: relative; z-index: 1; background: #0d0d0d; border: 1px solid rgba(201,168,76,0.3); border-radius: 12px; padding: 2rem; max-width: 860px; width: 95%; text-align: center; animation: fade-up 0.3s ease; max-height: 90vh; overflow-y: auto; }
 .lb-book-titre       { font-family: var(--font-sous); color: var(--or); font-size: 1rem; letter-spacing: 0.1em; margin-bottom: 1.5rem; }
 .lb-book-pages       { display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; margin-bottom: 1.5rem; }
 .lb-book-img         { height: 420px; width: auto; max-width: 300px; object-fit: contain; border-radius: 6px; box-shadow: 0 8px 40px rgba(0,0,0,0.5); cursor: zoom-in; transition: transform 0.2s; }
