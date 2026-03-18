@@ -44,7 +44,6 @@
   function buildNavbar() {
     var cfg = C.navbar;
 
-    /* Brand */
     var brand = $('navbar-brand');
     if (brand) {
       brand.innerHTML = '';
@@ -57,7 +56,6 @@
       brand.appendChild(title);
     }
 
-    /* Liens */
     var ul = $('nav-links');
     if (ul && cfg.liens) {
       ul.innerHTML = '';
@@ -78,25 +76,21 @@
   function buildHero() {
     var cfg = C.hero;
 
-    /* Bandeau */
     var b = $('hero-banner');
     if (b) b.innerHTML = '<span class="banner__text">' + cfg.bandeau + '</span>';
 
-    /* Titre */
     var t = $('hero-title');
     if (t) t.innerHTML =
       '<span class="hero__title-fr">' + cfg.titre_fr + '</span>' +
       '<span class="hero__title-he" dir="rtl">' + cfg.titre_he + '</span>';
 
-    /* Sous-titre */
     var s = $('hero-subtitle');
     if (s) s.innerHTML = cfg.subtitle + '<br><em>' + cfg.subtitle2 + '</em>';
 
-    /* CTA */
     var cta = $('hero-cta');
     if (cta) cta.innerHTML =
-      '<a href="#rite"    class="btn btn--primary">' + cfg.btn_decouvrir + '</a>' +
-      '<a href="devenir-fm.html" class="btn btn--outline">' + cfg.btn_rejoindre + '</a>'
+      '<a href="#rite" class="btn btn--primary">' + cfg.btn_decouvrir + '</a>' +
+      '<a href="devenir-fm.html" class="btn btn--outline">' + cfg.btn_rejoindre + '</a>';
   }
 
   /* ════════════════════════════════════════════════
@@ -117,7 +111,6 @@
           el('p',    { class: 'card__text',  text: c.texte })
         ]));
       });
-      // Bouton Roue des 33 Degrés
       var roueWrap = document.createElement('div');
       roueWrap.className = 'rite-roue-wrap reveal';
       roueWrap.innerHTML = '<a href="roue.html" class="btn btn--outline">✡ Découvrir la Roue des 33 Degrés</a>';
@@ -214,12 +207,10 @@
 
     zone.innerHTML = '';
 
-    /* Étape démarrage */
     var stepStart = el('div', { class: 'tuilage__step', id: 'tuilage-start' }, [
       el('button', { class: 'btn btn--primary btn--lg', id: 'tuilage-start-btn', text: 'Commencer le Tuilage' })
     ]);
 
-    /* Questions */
     var stepEls = cfg.questions.map(function (q, idx) {
       var n = idx + 1;
       return el('div', { class: 'tuilage__step tuilage__step--hidden', id: 'tuilage-' + q.id }, [
@@ -232,7 +223,6 @@
       ]);
     });
 
-    /* Succès + PDFs */
     var pdfBtns = cfg.pdfs.map(function (p) {
       return el('a', { href: '#', class: 'btn btn--outline', id: p.id, style: 'display:none', text: '📄 ' + p.label });
     });
@@ -246,7 +236,6 @@
       ])
     ]);
 
-    /* Échec */
     var stepEchec = el('div', { class: 'tuilage__step tuilage__step--hidden', id: 'tuilage-fail' }, [
       el('div', { class: 'tuilage__fail' }, [
         el('span', { class: 'tuilage__fail-icon', text: '✕' }),
@@ -260,7 +249,6 @@
     zone.appendChild(stepSucces);
     zone.appendChild(stepEchec);
 
-    /* ── Logique tuilage ─────────────────────── */
     var essais = cfg.questions.map(function () { return 0; });
     var qIdx   = 0;
     var MAX    = cfg.max_essais || 3;
@@ -296,7 +284,6 @@
       if (ok) {
         setFb(n, 'Bien répondu, Frère.', 'ok');
         if (idx + 1 < cfg.questions.length) {
-          /* Passer à la question suivante */
           setTimeout(function () {
             qIdx = idx + 1;
             showStep('tuilage-' + cfg.questions[qIdx].id);
@@ -304,7 +291,6 @@
             if (nextInp) nextInp.focus();
           }, 900);
         } else {
-          /* Toutes répondues → succès */
           setTimeout(function () { showStep('tuilage-success'); }, 900);
         }
       } else {
@@ -332,7 +318,6 @@
       showStep('tuilage-start');
     }
 
-    /* Bind bouton démarrer */
     var startBtn = $('tuilage-start-btn');
     if (startBtn) {
       startBtn.addEventListener('click', function () {
@@ -344,7 +329,6 @@
       });
     }
 
-    /* Bind boutons répondre + Enter */
     cfg.questions.forEach(function (q, idx) {
       var n   = idx + 1;
       var btn = $('tuilage-btn-' + n);
@@ -355,12 +339,11 @@
       });
     });
 
-    /* Bind retry */
     var retryBtn = $('tuilage-retry-btn');
     if (retryBtn) retryBtn.addEventListener('click', resetTuilage);
   }
 
-/* ════════════════════════════════════════════════
+  /* ════════════════════════════════════════════════
      7. CONTACT
   ════════════════════════════════════════════════ */
   function buildContact() {
@@ -384,12 +367,14 @@
     block.appendChild(el('a', {
       href: cfg.traites.url, class: 'btn btn--primary', text: cfg.traites.label
     }));
-  block.appendChild(el('a', {
+    block.appendChild(el('a', {
       href: 'https://forms.gle/G6mB3CpbLfmGzE219',
       target: '_blank', rel: 'noopener',
-      class: 'btn btn--cta',
+      class: 'btn btn--primary',
       text: '✡ Devenir Franc-Maçon'
     }));
+  }
+
   /* ════════════════════════════════════════════════
      8. FOOTER
   ════════════════════════════════════════════════ */
@@ -553,19 +538,21 @@
       '</div>';
 
     document.body.appendChild(lb);
-
     lb.querySelector('.lb-overlay').addEventListener('click', function() { lb.remove(); });
     lb.querySelector('.lb-close').addEventListener('click', function() { lb.remove(); });
     document.addEventListener('keydown', function esc(e) {
       if (e.key === 'Escape') { lb.remove(); document.removeEventListener('keydown', esc); }
     });
   }
+
+  /* ════════════════════════════════════════════════
+     INIT
+  ════════════════════════════════════════════════ */
   document.addEventListener('DOMContentLoaded', function () {
     if (!window.RBI_CONFIG) {
       console.error('[RBI] config.js introuvable !');
       return;
     }
-    /* Construire le contenu */
     buildNavbar();
     buildHero();
     buildRite();
@@ -575,7 +562,6 @@
     buildContact();
     buildFooter();
 
-    /* Activer les comportements */
     initBurger();
     initStars();
     initNavbarScroll();
