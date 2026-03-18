@@ -401,114 +401,27 @@
     Toute adhésion est soumise à l'approbation du Suprême Conseil Mondial.
   </p>
 
-  <form id="form-adhesion" onsubmit="soumettre(event, 'form-adhesion', 'msg-adhesion')">
-    <div class="form-grid">
-
-      <div>
-        <label>Prénom *</label>
-        <input type="text" name="prenom" required>
-      </div>
-      <div>
-        <label>Nom *</label>
-        <input type="text" name="nom" required>
-      </div>
-      <div>
-        <label>Date de naissance *</label>
-        <input type="date" name="ddn" required>
-      </div>
-      <div>
-        <label>Lieu de naissance</label>
-        <input type="text" name="lieu_naissance">
-      </div>
-      <div>
-        <label>Adresse *</label>
-        <input type="text" name="adresse" required>
-      </div>
-      <div>
-        <label>Code postal / Ville *</label>
-        <input type="text" name="cp_ville" required>
-      </div>
-      <div>
-        <label>Pays</label>
-        <input type="text" name="pays" value="France">
-      </div>
-      <div>
-        <label>Téléphone *</label>
-        <input type="tel" name="telephone" required>
-      </div>
-      <div class="form-full">
-        <label>Email *</label>
-        <input type="email" name="email" required>
-      </div>
-
-      <hr class="sep-section form-full">
-
-      <div>
-        <label>Obédience actuelle</label>
-        <input type="text" name="obedience" placeholder="Ex. GLDF, GODF, indépendant…">
-      </div>
-      <div>
-        <label>Grade maçonnique</label>
-        <select name="grade">
-          <option value="">— Sélectionner —</option>
-          <option>Apprenti (1°)</option>
-          <option>Compagnon (2°)</option>
-          <option>Maître (3°)</option>
-          <option>Degré 4° et supérieur</option>
-          <option>Non initié</option>
-        </select>
-      </div>
-      <div>
-        <label>Loge d'appartenance</label>
-        <input type="text" name="loge">
-      </div>
-      <div>
-        <label>Ancienneté en F∴M∴</label>
-        <input type="text" name="anciennete" placeholder="Ex. 5 ans">
-      </div>
-
-      <hr class="sep-section form-full">
-
-      <div class="form-full">
-        <label>Motivations pour rejoindre le Rite Brith Israël *</label>
-        <textarea name="motivations" placeholder="Décrivez en quelques lignes ce qui vous attire dans le Rite Brith Israël, votre démarche spirituelle, vos attentes…" required></textarea>
-      </div>
-      <div class="form-full">
-        <label>Comment avez-vous connu le Rite Brith Israël ?</label>
-        <textarea name="comment" style="min-height:80px;" placeholder="Bouche à oreille, site internet, réseaux sociaux, traité d'amitié avec votre obédience…"></textarea>
-      </div>
-
-      <hr class="sep-section form-full">
-
-      <div class="form-full">
-        <label>Photo d'identité (JPG, PNG — max 5 Mo)</label>
-        <div class="upload-zone" onclick="document.getElementById('photo-adhesion').click()">
-          <input type="file" id="photo-adhesion" name="photo" accept="image/*" onchange="afficherNomFichier(this, 'nom-photo-adhesion')">
-          <div class="upload-zone__label">
-            <span>Choisir un fichier</span> ou glisser-déposer votre photo ici<br>
-            <small id="nom-photo-adhesion" style="color:var(--or);margin-top:.4rem;display:block;"></small>
-          </div>
-        </div>
-      </div>
-
-      <div class="form-full">
-        <label>Extrait de casier judiciaire vierge — Bulletin n°3 (PDF — max 10 Mo)</label>
-        <div class="upload-zone" onclick="document.getElementById('casier-adhesion').click()">
-          <input type="file" id="casier-adhesion" name="casier" accept=".pdf,image/*" onchange="afficherNomFichier(this, 'nom-casier-adhesion')">
-          <div class="upload-zone__label">
-            <span>Choisir un fichier</span> ou glisser-déposer votre extrait ici<br>
-            <small id="nom-casier-adhesion" style="color:var(--or);margin-top:.4rem;display:block;"></small>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <div class="form-footer">
-      <button type="submit" class="btn btn-or">Soumettre ma demande d'adhésion</button>
-      <button type="button" class="btn btn-outline" onclick="telechargerPDF('adhesion')">⬇ Télécharger le formulaire vierge (PDF)</button>
-    </div>
-  </form>
+<div style="text-align:center;padding:2rem 0;">
+  <p style="font-size:.95rem;line-height:1.8;color:#e8e0d0;margin-bottom:.8rem;">
+    Le parcours d'affiliation pour un Franc-Maçon déjà initié comprend :
+  </p>
+  <ol style="text-align:left;max-width:500px;margin:0 auto 1.5rem;font-size:.9rem;line-height:2;color:#e8e0d0;">
+    <li>Dépôt de votre demande</li>
+    <li>Entretien avec 2 Maîtres Maçons de la Loge</li>
+    <li>Vote</li>
+    <li>Travail présenté à votre grade</li>
+    <li>Affiliation + perception des capitations</li>
+  </ol>
+  <p style="font-size:.82rem;font-style:italic;color:#888;margin-bottom:1.5rem;">
+    ✡ La double appartenance est autorisée.
+  </p>
+  <a href="https://forms.gle/KnxAiKkbD9dN4Pks6"
+     target="_blank" rel="noopener"
+     class="btn btn-or"
+     style="font-size:.9rem;padding:1rem 2.5rem;letter-spacing:.2em;">
+    ✡ Déposer ma demande d'affiliation
+  </a>
+</div>
 
   <div class="msg-success" id="msg-adhesion">
     ✡ Votre demande a bien été transmise au Suprême Conseil Mondial.<br>
