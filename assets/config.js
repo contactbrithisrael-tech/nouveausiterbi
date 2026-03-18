@@ -15,7 +15,7 @@ var RBI_CONFIG = {
   navbar: {
     nom:    "BRITH ISRAËL",
     hebrew: "ברית ישראל",
-    liens: liens: [
+liens: [
   { label: "Le Rite",          href: "#rite"   },
   { label: "Chefs de l'Ordre", href: "#chefs"  },
   { label: "Publications",     href: "#livres" },
