@@ -15,14 +15,16 @@ var RBI_CONFIG = {
   navbar: {
     nom:    "BRITH ISRAËL",
     hebrew: "ברית ישראל",
-    liens: [
-      { label: "Le Rite",         href: "#rite"   },
-      { label: "Chefs de l'Ordre",href: "#chefs"  },
-      { label: "Publications",    href: "#livres" },
-      { label: "Traités",         href: "traites.html" },
-      { label: "Tuilage",         href: "#tuilage", style: "discret" },
-      { label: "Contact",         href: "#contact", style: "cta" }
-    ]
+liens: [
+  { label: "Le Rite",          href: "#rite"   },
+  { label: "Chefs de l'Ordre", href: "#chefs"  },
+  { label: "Publications",     href: "#livres" },
+  { label: "Traités",          href: "traites.html" },
+  { label: "Devenir FM",       href: "devenir-fm.html", style: "cta" },
+  { label: "Tuilage",          href: "#tuilage", style: "discret" },
+  { label: "Espace Membres",   href: "espace-membres.html" },
+  { label: "Contact",          href: "#contact" }
+]
   },
 
   /* ──────────────────────────────────────────────
