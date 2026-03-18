@@ -96,7 +96,7 @@
     var cta = $('hero-cta');
     if (cta) cta.innerHTML =
       '<a href="#rite"    class="btn btn--primary">' + cfg.btn_decouvrir + '</a>' +
-      '<a href="#contact" class="btn btn--outline">' + cfg.btn_rejoindre + '</a>';
+      '<a href="devenir-fm.html" class="btn btn--outline">' + cfg.btn_rejoindre + '</a>'
   }
 
   /* ════════════════════════════════════════════════
