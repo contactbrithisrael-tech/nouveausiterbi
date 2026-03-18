@@ -5,118 +5,60 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Devenir Franc-Maçon — Rite Brith Israël</title>
   <style>
-    :root {
-      --or:    #c9a84c;
-      --or2:   #e8c96a;
-      --fond:  #0d0d0d;
-      --fond2: #141414;
-      --fond3: #1a1a1a;
-      --texte: #e8e0d0;
-      --gris:  #888;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: var(--fond); color: var(--texte); font-family: 'Georgia', serif; min-height: 100vh; }
-
-    /* ── HERO ── */
-    .hero { text-align: center; padding: 4rem 1.5rem 3rem; background: radial-gradient(ellipse at center, rgba(201,168,76,.06) 0%, transparent 70%); border-bottom: 1px solid rgba(201,168,76,.2); }
-    .hero__etoile { font-size: 2.5rem; margin-bottom: 1rem; display: block; }
-    .hero__titre { font-size: 2.4rem; font-variant: small-caps; letter-spacing: .15em; color: var(--or); margin-bottom: .6rem; }
-    .hero__sous { font-size: 1rem; color: var(--gris); font-style: italic; margin-bottom: 1.5rem; }
-    .hero__intro { max-width: 700px; margin: 0 auto; font-size: 1rem; line-height: 1.85; color: var(--texte); }
-    .sep { width: 60px; height: 1px; background: var(--or); margin: 1.5rem auto; opacity: .5; }
-
-    /* ── PARCOURS ── */
-    .parcours { max-width: 860px; margin: 0 auto; padding: 3.5rem 1.5rem; }
-    .bloc-titre { text-align: center; font-variant: small-caps; letter-spacing: .15em; color: var(--or); font-size: 1.5rem; margin-bottom: .5rem; }
-
-    .etapes { display: flex; flex-direction: column; margin-top: 2.5rem; position: relative; }
-    .etapes::before { content: ''; position: absolute; left: 36px; top: 0; bottom: 0; width: 1px; background: linear-gradient(to bottom, var(--or), rgba(201,168,76,.1)); }
-    .etape { display: flex; gap: 1.5rem; padding-bottom: 2.5rem; position: relative; }
-    .etape__num { min-width: 72px; height: 72px; border: 1px solid var(--or); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; color: var(--or); background: var(--fond); flex-shrink: 0; position: relative; z-index: 1; }
-    .etape__contenu { flex: 1; padding-top: .8rem; }
-    .etape__titre { font-variant: small-caps; color: var(--or); letter-spacing: .1em; font-size: 1.05rem; margin-bottom: .5rem; }
-    .etape__desc { font-size: .9rem; line-height: 1.8; color: var(--texte); }
-    .etape__note { display: inline-block; margin-top: .6rem; font-size: .78rem; font-style: italic; color: var(--gris); background: rgba(201,168,76,.07); border-left: 2px solid var(--or); padding: .4rem .8rem; }
-
-    /* ── DURÉE ── */
-    .duree-bloc { max-width: 860px; margin: 0 auto; padding: 0 1.5rem 3rem; }
-    .duree-cadre { background: var(--fond3); border: 1px solid rgba(201,168,76,.3); padding: 2rem; text-align: center; }
-    .duree-cadre__chiffre { font-size: 2.5rem; font-variant: small-caps; color: var(--or); letter-spacing: .1em; }
-    .duree-cadre__label { font-size: .85rem; color: var(--gris); margin-top: .3rem; font-style: italic; }
-    .duree-cadre p { margin-top: 1rem; font-size: .9rem; line-height: 1.7; }
-
-    /* ── FORMULAIRE ── */
-    .formulaire-section { background: var(--fond2); border-top: 1px solid rgba(201,168,76,.15); border-bottom: 1px solid rgba(201,168,76,.15); padding: 3.5rem 1.5rem; }
-    .formulaire-inner { max-width: 900px; margin: 0 auto; }
-    .form-titre { text-align: center; font-variant: small-caps; letter-spacing: .15em; color: var(--or); font-size: 1.5rem; margin-bottom: .4rem; }
-    .form-sous { text-align: center; font-style: italic; color: var(--gris); margin-bottom: 2rem; font-size: .9rem; }
-    .form-section-titre { background: rgba(201,168,76,.08); border-left: 3px solid var(--or); color: var(--or); font-variant: small-caps; letter-spacing: .12em; font-size: .92rem; padding: .6rem 1rem; margin: 2rem 0 1.2rem; }
-    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-    @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
-    .form-full { grid-column: 1 / -1; }
-    label { display: block; font-size: .75rem; letter-spacing: .09em; text-transform: uppercase; color: var(--or); margin-bottom: .35rem; }
-    input[type="text"], input[type="email"], input[type="tel"], input[type="date"], textarea, select {
-      width: 100%; background: var(--fond3); border: 1px solid rgba(201,168,76,.3); color: var(--texte);
-      padding: .65rem .85rem; font-family: 'Georgia', serif; font-size: .88rem; outline: none; transition: border-color .2s;
-    }
-    input:focus, textarea:focus, select:focus { border-color: var(--or); }
-    select option { background: var(--fond3); }
-    textarea { resize: vertical; min-height: 130px; }
-    .checkrow { display: flex; flex-wrap: wrap; gap: .7rem 1.3rem; margin-top: .3rem; }
-    .checkrow label { display: flex; align-items: center; gap: .4rem; text-transform: none; letter-spacing: 0; font-size: .88rem; cursor: pointer; color: var(--texte); }
-    .checkrow input { width: auto; accent-color: var(--or); }
-    .upload-zone { border: 1px dashed rgba(201,168,76,.4); padding: 1.2rem; text-align: center; cursor: pointer; transition: border-color .2s; background: var(--fond3); }
-    .upload-zone:hover { border-color: var(--or); }
-    .upload-zone input[type="file"] { display: none; }
-    .upload-zone__label { font-size: .82rem; color: var(--gris); cursor: pointer; }
-    .upload-zone__label span { color: var(--or); text-decoration: underline; }
-    .upload-info { background: rgba(201,168,76,.06); border-left: 2px solid var(--or); padding: .6rem 1rem; font-size: .8rem; font-style: italic; color: var(--gris); line-height: 1.6; margin-bottom: .7rem; }
-
-    /* BOUTONS */
-    .btn { display: inline-block; padding: .8rem 2rem; font-size: .78rem; letter-spacing: .15em; text-transform: uppercase; font-family: 'Georgia', serif; cursor: pointer; transition: all .25s; border: none; }
-    .btn-or { background: var(--or); color: var(--fond); }
-    .btn-or:hover { background: var(--or2); }
-    .btn-dl { display: inline-flex; align-items: center; gap: .5rem; padding: .65rem 1.3rem; border: 1px solid var(--or); color: var(--or); font-size: .75rem; letter-spacing: .1em; text-transform: uppercase; text-decoration: none; transition: all .2s; font-family: 'Georgia', serif; }
-    .btn-dl:hover { background: var(--or); color: var(--fond); }
-    .form-footer { margin-top: 2rem; text-align: center; display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
-    .obligatoire { font-size: .75rem; color: var(--gris); font-style: italic; text-align: right; margin-bottom: 1rem; }
-    .msg-success { display: none; text-align: center; padding: 2.5rem; border: 1px solid var(--or); color: var(--or); font-style: italic; margin-top: 2rem; line-height: 1.8; }
-    .msg-success.visible { display: block; }
-    .confidentialite { text-align: center; font-size: .75rem; color: var(--gris); font-style: italic; max-width: 600px; margin: 2rem auto 0; line-height: 1.7; }
-
-    /* FAQ */
-    .faq { max-width: 860px; margin: 0 auto; padding: 3.5rem 1.5rem; }
-    .faq__item { border-bottom: 1px solid rgba(201,168,76,.15); padding: 1.4rem 0; }
-    .faq__question { color: var(--or); font-size: .95rem; margin-bottom: .6rem; font-variant: small-caps; letter-spacing: .06em; }
-    .faq__reponse { font-size: .88rem; line-height: 1.8; }
-    .gadlu-box { background: rgba(201,168,76,.06); border: 1px solid rgba(201,168,76,.25); padding: 1.2rem 1.5rem; margin: .8rem 0; font-size: .88rem; line-height: 1.8; }
-    .gadlu-box strong { color: var(--or); }
-
-    /* CTA */
-    .cta-contact { text-align: center; padding: 3rem 1.5rem 4rem; background: radial-gradient(ellipse at center, rgba(201,168,76,.05) 0%, transparent 70%); }
-    .cta-contact p { font-size: .95rem; line-height: 1.8; color: var(--gris); margin-bottom: 1.2rem; font-style: italic; }
-    .cta-contact a { color: var(--or); text-decoration: none; }
-    .cta-contact a:hover { text-decoration: underline; }
-
-    /* TELECHARGEMENTS PDF */
-    .dl-section { max-width: 860px; margin: 0 auto; padding: 0 1.5rem 3rem; }
-    .dl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
-    @media (max-width: 600px) { .dl-grid { grid-template-columns: 1fr; } }
-    .dl-card { background: var(--fond3); border: 1px solid rgba(201,168,76,.25); padding: 1.5rem; display: flex; gap: 1.2rem; align-items: center; transition: border-color .2s; }
-    .dl-card:hover { border-color: var(--or); }
-    .dl-card__icone { font-size: 2rem; flex-shrink: 0; }
-    .dl-card__titre { color: var(--or); font-variant: small-caps; letter-spacing: .08em; margin-bottom: .3rem; font-size: .9rem; }
-    .dl-card__desc { font-size: .78rem; color: var(--gris); line-height: 1.5; margin-bottom: .8rem; }
-    .sep-section { border: none; border-top: 1px solid rgba(201,168,76,.1); margin: 1.5rem 0; }
-    .header-logo { width: 90px; height: 90px; object-fit: contain; margin: 0 auto 1rem; display: block; opacity: .92; }
+    :root { --or:#c9a84c; --or2:#e8c96a; --fond:#0d0d0d; --fond2:#141414; --fond3:#1a1a1a; --texte:#e8e0d0; --gris:#888; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { background:var(--fond); color:var(--texte); font-family:'Georgia',serif; min-height:100vh; }
+    .hero { text-align:center; padding:4rem 1.5rem 3rem; background:radial-gradient(ellipse at center,rgba(201,168,76,.06) 0%,transparent 70%); border-bottom:1px solid rgba(201,168,76,.2); }
+    .hero__etoile { font-size:2.5rem; margin-bottom:1rem; display:block; }
+    .hero__titre { font-size:2.4rem; font-variant:small-caps; letter-spacing:.15em; color:var(--or); margin-bottom:.6rem; }
+    .hero__sous { font-size:1rem; color:var(--gris); font-style:italic; margin-bottom:1.5rem; }
+    .hero__intro { max-width:700px; margin:0 auto; font-size:1rem; line-height:1.85; color:var(--texte); }
+    .sep { width:60px; height:1px; background:var(--or); margin:1.5rem auto; opacity:.5; }
+    .parcours { max-width:860px; margin:0 auto; padding:3.5rem 1.5rem; }
+    .bloc-titre { text-align:center; font-variant:small-caps; letter-spacing:.15em; color:var(--or); font-size:1.5rem; margin-bottom:.5rem; }
+    .etapes { display:flex; flex-direction:column; margin-top:2.5rem; position:relative; }
+    .etapes::before { content:''; position:absolute; left:36px; top:0; bottom:0; width:1px; background:linear-gradient(to bottom,var(--or),rgba(201,168,76,.1)); }
+    .etape { display:flex; gap:1.5rem; padding-bottom:2.5rem; position:relative; }
+    .etape__num { min-width:72px; height:72px; border:1px solid var(--or); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.3rem; color:var(--or); background:var(--fond); flex-shrink:0; position:relative; z-index:1; }
+    .etape__contenu { flex:1; padding-top:.8rem; }
+    .etape__titre { font-variant:small-caps; color:var(--or); letter-spacing:.1em; font-size:1.05rem; margin-bottom:.5rem; }
+    .etape__desc { font-size:.9rem; line-height:1.8; color:var(--texte); }
+    .etape__note { display:inline-block; margin-top:.6rem; font-size:.78rem; font-style:italic; color:var(--gris); background:rgba(201,168,76,.07); border-left:2px solid var(--or); padding:.4rem .8rem; }
+    .duree-bloc { max-width:860px; margin:0 auto; padding:0 1.5rem 3rem; }
+    .duree-cadre { background:var(--fond3); border:1px solid rgba(201,168,76,.3); padding:2rem; text-align:center; }
+    .duree-cadre__chiffre { font-size:2.5rem; font-variant:small-caps; color:var(--or); letter-spacing:.1em; }
+    .duree-cadre__label { font-size:.85rem; color:var(--gris); margin-top:.3rem; font-style:italic; }
+    .duree-cadre p { margin-top:1rem; font-size:.9rem; line-height:1.7; }
+    .btn { display:inline-block; padding:.8rem 2rem; font-size:.78rem; letter-spacing:.15em; text-transform:uppercase; font-family:'Georgia',serif; cursor:pointer; transition:all .25s; border:none; }
+    .btn-or { background:var(--or); color:var(--fond); }
+    .btn-or:hover { background:var(--or2); }
+    .btn-dl { display:inline-flex; align-items:center; gap:.5rem; padding:.65rem 1.3rem; border:1px solid var(--or); color:var(--or); font-size:.75rem; letter-spacing:.1em; text-transform:uppercase; text-decoration:none; transition:all .2s; font-family:'Georgia',serif; }
+    .btn-dl:hover { background:var(--or); color:var(--fond); }
+    .dl-section { max-width:860px; margin:0 auto; padding:0 1.5rem 3rem; }
+    .dl-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; }
+    @media(max-width:600px){.dl-grid{grid-template-columns:1fr;}}
+    .dl-card { background:var(--fond3); border:1px solid rgba(201,168,76,.25); padding:1.5rem; display:flex; gap:1.2rem; align-items:center; transition:border-color .2s; }
+    .dl-card:hover { border-color:var(--or); }
+    .dl-card__icone { font-size:2rem; flex-shrink:0; }
+    .dl-card__titre { color:var(--or); font-variant:small-caps; letter-spacing:.08em; margin-bottom:.3rem; font-size:.9rem; }
+    .dl-card__desc { font-size:.78rem; color:var(--gris); line-height:1.5; margin-bottom:.8rem; }
+    .faq { max-width:860px; margin:0 auto; padding:3.5rem 1.5rem; }
+    .faq__item { border-bottom:1px solid rgba(201,168,76,.15); padding:1.4rem 0; }
+    .faq__question { color:var(--or); font-size:.95rem; margin-bottom:.6rem; font-variant:small-caps; letter-spacing:.06em; }
+    .faq__reponse { font-size:.88rem; line-height:1.8; }
+    .gadlu-box { background:rgba(201,168,76,.06); border:1px solid rgba(201,168,76,.25); padding:1.2rem 1.5rem; margin:.8rem 0; font-size:.88rem; line-height:1.8; }
+    .gadlu-box strong { color:var(--or); }
+    .cta-contact { text-align:center; padding:3rem 1.5rem 4rem; background:radial-gradient(ellipse at center,rgba(201,168,76,.05) 0%,transparent 70%); }
+    .cta-contact p { font-size:.95rem; line-height:1.8; color:var(--gris); margin-bottom:1.2rem; font-style:italic; }
+    .cta-contact a { color:var(--or); text-decoration:none; }
+    .cta-contact a:hover { text-decoration:underline; }
+    .header-logo { width:90px; height:90px; object-fit:contain; margin:0 auto 1rem; display:block; opacity:.92; }
   </style>
 </head>
 <body>
 
-<!-- BOUTON RETOUR -->
 <a href="index.html" style="position:fixed;top:1rem;left:1rem;z-index:999;color:#c9a84c;font-family:Georgia,serif;font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;border:1px solid rgba(201,168,76,.4);padding:.4rem .9rem;background:rgba(13,13,13,.9);text-decoration:none;">← Accueil</a>
 
-<!-- HERO -->
 <div class="hero">
   <img id="header-seal" class="header-logo" src="" alt="Sceau RBI">
   <span class="hero__etoile">✡</span>
@@ -132,7 +74,6 @@
   </p>
 </div>
 
-<!-- PARCOURS -->
 <div class="parcours">
   <h2 class="bloc-titre">Le Chemin vers l'Initiation</h2>
   <div class="sep"></div>
@@ -141,7 +82,11 @@
       <div class="etape__num">①</div>
       <div class="etape__contenu">
         <div class="etape__titre">Dépôt de votre demande</div>
-        <div class="etape__desc">Vous remplissez le formulaire de recueil de renseignements ci-dessous. Vous y joignez une photo d'identité, un extrait de casier judiciaire vierge (Bulletin n°3) et exposez vos motivations, votre démarche et vos valeurs.</div>
+        <div class="etape__desc">
+          Vous remplissez le formulaire de recueil de renseignements ci-dessous.
+          Vous y joignez une photo d'identité, un extrait de casier judiciaire vierge (Bulletin n°3)
+          et exposez vos motivations, votre démarche et vos valeurs.
+        </div>
         <span class="etape__note">Tous les renseignements fournis sont strictement confidentiels.</span>
       </div>
     </div>
@@ -149,7 +94,12 @@
       <div class="etape__num">②</div>
       <div class="etape__contenu">
         <div class="etape__titre">Entretien téléphonique</div>
-        <div class="etape__desc">Suite à réception de votre dossier, un membre du Suprême Conseil ou un Officier désigné vous contactera par téléphone. Il n'y a pas de bonne ou mauvaise réponse — seulement la vérité de votre chemin.</div>
+        <div class="etape__desc">
+          Suite à réception de votre dossier, un membre du Suprême Conseil ou un Officier désigné
+          vous contactera par téléphone. Cet entretien est l'occasion d'échanger librement sur votre démarche,
+          vos questions, votre parcours de vie et votre vision de la Franc-Maçonnerie.
+          Il n'y a pas de bonne ou mauvaise réponse — seulement la vérité de votre chemin.
+        </div>
         <span class="etape__note">Délai habituel : 2 à 4 semaines après réception du dossier.</span>
       </div>
     </div>
@@ -157,7 +107,13 @@
       <div class="etape__num">③</div>
       <div class="etape__contenu">
         <div class="etape__titre">Les trois enquêtes maçonniques</div>
-        <div class="etape__desc">Trois enquêtes sont diligentées par des membres de la Loge. <strong style="color:var(--or);">Les trois votes sont indépendants et doivent être favorables.</strong> Un seul vote négatif suffit à suspendre la procédure.</div>
+        <div class="etape__desc">
+          Trois enquêtes sont diligentées par des membres de la Loge à laquelle vous seriez affilié.
+          Chaque enquêteur vous rencontrera individuellement et rédigera son rapport avant de voter.
+          <br><br>
+          <strong style="color:var(--or);">Les trois votes sont indépendants et doivent être favorables.</strong>
+          Un seul vote négatif suffit à suspendre la procédure.
+        </div>
         <span class="etape__note">Les enquêteurs sont des Frères ou Sœurs de confiance — jamais vos proches.</span>
       </div>
     </div>
@@ -165,14 +121,22 @@
       <div class="etape__num">④</div>
       <div class="etape__contenu">
         <div class="etape__titre">Vote de la Loge</div>
-        <div class="etape__desc">La candidature est présentée en Loge. Les membres votent à bulletin secret. La décision de la Loge est souveraine.</div>
+        <div class="etape__desc">
+          Une fois les trois enquêtes favorables remises au Vénérable Maître,
+          la candidature est présentée en Loge. Les membres votent à bulletin secret.
+          La décision de la Loge est souveraine.
+        </div>
       </div>
     </div>
     <div class="etape">
       <div class="etape__num">⑤</div>
       <div class="etape__contenu">
         <div class="etape__titre">Le Passage sous le Bandeau</div>
-        <div class="etape__desc">Si le vote est favorable, vous êtes convié à une Tenue solennelle pour votre passage sous le bandeau — première étape du voyage initiatique.</div>
+        <div class="etape__desc">
+          Si le vote est favorable, vous êtes convié à une Tenue solennelle pour votre passage sous le bandeau —
+          première étape du voyage initiatique. C'est votre rencontre avec la Loge dans l'obscurité symbolique,
+          avant la Lumière.
+        </div>
         <span class="etape__note">Vous serez informé en temps voulu des modalités pratiques.</span>
       </div>
     </div>
@@ -180,23 +144,27 @@
       <div class="etape__num">✡</div>
       <div class="etape__contenu">
         <div class="etape__titre">L'Initiation</div>
-        <div class="etape__desc">Vous serez initié au 1° Degré du Rite Brith Israël lors d'une Tenue solennelle. Vous entrez alors dans la Fraternité et commencez votre travail sur l'Arbre de Vie.</div>
+        <div class="etape__desc">
+          Après le passage sous bandeau, si la Loge vote favorablement votre réception,
+          vous serez initié au 1° Degré du Rite Brith Israël lors d'une Tenue solennelle.
+          Vous entrez alors dans la Fraternité et commencez votre travail sur l'Arbre de Vie.
+        </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- DURÉE -->
 <div class="duree-bloc">
   <div class="duree-cadre">
     <div style="font-size:2rem;margin-bottom:.8rem;">⏳</div>
     <div class="duree-cadre__chiffre">12 à 18 mois</div>
     <div class="duree-cadre__label">entre la demande et l'initiation</div>
-    <p>Ce délai n'est pas un obstacle — c'est une invitation à la patience et à la maturation. La Franc-Maçonnerie ne se conquiert pas, elle se mérite.</p>
+    <p>Ce délai n'est pas un obstacle — c'est une invitation à la patience et à la maturation.
+    La Franc-Maçonnerie ne se conquiert pas, elle se mérite.
+    Ce temps est celui de votre préparation intérieure autant que de la procédure formelle.</p>
   </div>
 </div>
 
-<!-- TÉLÉCHARGEMENTS -->
 <div class="dl-section">
   <h2 class="bloc-titre" style="margin-bottom:.5rem;">Documents à télécharger</h2>
   <div class="sep"></div>
@@ -220,46 +188,73 @@
   </div>
 </div>
 
-<!-- FORMULAIRE GOOGLE -->
 <div style="text-align:center;padding:2rem 0;">
   <p style="font-size:.95rem;line-height:1.8;color:#e8e0d0;margin-bottom:1.5rem;">
     Remplissez le formulaire officiel de candidature en ligne.<br>
     <em style="color:#888;font-size:.85rem;">Photo d'identité et extrait de casier judiciaire requis.</em>
   </p>
-  <a href="https://forms.gle/G6mB3CpbLfmGzE219"
-     target="_blank" rel="noopener"
-     class="btn btn-or"
-     style="font-size:.9rem;padding:1rem 2.5rem;letter-spacing:.2em;">
+  <a href="https://forms.gle/G6mB3CpbLfmGzE219" target="_blank" rel="noopener" class="btn btn-or" style="font-size:.9rem;padding:1rem 2.5rem;letter-spacing:.2em;">
     ✡ Déposer ma candidature
   </a>
 </div>
 
-<!-- FAQ -->
 <div class="faq">
   <h2 class="bloc-titre">Questions fréquentes</h2>
   <div class="sep"></div>
   <div class="faq__item">
     <div class="faq__question">Faut-il croire en Dieu pour rejoindre le Rite Brith Israël ?</div>
     <div class="faq__reponse">
-      <div class="gadlu-box">Le Rite Brith Israël requiert la croyance en un <strong>principe créateur</strong> — désigné sous le vocable universel de <strong>Grand Architecte de l'Univers (G∴A∴D∴L∴U∴)</strong>.</div>
-      <strong style="color:var(--or);">Un athée déclaré ne peut adhérer au Rite Brith Israël.</strong>
+      <div class="gadlu-box">
+        Le Rite Brith Israël requiert la croyance en un <strong>principe créateur</strong> — désigné sous le vocable universel de
+        <strong>Grand Architecte de l'Univers (G∴A∴D∴L∴U∴)</strong>. Ce principe transcendant est reconnu par chacun
+        selon sa propre tradition, sa religion ou ses convictions spirituelles : Dieu, HaShem, Allah, l'Être Suprême,
+        la Force créatrice de l'Univers… chacun s'y retrouve selon son chemin, sans qu'aucune confession ne soit imposée.
+      </div>
+      En revanche, <strong style="color:var(--or);">un athée déclaré ne peut adhérer au Rite Brith Israël.</strong>
+      La croyance en un principe créateur n'est pas une formalité — elle est le socle même de notre démarche initiatique,
+      fondée sur la Tradition hébraïque, la Kabbale et l'Arbre de Vie.
+      Elle conditionne le sens profond de tous les rituels et du travail symbolique pratiqué en Loge.
     </div>
   </div>
   <div class="faq__item">
     <div class="faq__question">Le Rite Brith Israël est-il réservé aux hommes ?</div>
-    <div class="faq__reponse">Non. Le Rite est <strong style="color:var(--or);">mixte</strong>, ouvert aux Frères et aux Sœurs sans distinction.</div>
+    <div class="faq__reponse">
+      Non. Le Rite Brith Israël est un Rite <strong style="color:var(--or);">mixte</strong>, ouvert aux Frères et aux Sœurs sans distinction.
+      Cette mixité est un choix fondateur, conforme aux valeurs d'universalité et d'égalité qui nous guident.
+    </div>
+  </div>
+  <div class="faq__item">
+    <div class="faq__question">Avez-vous déjà effectué des démarches pour entrer en Franc-Maçonnerie ?</div>
+    <div class="faq__reponse">
+      Cette question vous est posée dans le formulaire de candidature. Elle n'a rien de discriminant —
+      elle permet simplement de mieux comprendre votre parcours, votre connaissance du monde maçonnique
+      et les raisons qui vous amènent spécifiquement au Rite Brith Israël.
+    </div>
   </div>
   <div class="faq__item">
     <div class="faq__question">Y a-t-il une cotisation ?</div>
-    <div class="faq__reponse">Oui. Des cotisations annuelles sont demandées pour couvrir les frais de fonctionnement. Leur montant est communiqué lors de l'entretien téléphonique.</div>
+    <div class="faq__reponse">
+      Oui. Des cotisations annuelles sont demandées pour couvrir les frais de fonctionnement de la Loge
+      et du Suprême Conseil. Leur montant est fixé par la Loge d'appartenance et communiqué lors de l'entretien téléphonique.
+    </div>
+  </div>
+  <div class="faq__item">
+    <div class="faq__question">Où se tiennent les Tenues du Rite Brith Israël ?</div>
+    <div class="faq__reponse">
+      Les Loges et Ateliers du Rite se tiennent dans plusieurs villes de France et à l'international.
+      La localisation vous sera communiquée lors de l'entretien téléphonique, en fonction de votre lieu de résidence.
+    </div>
   </div>
   <div class="faq__item">
     <div class="faq__question">Combien de temps dure le processus d'initiation ?</div>
-    <div class="faq__reponse">Entre <strong style="color:var(--or);">12 et 18 mois</strong> en règle générale, entre le dépôt de votre dossier et votre initiation.</div>
+    <div class="faq__reponse">
+      Entre <strong style="color:var(--or);">12 et 18 mois</strong> en règle générale, entre le dépôt de votre dossier et votre initiation.
+      Ce délai comprend l'instruction du dossier, l'entretien téléphonique, les trois enquêtes, le vote de la Loge,
+      le passage sous le bandeau, et la tenue d'initiation. Il peut varier selon les circonstances.
+    </div>
   </div>
 </div>
 
-<!-- CTA CONTACT -->
 <div class="cta-contact">
   <div class="sep"></div>
   <p>Une question avant de vous lancer ? Écrivez-nous.</p>
