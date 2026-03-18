@@ -13,7 +13,7 @@ var RBI_CONFIG = {
      PAGE : NAVBAR
   ────────────────────────────────────────────── */
   navbar: {
-    nom:    "BRITH ISRAËL",
+    nom:    "BRITH ISRAËL®",
     hebrew: "ברית ישראל",
    liens: [
   { label: "Le Rite",          href: "#rite"   },
@@ -32,9 +32,9 @@ var RBI_CONFIG = {
   ────────────────────────────────────────────── */
   hero: {
     bandeau:   "A∴L∴G∴G∴A∴D∴L'∴U∴ — ב∴ס∴ד∴",
-    titre_fr:  "Rite Brith Israël",
+    titre_fr:  "Rite Brith Israël®",
     titre_he:  "ברית ישראל",
-    subtitle:  "Rite Maçonnique Kabbalistique en 33 degrés.",
+    subtitle:  "Rite Maçonnique Historique d'inspiration Kabbalistique en 33 degrés.",
     subtitle2: "Alliance de Lumière entre les Peuples, fidélité à la Tradition Hébraïque, universalité de la Franc-Maçonnerie.",
     btn_decouvrir: "Découvrir le Rite",
     btn_rejoindre: "Devenir Franc-Maçon"
