@@ -34,7 +34,7 @@ var RBI_CONFIG = {
     bandeau:   "A∴L∴G∴G∴A∴D∴L'∴U∴ — ב∴ס∴ד∴",
     titre_fr:  "Rite Brith Israël",
     titre_he:  "ברית ישראל",
-    subtitle:  "Rite Maçonnique Kabbalistique de 33 degrés.",
+    subtitle:  "Rite Maçonnique Kabbalistique en 33 degrés.",
     subtitle2: "Alliance de Lumière entre les Peuples, fidélité à la Tradition Hébraïque, universalité de la Franc-Maçonnerie.",
     btn_decouvrir: "Découvrir le Rite",
     btn_rejoindre: "Devenir Franc-Maçon"
