@@ -13,13 +13,13 @@ var RBI_CONFIG = {
      PAGE : NAVBAR
   ────────────────────────────────────────────── */
   navbar: {
-    nom:    "BRITH ISRAËL",
+    nom:    "BRITH ISRAËL®",
     hebrew: "ברית ישראל",
-liens: [
+   liens: [
   { label: "Le Rite",          href: "#rite"   },
   { label: "Chefs de l'Ordre", href: "#chefs"  },
   { label: "Publications",     href: "#livres" },
-  { label: "Traités",          href: "traites.html" },
+  { label: "Traités",          href: "traits.html" },
   { label: "Devenir FM",       href: "devenir-fm.html", style: "cta" },
   { label: "Tuilage",          href: "#tuilage", style: "discret" },
   { label: "Espace Membres",   href: "espace-membres.html" },
@@ -31,10 +31,10 @@ liens: [
      PAGE : HERO (section d'accueil)
   ────────────────────────────────────────────── */
   hero: {
-    bandeau:   "A∴L∴G∴G∴A∴D∴L∴A∴U∴ — ב∴ס∴ד∴",
-    titre_fr:  "Rite Brith Israël",
+    bandeau:   "A∴L∴G∴G∴A∴D∴L'∴U∴ — ב∴ס∴ד∴",
+    titre_fr:  "Rite Brith Israël®",
     titre_he:  "ברית ישראל",
-    subtitle:  "Rite Maçonnique Kabbalistique de 33 degrés.",
+    subtitle:  "Rite Maçonnique Historique d'inspiration Kabbalistique en 33 degrés.",
     subtitle2: "Alliance de Lumière entre les Peuples, fidélité à la Tradition Hébraïque, universalité de la Franc-Maçonnerie.",
     btn_decouvrir: "Découvrir le Rite",
     btn_rejoindre: "Devenir Franc-Maçon"
@@ -45,7 +45,7 @@ liens: [
   ────────────────────────────────────────────── */
   rite: {
     titre: "Le Rite Brith Israël",
-    intro: "Fondé par le T∴I∴F∴ Mickaël DARMON, le Rite Brith Israël est un Rite Maçonnique Kabbalistique de 33 degrés puisant ses sources dans la Tradition Hébraïque, la Kabbale et la Franc-Maçonnerie universelle. Son nom honore la mémoire d'Israël DARMON, pilier spirituel et inspirateur du Rite.",
+    intro: "Fondé par le T∴I∴F∴ Mickaël DARMON 33e, le Rite Brith Israël est un Rite Maçonnique Kabbalistique en 33 degrés puisant ses sources dans la Tradition Hébraïque, la Kabbale et la Franc-Maçonnerie universelle. Son nom honore la mémoire d'Israël DARMON, pilier spirituel et inspirateur du Rite.",
     cartes: [
       {
         icone: "✡",
@@ -73,9 +73,9 @@ liens: [
     membres: [
       /* ── Souverain Grand Commandeur ── */
       {
-        nom:    "Mickaël DARMON",
-        grade:  "33°",
-        titre:  "Souverain Grand Commandeur — T∴I∴F∴",
+        nom:    "T∴I∴F∴ Mickaël DARMON",
+        grade:  "33°-96°",
+        titre:  "Souverain Grand Commandeur",
         role:   "Fondateur et Grand Maître",
         img_id: "photo-darmon",   // ID injecté par images.js
         rang:   "sgc"
@@ -85,7 +85,7 @@ liens: [
         nom:    "Jean-Michel RAUX",
         grade:  "32°",
         titre:  "Grand Maître Adjoint",
-        role:   "Lieutenant SGC — Trésorier",
+        role:   "Lieutenant Souverain Grand Commandeur —  Grand Trésorier",
         img_id: "photo-raux",
         rang:   "gma"
       },
@@ -93,7 +93,7 @@ liens: [
         nom:    "Martine HABERT",
         grade:  "32°",
         titre:  "Grand Maître Adjoint",
-        role:   "Secrétaire",
+        role:   " Grand Secrétaire",
         img_id: "photo-habert",
         rang:   "gma"
       },
@@ -101,7 +101,7 @@ liens: [
         nom:    "Jean-Louis CARILLO",
         grade:  "32°",
         titre:  "Grand Maître Adjoint",
-        role:   "Expert",
+        role:   "Grand Expert",
         img_id: "photo-carillo",
         rang:   "gma"
       },
@@ -109,24 +109,24 @@ liens: [
       {
         nom:    "Didier BUHLER",
         grade:  "32°",
-        titre:  "Adjoint au Grand Maître",
-        role:   "Chancelier",
+        titre:  "Assistant Grand Maître",
+        role:   " Grand Chancelier",
         img_id: "photo-buhler",
         rang:   "agm"
       },
       {
         nom:    "Laurent NOTARIANNI",
         grade:  "32°",
-        titre:  "Adjoint au Grand Maître",
-        role:   "Orateur",
+        titre:  "Assistant Grand Maître",
+        role:   " Grand Orateur",
         img_id: "photo-notarianni",
         rang:   "agm"
       },
       {
         nom:    "Pierre JOURDAN",
         grade:  "32°",
-        titre:  "Adjoint au Grand Maître",
-        role:   "Hospitalier",
+        titre:  "Assistant Grand Maître",
+        role:   " Grand Hospitalier",
         img_id: "photo-jourdan",
         rang:   "agm"
       }
@@ -235,7 +235,7 @@ liens: [
     },
     traites: {
       label: "Traités & Obédiences alliées",
-      url:   "traites.html"
+      url:   "traits.html"
     }
   },
 
