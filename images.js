@@ -70,7 +70,6 @@
     setImg('photo-carillo',    IMG.PHOTO_CARILLO);
     setImg('photo-buhler',     IMG.PHOTO_BUHLER);
     setImg('photo-notarianni', IMG.PHOTO_NOTARIANNI);
-    setImg('photo-jourdan',    IMG.PHOTO_JOURDAN);
 
     /* Livres */
     setImg('book-alliance', IMG.BOOK_ALLIANCE);
