@@ -179,6 +179,74 @@ Les documents importés portent `category=rbi`, `source=rbi_officiel` et les
 étiquettes `rbi, officiel` — ce sont ces valeurs qui permettent de filtrer
 une recherche sur le seul corpus de l'Ordre.
 
+#### Vos livres sont dans un dossier du Mac
+
+Exemple : `/Users/Mickael Darmon/Desktop/livres rbi`.
+
+**1. Déclarer le dossier une seule fois**
+
+```bash
+cp docker-compose.override.yml.example docker-compose.override.yml
+```
+
+Le fichier contient déjà le montage :
+
+```yaml
+services:
+  joshua:
+    volumes:
+      - "/Users/Mickael Darmon/Desktop/livres rbi:/library:ro"
+    environment:
+      JOSHUA_RBI_SOURCE: /library
+```
+
+`:ro` = lecture seule : le noyau refuse toute écriture, quoi que fasse le
+programme. Les guillemets sont obligatoires, le chemin contenant des espaces.
+
+**2. Importer**
+
+```bash
+docker compose up -d
+docker compose exec joshua python scripts/import_rbi.py --dry-run
+docker compose exec joshua python scripts/import_rbi.py
+```
+
+L'import s'exécute **dans le conteneur**, où le dossier est visible sous
+`/library`. Le chemin macOS n'existe pas là où le code tourne : c'est
+`JOSHUA_RBI_SOURCE=/library` que les scripts lisent.
+
+**Deux autorisations macOS à vérifier**, sans quoi le montage apparaît vide
+sans le moindre message d'erreur :
+
+| Réglage | Où |
+|---|---|
+| Partage de fichiers | Docker Desktop → Settings → Resources → File sharing (le dossier ou `/Users`) |
+| Accès complet au disque | Réglages Système → Confidentialité et sécurité (cocher Docker Desktop) |
+
+Le Bureau est souvent synchronisé par iCloud (« Dossiers Bureau et
+Documents »). Les livres restés dans le nuage sont détectés, signalés
+`icloud_not_downloaded`, et n'interrompent rien. Pour les rapatrier : ouvrir
+le dossier dans le Finder, attendre la fin des téléchargements, relancer
+l'import — seuls les nouveaux seront traités.
+
+Ce que Joshua fait de ce dossier, vérifié sur une arborescence réelle
+(sous-dossiers, accents, espaces, `.DS_Store`, livre évincé par iCloud) :
+
+```
+livres rbi/
+├── Constitution du Rite.pdf          → 16 chunks, pages 1 à 35
+├── notes perso.txt                   →  1 chunk
+├── .DS_Store                         →  ignoré
+├── couverture.jpg                    →  ignoré (format non documentaire)
+├── Rituels/
+│   ├── Rituel 1er degré.pdf          →  1 chunk
+│   └── .Rituel 3e degré.epub.icloud  →  icloud_not_downloaded (signalé, non bloquant)
+└── Traités/
+    └── Traité d'amitié.pdf           →  1 chunk
+
+5 fichiers vus · 4 indexés · 1 dans le nuage · 0 erreur · 19 chunks
+```
+
 ### Bibliothèque existante (iCloud, NAS, disque externe)
 
 ```bash
@@ -500,7 +568,7 @@ parcourue : un volume iCloud non monté ne peut pas vider l'index.
 make test          # ou : python -m pytest tests/ -v
 ```
 
-97 tests, aucune infrastructure requise : ni PostgreSQL, ni Qdrant, ni Redis,
+99 tests, aucune infrastructure requise : ni PostgreSQL, ni Qdrant, ni Redis,
 ni clé Anthropic, ni modèle d'embeddings. Une suite qui exige une
 infrastructure n'est pas exécutée, donc ne protège de rien.
 
@@ -536,6 +604,8 @@ voir.
 | Démarrage très lent la première fois | téléchargement du modèle (~1 Go) | normal, une seule fois (volume `models_cache`) |
 | `POSTGRES_PASSWORD est obligatoire` | variable vide | la renseigner dans `.env` |
 | Beaucoup de `icloud_not_downloaded` | fichiers non rapatriés | ouvrir le dossier dans le Finder, forcer le téléchargement, relancer `--update` |
+| `aucun document RBI trouvé` alors que le dossier existe | montage Docker vide | vérifier File sharing et l'Accès complet au disque (voir plus haut), puis `docker compose exec joshua ls -la /library` |
+| Les livres sont importés deux fois | `JOSHUA_RBI_SOURCE` et `JOSHUA_LIBRARY_PATH` sur le même dossier | n'en garder qu'un : deux catégories exigent deux dossiers distincts |
 
 Les journaux sont structurés en JSON et portent `request_id`, `telegram_user_id`,
 `module` et `duration_ms` :

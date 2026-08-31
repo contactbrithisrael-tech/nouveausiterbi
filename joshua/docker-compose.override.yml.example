@@ -1,0 +1,55 @@
+# ═══════════════════════════════════════════════════════════════
+# Joshua — surcouche LOCALE (à copier, pas à versionner)
+#
+#     cp docker-compose.override.yml.example docker-compose.override.yml
+#
+# Docker Compose fusionne automatiquement ce fichier avec docker-compose.yml.
+# C'est l'endroit prévu pour ce qui dépend de VOTRE machine — ici, le chemin
+# de vos livres — sans modifier le fichier partagé par tout le monde.
+#
+# Pourquoi un montage et non une copie
+# ------------------------------------
+# Le dossier est monté en LECTURE SEULE (`:ro`). Le noyau refuse alors toute
+# écriture, quoi que fasse le programme : la garantie « Joshua ne touche pas
+# à vos livres » cesse d'être une promesse du code pour devenir une propriété
+# du système.
+#
+# macOS — deux autorisations à vérifier avant de lancer
+# -----------------------------------------------------
+# 1. Docker Desktop → Settings → Resources → File sharing : le dossier (ou
+#    /Users) doit y figurer, sinon le montage est vide sans message d'erreur.
+# 2. Réglages Système → Confidentialité et sécurité → Accès complet au
+#    disque : Docker Desktop doit y être coché pour lire le Bureau et les
+#    Documents, protégés par macOS depuis Ventura.
+#
+# Si le Bureau est synchronisé par iCloud (« Dossiers Bureau et Documents »),
+# certains livres peuvent n'exister que dans le nuage : Joshua les détecte,
+# les signale « icloud_not_downloaded » et poursuit. Pour les rapatrier,
+# ouvrir le dossier dans le Finder et attendre la fin du téléchargement.
+# ═══════════════════════════════════════════════════════════════
+
+services:
+  joshua:
+    volumes:
+      # gauche = chemin sur VOTRE Mac (les guillemets sont obligatoires : le
+      #          chemin contient des espaces)
+      # droite = chemin vu par Joshua dans le conteneur — c'est celui-là que
+      #          les scripts reçoivent.
+      - "/Users/Mickael Darmon/Desktop/livres rbi:/library:ro"
+
+      # Bibliothèque personnelle SÉPARÉE (facultatif), montée ailleurs :
+      # - "/Users/Mickael Darmon/Library/Mobile Documents/com~apple~CloudDocs/Livres:/bibliotheque:ro"
+
+    environment:
+      # Vus de l'intérieur du conteneur, les livres sont dans /library.
+      # C'est cette valeur que les scripts doivent utiliser, jamais le chemin
+      # macOS — qui n'existe pas là où le code s'exécute.
+      JOSHUA_RBI_SOURCE: /library
+
+      # ⚠ NE PAS faire pointer JOSHUA_LIBRARY_PATH sur le MÊME dossier que
+      # JOSHUA_RBI_SOURCE. Le second passage retrouverait des passages déjà
+      # indexés, la déduplication les écarterait tous, et les documents
+      # resteraient classés dans la première catégorie seulement : on croirait
+      # avoir deux corpus alors qu'on n'en a qu'un, mal étiqueté.
+      # À décommenter uniquement avec le second montage ci-dessus :
+      # JOSHUA_LIBRARY_PATH: /bibliotheque

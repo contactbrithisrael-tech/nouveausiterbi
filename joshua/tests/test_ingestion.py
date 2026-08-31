@@ -281,3 +281,22 @@ def test_filtre_par_extension(tmp_path):
     (tmp_path / "notes.md").write_text("# x")
     trouves = {f.chemin_relatif for f in parcourir(tmp_path, extensions={".pdf", ".epub"})}
     assert trouves == {"doc.pdf"}
+
+
+def test_document_en_echec_conserve_sa_categorie(tmp_path, espions):
+    """Un livre resté dans le nuage appartient déjà à son corpus.
+
+    Sans catégorie ni source, il n'apparaîtrait dans aucun inventaire de
+    corpus — donc personne ne saurait qu'il faut le rapatrier.
+    """
+    _, documents = espions
+    (tmp_path / ".Absent.pdf.icloud").write_bytes(b"x")
+    (tmp_path / "casse.pdf").write_bytes(b"pas un pdf")
+
+    module_pipeline.ingerer(
+        tmp_path, settings=_settings(), provider=FauxProvider(), session=object(),
+        source="rbi_officiel", categorie="rbi",
+    )
+    assert documents.enregistrements
+    assert all(d["category"] == "rbi" for d in documents.enregistrements)
+    assert all(d["source"] == "rbi_officiel" for d in documents.enregistrements)

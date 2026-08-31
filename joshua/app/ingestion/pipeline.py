@@ -265,7 +265,8 @@ def ingerer(
             compteurs.icloud_absents += 1
             compteurs.details.append(f"icloud_not_downloaded: {fichier.chemin_relatif}")
             _marquer_erreur(session, fichier, StatutDocument.ICLOUD_NON_TELECHARGE,
-                            "Fichier iCloud non téléchargé localement")
+                            "Fichier iCloud non téléchargé localement",
+                            source=source, categorie=categorie)
             if progression:
                 progression(fichier.chemin_relatif, compteurs)
             continue
@@ -303,7 +304,9 @@ def ingerer(
             compteurs.erreurs += 1
             compteurs.details.append(f"error: {fichier.chemin_relatif} — {type(exc).__name__}: {exc}")
             log.error("document_erreur", file=fichier.chemin_relatif, error=str(exc), exc_info=True)
-            _marquer_erreur(session, fichier, StatutDocument.ERREUR, f"{type(exc).__name__}: {exc}"[:2000])
+            _marquer_erreur(session, fichier, StatutDocument.ERREUR,
+                            f"{type(exc).__name__}: {exc}"[:2000],
+                            source=source, categorie=categorie)
 
         if progression:
             progression(fichier.chemin_relatif, compteurs)
@@ -325,11 +328,23 @@ def ingerer(
     return compteurs
 
 
-def _marquer_erreur(session, fichier: FichierDecouvert, statut: StatutDocument, message: str) -> None:
+def _marquer_erreur(
+    session,
+    fichier: FichierDecouvert,
+    statut: StatutDocument,
+    message: str,
+    source: str | None = None,
+    categorie: str | None = None,
+) -> None:
     """Trace l'échec sans interrompre le flux.
 
     L'écriture est elle-même protégée : si la base est momentanément
     indisponible, la perte de la trace est préférable à l'arrêt de l'import.
+
+    La catégorie et la source sont conservées même en échec : un livre resté
+    dans le nuage appartient déjà à son corpus, et doit apparaître dans les
+    inventaires de ce corpus — sans quoi il devient invisible et personne ne
+    songe à le rapatrier.
     """
     try:
         enregistrer_document(
@@ -344,6 +359,8 @@ def _marquer_erreur(session, fichier: FichierDecouvert, statut: StatutDocument, 
                 "checksum": f"unavailable:{abs(hash(str(fichier.chemin)))}",
                 "size": fichier.taille,
                 "document_type": fichier.document_type,
+                "category": categorie,
+                "source": source,
                 "status": statut,
                 "error_message": message,
                 "source_mtime": fichier.mtime,

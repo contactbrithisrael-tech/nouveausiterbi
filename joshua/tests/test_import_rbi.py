@@ -140,3 +140,22 @@ def test_ingerer_accepte_les_regles_de_scan(faux_depot, monkeypatch):
         **import_rbi.regles_de_scan(depot),
     )
     assert compteurs.vus == 2  # les deux PDF, pas package.json ni assets/
+
+
+def test_chemin_avec_espaces_et_accents(tmp_path, monkeypatch):
+    """Le chemin réel de la bibliothèque contient des espaces et des accents.
+
+    Un dossier « /Users/Mickael Darmon/Desktop/livres rbi » traverse argparse,
+    pathlib, os.walk et le calcul de chemin relatif : ce test verrouille toute
+    la chaîne, y compris les noms de sous-dossiers accentués.
+    """
+    racine = tmp_path / "Mickael Darmon" / "Desktop" / "livres rbi"
+    (racine / "Traités").mkdir(parents=True)
+    (racine / "Constitution du Rite.pdf").write_bytes(b"%PDF-1.4")
+    (racine / "Traités" / "Traité d'amitié.pdf").write_bytes(b"%PDF-1.4")
+    (racine / ".DS_Store").write_bytes(b"mac")
+    (racine / "couverture.jpg").write_bytes(b"\xff\xd8")
+
+    assert import_rbi.localiser_sources(str(racine)) == [racine]
+    trouves = {f.chemin_relatif for f in import_rbi._scanner(racine)}
+    assert trouves == {"Constitution du Rite.pdf", "Traités/Traité d'amitié.pdf"}

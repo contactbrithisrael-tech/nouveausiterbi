@@ -28,10 +28,11 @@ services:
       # Cache des modèles d'embeddings : survit aux reconstructions d'image.
       - models_cache:/models
       - ./data:/app/data
-      # Bibliothèque iCloud montée en LECTURE SEULE (:ro). C'est la garantie
-      # technique — et non seulement une promesse du code — qu'aucun livre ne
-      # sera modifié ou supprimé. Décommenter et renseigner le chemin hôte.
-      # - "${JOSHUA_LIBRARY_PATH}:/library:ro"
+      # Le dossier de livres n'est PAS monté ici : son chemin dépend de la
+      # machine, et le figer dans le fichier partagé obligerait chacun à le
+      # modifier — donc à polluer le dépôt à chaque commit.
+      # Copier docker-compose.override.yml.example en docker-compose.override.yml
+      # et y déclarer le montage (:ro) : Compose fusionne les deux fichiers.
     depends_on:
       postgres:
         condition: service_healthy
