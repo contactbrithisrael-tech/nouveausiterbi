@@ -115,9 +115,16 @@
         var cls = 'nav-link';
         if (lien.style === 'discret') cls += ' nav-link--tuilage';
         if (lien.style === 'cta')     cls += ' nav-link--cta';
-        ul.appendChild(el('li', {}, [
-          el('a', { href: lien.href, class: cls, text: lien.label })
-        ]));
+        var attributs = { href: lien.href, class: cls, text: lien.label };
+        // Un lien vers un autre service s'ouvre dans un onglet séparé, et
+        // « noopener » l'empêche de reprendre la main sur la page qui
+        // l'a ouvert — une page tierce peut sinon rediriger l'onglet
+        // d'origine à l'insu du lecteur.
+        if (lien.cible) {
+          attributs.target = lien.cible;
+          attributs.rel = 'noopener';
+        }
+        ul.appendChild(el('li', {}, [el('a', attributs)]));
       });
     }
   }

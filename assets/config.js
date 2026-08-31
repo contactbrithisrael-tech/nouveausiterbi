@@ -50,6 +50,11 @@ var RBI_CONFIG = {
   { label: "Devenir FM",       href: "devenir-fm.html", style: "cta" },
   { label: "Tuilage",          href: "#tuilage", style: "discret" },
   { label: "Espace Membres",   href: "espace-membres.html" },
+  // Joshua ouvre dans un onglet séparé : c'est un autre service, sur un
+  // autre serveur, et un Frère qui le consulte ne doit pas perdre la
+  // page du Rite en cours de lecture.
+  { label: "Joshua",           href: "https://joshua-studio.onrender.com/joshua",
+    cible: "_blank" },
   { label: "Contact",          href: "#contact" }
 ]
   },

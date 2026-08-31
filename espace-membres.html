@@ -382,7 +382,12 @@
 
 <!-- NAVIGATION ONGLETS -->
 <nav class="nav-onglets">
-  <button class="onglet actif" onclick="afficherSection('adhesion')">Adhésion individuelle</button>
+  <!-- Joshua en premier, et actif par défaut : c'est l'outil qu'un Frère
+       déjà reconnu vient consulter chaque semaine, tandis que l'adhésion
+       ne se fait qu'une fois. L'ordre des onglets suit l'usage, pas
+       l'ordre dans lequel les sections ont été écrites. -->
+  <button class="onglet actif" onclick="afficherSection('joshua')">Joshua</button>
+  <button class="onglet" onclick="afficherSection('adhesion')">Adhésion individuelle</button>
   <button class="onglet" onclick="afficherSection('patente')">Demande de patente</button>
   <button class="onglet" onclick="afficherSection('documents')">Documents & Téléchargements</button>
   <button class="onglet" onclick="afficherSection('annuaire')">Annuaire F∴M∴</button>
@@ -393,7 +398,51 @@
 <!-- ═══════════════════════════════════════════
      SECTION 1 : ADHÉSION INDIVIDUELLE
 ═══════════════════════════════════════════ -->
-<section class="section actif" id="adhesion">
+<!-- ═══════════════════════════════════════════
+     SECTION 0 : JOSHUA
+═══════════════════════════════════════════ -->
+<section class="section actif" id="joshua">
+  <h2 class="section__titre">Joshua — Assistant d'Étude</h2>
+  <div class="section__sep"></div>
+  <p class="section__intro">
+    Joshua répond à vos questions à partir des ouvrages du Rite, et cite
+    ses sources — ouvrage et page — pour chaque affirmation.<br>
+    Il ne répond jamais de mémoire : ce qui ne figure pas dans les textes,
+    il dit ne pas le savoir.
+  </p>
+
+  <div class="docs-grid">
+    <div class="doc-card">
+      <div class="doc-card__icone">✡</div>
+      <h3 class="doc-card__titre">Consulter Joshua</h3>
+      <p class="doc-card__desc">
+        Première venue : répondez aux questions d'usage, donnez votre nom
+        de famille, puis choisissez votre mot de passe personnel.<br>
+        Ensuite, votre mot de passe seul suffit.
+      </p>
+      <!-- Adresse technique tant que le sous-domaine n'est pas branché.
+           Un lien qui fonctionne vaut mieux qu'un lien qui anticipe. -->
+      <a class="btn btn-or" href="https://joshua-studio.onrender.com/joshua"
+         target="_blank" rel="noopener">Ouvrir Joshua</a>
+    </div>
+
+    <div class="doc-card">
+      <div class="doc-card__icone">🔐</div>
+      <h3 class="doc-card__titre">Ce que Joshua vous montre</h3>
+      <p class="doc-card__desc">
+        Les ouvrages accessibles à <strong>votre degré</strong>, et eux
+        seuls. Un texte d'un degré supérieur n'apparaît pas dans les
+        réponses, et son existence n'est pas mentionnée.<br>
+        Votre degré est fixé par le Souverain Grand Commandeur.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 1 : ADHÉSION INDIVIDUELLE
+═══════════════════════════════════════════ -->
+<section class="section" id="adhesion">
   <h2 class="section__titre">Formulaire d'Adhésion Individuelle</h2>
   <div class="section__sep"></div>
   <p class="section__intro">
