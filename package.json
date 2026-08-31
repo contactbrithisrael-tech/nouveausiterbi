@@ -14,7 +14,7 @@
     "test:smoke": "node tools/smoke-test.mjs",
     "test:smoke:src": "node tools/smoke-test.mjs .",
     "build": "node tools/build.mjs > build-manifest.json",
-    "structure": "tree -a -I 'node_modules|.git|dist' > structure.txt",
+    "structure": "tree -a -I 'node_modules|.git|dist|__pycache__|.pytest_cache|.venv' > structure.txt",
     "bridge": "node tools/make-bridge.js",
     "bridge:serve": "node tools/make-bridge.js --serve 8080",
     "verify": "npm run test && npm run build && npm run test:smoke"

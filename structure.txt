@@ -22,6 +22,7 @@
 |   |-- index.html
 |   |-- roue.html
 |   `-- style.css
+|-- build-manifest.json
 |-- components
 |   |-- demo.html
 |   |-- html
@@ -38,6 +39,97 @@
 |-- galerie.html
 |-- images.js
 |-- index.html
+|-- joshua
+|   |-- .dockerignore
+|   |-- .env.example
+|   |-- .gitignore
+|   |-- Dockerfile
+|   |-- Makefile
+|   |-- README.md
+|   |-- alembic
+|   |   |-- env.py
+|   |   |-- script.py.mako
+|   |   `-- versions
+|   |       `-- 0001_schema_initial.py
+|   |-- alembic.ini
+|   |-- app
+|   |   |-- __init__.py
+|   |   |-- ai
+|   |   |   |-- __init__.py
+|   |   |   |-- claude.py
+|   |   |   |-- context_builder.py
+|   |   |   |-- prompts.py
+|   |   |   `-- rag.py
+|   |   |-- bot
+|   |   |   |-- __init__.py
+|   |   |   |-- commands.py
+|   |   |   |-- handlers.py
+|   |   |   `-- telegram.py
+|   |   |-- config.py
+|   |   |-- database
+|   |   |   |-- __init__.py
+|   |   |   |-- models.py
+|   |   |   |-- repository.py
+|   |   |   `-- session.py
+|   |   |-- embeddings
+|   |   |   |-- __init__.py
+|   |   |   |-- base.py
+|   |   |   `-- fastembed_provider.py
+|   |   |-- ingestion
+|   |   |   |-- __init__.py
+|   |   |   |-- chunker.py
+|   |   |   |-- deduplication.py
+|   |   |   |-- loader.py
+|   |   |   |-- parser.py
+|   |   |   `-- pipeline.py
+|   |   |-- main.py
+|   |   |-- memory
+|   |   |   |-- __init__.py
+|   |   |   |-- conversation.py
+|   |   |   `-- summary.py
+|   |   |-- parsers
+|   |   |   |-- __init__.py
+|   |   |   |-- csv_parser.py
+|   |   |   |-- docx.py
+|   |   |   |-- epub.py
+|   |   |   |-- json_parser.py
+|   |   |   |-- markdown.py
+|   |   |   |-- pdf.py
+|   |   |   `-- txt.py
+|   |   |-- security
+|   |   |   |-- __init__.py
+|   |   |   |-- permissions.py
+|   |   |   `-- sanitization.py
+|   |   |-- utils
+|   |   |   |-- __init__.py
+|   |   |   `-- logging.py
+|   |   `-- vectorstore
+|   |       |-- __init__.py
+|   |       `-- qdrant.py
+|   |-- data
+|   |   |-- incoming
+|   |   |   `-- .gitkeep
+|   |   `-- processed
+|   |       `-- .gitkeep
+|   |-- docker-compose.yml
+|   |-- pytest.ini
+|   |-- requirements.txt
+|   |-- scripts
+|   |   |-- index_library.py
+|   |   |-- ingest.py
+|   |   `-- reindex.py
+|   `-- tests
+|       |-- __init__.py
+|       |-- conftest.py
+|       |-- test_chunking.py
+|       |-- test_deduplication.py
+|       |-- test_ingestion.py
+|       |-- test_integration_qdrant.py
+|       |-- test_memoire.py
+|       |-- test_permissions.py
+|       |-- test_rag.py
+|       |-- test_securite.py
+|       `-- test_telegram_split.py
 |-- llms.txt
 |-- package-lock.json
 |-- package.json
@@ -53,4 +145,4 @@
 |   `-- test.mjs
 `-- traites.html
 
-9 directories, 45 files
+28 directories, 118 files

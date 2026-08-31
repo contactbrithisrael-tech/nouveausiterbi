@@ -1,0 +1,102 @@
+# ═══════════════════════════════════════════════════════════════
+# Joshua — pile complète
+#
+#     docker compose up -d
+#
+# Ordre de démarrage : joshua attend que postgres, qdrant et redis soient
+# SAINS (condition: service_healthy), pas seulement démarrés. Un conteneur
+# PostgreSQL « démarré » n'accepte pas encore de connexion pendant plusieurs
+# secondes ; sans cette condition, joshua échoue au premier lancement à
+# chaque fois.
+# ═══════════════════════════════════════════════════════════════
+
+services:
+  joshua:
+    build: .
+    container_name: joshua
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      # Ces valeurs écrasent le .env : dans le réseau Docker, les services se
+      # joignent par leur nom, jamais par localhost.
+      POSTGRES_HOST: postgres
+      QDRANT_URL: http://qdrant:6333
+      REDIS_URL: redis://redis:6379/0
+    ports:
+      - "${API_PORT:-8000}:8000"
+    volumes:
+      # Cache des modèles d'embeddings : survit aux reconstructions d'image.
+      - models_cache:/models
+      - ./data:/app/data
+      # Bibliothèque iCloud montée en LECTURE SEULE (:ro). C'est la garantie
+      # technique — et non seulement une promesse du code — qu'aucun livre ne
+      # sera modifié ou supprimé. Décommenter et renseigner le chemin hôte.
+      # - "${JOSHUA_LIBRARY_PATH}:/library:ro"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      qdrant:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: joshua-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-joshua}
+      POSTGRES_USER: ${POSTGRES_USER:-joshua}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD est obligatoire}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-joshua} -d ${POSTGRES_DB:-joshua}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    # Port non exposé à l'hôte : la base n'est joignable que depuis le réseau
+    # Docker. Pour l'inspecter en développement, décommenter.
+    # ports:
+    #   - "5432:5432"
+
+  qdrant:
+    image: qdrant/qdrant:v1.12.5
+    container_name: joshua-qdrant
+    restart: unless-stopped
+    environment:
+      QDRANT__SERVICE__API_KEY: ${QDRANT_API_KEY:-}
+      QDRANT__TELEMETRY_DISABLED: "true"
+    volumes:
+      - qdrant_storage:/qdrant/storage
+    healthcheck:
+      # Qdrant n'embarque ni curl ni wget : on utilise le shell Bash pour
+      # ouvrir une socket TCP, seule méthode disponible dans cette image.
+      test: ["CMD-SHELL", "bash -c ':> /dev/tcp/127.0.0.1/6333' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    ports:
+      - "6333:6333"
+
+  redis:
+    image: redis:7-alpine
+    container_name: joshua-redis
+    restart: unless-stopped
+    # Redis ne contient ici que du cache et des compteurs : la persistance est
+    # désactivée volontairement. Perdre ce contenu au redémarrage est sans
+    # conséquence, et l'écriture disque serait un coût pur.
+    command: ["redis-server", "--save", "", "--appendonly", "no", "--maxmemory", "512mb", "--maxmemory-policy", "allkeys-lru"]
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  postgres_data:
+  qdrant_storage:
+  redis_data:
+  models_cache:

@@ -1,0 +1,25 @@
+# Secrets : jamais versionnés. Le modèle est .env.example.
+.env
+.env.*
+!.env.example
+
+# Environnements et caches Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+
+# Documents déposés par l'utilisateur : ce sont ses données, pas du code.
+data/incoming/*
+data/processed/*
+!data/*/.gitkeep
+
+# Modèles d'embeddings téléchargés (~1 Go)
+models/
+.fastembed_cache/
+
+# Divers
+.DS_Store
+*.log

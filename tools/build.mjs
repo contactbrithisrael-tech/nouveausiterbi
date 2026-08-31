@@ -41,8 +41,10 @@ const DIST = path.join(ROOT, 'dist');
    partenaire. `tools/`, `.github/` et `backup/` restent exclus : ce sont
    respectivement de l'outillage, de la configuration CI et une archive,
    dont la publication n'apporterait rien et exposerait d'anciennes
-   versions du site. */
-const EXCLUS = new Set(['.git', 'node_modules', 'dist', 'backup', 'tools', '.github', '.claude']);
+   versions du site. `joshua/` est un projet Python distinct hébergé dans le
+   même dépôt : il n'a rien à faire dans un site statique, et l'y déployer
+   publierait son code source et sa configuration. */
+const EXCLUS = new Set(['.git', 'node_modules', 'dist', 'backup', 'tools', '.github', '.claude', 'joshua']);
 const EXCLUS_FICHIERS = new Set(['structure.txt', 'package.json', 'package-lock.json', '.gitignore']);
 
 const MAX_MINIFY = 1_500_000;  // octets — au-delà : copie verbatim

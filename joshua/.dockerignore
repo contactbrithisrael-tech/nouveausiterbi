@@ -1,0 +1,16 @@
+# Ce qui n'a rien à faire dans l'image : secrets, artefacts locaux, données.
+.env
+.env.*
+!.env.example
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.git/
+.gitignore
+data/incoming/*
+data/processed/*
+!data/incoming/.gitkeep
+!data/processed/.gitkeep
+*.md
+!README.md
