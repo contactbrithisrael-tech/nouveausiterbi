@@ -37,6 +37,7 @@ from app.bot.telegram import construire_application
 from app.config import get_settings
 from app.database.session import fermer_async_engine, init_async_engine, session_async
 from app.embeddings.base import get_embedding_provider
+from app.security.auth import LimiteurTentatives, MagasinPostgres
 from app.security.permissions import RateLimiter
 from app.utils.logging import configure_logging, get_logger
 from app.vectorstore.qdrant import QdrantRecherche
@@ -86,6 +87,12 @@ async def lifespan(app: FastAPI):
             "recherche": recherche,
             "rate_limiter": limiteur,
             "provider": provider,
+            # Persistance des modes en base : c'est ce qui fait survivre une
+            # authentification à un redémarrage et à plusieurs instances du bot.
+            "modes": MagasinPostgres(),
+            "auth_limiter": LimiteurTentatives(
+                settings.AUTH_MAX_TENTATIVES, settings.AUTH_FENETRE_SECONDES
+            ),
         },
     )
 

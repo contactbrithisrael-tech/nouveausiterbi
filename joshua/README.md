@@ -50,6 +50,8 @@ Pour `/setcommands`, coller :
 start - Présentation de Joshua
 help - Aide et commandes
 status - État des services
+mode - Niveau d'accès actuel
+logout - Revenir au mode public
 ```
 
 Les commandes d'administration ne sont **volontairement pas** déclarées ici :
@@ -285,6 +287,43 @@ Sources :
 Commandes d'administration (réservées à `ADMIN_TELEGRAM_IDS`) :
 `/stats`, `/sources`, `/reindex`. Pour un non-administrateur, elles répondent
 « Commande inconnue » — leur existence n'est pas divulguée.
+
+### Modes d'accès
+
+| Commande | Effet |
+|---|---|
+| `/mode` | affiche le niveau d'accès réellement enregistré |
+| `/ff <mot de passe>` | passe en mode Frère/Sœur |
+| `/sgc <mot de passe>` | passe en mode Souverain Grand Commandeur |
+| `/logout` | revient au mode public |
+
+```
+🟢 Mode actuel : Public (profane)
+🟡 Mode actuel : Frère/Sœur
+🔴 Mode actuel : SGC
+```
+
+Le mode est **persisté dans PostgreSQL**, attaché au `telegram_user_id`. Il
+survit donc à un redémarrage du bot et reste correct avec plusieurs instances
+— contrairement à `context.user_data`, qui est la cause habituelle du
+symptôme « le mot de passe est accepté mais `/mode` affiche encore public ».
+
+Traitement du secret, à chaque étape :
+
+* la comparaison est faite **par le code**, avec `hmac.compare_digest` : le
+  modèle de langage n'est jamais consulté et ne voit ni le mot de passe, ni
+  la tentative ;
+* un secret non configuré n'authentifie **jamais** ;
+* le message contenant le mot de passe est effacé du salon ;
+* il n'est ni journalisé, ni enregistré en base (les commandes échappent au
+  gestionnaire qui écrit l'historique), ni renvoyé dans une réponse ;
+* cinq échecs par quart d'heure et par utilisateur, puis refus temporaire.
+
+Effet sur les réponses : le mode restreint la recherche documentaire **par
+exclusion** (`must_not access_level`). Un document indexé sans niveau déclaré
+reste visible de tous — un filtre par inclusion aurait masqué d'un coup tout
+le corpus existant, panne totale déguisée en sécurité. Le marquage des
+documents réservés se fera à l'ingestion.
 
 ## 9. Sauvegarder Qdrant et PostgreSQL
 
@@ -568,7 +607,7 @@ parcourue : un volume iCloud non monté ne peut pas vider l'index.
 make test          # ou : python -m pytest tests/ -v
 ```
 
-99 tests, aucune infrastructure requise : ni PostgreSQL, ni Qdrant, ni Redis,
+119 tests, aucune infrastructure requise : ni PostgreSQL, ni Qdrant, ni Redis,
 ni clé Anthropic, ni modèle d'embeddings. Une suite qui exige une
 infrastructure n'est pas exécutée, donc ne protège de rien.
 
@@ -583,6 +622,7 @@ infrastructure n'est pas exécutée, donc ne protège de rien.
 | `test_memoire.py` | alternance des rôles, injection du résumé |
 | `test_ingestion.py` | iCloud, dispatch, lots, isolation des erreurs |
 | `test_import_rbi.py` | sélection des sources, règles de scan partagées |
+| `test_auth_modes.py` | modes d'accès : validation, persistance, isolation, enregistrement des commandes |
 | `test_integration_qdrant.py` | ingestion → recherche de bout en bout (Qdrant local) |
 
 Le test d'intégration utilise le moteur Qdrant **embarqué** du client

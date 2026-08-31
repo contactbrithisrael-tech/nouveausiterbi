@@ -43,6 +43,7 @@ from app.database.repository import (
 from app.database.session import session_async
 from app.memory.conversation import charger_contexte_conversation
 from app.memory.summary import resumer_si_necessaire
+from app.security.auth import filtres_documentaires
 from app.security.sanitization import nettoyer_entree_utilisateur
 from app.utils.logging import bind_request, clear_request, get_logger
 
@@ -114,10 +115,15 @@ async def traiter_message(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
                 historique = await charger_contexte_conversation(session, conversation, settings)
                 conversation_id = conversation.id
 
+            # Le mode est relu à CHAQUE message, jamais mémorisé dans le
+            # processus : une déconnexion prend effet immédiatement, y compris
+            # si elle a été demandée depuis une autre instance du bot.
+            mode = await context.bot_data["modes"].lire(utilisateur_tg.id)
+
             # Le RAG s'exécute hors transaction : il appelle le réseau
             # (embeddings, Qdrant) et garder une connexion PostgreSQL ouverte
             # pendant ce temps épuiserait le pool sous charge.
-            contexte = await rag.recuperer(question)
+            contexte = await rag.recuperer(question, filtres=filtres_documentaires(mode))
 
             messages = historique + [
                 {"role": "user", "content": message_utilisateur(question, contexte.contexte)}
@@ -152,6 +158,7 @@ async def traiter_message(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         log.info(
             "message_traite",
             duration_ms=round(duree, 1),
+            mode=mode.value,
             sources=len(contexte.sources),
             candidats=contexte.candidats,
             tokens_in=reponse.tokens_in,

@@ -91,6 +91,13 @@ class Utilisateur(Base):
     first_name: Mapped[str | None] = mapped_column(String(128))
     language_code: Mapped[str | None] = mapped_column(String(16))
     is_blocked: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    #: Mode d'accès courant (public | ff | sgc). Persisté en base et non en
+    #: mémoire de processus : c'est ce qui fait survivre une authentification
+    #: à un redémarrage du bot et à la présence de plusieurs instances.
+    #: `server_default` garantit que les lignes existantes valent « public »
+    #: après migration — jamais NULL, jamais un privilège par défaut.
+    mode: Mapped[str] = mapped_column(String(16), default="public", server_default="public", nullable=False)
+    mode_set_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     first_seen: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=maintenant, nullable=False)
     last_seen: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=maintenant, nullable=False)
 

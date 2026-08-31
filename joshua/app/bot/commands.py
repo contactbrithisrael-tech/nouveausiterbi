@@ -16,11 +16,12 @@ c'est une séparation de responsabilités, pas une limitation.
 from __future__ import annotations
 
 from telegram import Update
-from telegram.ext import Application, CommandHandler, ContextTypes
+from telegram.ext import Application, CommandHandler, ContextTypes, MessageHandler, filters
 
 from app.bot.telegram import envoyer_reponse
 from app.database.repository import sources_principales, statistiques
 from app.database.session import session_async
+from app.security.auth import Mode, verifier_mot_de_passe
 from app.security.permissions import exiger_admin
 from app.utils.logging import bind_request, clear_request, get_logger
 
@@ -41,6 +42,8 @@ TEXTE_HELP = """Commandes disponibles :
 /start — présentation
 /help — cette aide
 /status — état des services
+/mode — niveau d'accès actuel
+/logout — revenir au mode public
 
 Posez vos questions directement, sans commande. Je garde le fil de la
 conversation ; les échanges anciens sont résumés automatiquement.
@@ -172,13 +175,132 @@ def _envelopper(handler):
     return enveloppe
 
 
+# ═══════════════════════════════════════════════════════════════════
+# MODES D'ACCÈS
+#
+# Le mot de passe est vérifié PAR LE CODE, jamais par le modèle : Claude
+# n'est appelé à aucun moment de ces commandes et ne voit ni le secret, ni
+# la tentative. Le message qui le contient est effacé du salon, n'est pas
+# journalisé, et n'est pas enregistré en base — les commandes échappent au
+# gestionnaire de messages, qui seul écrit dans l'historique.
+# ═══════════════════════════════════════════════════════════════════
+
+
+async def _effacer_message(update: Update) -> None:
+    """Supprime le message contenant le mot de passe.
+
+    Best-effort : la suppression peut échouer (droits, message trop ancien).
+    L'échec ne doit pas empêcher l'authentification — le secret resterait
+    visible dans l'historique du salon, ce qui est un problème d'hygiène, pas
+    une raison de refuser l'accès. L'utilisateur en est averti.
+    """
+    try:
+        await update.message.delete()
+    except Exception:
+        log.info("suppression_message_impossible")
+
+
+async def _authentifier(update: Update, context: ContextTypes.DEFAULT_TYPE, mode: Mode) -> None:
+    settings = context.bot_data["settings"]
+    magasin = context.bot_data["modes"]
+    limiteur = context.bot_data["auth_limiter"]
+    user_id = update.effective_user.id
+
+    fourni = " ".join(context.args or []).strip()
+    await _effacer_message(update)
+
+    if not fourni:
+        await update.message.chat.send_message(
+            f"Usage : /{mode.value} <mot de passe>\n"
+            "Le message est effacé automatiquement après lecture."
+        )
+        return
+
+    autorise, attente = limiteur.autorise(user_id)
+    if not autorise:
+        # Le message ne distingue pas « trop d'essais » d'un mot de passe
+        # faux : indiquer qu'un blocage est actif renseignerait sur le fait
+        # que le compte vaut la peine d'être attaqué.
+        log.warning("auth_trop_de_tentatives", telegram_user_id=user_id, mode=mode.value)
+        await update.message.chat.send_message(
+            f"Trop de tentatives. Réessayez dans {attente // 60 + 1} minute(s)."
+        )
+        return
+
+    if not verifier_mot_de_passe(mode, fourni, settings):
+        limiteur.enregistrer_echec(user_id)
+        # Seul l'ÉCHEC est journalisé, et jamais la valeur soumise.
+        log.warning("auth_echec", telegram_user_id=user_id, mode=mode.value)
+        await update.message.chat.send_message("Mot de passe incorrect.")
+        return
+
+    limiteur.reinitialiser(user_id)
+    await magasin.ecrire(user_id, mode)
+    log.info("auth_reussie", telegram_user_id=user_id, mode=mode.value)
+
+    # L'état est relu depuis le magasin plutôt qu'affiché de mémoire : la
+    # confirmation atteste alors d'une écriture réellement persistée, et non
+    # de l'intention de l'écrire. C'est exactement la différence entre
+    # « le mot de passe est accepté » et « le mode a changé ».
+    confirme = await magasin.lire(user_id)
+    await update.message.chat.send_message(
+        f"Authentification acceptée.\n{confirme.libelle}"
+    )
+
+
+async def cmd_sgc(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    await _authentifier(update, context, Mode.SGC)
+
+
+async def cmd_ff(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    await _authentifier(update, context, Mode.FF)
+
+
+async def cmd_mode(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Affiche le mode réellement persisté pour CET utilisateur."""
+    magasin = context.bot_data["modes"]
+    mode = await magasin.lire(update.effective_user.id)
+    await update.message.reply_text(mode.libelle)
+
+
+async def cmd_logout(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    magasin = context.bot_data["modes"]
+    user_id = update.effective_user.id
+    await magasin.ecrire(user_id, Mode.PUBLIC)
+    log.info("logout", telegram_user_id=user_id)
+    mode = await magasin.lire(user_id)
+    await update.message.reply_text(f"Déconnecté.\n{mode.libelle}")
+
+
+async def cmd_inconnue(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Réponse aux commandes non reconnues.
+
+    Sans ce gestionnaire, une commande inconnue reste SANS RÉPONSE : le
+    filtre des messages ordinaires exclut les commandes, et l'utilisateur
+    conclut que le bot est en panne. Le message est le même que celui
+    renvoyé à un non-administrateur qui tente une commande réservée — ainsi
+    l'existence de ces commandes ne se déduit pas de la réponse.
+    """
+    if update.message:
+        await update.message.reply_text("Commande inconnue. /help pour la liste.")
+
+
 def enregistrer_commandes(application: Application) -> None:
     for nom, handler in (
         ("start", cmd_start),
         ("help", cmd_help),
         ("status", cmd_status),
+        ("mode", cmd_mode),
+        ("sgc", cmd_sgc),
+        ("ff", cmd_ff),
+        ("logout", cmd_logout),
         ("stats", cmd_stats),
         ("sources", cmd_sources),
         ("reindex", cmd_reindex),
     ):
         application.add_handler(CommandHandler(nom, _envelopper(handler)))
+
+    # Enregistré EN DERNIER : python-telegram-bot évalue les gestionnaires
+    # dans l'ordre, un filtre « toute commande » placé avant intercepterait
+    # les commandes réelles.
+    application.add_handler(MessageHandler(filters.COMMAND, _envelopper(cmd_inconnue)))

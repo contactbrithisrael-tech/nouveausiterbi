@@ -191,16 +191,14 @@ def supprimer_par_document(settings: Settings, document_id: str, collection: str
         client.close()
 
 
-def _construire_filtre(filtres: dict[str, Any] | None) -> qm.Filter | None:
-    """Traduit un dictionnaire simple en filtre Qdrant.
+#: Clé réservée : son contenu devient un ``must_not`` au lieu d'un ``must``.
+#: L'exclusion est indispensable aux filtres d'habilitation — restreindre par
+#: inclusion masquerait aussi tous les documents dépourvus du champ filtré
+#: (voir app/security/auth.filtres_documentaires).
+CLE_EXCLUSION = "__must_not__"
 
-    Les listes deviennent des ``MatchAny`` (OU), les scalaires des
-    ``MatchValue`` (ET entre clés différentes). Cette convention couvre les
-    besoins réels (« catégorie X ET tags parmi [a, b] ») sans exposer la
-    syntaxe complète de Qdrant au reste du code.
-    """
-    if not filtres:
-        return None
+
+def _conditions(filtres: dict[str, Any]) -> list[qm.FieldCondition]:
     conditions: list[qm.FieldCondition] = []
     for cle, valeur in filtres.items():
         if valeur is None:
@@ -209,7 +207,33 @@ def _construire_filtre(filtres: dict[str, Any] | None) -> qm.Filter | None:
             conditions.append(qm.FieldCondition(key=cle, match=qm.MatchAny(any=list(valeur))))
         else:
             conditions.append(qm.FieldCondition(key=cle, match=qm.MatchValue(value=valeur)))
-    return qm.Filter(must=conditions) if conditions else None
+    return conditions
+
+
+def _construire_filtre(filtres: dict[str, Any] | None) -> qm.Filter | None:
+    """Traduit un dictionnaire simple en filtre Qdrant.
+
+    Les listes deviennent des ``MatchAny`` (OU), les scalaires des
+    ``MatchValue`` (ET entre clés différentes). Cette convention couvre les
+    besoins réels (« catégorie X ET tags parmi [a, b] ») sans exposer la
+    syntaxe complète de Qdrant au reste du code.
+
+    La clé réservée ``__must_not__`` porte un sous-dictionnaire dont les
+    conditions sont NIÉES. Un point dépourvu du champ visé ne correspond à
+    aucune condition, donc il échappe au ``must_not`` : c'est exactement le
+    comportement attendu d'un filtre d'habilitation appliqué à un corpus dont
+    tous les documents ne sont pas encore marqués.
+    """
+    if not filtres:
+        return None
+    exclusions = filtres.get(CLE_EXCLUSION) or {}
+    inclusions = {k: v for k, v in filtres.items() if k != CLE_EXCLUSION}
+
+    must = _conditions(inclusions)
+    must_not = _conditions(exclusions)
+    if not must and not must_not:
+        return None
+    return qm.Filter(must=must or None, must_not=must_not or None)
 
 
 class QdrantRecherche:

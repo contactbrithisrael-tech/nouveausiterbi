@@ -130,6 +130,14 @@ class Settings(BaseSettings):
     ADMIN_TELEGRAM_IDS: str = ""
     MAX_USER_INPUT_CHARS: int = 4000
 
+    # Secrets des modes d'accès. Vides par défaut : un mode sans secret
+    # configuré refuse TOUTE authentification (voir security/auth.py). Ils ne
+    # sont jamais journalisés, jamais envoyés au modèle, jamais affichés.
+    JOSHUA_SGC_PASSWORD: str = ""
+    JOSHUA_FF_PASSWORD: str = ""
+    AUTH_MAX_TENTATIVES: int = 5
+    AUTH_FENETRE_SECONDES: int = 900
+
     # ── Divers ──────────────────────────────────────────────────────
     LOG_LEVEL: str = "INFO"
     LOG_JSON: bool = True

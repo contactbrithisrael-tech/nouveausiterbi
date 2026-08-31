@@ -141,6 +141,33 @@ async def enregistrer_resume(
     )
 
 
+async def lire_mode(session: AsyncSession, telegram_user_id: int) -> str:
+    """Mode d'accès courant d'un utilisateur.
+
+    Un utilisateur inconnu vaut « public » : l'absence d'enregistrement ne
+    doit jamais se traduire par une habilitation.
+    """
+    stmt = select(Utilisateur.mode).where(Utilisateur.telegram_user_id == telegram_user_id)
+    valeur = (await session.execute(stmt)).scalar_one_or_none()
+    return valeur or "public"
+
+
+async def definir_mode(session: AsyncSession, telegram_user_id: int, mode: str) -> None:
+    """Écrit le mode d'un utilisateur.
+
+    ``UPDATE`` ciblé par ``telegram_user_id`` : l'écriture ne peut toucher
+    qu'une ligne, celle de l'utilisateur concerné. C'est la garantie
+    structurelle qu'une authentification ne peut pas déborder sur un autre
+    compte — la propriété qu'un état gardé en mémoire de processus ne peut
+    pas offrir.
+    """
+    await session.execute(
+        update(Utilisateur)
+        .where(Utilisateur.telegram_user_id == telegram_user_id)
+        .values(mode=mode, mode_set_at=maintenant())
+    )
+
+
 async def statistiques(session: AsyncSession) -> dict[str, int]:
     """Compteurs pour /stats.
 
