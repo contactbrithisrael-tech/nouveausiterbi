@@ -5,6 +5,33 @@
    
    Textes, noms, liens, réponses de tuilage, PDFs, couleurs...
    Ne toucher ni index.html ni app.js sauf cas exceptionnel.
+
+   ── RÔLE DANS L'ARCHITECTURE ────────────────────────────────
+
+   Ce fichier est la SOURCE DE VÉRITÉ du contenu éditorial. Il ne
+   contient aucune logique et n'appelle aucune API du navigateur :
+   c'est une donnée, pas un programme. Cette contrainte est le socle
+   du découpage à trois couches (config → app → images) et la raison
+   pour laquelle le contenu peut être modifié sans risque de casser
+   le comportement du site.
+
+   Structure calquée sur les SECTIONS de la page et non sur des
+   types techniques : la personne qui édite cherche « le texte du
+   hero », pas « la liste des chaînes de caractères ». Chaque clé de
+   premier niveau correspond à un bloc visible et à une fonction
+   build*() d'app.js.
+
+   `var` et non `const` : le fichier est chargé par une balise
+   <script> classique, sans module ni build. `var RBI_CONFIG`
+   attache l'objet à `window`, seul canal disponible pour le
+   transmettre à app.js et images.js. C'est l'unique variable
+   globale volontaire du site.
+
+   Les clés `img_id` / `id` ne sont pas décoratives : elles forment
+   le contrat qui relie une entrée de config au nœud DOM créé par
+   app.js puis rempli par images.js. Renommer l'une sans l'autre
+   rompt silencieusement la chaîne (le visuel reste vide, sans
+   erreur en console).
 ════════════════════════════════════════════════════════════════ */
 
 var RBI_CONFIG = {
@@ -169,12 +196,21 @@ var RBI_CONFIG = {
   tuilage: {
     titre: "Tuilage Maçonnique",
     intro: "Frère, avant d'accéder aux documents réservés, veuillez répondre aux questions de tuilage.",
-    max_essais: 3,           // Nombre d'essais par question
+    // ⚠ Ces questions/réponses sont livrées au navigateur en clair :
+    // le tuilage filtre l'usage, il ne protège pas l'accès (voir la
+    // section 6 d'app.js). N'y placer aucun secret réel.
+    max_essais: 3,           // Nombre d'essais par question — décompté séparément pour chaque question
     questions: [
       {
         id:       "q1",
         texte:    "D'où venez-vous ?",
-        // Toutes les réponses acceptées (insensible accents + casse)
+        // Liste EXHAUSTIVE des formulations acceptées : la comparaison
+        // se fait par égalité stricte après normalisation (app.js), et
+        // non par correspondance approximative. Un rapprochement flou
+        // accepterait des réponses fausses proches ; on préfère élargir
+        // cette liste à la main, ce qui reste vérifiable et prévisible.
+        // Inutile d'y varier accents, casse ou ponctuation : la
+        // normalisation les efface des deux côtés.
         reponses: [
           "de saint jean",
           "saint jean",

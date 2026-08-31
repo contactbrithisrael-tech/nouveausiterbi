@@ -67,6 +67,26 @@
 </head>
 <body>
 
+<!--
+  ══════════════════════════════════════════════════════════════
+  STRUCTURE DE LA PAGE
+
+  Ce document ne contient QUE le squelette : sections, conteneurs
+  vides et leurs `id`. Aucun texte éditorial n'y figure, il est
+  injecté par app.js depuis config.js.
+
+  Ces `id` sont l'interface entre les trois couches — les renommer
+  ici sans les renommer dans config.js/app.js vide la section
+  correspondante sans produire la moindre erreur visible.
+
+  Conséquence assumée : sans JavaScript, la page est une coquille.
+  Le compromis est compensé côté référencement par les métadonnées
+  et le JSON-LD ci-dessus, plus le <h1> statique du hero — tous
+  présents dans le HTML servi, donc lisibles sans exécution de
+  script.
+  ══════════════════════════════════════════════════════════════
+-->
+
 <!-- NAVBAR — générée par app.js via config.js -->
 <header class="navbar" id="navbar">
   <div class="navbar__brand" id="navbar-brand"></div>
@@ -86,7 +106,13 @@
   <div class="hero__seal">
     <img src="" id="hero-seal" alt="Sceau du Rite Brith Israël" class="hero__seal-img">
   </div>
-  <!-- H1 SEO — invisible à l'écran, lu par Google -->
+  <!-- H1 SEO — invisible à l'écran, lu par Google.
+       Le titre visible (#hero-title) est écrit par app.js : un moteur
+       qui n'exécute pas le JS ne verrait aucun H1. Celui-ci est donc
+       en dur dans le document servi. Il est masqué par découpe (clip)
+       et non par display:none ni visibility:hidden, seules techniques
+       qui le retireraient aussi de l'arbre d'accessibilité et des
+       index. La duplication de H1 est le prix de ce rendu client. -->
 <h1 style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);">
   Rite Brith Israël — Rite Maçonnique Kabbalistique à 33 Degrés
 </h1>
@@ -149,13 +175,33 @@
   <div class="footer__content" id="footer-content"></div>
 </footer>
 
-<!-- scripts : config → app (construit le DOM) → images (injecte les photos) -->
+<!--
+  ORDRE DES SCRIPTS — dépendance stricte, ne pas réordonner :
+    config.js  publie window.RBI_CONFIG (données seules)
+    app.js     le lit et construit le DOM sur DOMContentLoaded
+    images.js  remplit ce DOM sur `load` (après le premier rendu)
+
+  Chargés en fin de <body> et sans `defer` : le placement suffit à
+  garantir que le squelette est analysé, et l'exécution séquentielle
+  des scripts classiques garantit l'ordre ci-dessus. `async` le
+  romprait ; `defer` fonctionnerait mais n'apporterait rien ici,
+  le document étant déjà entièrement parcouru à ce point.
+-->
 <script src="assets/config.js"></script>
 <script src="assets/app.js"></script>
 <script src="assets/images.js"></script>
 
 
-<!-- ── LECTEUR MUSICAL ── -->
+<!-- ── LECTEUR MUSICAL ──
+     Intégré directement dans index.html plutôt que dans app.js : c'est
+     le seul bloc dont le contenu ne vient pas de config.js, et il
+     dépend d'une API tierce (YouTube IFrame). Le garder à l'écart du
+     moteur de rendu évite d'introduire une dépendance réseau externe
+     dans le chemin de construction de la page — si YouTube est
+     injoignable, seul ce widget est inopérant.
+     Styles en ligne pour la même raison : le lecteur est autonome et
+     supprimable en un bloc, sans laisser de règles orphelines dans
+     style.css. -->
 <div id="music-player" style="
   position:fixed; bottom:1.2rem; right:1.2rem; z-index:999;
   background:rgba(13,13,13,.92); border:1px solid rgba(201,168,76,.4);
@@ -198,6 +244,11 @@
     }
     playing = !playing;
   }
+  // L'API YouTube est injectée par script après le rendu, et non
+  // déclarée dans <head> : elle ne bloque donc jamais l'affichage.
+  // `autoplay:0` — la lecture ne démarre que sur action explicite du
+  // visiteur (les navigateurs bloquent de toute façon le son
+  // automatique, et le site est consulté en contexte de lecture).
   var tag = document.createElement('script');
   tag.src = "https://www.youtube.com/iframe_api";
   document.head.appendChild(tag);

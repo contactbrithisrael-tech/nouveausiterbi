@@ -3,6 +3,27 @@
    
    Injecte les photos et PDFs base64 dans la page.
    Chargé en dernier → n'affecte pas les performances.
+
+   ── POURQUOI UN FICHIER SÉPARÉ (et pourquoi du base64) ──────
+
+   Les médias sont embarqués en data-URI plutôt que servis comme
+   fichiers : le site est déployé par simple dépôt de fichiers, et
+   cette forme rend chaque page autonome — aucun chemin relatif à
+   maintenir, aucun visuel cassé après un déplacement de dossier.
+   Le coût est réel et assumé : ~33 % de volume en plus par rapport
+   au binaire, et aucune mise en cache séparée des visuels.
+
+   L'isolement dans CE fichier est ce qui rend le coût supportable :
+   1) le poids (plusieurs Mo) est concentré ici, donc config.js et
+      app.js restent lisibles et modifiables à la main ;
+   2) chargé en dernier et injecté après `load` (voir plus bas), il
+      ne retarde ni le rendu du texte ni la construction de la page ;
+   3) il est régénérable par script (voir en fin de fichier), donc
+      jamais édité manuellement.
+
+   Contrat avec les autres couches : ce fichier ne CRÉE aucun nœud,
+   il ne fait que remplir des balises déjà posées par app.js, qu'il
+   retrouve par les `id` déclarés dans config.js.
    
    Pour remplir ce fichier automatiquement :
    → lance : python3 patch_extract_images.py
@@ -43,6 +64,11 @@
   /* ─────────────────────────────────────────────
      INJECTION
   ───────────────────────────────────────────── */
+  /* Injection tolérante : une source vide (média non encore extrait)
+     laisse la balise intacte, donc le placeholder CSS visible ; un id
+     absent est ignoré de même. Conséquence recherchée : une page à
+     laquelle il manque un visuel s'affiche complète et sans erreur —
+     ce fichier ne doit jamais pouvoir interrompre le rendu. */
   function setImg(id, src) {
     if (!src) return;
     var el = document.getElementById(id);
@@ -53,11 +79,25 @@
     if (!src) return;
     var btn = document.getElementById(btnId);
     if (!btn) return;
+    // Le bouton reste masqué tant que le PDF n'existe pas : on ne
+    // propose jamais un lien de téléchargement vide. `download` force
+    // l'enregistrement sous un nom lisible plutôt que l'ouverture d'un
+    // data-URI brut dans l'onglet.
     btn.href     = src;
     btn.download = (label || 'document') + '.pdf';
     btn.style.display = '';
   }
 
+  /* `load` et non `DOMContentLoaded` — choix délibéré et non
+     interchangeable ici : app.js construit la page sur
+     DOMContentLoaded, et l'affectation de plusieurs mégaoctets de
+     data-URI déclenche décodage et repeinture. En attendant `load`,
+     ce travail est repoussé après le premier rendu : le visiteur lit
+     le texte pendant que les visuels arrivent, au lieu d'attendre
+     devant une page blanche.
+     Effet de bord accepté : entre les deux événements, les
+     placeholders CSS (initiales, lettres de couverture) sont visibles.
+     Ils font partie de la maquette, pas d'un état d'erreur. */
   window.addEventListener('load', function () {
 
     /* Sceau */
@@ -77,13 +117,21 @@
     setImg('book-alliance', IMG.BOOK_ALLIANCE);
     setImg('book-guide',    IMG.BOOK_GUIDE);
 
-    // Stocker les 4e de couv sur les éléments pour la lightbox
+    // La 4e de couverture n'est jamais affichée dans la page : on la
+    // dépose sur l'élément (data-*) au lieu de l'exposer en variable
+    // globale. Le DOM sert de point de rendez-vous entre images.js et
+    // la lightbox d'app.js, sans qu'aucun des deux n'ait à connaître
+    // l'autre — la couche médias reste substituable.
     var b1 = document.getElementById('book-alliance');
     var b2 = document.getElementById('book-guide');
     if (b1) b1.dataset.back = IMG.BOOK_ALLIANCE_4E || '';
     if (b2) b2.dataset.back = IMG.BOOK_GUIDE_4E || '';
 
     /* PDFs tuilage */
+    // Les id des boutons viennent de config.js, jamais de constantes
+    // écrites ici : la liste des documents se modifie donc côté config
+    // seule. Chaîne de gardes obligatoire — ce script est aussi chargé
+    // par des pages dépourvues de section tuilage.
     var cfgPdfs = window.RBI_CONFIG && window.RBI_CONFIG.tuilage && window.RBI_CONFIG.tuilage.pdfs;
     if (cfgPdfs) {
       setPDF(cfgPdfs[0].id, IMG.PDF_1, cfgPdfs[0].label);
