@@ -1,0 +1,138 @@
+# ═══════════════════════════════════════════════════════════════
+# RITE BRITH ISRAËL — Intégration continue
+#
+# ── POURQUOI CE WORKFLOW EST « APPELABLE » ────────────────────
+# `workflow_call` en fait la brique unique de vérification : le
+# déploiement l'INVOQUE au lieu de recopier ses étapes. Une seule
+# définition des tests existe donc, et il devient impossible de
+# déployer un artefact produit par une chaîne différente de celle
+# qui l'a validé.
+#
+# ── ORDRE DES ÉTAPES ─────────────────────────────────────────
+#   1. tests statiques  — rapides, sans navigateur : échouent vite
+#   2. build            — produit dist/
+#   3. test de fumée    — joué SUR dist/, pas sur les sources :
+#                         c'est l'artefact qui part en production.
+# Inverser 2 et 3 laisserait la minification hors du périmètre testé.
+# ═══════════════════════════════════════════════════════════════
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+  workflow_call:
+    outputs:
+      empreinte:
+        description: "Empreinte SHA-256 du build validé"
+        value: ${{ jobs.verifier.outputs.empreinte }}
+
+# Droits minimaux : ce workflow ne fait que lire le dépôt.
+permissions:
+  contents: read
+
+# Une exécution par référence : un second push annule la précédente,
+# qui teste de toute façon un état périmé.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verifier:
+    name: Tests, build et test de fumée
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    outputs:
+      empreinte: ${{ steps.build.outputs.empreinte }}
+
+    steps:
+      - name: Récupérer le dépôt
+        uses: actions/checkout@v4
+        # NOTE SÉCURITÉ : en durcissement, épingler chaque action sur son
+        # SHA de commit plutôt que sur une étiquette mobile (@v4), qu'un
+        # mainteneur amont peut déplacer.
+
+      - name: Installer Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Installer l'outillage
+        # `npm ci` et non `npm install` : installation reproductible à
+        # partir du lockfile, et échec si package.json et lock divergent.
+        run: npm ci
+
+      - name: Tests statiques et unitaires
+        run: npm run test:unit
+
+      - name: Tests des composants isolés
+        # Séparés du reste : ils vérifient une promesse différente —
+        # non pas « le site fonctionne » mais « ces composants ne
+        # cassent rien dans la page qui les accueille ».
+        run: npm run test:components
+
+      - name: Installer Chromium
+        # Seul Chromium est téléchargé : les deux autres moteurs
+        # tripleraient la durée de l'étape sans rien tester de plus ici,
+        # le site n'ayant aucun code spécifique à un moteur.
+        run: npx playwright install --with-deps chromium
+
+      - name: Construire dist/
+        id: build
+        run: |
+          set -euo pipefail
+          node tools/build.mjs > build-manifest.json
+          # L'empreinte est propagée en sortie de job : le déploiement
+          # peut ainsi vérifier qu'il publie bien l'artefact validé ici.
+          echo "empreinte=$(node -p "require('./build-manifest.json').empreinte")" >> "$GITHUB_OUTPUT"
+          node -e "const m=require('./build-manifest.json');console.log(\`\${m.fichiers} fichiers, \${m.octetsAvant} → \${m.octetsApres} octets (\${m.gainPourcent} %)\`)"
+
+      - name: Vérifier l'intégrité de l'artefact
+        # Garde-fou contre un build vide ou tronqué : un dist/ sans
+        # index.html ou sans les trois scripts serait déployable sans
+        # qu'aucun test précédent ne s'en aperçoive.
+        run: |
+          set -euo pipefail
+          for f in index.html assets/app.js assets/config.js assets/images.js assets/style.css; do
+            test -s "dist/$f" || { echo "::error::dist/$f manquant ou vide"; exit 1; }
+          done
+
+      - name: Test de fumée (navigateur, sur dist/)
+        run: npm run test:smoke
+
+      - name: Contrat du pont Make.com
+        # Vérifie les DEUX transports du pont : le noyau est déjà couvert
+        # par les tests unitaires, mais un scénario Make.com passe par
+        # HTTP — c'est ce chemin-là qu'il faut prouver.
+        run: |
+          set -euo pipefail
+          echo '{"action":"ping"}' | node tools/make-bridge.js | node -e "
+            let b='';process.stdin.on('data',c=>b+=c).on('end',()=>{
+              const r=JSON.parse(b);           // JSON.parse strict : la sortie DOIT être parsable telle quelle
+              if(!r.ok) { console.error(b); process.exit(1); }
+              console.log('CLI : ok');
+            });"
+          export RBI_BRIDGE_TOKEN="ci-$(openssl rand -hex 16)"
+          node tools/make-bridge.js --serve 8099 &
+          for i in $(seq 1 50); do curl -sf -o /dev/null -X POST http://127.0.0.1:8099/bridge -H "x-rbi-token: $RBI_BRIDGE_TOKEN" -d '{"action":"ping"}' && break || sleep 0.2; done
+          code=$(curl -s -o /tmp/rep.json -w '%{http_code}' -X POST http://127.0.0.1:8099/bridge -H "x-rbi-token: $RBI_BRIDGE_TOKEN" -d '{"action":"site.manifest"}')
+          test "$code" = "200" || { echo "::error::HTTP $code"; cat /tmp/rep.json; exit 1; }
+          node -e "const r=require('/tmp/rep.json'); if(!r.ok) process.exit(1); console.log('HTTP : ok —', r.data.sections.join(', '))"
+          # Le rejet sans jeton fait partie du contrat : le vérifier ici
+          # évite qu'un pont soit un jour exposé sans authentification.
+          code=$(curl -s -o /dev/null -w '%{http_code}' -X POST http://127.0.0.1:8099/bridge -d '{"action":"ping"}')
+          test "$code" = "401" || { echo "::error::jeton non exigé (HTTP $code)"; exit 1; }
+          kill %1
+
+      - name: Publier l'artefact
+        uses: actions/upload-artifact@v4
+        with:
+          name: site-dist
+          path: |
+            dist/
+            build-manifest.json
+          retention-days: 7
+          # `if-no-files-found: error` : sans cela, un build silencieusement
+          # vide produirait un artefact vide, déployable tel quel.
+          if-no-files-found: error

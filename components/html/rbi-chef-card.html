@@ -1,0 +1,116 @@
+<!-- ═══════════════════════════════════════════════════════════════
+     RBI — Composant isolé : CARTE DE DIGNITAIRE
+     Fichier autonome : à copier tel quel dans une page, un iframe,
+     un bloc « embed » (Canva, Notion, Wix…) ou un CMS.
+
+     ── ISOLATION : POURQUOI CES CONTRAINTES ────────────────────
+     Le composant atterrit dans une page dont on ne connaît NI le CSS
+     NI le JS. Trois règles en découlent, toutes visibles ci-dessous :
+
+     1. Tout est préfixé `rbi-` et confiné sous la racine `.rbi-chef`.
+        Aucun sélecteur d'élément nu (`h3`, `img`) n'est écrit hors de
+        cette racine : le composant ne peut donc pas repeindre la page
+        d'accueil qui l'héberge.
+     2. Les variables de thème sont déclarées SUR la racine, pas sur
+        `:root`. Deux composants RBI aux couleurs différentes peuvent
+        ainsi cohabiter, et le thème de l'hôte n'écrase pas le nôtre.
+     3. Les propriétés qu'un CSS hôte agressif redéfinit le plus
+        souvent (font, line-height, color, box-sizing) sont réaffirmées
+        explicitement sur la racine et ses descendants. Un `all: initial`
+        serait plus radical mais casserait l'héritage volontaire et
+        coûterait cher à la moindre personnalisation.
+
+     ── DONNÉES ─────────────────────────────────────────────────
+     Le contenu vit dans le balisage, pas dans un script : un éditeur
+     visuel (Canva, CMS) doit pouvoir le modifier sans toucher au code,
+     et le composant doit rester lisible sans JavaScript.
+     Pour la photo : remplacer la valeur de `src`. Laisser `src=""`
+     affiche automatiquement l'initiale de repli (voir `.rbi-chef__ph`).
+════════════════════════════════════════════════════════════════ -->
+<div class="rbi-chef" data-rbi-component="chef-card">
+  <style>
+    /* Portée : chaque règle commence par .rbi-chef — aucune fuite possible. */
+    .rbi-chef {
+      /* Thème local, surchargeable de l'extérieur par un style inline
+         sur cette même balise : <div class="rbi-chef" style="--rbi-or:#b08d57"> */
+      --rbi-or:        #C9A84C;
+      --rbi-or-clair:  #E8C96A;
+      --rbi-noir:      #0d0d0d;
+      --rbi-noir-2:    #1a1a1a;
+      --rbi-blanc:     #F5F0E8;
+      /* Piles de polices complètes : les polices Google ne sont PAS
+         chargées ici. Un composant embarqué ne doit pas imposer une
+         requête réseau tierce à la page hôte — et dans un embed Canva,
+         cette requête est souvent bloquée. Le rendu reste correct avec
+         les polices du système. */
+      --rbi-titre:     'Cinzel', 'Cinzel Decorative', 'Trajan Pro', Georgia, 'Times New Roman', serif;
+      --rbi-corps:     'EB Garamond', Georgia, 'Times New Roman', serif;
+
+      box-sizing: border-box;
+      display: inline-block;
+      width: 100%;
+      max-width: 320px;
+      padding: 1.75rem 1.25rem;
+      text-align: center;
+      background: linear-gradient(180deg, var(--rbi-noir-2) 0%, var(--rbi-noir) 100%);
+      border: 1px solid rgba(201, 168, 76, 0.28);
+      border-radius: 4px;
+      color: var(--rbi-blanc);
+      font-family: var(--rbi-corps);
+      line-height: 1.6;
+      /* `contain: layout style` isole les recalculs de mise en page du
+         composant : utile quand l'hôte en affiche plusieurs dizaines. */
+      contain: layout style;
+    }
+    .rbi-chef *, .rbi-chef *::before, .rbi-chef *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    .rbi-chef__photo-wrap {
+      position: relative;
+      width: 130px; height: 130px;
+      margin: 0 auto 1rem;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 2px solid var(--rbi-or);
+      background: var(--rbi-noir-2);
+    }
+    .rbi-chef__photo { width: 100%; height: 100%; object-fit: cover; display: block; position: relative; z-index: 2; }
+    /* Repli sans JavaScript : une image sans source est masquée par ce
+       sélecteur d'attribut, laissant apparaître l'initiale placée en
+       dessous. Aucun script, aucune image de remplacement à héberger. */
+    .rbi-chef__photo[src=""], .rbi-chef__photo:not([src]) { display: none; }
+    .rbi-chef__ph {
+      position: absolute; inset: 0; z-index: 1;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--rbi-titre); font-size: 3rem; color: var(--rbi-or);
+      background: var(--rbi-noir-2);
+    }
+
+    .rbi-chef__grade {
+      display: inline-block;
+      padding: 0.2rem 0.75rem;
+      margin-bottom: 0.6rem;
+      font-family: var(--rbi-titre);
+      font-size: 0.72rem; letter-spacing: 0.14em;
+      color: var(--rbi-noir); background: var(--rbi-or);
+      border-radius: 2px;
+    }
+    .rbi-chef__nom   { font-family: var(--rbi-titre); font-size: 1.05rem; letter-spacing: 0.06em; color: var(--rbi-blanc); margin-bottom: 0.35rem; }
+    .rbi-chef__titre { font-size: 0.9rem; color: var(--rbi-or-clair); font-style: italic; }
+    .rbi-chef__role  { font-size: 0.82rem; color: #9a9a9a; margin-top: 0.3rem; }
+
+    /* Accessibilité : le composant reste utilisable si l'utilisateur a
+       demandé la réduction des animations — ici, pas d'animation du
+       tout, mais la règle documente l'intention pour les variantes. */
+    @media (prefers-reduced-motion: reduce) { .rbi-chef, .rbi-chef * { transition: none !important; animation: none !important; } }
+  </style>
+
+  <div class="rbi-chef__photo-wrap">
+    <!-- alt et initiale doivent rester cohérents avec le nom ci-dessous -->
+    <img class="rbi-chef__photo" src="" alt="Portrait de Mickaël DARMON">
+    <span class="rbi-chef__ph" aria-hidden="true">M</span>
+  </div>
+  <span class="rbi-chef__grade">33°-96°</span>
+  <h3 class="rbi-chef__nom">T∴I∴F∴ Mickaël DARMON</h3>
+  <p class="rbi-chef__titre">Souverain Grand Commandeur</p>
+  <p class="rbi-chef__role">Fondateur et Grand Maître</p>
+</div>

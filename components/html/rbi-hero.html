@@ -1,0 +1,103 @@
+<!-- ═══════════════════════════════════════════════════════════════
+     RBI — Composant isolé : BANDEAU D'ACCUEIL (hero)
+
+     ── CIEL ÉTOILÉ SANS JAVASCRIPT ─────────────────────────────
+     Le site génère 120 étoiles en JS. Ici, le même effet est obtenu
+     en CSS pur, par des dégradés radiaux répétés. Raison : un embed
+     (Canva, newsletter, CMS) exécute rarement le JavaScript qu'on lui
+     confie, et un bandeau qui perdrait son décor n'aurait plus d'objet.
+     Le compromis : les étoiles sont régulières au lieu d'être
+     aléatoires — invisible à l'usage, et le composant reste purement
+     déclaratif, donc rendu identiquement partout.
+
+     ── TYPOGRAPHIE HÉBRAÏQUE ───────────────────────────────────
+     `dir="rtl"` est porté par l'élément hébreu lui-même et non par la
+     racine : mêler les deux directions sur un même conteneur
+     déplacerait la ponctuation latine de façon imprévisible.
+════════════════════════════════════════════════════════════════ -->
+<section class="rbi-hero" data-rbi-component="hero">
+  <style>
+    .rbi-hero {
+      --rbi-or:       #C9A84C;
+      --rbi-or-clair: #E8C96A;
+      --rbi-noir:     #080808;
+      --rbi-blanc:    #F5F0E8;
+      --rbi-titre:    'Cinzel Decorative', 'Cinzel', 'Trajan Pro', Georgia, serif;
+      --rbi-sous:     'Cinzel', 'Trajan Pro', Georgia, serif;
+      --rbi-corps:    'EB Garamond', Georgia, 'Times New Roman', serif;
+
+      box-sizing: border-box;
+      position: relative; isolation: isolate;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      width: 100%; min-height: 420px;
+      padding: 3rem 1.5rem;
+      text-align: center;
+      color: var(--rbi-blanc);
+      font-family: var(--rbi-corps);
+      background: radial-gradient(ellipse at 50% 30%, #14120c 0%, var(--rbi-noir) 65%);
+      overflow: hidden;
+    }
+    .rbi-hero *, .rbi-hero *::before, .rbi-hero *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* Ciel : trois couches de points de tailles et de densités
+       différentes, animées en opacité. `will-change` est volontairement
+       omis — sur une couche plein écran, il force une texture en mémoire
+       vidéo pour un gain nul sur une animation d'opacité. */
+    .rbi-hero::before {
+      content: ''; position: absolute; inset: 0; z-index: -1;
+      background-image:
+        radial-gradient(1.4px 1.4px at 20% 30%, rgba(245,240,232,0.75) 50%, transparent 51%),
+        radial-gradient(1px 1px   at 70% 20%, rgba(245,240,232,0.55) 50%, transparent 51%),
+        radial-gradient(1.6px 1.6px at 45% 75%, rgba(201,168,76,0.55) 50%, transparent 51%),
+        radial-gradient(1px 1px   at 85% 60%, rgba(245,240,232,0.45) 50%, transparent 51%),
+        radial-gradient(1.2px 1.2px at 10% 80%, rgba(245,240,232,0.5) 50%, transparent 51%);
+      background-size: 240px 240px, 180px 180px, 320px 320px, 200px 200px, 260px 260px;
+      animation: rbi-scintille 5s ease-in-out infinite alternate;
+    }
+    @keyframes rbi-scintille { from { opacity: 0.45; } to { opacity: 1; } }
+
+    .rbi-hero__bandeau { font-family: var(--rbi-sous); font-size: 0.75rem; letter-spacing: 0.22em; color: var(--rbi-or); margin-bottom: 1.5rem; }
+    .rbi-hero__sceau   { width: 110px; height: 110px; margin-bottom: 1.2rem; object-fit: contain; }
+    .rbi-hero__sceau[src=""], .rbi-hero__sceau:not([src]) { display: none; }
+
+    .rbi-hero__titre    { font-family: var(--rbi-titre); font-size: clamp(1.8rem, 5vw, 3rem); letter-spacing: 0.05em; color: var(--rbi-blanc); line-height: 1.2; }
+    .rbi-hero__hebreu   { display: block; font-size: clamp(1.2rem, 3.5vw, 2rem); color: var(--rbi-or); margin-top: 0.4rem; }
+    .rbi-hero__sous     { max-width: 640px; margin: 1.1rem auto 0; font-size: 1rem; color: #cfc9bd; }
+    .rbi-hero__sous em  { display: block; margin-top: 0.4rem; font-size: 0.92rem; color: #a8a298; }
+
+    .rbi-hero__cta { display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center; margin-top: 1.8rem; }
+    .rbi-hero__btn {
+      display: inline-block; padding: 0.65rem 1.5rem;
+      font-family: var(--rbi-sous); font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase;
+      text-decoration: none; border: 1px solid var(--rbi-or); border-radius: 2px;
+      transition: background 0.25s ease, color 0.25s ease;
+    }
+    .rbi-hero__btn--plein { background: var(--rbi-or); color: var(--rbi-noir); }
+    .rbi-hero__btn--vide  { background: transparent; color: var(--rbi-or); }
+    .rbi-hero__btn--plein:hover { background: var(--rbi-or-clair); }
+    .rbi-hero__btn--vide:hover  { background: rgba(201,168,76,0.12); }
+    .rbi-hero__btn:focus-visible { outline: 2px solid var(--rbi-or-clair); outline-offset: 2px; }
+
+    .rbi-hero__ornement { margin-top: 1.6rem; color: var(--rbi-or); letter-spacing: 0.8rem; font-size: 0.8rem; }
+
+    /* L'animation du ciel est purement décorative : elle est coupée net
+       pour qui a demandé moins de mouvement, sans dégrader le contenu. */
+    @media (prefers-reduced-motion: reduce) { .rbi-hero::before { animation: none; opacity: 0.7; } }
+  </style>
+
+  <p class="rbi-hero__bandeau">A∴L∴G∴G∴A∴D∴L'∴U∴ — ב∴ס∴ד∴</p>
+  <img class="rbi-hero__sceau" src="" alt="Sceau du Rite Brith Israël">
+  <h1 class="rbi-hero__titre">
+    Rite Brith Israël<sup>®</sup>
+    <span class="rbi-hero__hebreu" dir="rtl" lang="he">ברית ישראל</span>
+  </h1>
+  <p class="rbi-hero__sous">
+    Rite Maçonnique Historique d'inspiration Kabbalistique en 33 degrés.
+    <em>Alliance de Lumière entre les Peuples, fidélité à la Tradition Hébraïque, universalité de la Franc-Maçonnerie.</em>
+  </p>
+  <div class="rbi-hero__cta">
+    <a class="rbi-hero__btn rbi-hero__btn--plein" href="https://www.brith-israel.org/#rite">Découvrir le Rite</a>
+    <a class="rbi-hero__btn rbi-hero__btn--vide" href="https://www.brith-israel.org/devenir-fm.html">Devenir Franc-Maçon</a>
+  </div>
+  <p class="rbi-hero__ornement" aria-hidden="true">✦ ✧ ✦</p>
+</section>

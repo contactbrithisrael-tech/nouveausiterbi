@@ -1,0 +1,56 @@
+.
+|-- .github
+|   `-- workflows
+|       |-- ci.yml
+|       `-- deploy.yml
+|-- .gitignore
+|-- Constitution_RBI_repaginee_V7.pdf
+|-- Fiche_Individuelle_Adhesion_RBI.pdf
+|-- Formulaire_Demande_Patente_BI.pdf
+|-- README.md
+|-- app.js
+|-- assets
+|   |-- app.js
+|   |-- config.js
+|   |-- images-extra.js
+|   |-- images.js
+|   `-- style.css
+|-- backup
+|   |-- app.js
+|   |-- config.js
+|   |-- images.js
+|   |-- index.html
+|   |-- roue.html
+|   `-- style.css
+|-- components
+|   |-- demo.html
+|   |-- html
+|   |   |-- rbi-book-card.html
+|   |   |-- rbi-chef-card.html
+|   |   |-- rbi-hero.html
+|   |   `-- rbi-tuilage.html
+|   `-- react
+|       `-- rbi-components.jsx
+|-- config.js
+|-- devenir-fm.html
+|-- espace-membres.html
+|-- files.zip
+|-- galerie.html
+|-- images.js
+|-- index.html
+|-- llms.txt
+|-- package-lock.json
+|-- package.json
+|-- roue.html
+|-- structure.txt
+|-- style.css
+|-- tools
+|   |-- build.mjs
+|   |-- make-bridge.js
+|   |-- make-bridge.schema.json
+|   |-- smoke-test.mjs
+|   |-- test-components.mjs
+|   `-- test.mjs
+`-- traites.html
+
+9 directories, 45 files

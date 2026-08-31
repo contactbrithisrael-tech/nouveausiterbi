@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RBI — Galerie des composants isolés</title>
+<!-- ═══════════════════════════════════════════════════════════════
+     PAGE DE DÉMONSTRATION — vitrine ET test manuel des composants.
+
+     ── POURQUOI DES IFRAMES POUR LES COMPOSANTS HTML ───────────
+     Chaque composant HTML est chargé dans son propre iframe, et non
+     inséré dans cette page. C'est la seule façon de PROUVER leur
+     isolation : dans un iframe, un composant qui déborderait sur son
+     hôte (règle CSS globale, variable `:root`, `id` en collision) ne
+     pourrait de toute façon rien casser ici, et l'on verrait
+     immédiatement s'il dépend du contexte de la page.
+     Le CSS volontairement agressif de cette page (`* { ... }`,
+     variables `--rbi-*` détournées) sert de piège : les composants
+     React, eux, sont montés DANS la page et doivent y survivre.
+
+     ── REACT SANS BUILD ────────────────────────────────────────
+     React et Babel sont chargés par balise <script> depuis un CDN.
+     Babel compile le JSX dans le navigateur : c'est lent et réservé à
+     la démonstration — jamais à la production, où le JSX doit être
+     compilé en amont. Ce choix évite d'imposer une chaîne d'outils
+     pour simplement REGARDER les composants.
+════════════════════════════════════════════════════════════════ -->
+<style>
+  /* Piège volontaire : un thème hôte hostile, censé ne PAS traverser
+     l'isolation des composants (voir commentaire ci-dessus). */
+  :root { --rbi-or: #ff0000; --rbi-blanc: #00ff00; }
+  * { font-family: 'Comic Sans MS', cursive; }
+  body { margin: 0; background: #111; color: #ddd; font-family: system-ui, sans-serif; }
+  header { padding: 2rem 1.5rem 1rem; border-bottom: 1px solid #333; }
+  h1 { font-size: 1.2rem; letter-spacing: .1em; text-transform: uppercase; color: #C9A84C; margin: 0 0 .4rem; }
+  p.sous { margin: 0; color: #888; font-size: .9rem; }
+  section { padding: 2rem 1.5rem; border-bottom: 1px solid #222; }
+  h2 { font-size: .8rem; letter-spacing: .16em; text-transform: uppercase; color: #C9A84C; margin: 0 0 1rem; }
+  .rangee { display: flex; flex-wrap: wrap; gap: 1.5rem; align-items: flex-start; }
+  iframe { width: 100%; border: 1px dashed #333; background: transparent; }
+  code { color: #C9A84C; font-family: ui-monospace, monospace; font-size: .8rem; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Composants isolés — Rite Brith Israël</h1>
+  <p class="sous">
+    HTML/CSS autonomes (en <code>iframe</code>, pour démontrer l'isolation) et composants React montés
+    directement dans cette page, dont le CSS est volontairement hostile.
+  </p>
+</header>
+
+<section>
+  <h2>HTML / CSS — hero</h2>
+  <iframe src="html/rbi-hero.html" height="480" title="Composant hero" loading="lazy"></iframe>
+</section>
+
+<section>
+  <h2>HTML / CSS — carte de dignitaire &amp; fiche de publication</h2>
+  <div class="rangee">
+    <iframe src="html/rbi-chef-card.html" height="430" style="max-width:360px" title="Composant carte de dignitaire" loading="lazy"></iframe>
+    <iframe src="html/rbi-book-card.html" height="430" style="max-width:680px" title="Composant fiche de publication" loading="lazy"></iframe>
+  </div>
+</section>
+
+<section>
+  <h2>HTML / CSS — tuilage</h2>
+  <iframe src="html/rbi-tuilage.html" height="380" style="max-width:600px" title="Composant tuilage" loading="lazy"></iframe>
+</section>
+
+<section>
+  <h2>React — montés dans cette page (CSS hôte hostile)</h2>
+  <div id="racine-react"></div>
+</section>
+
+<!-- Versions épinglées : une version flottante ferait dépendre le
+     rendu de la démonstration de la date à laquelle on l'ouvre. -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js" crossorigin></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.26.4/babel.min.js" crossorigin></script>
+
+<script>
+/* ── Chargement des composants React SANS build ─────────────────
+   Babel-standalone ne transforme QUE le code qu'on lui donne : il ne
+   suit pas les `import`. Un <script type="text/babel"> qui importerait
+   le fichier .jsx ferait donc télécharger ce fichier par le
+   navigateur, qui échouerait aussitôt sur la syntaxe JSX.
+
+   D'où ce chargeur : on récupère le VRAI fichier de composants, on le
+   transforme (JSX + modules ES → CommonJS), puis on l'exécute avec un
+   `require` minimal qui résout « react » vers le global chargé par
+   balise. La démonstration teste ainsi le fichier réellement livré,
+   sans qu'aucune copie n'en soit faite.
+
+   ⚠ Cette page doit être servie en http:// (fetch est interdit sur
+   file://) et cette compilation navigateur reste réservée à la
+   démonstration : en production, le JSX se compile en amont. */
+(function () {
+  var cible = document.getElementById('racine-react');
+
+  function erreur(message) {
+    cible.innerHTML = '';
+    var p = document.createElement('p');
+    p.style.color = '#b4544a';
+    p.textContent = 'Composants React non chargés : ' + message;
+    cible.appendChild(p);
+  }
+
+  if (typeof React === 'undefined' || typeof ReactDOM === 'undefined' || typeof Babel === 'undefined') {
+    return erreur('React ou Babel n\'a pas pu être chargé depuis le CDN (réseau ou blocage).');
+  }
+
+  fetch('./react/rbi-components.jsx')
+    .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); })
+    .then(function (source) {
+      var code = Babel.transform(source, {
+        presets: ['react'],
+        plugins: ['transform-modules-commonjs'],
+        sourceType: 'module'
+      }).code;
+
+      /* `require` minimal : le fichier de composants n'importe que
+         React. Tout autre import doit échouer bruyamment plutôt que
+         de renvoyer un objet vide, qui produirait une erreur bien plus
+         difficile à diagnostiquer à l'exécution. */
+      function requireLocal(nom) {
+        if (nom === 'react') return React;
+        if (nom === 'react-dom') return ReactDOM;
+        throw new Error('dépendance non prévue dans la démonstration : ' + nom);
+      }
+
+      var module_ = { exports: {} };
+      new Function('require', 'module', 'exports', code)(requireLocal, module_, module_.exports);
+      var C = module_.exports;
+
+      var h = React.createElement;
+      var galerie = h(React.StrictMode, null,
+        h('div', { style: { display: 'flex', flexDirection: 'column', gap: '1.5rem' } },
+          h(C.RbiHero, { titreFr: 'Rite Brith Israël' }),
+          h('div', { style: { display: 'flex', flexWrap: 'wrap', gap: '1.5rem', alignItems: 'flex-start' } },
+            h(C.RbiChefCard, { onClick: function () { console.log('[demo] carte cliquée — point d\'extension onClick'); } }),
+            /* Thème surchargé par prop : démontre que les couleurs sont
+               pilotables sans toucher au CSS du composant. */
+            h(C.RbiChefCard, { nom: 'Jean-Michel RAUX', grade: '32°', titre: 'Grand Maître Adjoint', role: 'Grand Trésorier', theme: { or: '#8fa6c9', 'or-clair': '#b9cbe8' } })
+          ),
+          h(C.RbiBookCard, {}),
+          h(C.RbiTuilage, { onSucces: function () { console.log('[demo] tuilage réussi'); } })
+        )
+      );
+      ReactDOM.createRoot(cible).render(galerie);
+    })
+    .catch(function (e) { erreur(e.message); });
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,16 @@
+# Artefacts de build — régénérés par « npm run build », jamais versionnés :
+# les versionner ferait diverger la copie déployée de sa source.
+dist/
+build-manifest.json
+
+# Outillage local
+node_modules/
+npm-debug.log*
+.DS_Store
+
+# Secrets de déploiement : ils vivent dans les secrets GitHub Actions
+# (voir .github/workflows/deploy.yml), jamais dans le dépôt.
+.env
+.env.*
+*.pem
+deploy-key*

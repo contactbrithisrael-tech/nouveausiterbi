@@ -1,0 +1,217 @@
+# ═══════════════════════════════════════════════════════════════
+# RITE BRITH ISRAËL — Déploiement en production
+#
+# ── RÈGLE ABSOLUE : ON NE DÉPLOIE QUE CE QUI A ÉTÉ VALIDÉ ─────
+# Le job `deployer` dépend de `ci`, qui INVOQUE le workflow CI
+# complet (tests → build → test de fumée). L'artefact déployé est
+# celui produit par cette exécution, jamais un build refait ici :
+# reconstruire donnerait un artefact non testé, à un octet près.
+#
+# ── DEUX TRANSPORTS, UN SEUL ARTEFACT ────────────────────────
+# FTP et SSH/rsync coexistent parce que les hébergements mutualisés
+# n'offrent souvent que le premier. Chaque transport s'active à la
+# seule présence de ses secrets : aucun paramétrage à maintenir en
+# double, et un dépôt sans secret ne déploie rien plutôt que
+# d'échouer bruyamment à chaque push.
+#
+# ── SECRETS ATTENDUS (Settings → Secrets → Actions) ──────────
+#   FTP  : FTP_SERVER, FTP_USERNAME, FTP_PASSWORD, FTP_REMOTE_DIR
+#   SSH  : SSH_HOST, SSH_USER, SSH_PORT, SSH_TARGET_DIR,
+#          SSH_PRIVATE_KEY, SSH_KNOWN_HOSTS
+#   Vérif: PROD_URL (facultatif — contrôle post-déploiement)
+# Aucune de ces valeurs ne figure dans le dépôt : elles ne sont
+# lisibles que par les exécutions de l'environnement « production ».
+# ═══════════════════════════════════════════════════════════════
+name: Déploiement production
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      transport:
+        description: "Transport à utiliser"
+        type: choice
+        options: [auto, ftp, ssh, aucun]
+        default: auto
+      simulation:
+        description: "Simulation (rsync --dry-run, FTP non exécuté)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+# Un seul déploiement à la fois, et JAMAIS d'annulation en cours de
+# route : interrompre un transfert laisserait le serveur avec un site
+# à moitié copié. La file d'attente est préférable à l'incohérence.
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  ci:
+    # Réutilisation du workflow de vérification : une seule définition
+    # des tests pour tout le dépôt (voir ci.yml).
+    uses: ./.github/workflows/ci.yml
+
+  deployer:
+    name: Transfert vers la production
+    needs: ci
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    # L'environnement « production » permet d'exiger une approbation
+    # manuelle et de restreindre l'accès aux secrets côté GitHub.
+    environment:
+      name: production
+      url: ${{ vars.PROD_URL }}
+
+    env:
+      # Les secrets sont projetés en variables d'environnement au niveau
+      # du job : les conditions `if:` peuvent alors tester leur présence,
+      # ce que le contexte `secrets` ne permet pas partout de façon fiable.
+      FTP_SERVER:     ${{ secrets.FTP_SERVER }}
+      FTP_USERNAME:   ${{ secrets.FTP_USERNAME }}
+      FTP_PASSWORD:   ${{ secrets.FTP_PASSWORD }}
+      FTP_REMOTE_DIR: ${{ secrets.FTP_REMOTE_DIR }}
+      SSH_HOST:       ${{ secrets.SSH_HOST }}
+      SSH_USER:       ${{ secrets.SSH_USER }}
+      SSH_PORT:       ${{ secrets.SSH_PORT }}
+      SSH_TARGET_DIR: ${{ secrets.SSH_TARGET_DIR }}
+      TRANSPORT:      ${{ github.event.inputs.transport || 'auto' }}
+      SIMULATION:     ${{ github.event.inputs.simulation || 'false' }}
+
+    steps:
+      - name: Récupérer le dépôt
+        uses: actions/checkout@v4
+
+      - name: Récupérer l'artefact validé
+        uses: actions/download-artifact@v4
+        with:
+          name: site-dist
+
+      - name: Vérifier l'empreinte de l'artefact
+        # L'artefact transite par le stockage de GitHub entre deux jobs :
+        # on revérifie qu'il porte bien l'empreinte calculée à la
+        # construction avant d'en publier le contenu.
+        run: |
+          set -euo pipefail
+          test -s dist/index.html || { echo "::error::artefact vide"; exit 1; }
+          attendue="${{ needs.ci.outputs.empreinte }}"
+          obtenue=$(node -p "require('./build-manifest.json').empreinte")
+          echo "empreinte CI      : $attendue"
+          echo "empreinte artefact: $obtenue"
+          test "$attendue" = "$obtenue" || { echo "::error::l'artefact ne correspond pas au build validé"; exit 1; }
+
+      # ── Transport 1 : SSH / rsync ────────────────────────────────
+      # Préféré quand il est disponible : transfert chiffré, delta au
+      # lieu d'une recopie intégrale, et suppression fiable des fichiers
+      # retirés du site — trois choses que le FTP fait mal ou pas.
+      - name: Préparer la clé SSH
+        if: env.SSH_HOST != '' && env.TRANSPORT != 'ftp' && env.TRANSPORT != 'aucun'
+        run: |
+          set -euo pipefail
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_deploy
+          chmod 600 ~/.ssh/id_deploy
+          # Empreinte du serveur fournie explicitement. On n'utilise
+          # JAMAIS StrictHostKeyChecking=no : cela accepterait n'importe
+          # quel hôte se présentant à cette adresse, et livrerait le
+          # contenu — voire la clé — à une machine intermédiaire.
+          printf '%s\n' "${{ secrets.SSH_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+          test -s ~/.ssh/known_hosts || { echo "::error::SSH_KNOWN_HOSTS requis (ssh-keyscan -p PORT HOTE)"; exit 1; }
+
+      - name: Déployer par rsync (SSH)
+        if: env.SSH_HOST != '' && env.TRANSPORT != 'ftp' && env.TRANSPORT != 'aucun'
+        run: |
+          set -euo pipefail
+          port="${SSH_PORT:-22}"
+          cible="${SSH_TARGET_DIR:?SSH_TARGET_DIR requis}"
+          options="-rlvz --checksum --delete --delete-after"
+          # --checksum plutôt que la comparaison date+taille : l'artefact
+          # est reconstruit à chaque exécution, ses horodatages sont donc
+          # toujours neufs et un transfert intégral serait relancé sans
+          # raison à chaque déploiement.
+          # --delete-after : les suppressions n'ont lieu qu'une fois les
+          # nouveaux fichiers en place, pour ne jamais laisser le site
+          # amputé pendant le transfert.
+          if [ "$SIMULATION" = "true" ]; then options="$options --dry-run"; echo "→ SIMULATION"; fi
+          rsync $options \
+            --exclude '.git*' --exclude 'node_modules' \
+            -e "ssh -i ~/.ssh/id_deploy -p $port -o StrictHostKeyChecking=yes -o UserKnownHostsFile=~/.ssh/known_hosts" \
+            dist/ "$SSH_USER@$SSH_HOST:$cible"
+
+      # ── Transport 2 : FTP ────────────────────────────────────────
+      # Repli pour les hébergements mutualisés sans accès shell.
+      # N'est joué que si SSH n'est pas configuré, ou s'il est demandé
+      # explicitement : déployer deux fois le même contenu par deux
+      # canaux doublerait la durée sans rien apporter.
+      - name: Déployer par FTP
+        if: >-
+          env.FTP_SERVER != '' && env.TRANSPORT != 'ssh' && env.TRANSPORT != 'aucun' &&
+          (env.SSH_HOST == '' || env.TRANSPORT == 'ftp') && env.SIMULATION != 'true'
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          # FTPS par défaut : le FTP simple ferait transiter identifiants
+          # et contenu en clair. Basculer sur `ftp` uniquement si
+          # l'hébergeur ne propose vraiment aucun chiffrement.
+          protocol: ftps
+          local-dir: ./dist/
+          server-dir: ${{ secrets.FTP_REMOTE_DIR }}
+          # L'action tient un état de synchronisation côté serveur pour
+          # n'envoyer que les fichiers modifiés : indispensable ici, le
+          # site pesant plusieurs dizaines de mégaoctets à cause des PDF.
+          state-name: .ftp-deploy-state.json
+          dangerous-clean-slate: false
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+
+      - name: Aucun transport configuré
+        if: >-
+          (env.SSH_HOST == '' && env.FTP_SERVER == '') || env.TRANSPORT == 'aucun'
+        # Étape informative et non bloquante : un dépôt fraîchement cloné
+        # (ou un fork) n'a aucun secret. Échouer ici rendrait rouge chaque
+        # push sur main sans qu'aucun code ne soit en cause.
+        run: |
+          echo "::warning::aucun secret de déploiement — artefact construit et validé, non transféré"
+          echo "Configurer FTP_* ou SSH_* dans Settings → Secrets → Actions."
+
+      # ── Contrôle post-déploiement ────────────────────────────────
+      - name: Vérifier la production
+        if: vars.PROD_URL != '' && env.SIMULATION != 'true' && env.TRANSPORT != 'aucun'
+        run: |
+          set -euo pipefail
+          url="${{ vars.PROD_URL }}"
+          # Un transfert « réussi » ne prouve rien : seul le site
+          # réellement servi fait foi. On contrôle le code HTTP puis la
+          # présence des scripts, dont l'absence viderait la page.
+          code=$(curl -sS -o /tmp/prod.html -w '%{http_code}' --max-time 30 "$url")
+          test "$code" = "200" || { echo "::error::$url répond $code"; exit 1; }
+          for f in assets/config.js assets/app.js assets/images.js; do
+            grep -q "$f" /tmp/prod.html || { echo "::error::$f absent de la page servie"; exit 1; }
+            fcode=$(curl -sS -o /dev/null -w '%{http_code}' --max-time 60 "${url%/}/$f")
+            test "$fcode" = "200" || { echo "::error::${url%/}/$f répond $fcode"; exit 1; }
+          done
+          echo "✓ production servie et complète : $url"
+
+      - name: Résumé
+        if: always()
+        run: |
+          {
+            echo "### Déploiement — ${{ job.status }}"
+            echo ""
+            echo "| Élément | Valeur |"
+            echo "| --- | --- |"
+            echo "| Commit | \`${{ github.sha }}\` |"
+            echo "| Empreinte du build | \`${{ needs.ci.outputs.empreinte }}\` |"
+            echo "| Transport demandé | \`${TRANSPORT}\` |"
+            echo "| SSH configuré | ${{ env.SSH_HOST != '' }} |"
+            echo "| FTP configuré | ${{ env.FTP_SERVER != '' }} |"
+            echo "| Simulation | \`${SIMULATION}\` |"
+          } >> "$GITHUB_STEP_SUMMARY"

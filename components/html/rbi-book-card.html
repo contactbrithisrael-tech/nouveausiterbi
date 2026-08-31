@@ -1,0 +1,101 @@
+<!-- ═══════════════════════════════════════════════════════════════
+     RBI — Composant isolé : FICHE DE PUBLICATION
+     Mêmes règles d'isolation que rbi-chef-card.html (préfixe `rbi-`,
+     variables portées par la racine, aucune police distante).
+
+     ── DISPOSITION ─────────────────────────────────────────────
+     Grille à deux colonnes qui repasse sur une colonne sous 480 px.
+     Le point de rupture est exprimé en `container query` avec repli
+     `@media` : dans un embed, la largeur de la fenêtre n'est PAS
+     celle du composant — un iframe de 300 px dans une page de 1400 px
+     resterait en deux colonnes avec la seule media query. La container
+     query mesure le composant lui-même, ce qui est la seule mesure
+     juste ici ; le repli couvre les navigateurs qui l'ignorent.
+════════════════════════════════════════════════════════════════ -->
+<div class="rbi-livre" data-rbi-component="book-card">
+  <style>
+    .rbi-livre {
+      --rbi-or:       #C9A84C;
+      --rbi-or-clair: #E8C96A;
+      --rbi-noir:     #0d0d0d;
+      --rbi-noir-2:   #1a1a1a;
+      --rbi-blanc:    #F5F0E8;
+      --rbi-titre:    'Cinzel', 'Trajan Pro', Georgia, 'Times New Roman', serif;
+      --rbi-corps:    'EB Garamond', Georgia, 'Times New Roman', serif;
+
+      box-sizing: border-box;
+      display: block;
+      width: 100%;
+      max-width: 640px;
+      /* Déclare le composant comme conteneur de requête : c'est ce qui
+         rend la règle @container plus bas mesurable. */
+      container-type: inline-size;
+      container-name: rbi-livre;
+      background: var(--rbi-noir);
+      border: 1px solid rgba(201, 168, 76, 0.28);
+      border-radius: 4px;
+      color: var(--rbi-blanc);
+      font-family: var(--rbi-corps);
+      line-height: 1.65;
+      overflow: hidden;
+    }
+    .rbi-livre *, .rbi-livre *::before, .rbi-livre *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    .rbi-livre__grille { display: grid; grid-template-columns: 180px 1fr; gap: 1.25rem; padding: 1.25rem; align-items: start; }
+    @container rbi-livre (max-width: 480px) { .rbi-livre__grille { grid-template-columns: 1fr; } }
+    /* Repli pour les navigateurs sans container queries : moins juste
+       (mesure la fenêtre) mais préférable à une carte écrasée. */
+    @supports not (container-type: inline-size) {
+      @media (max-width: 480px) { .rbi-livre__grille { grid-template-columns: 1fr; } }
+    }
+
+    .rbi-livre__cover { position: relative; aspect-ratio: 2 / 3; background: var(--rbi-noir-2); border: 1px solid rgba(201,168,76,0.25); border-radius: 3px; overflow: hidden; }
+    .rbi-livre__img   { width: 100%; height: 100%; object-fit: cover; display: block; position: relative; z-index: 2; }
+    .rbi-livre__img[src=""], .rbi-livre__img:not([src]) { display: none; }
+    .rbi-livre__ph    { position: absolute; inset: 0; z-index: 1; display: flex; align-items: center; justify-content: center; font-family: var(--rbi-titre); font-size: 3.5rem; color: rgba(201,168,76,0.55); }
+
+    .rbi-livre__titre { font-family: var(--rbi-titre); font-size: 1.15rem; letter-spacing: 0.04em; color: var(--rbi-blanc); }
+    .rbi-livre__sous  { font-size: 0.85rem; color: var(--rbi-or-clair); font-style: italic; margin: 0.2rem 0 0.6rem; }
+    .rbi-livre__desc  { font-size: 0.92rem; color: #b9b4aa; }
+    .rbi-livre__liens { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.9rem; }
+
+    .rbi-livre__btn {
+      display: inline-block;
+      padding: 0.45rem 1rem;
+      font-family: var(--rbi-titre); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase;
+      text-decoration: none;
+      border: 1px solid var(--rbi-or);
+      border-radius: 2px;
+      transition: background 0.25s ease, color 0.25s ease;
+    }
+    .rbi-livre__btn--plein { background: var(--rbi-or); color: var(--rbi-noir); }
+    .rbi-livre__btn--vide  { background: transparent; color: var(--rbi-or); }
+    .rbi-livre__btn--plein:hover { background: var(--rbi-or-clair); color: var(--rbi-noir); }
+    .rbi-livre__btn--vide:hover  { background: rgba(201,168,76,0.12); color: var(--rbi-or-clair); }
+    /* Le focus visible n'est jamais supprimé : dans un embed, le clavier
+       est souvent le seul moyen d'atteindre ces liens. */
+    .rbi-livre__btn:focus-visible { outline: 2px solid var(--rbi-or-clair); outline-offset: 2px; }
+
+    @media (prefers-reduced-motion: reduce) { .rbi-livre *, .rbi-livre *::before { transition: none !important; animation: none !important; } }
+  </style>
+
+  <div class="rbi-livre__grille">
+    <div class="rbi-livre__cover">
+      <img class="rbi-livre__img" src="" alt="Couverture de L'Alliance de Lumière">
+      <span class="rbi-livre__ph" aria-hidden="true">L</span>
+    </div>
+    <div>
+      <h3 class="rbi-livre__titre">L'Alliance de Lumière</h3>
+      <p class="rbi-livre__sous">Tome I — Rituel du Rite Brith Israël</p>
+      <p class="rbi-livre__desc">Le premier tome des rituels du Rite Brith Israël, publié aux éditions CoolLibri. Fondement doctrinal et initiatique du Rite.</p>
+      <div class="rbi-livre__liens">
+        <!-- rel="noopener" systématique sur target="_blank" : sans lui,
+             la page ouverte accède à window.opener et peut rediriger la
+             page hôte. Le composant ne doit jamais introduire ce risque
+             chez celui qui l'intègre. -->
+        <a class="rbi-livre__btn rbi-livre__btn--plein" href="https://www.coollibri.com/bibliotheque-en-ligne/mickael-darmon/brith-israel-lalliance-de-lumiere_1428718" target="_blank" rel="noopener noreferrer">CoolLibri</a>
+        <a class="rbi-livre__btn rbi-livre__btn--vide" href="https://www.brith-israel.org" target="_blank" rel="noopener noreferrer">En savoir plus</a>
+      </div>
+    </div>
+  </div>
+</div>

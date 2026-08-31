@@ -1,0 +1,253 @@
+<!-- ═══════════════════════════════════════════════════════════════
+     RBI — Composant isolé : TUILAGE (questionnaire séquentiel)
+
+     ⚠ PORTÉE — identique à celle du site : ce composant FILTRE un
+     usage, il ne PROTÈGE rien. Questions, réponses et lien final sont
+     dans la page, donc lisibles par quiconque ouvre le code source.
+     Ne jamais y mettre d'URL réellement confidentielle : utiliser un
+     lien signé ou une page authentifiée côté serveur.
+
+     ── ARCHITECTURE ────────────────────────────────────────────
+     • Données dans un <script type="application/json"> plutôt que dans
+       le code : un type MIME inerte n'est PAS exécuté par le navigateur,
+       reste éditable sans risque de casser la logique, et sépare
+       contenu et comportement comme le fait config.js sur le site.
+     • Aucune variable globale : tout vit dans une IIFE. Plusieurs
+       instances peuvent coexister dans la même page.
+     • Les éléments sont retrouvés par `racine.querySelector(...)`,
+       jamais par `document.getElementById(...)` : un `id` unique
+       interdirait la seconde instance, et entrerait en collision avec
+       les `id` de la page hôte.
+════════════════════════════════════════════════════════════════ -->
+<div class="rbi-tuilage" data-rbi-component="tuilage">
+  <style>
+    .rbi-tuilage {
+      --rbi-or:       #C9A84C;
+      --rbi-or-clair: #E8C96A;
+      --rbi-noir:     #0d0d0d;
+      --rbi-noir-2:   #1a1a1a;
+      --rbi-blanc:    #F5F0E8;
+      --rbi-rouge:    #b4544a;
+      --rbi-titre:    'Cinzel', 'Trajan Pro', Georgia, 'Times New Roman', serif;
+      --rbi-corps:    'EB Garamond', Georgia, 'Times New Roman', serif;
+
+      box-sizing: border-box;
+      display: block; width: 100%; max-width: 560px;
+      padding: 2rem 1.5rem;
+      text-align: center;
+      background: radial-gradient(ellipse at top, var(--rbi-noir-2) 0%, var(--rbi-noir) 70%);
+      border: 1px solid rgba(201,168,76,0.3);
+      border-radius: 4px;
+      color: var(--rbi-blanc); font-family: var(--rbi-corps); line-height: 1.6;
+    }
+    .rbi-tuilage *, .rbi-tuilage *::before, .rbi-tuilage *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    .rbi-tuilage__titre { font-family: var(--rbi-titre); font-size: 1.3rem; letter-spacing: 0.08em; color: var(--rbi-or); margin-bottom: 0.4rem; }
+    .rbi-tuilage__intro { font-size: 0.92rem; color: #b9b4aa; margin-bottom: 1.4rem; }
+
+    /* Une seule étape visible à la fois — même invariant que sur le
+       site : on masque tout, puis on révèle la cible. */
+    .rbi-tuilage__etape { display: none; }
+    .rbi-tuilage__etape[data-visible="1"] { display: block; }
+
+    .rbi-tuilage__question { font-family: var(--rbi-titre); font-size: 1.05rem; color: var(--rbi-blanc); margin-bottom: 0.9rem; }
+    .rbi-tuilage__saisie   { display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; }
+    .rbi-tuilage__input {
+      flex: 1 1 220px; min-width: 0;
+      padding: 0.6rem 0.85rem;
+      background: rgba(0,0,0,0.45); color: var(--rbi-blanc);
+      border: 1px solid rgba(201,168,76,0.4); border-radius: 2px;
+      font-family: var(--rbi-corps); font-size: 1rem;
+    }
+    .rbi-tuilage__input:focus { outline: 2px solid var(--rbi-or); outline-offset: 1px; }
+
+    .rbi-tuilage__btn {
+      padding: 0.6rem 1.2rem;
+      font-family: var(--rbi-titre); font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase;
+      background: var(--rbi-or); color: var(--rbi-noir);
+      border: 1px solid var(--rbi-or); border-radius: 2px; cursor: pointer;
+      transition: background 0.25s ease;
+    }
+    .rbi-tuilage__btn:hover { background: var(--rbi-or-clair); }
+    .rbi-tuilage__btn--vide { background: transparent; color: var(--rbi-or); }
+    .rbi-tuilage__btn:focus-visible { outline: 2px solid var(--rbi-or-clair); outline-offset: 2px; }
+
+    .rbi-tuilage__retour { min-height: 1.4rem; margin-top: 0.7rem; font-size: 0.88rem; }
+    .rbi-tuilage__retour[data-type="ok"]    { color: var(--rbi-or-clair); }
+    .rbi-tuilage__retour[data-type="error"] { color: var(--rbi-rouge); }
+
+    .rbi-tuilage__icone { display: block; font-size: 2.2rem; color: var(--rbi-or); margin-bottom: 0.5rem; }
+    .rbi-tuilage__lien  { display: inline-block; margin-top: 1rem; padding: 0.55rem 1.2rem; font-family: var(--rbi-titre); font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none; background: var(--rbi-or); color: var(--rbi-noir); border-radius: 2px; }
+
+    @media (prefers-reduced-motion: reduce) { .rbi-tuilage * { transition: none !important; animation: none !important; } }
+  </style>
+
+  <!-- Contenu éditable sans toucher au script. Le type MIME
+       « application/json » garantit que le navigateur ne l'exécute pas. -->
+  <script type="application/json" class="rbi-tuilage__data">
+  {
+    "titre": "Tuilage Maçonnique",
+    "intro": "Frère, avant d'accéder aux documents réservés, veuillez répondre aux questions de tuilage.",
+    "maxEssais": 3,
+    "delaiMs": 900,
+    "questions": [
+      { "texte": "D'où venez-vous ?", "reponses": ["de saint jean", "saint jean", "loge de saint jean", "loge st jean", "de la loge saint jean"] },
+      { "texte": "Quel âge avez-vous ?", "reponses": ["3 ans", "5 ans", "7 ans", "trois ans", "cinq ans", "sept ans", "3", "5", "7", "7 ans et plus"] }
+    ],
+    "succes": { "icone": "✡", "titre": "Frère reconnu", "message": "M∴T∴C∴S∴ — Que la Lumière vous guide.", "lien": { "label": "Accéder aux documents", "url": "#" } },
+    "echec":  { "message": "Je ne saurais vous reconnaître, Profane." }
+  }
+  </script>
+
+  <div class="rbi-tuilage__zone"></div>
+</div>
+
+<script>
+/* IIFE : aucune variable ne fuit vers la page hôte. */
+(function () {
+  'use strict';
+
+  /* `document.currentScript` capture la balise en cours d'exécution :
+     c'est le seul moyen fiable de retrouver SA racine quand plusieurs
+     instances du composant coexistent — un querySelector global
+     rattacherait toutes les instances à la première. */
+  var script = document.currentScript;
+  var racine = script.previousElementSibling;
+  while (racine && !racine.classList.contains('rbi-tuilage')) racine = racine.previousElementSibling;
+  if (!racine) return;
+
+  var brut = racine.querySelector('.rbi-tuilage__data');
+  var cfg;
+  try { cfg = JSON.parse(brut.textContent); }
+  catch (e) {
+    /* Échec explicite et LOCAL : le composant affiche son erreur au
+       lieu de laisser un bloc vide et muet dans la page hôte. */
+    racine.textContent = 'Tuilage : configuration JSON invalide (' + e.message + ')';
+    return;
+  }
+
+  /* Normalisation identique à celle du site (app.js) : accents, casse
+     et ponctuation neutralisés des deux côtés de la comparaison. */
+  function normalise(s) {
+    return (s || '').toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ').trim();
+  }
+
+  var zone = racine.querySelector('.rbi-tuilage__zone');
+  var etapes = {};
+  var essais = cfg.questions.map(function () { return 0; });
+
+  function el(tag, cls, texte) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    /* textContent et jamais innerHTML : le contenu vient d'un JSON
+       éditable par un tiers ; l'insérer en HTML ouvrirait une injection
+       de script dans la page qui héberge le composant. */
+    if (texte !== undefined) e.textContent = texte;
+    return e;
+  }
+
+  function etape(nom) {
+    var d = el('div', 'rbi-tuilage__etape');
+    d.setAttribute('data-etape', nom);
+    etapes[nom] = d; zone.appendChild(d); return d;
+  }
+
+  function montrer(nom) {
+    Object.keys(etapes).forEach(function (k) { etapes[k].removeAttribute('data-visible'); });
+    if (etapes[nom]) etapes[nom].setAttribute('data-visible', '1');
+  }
+
+  racine.insertBefore(el('h3', 'rbi-tuilage__titre', cfg.titre), zone);
+  racine.insertBefore(el('p', 'rbi-tuilage__intro', cfg.intro), zone);
+
+  /* Étape de départ */
+  var depart = etape('start');
+  var btnStart = el('button', 'rbi-tuilage__btn', 'Commencer le Tuilage');
+  btnStart.type = 'button';
+  depart.appendChild(btnStart);
+
+  /* Une étape par question, toutes construites d'avance : les
+     écouteurs sont posés une seule fois et survivent au parcours,
+     y compris après « Recommencer ». */
+  cfg.questions.forEach(function (q, idx) {
+    var e = etape('q' + idx);
+    e.appendChild(el('p', 'rbi-tuilage__question', q.texte));
+    var groupe = el('div', 'rbi-tuilage__saisie');
+    var input = el('input', 'rbi-tuilage__input');
+    input.type = 'text'; input.autocomplete = 'off'; input.placeholder = 'Votre réponse…';
+    input.setAttribute('aria-label', q.texte);
+    var btn = el('button', 'rbi-tuilage__btn', 'Répondre');
+    btn.type = 'button';
+    groupe.appendChild(input); groupe.appendChild(btn);
+    e.appendChild(groupe);
+    var retour = el('p', 'rbi-tuilage__retour');
+    /* aria-live : la réponse est annoncée aux lecteurs d'écran, qui
+       ne perçoivent pas un changement de texte silencieux. */
+    retour.setAttribute('aria-live', 'polite');
+    e.appendChild(retour);
+
+    function verifier() {
+      var val = normalise(input.value);
+      var ok = val !== '' && q.reponses.some(function (r) { return normalise(r) === val; });
+      if (ok) {
+        retour.textContent = 'Bien répondu, Frère.';
+        retour.setAttribute('data-type', 'ok');
+        setTimeout(function () {
+          if (idx + 1 < cfg.questions.length) {
+            montrer('q' + (idx + 1));
+            var suivant = etapes['q' + (idx + 1)].querySelector('.rbi-tuilage__input');
+            if (suivant) suivant.focus();
+          } else montrer('succes');
+        }, cfg.delaiMs || 900);
+      } else {
+        essais[idx]++;
+        if (essais[idx] >= (cfg.maxEssais || 3)) { montrer('echec'); return; }
+        retour.textContent = 'Je ne vous reconnais pas. Essai ' + essais[idx] + '/' + (cfg.maxEssais || 3) + '.';
+        retour.setAttribute('data-type', 'error');
+        input.value = ''; input.focus();
+      }
+    }
+    btn.addEventListener('click', verifier);
+    input.addEventListener('keydown', function (ev) { if (ev.key === 'Enter') verifier(); });
+  });
+
+  /* Succès */
+  var succes = etape('succes');
+  succes.appendChild(el('span', 'rbi-tuilage__icone', cfg.succes.icone));
+  succes.appendChild(el('h4', 'rbi-tuilage__question', cfg.succes.titre));
+  succes.appendChild(el('p', '', cfg.succes.message));
+  if (cfg.succes.lien && cfg.succes.lien.url) {
+    var lien = el('a', 'rbi-tuilage__lien', cfg.succes.lien.label);
+    lien.href = cfg.succes.lien.url;
+    /* Ouverture dans un nouvel onglet : le composant est souvent
+       embarqué dans un iframe étroit, où une navigation interne
+       enfermerait le visiteur. */
+    lien.target = '_blank'; lien.rel = 'noopener noreferrer';
+    succes.appendChild(lien);
+  }
+
+  /* Échec */
+  var echec = etape('echec');
+  echec.appendChild(el('span', 'rbi-tuilage__icone', '✕'));
+  echec.appendChild(el('p', '', cfg.echec.message));
+  var btnRetry = el('button', 'rbi-tuilage__btn rbi-tuilage__btn--vide', 'Recommencer');
+  btnRetry.type = 'button';
+  echec.appendChild(btnRetry);
+
+  btnStart.addEventListener('click', function () {
+    montrer('q0');
+    var premier = etapes.q0.querySelector('.rbi-tuilage__input');
+    if (premier) premier.focus();
+  });
+  btnRetry.addEventListener('click', function () {
+    essais = cfg.questions.map(function () { return 0; });
+    racine.querySelectorAll('.rbi-tuilage__input').forEach(function (i) { i.value = ''; });
+    racine.querySelectorAll('.rbi-tuilage__retour').forEach(function (r) { r.textContent = ''; r.removeAttribute('data-type'); });
+    montrer('start');
+  });
+
+  montrer('start');
+})();
+</script>

@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://www.brith-israel.org/schemas/make-bridge-1.0.0.json",
+  "title": "RBI Make.com bridge — contrat d'entrée/sortie",
+  "description": "Contrat versionné du pont tools/make-bridge.js. Il est publié en JSON Schema plutôt que décrit en prose pour rester vérifiable par machine : Make.com peut en dériver la structure d'un module, et la CI l'utilise comme test de non-régression du format. Toute évolution incompatible impose un nouvel $id (1.1.0, 2.0.0...) : les scénarios Make.com déjà déployés continuent alors de fonctionner sur l'ancien contrat.",
+  "type": "object",
+  "$defs": {
+    "requete": {
+      "type": "object",
+      "required": ["action"],
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "type": "string",
+          "description": "Nom de l'opération. Espace de noms « domaine.verbe » : le préfixe regroupe les actions d'un même domaine et laisse la place à de nouveaux domaines sans collision.",
+          "enum": ["ping", "site.manifest", "content.get", "tuilage.verify", "contact.normalize"]
+        },
+        "params": {
+          "type": "object",
+          "description": "Paramètres de l'action. Objet et non tableau : un paramètre ajouté plus tard reste rétrocompatible, ce qu'une liste positionnelle ne permettrait pas.",
+          "default": {}
+        },
+        "requestId": {
+          "type": ["string", "null"],
+          "maxLength": 128,
+          "description": "Identifiant opaque renvoyé tel quel dans la réponse. Permet à Make.com de corréler requête et réponse dans ses journaux sans que le pont ait à tenir un état."
+        }
+      }
+    },
+    "reponse": {
+      "type": "object",
+      "required": ["ok", "action", "requestId", "meta"],
+      "description": "Enveloppe UNIQUE et invariante : quel que soit le résultat, les mêmes clés de premier niveau sont présentes. Un scénario Make.com peut donc être câblé une seule fois, puis router sur « ok », sans branche conditionnelle sur la forme du message.",
+      "properties": {
+        "ok": { "type": "boolean" },
+        "action": { "type": ["string", "null"] },
+        "requestId": { "type": ["string", "null"] },
+        "data": { "description": "Présent si ok = true. Forme dépendante de l'action." },
+        "error": { "$ref": "#/$defs/erreur" },
+        "meta": {
+          "type": "object",
+          "required": ["durationMs", "at"],
+          "properties": {
+            "durationMs": { "type": "integer", "minimum": 0 },
+            "at": { "type": "string", "format": "date-time" }
+          }
+        }
+      },
+      "oneOf": [
+        { "required": ["data"], "properties": { "ok": { "const": true } } },
+        { "required": ["error"], "properties": { "ok": { "const": false } } }
+      ]
+    },
+    "erreur": {
+      "type": "object",
+      "required": ["code", "message"],
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": "Code stable, destiné au branchement automatique. Le message, lui, est humain et peut changer sans préavis : ne jamais router dessus.",
+          "enum": [
+            "E_EMPTY_BODY", "E_INVALID_JSON", "E_NOT_AN_OBJECT", "E_BODY_TOO_LARGE",
+            "E_MISSING_ACTION", "E_UNKNOWN_ACTION", "E_BAD_PARAMS", "E_BAD_PARAM",
+            "E_FORBIDDEN_PATH", "E_PATH_NOT_FOUND",
+            "E_CONFIG_UNREADABLE", "E_CONFIG_INVALID", "E_CONFIG_MISSING",
+            "E_METHOD_NOT_ALLOWED", "E_NOT_FOUND", "E_UNAUTHORIZED", "E_INTERNAL"
+          ]
+        },
+        "message": { "type": "string" },
+        "details": { "type": ["object", "array", "string", "null"] }
+      }
+    }
+  },
+  "properties": {
+    "request":  { "$ref": "#/$defs/requete" },
+    "response": { "$ref": "#/$defs/reponse" }
+  },
+  "examples": [
+    {
+      "request":  { "action": "tuilage.verify", "params": { "answers": { "q1": "de saint jean", "q2": "7 ans" } }, "requestId": "make-42" },
+      "response": { "ok": true, "action": "tuilage.verify", "requestId": "make-42", "data": { "reconnu": true, "message": "", "details": [] }, "meta": { "durationMs": 2, "at": "2026-01-01T00:00:00.000Z" } }
+    },
+    {
+      "request":  { "action": "inexistante" },
+      "response": { "ok": false, "action": "inexistante", "requestId": null, "error": { "code": "E_UNKNOWN_ACTION", "message": "action inconnue : inexistante", "details": null }, "meta": { "durationMs": 0, "at": "2026-01-01T00:00:00.000Z" } }
+    }
+  ]
+}
