@@ -157,6 +157,28 @@ python scripts/ingest.py data/incoming/ --category reglements --tags interne,202
 
 Formats pris en charge : **PDF, EPUB, DOCX, TXT, Markdown, CSV, JSON/JSONL**.
 
+### Corpus RBI (documents officiels du Rite)
+
+```bash
+python scripts/import_rbi.py --dry-run   # que va-t-il être importé ?
+python scripts/import_rbi.py             # importe le corpus
+python scripts/import_rbi.py --library   # + la bibliothèque personnelle
+```
+
+Le script cherche les documents dans cet ordre : `--source`, puis
+`JOSHUA_RBI_SOURCE`, puis `data/incoming/rbi/`, puis la racine du dépôt du
+site — où les PDF publiés se trouvent déjà. **Les originaux ne sont ni
+copiés, ni déplacés, ni modifiés.**
+
+Sur le repli « racine du dépôt », le parcours est volontairement **à plat et
+restreint aux formats documentaires** (`.pdf`, `.epub`, `.docx`) : un dépôt
+contient des `.json` et des `.md` qui sont du code et de la configuration,
+pas des documents. Un dossier désigné explicitement, lui, n'est pas restreint.
+
+Les documents importés portent `category=rbi`, `source=rbi_officiel` et les
+étiquettes `rbi, officiel` — ce sont ces valeurs qui permettent de filtrer
+une recherche sur le seul corpus de l'Ordre.
+
 ### Bibliothèque existante (iCloud, NAS, disque externe)
 
 ```bash
@@ -399,7 +421,15 @@ Une ingestion dure des heures. La lancer dans le processus qui répond aux
 utilisateurs le rendrait indisponible. La commande affiche l'état et rappelle
 l'invocation à exécuter côté serveur.
 
-### 13. Polling par défaut, webhook sans réécriture
+### 13. Inventaire et import parcourent le même ensemble
+
+`ingerer()` accepte `extensions` et `profondeur_max`, et `import_rbi.py`
+passe les **mêmes** règles à son inventaire (`--dry-run`) et à son import.
+Deux chemins de code qui « filtrent pareil » finissent toujours par filtrer
+différemment : lors de la vérification, l'aperçu annonçait 3 documents et
+l'ingestion réelle en avalait 18, dont `package.json` et `structure.txt`.
+
+### 14. Polling par défaut, webhook sans réécriture
 
 `construire_application()` renvoie la même `Application` dans les deux cas ;
 seule la réception change. Passer en webhook, c'est régler `TELEGRAM_MODE`,
@@ -408,7 +438,7 @@ modifié. La route webhook vérifie le jeton secret et traite la mise à jour en
 tâche de fond : Telegram réémet toute mise à jour non acquittée en quelques
 secondes, et une réponse de vingt secondes produirait des doublons.
 
-### 14. Dégradation plutôt qu'arrêt
+### 15. Dégradation plutôt qu'arrêt
 
 Redis absent : le cache et la limitation basculent en mémoire locale. Qdrant
 absent : Joshua converse sans documents et le dit. PostgreSQL absent : `/health`
@@ -470,7 +500,7 @@ parcourue : un volume iCloud non monté ne peut pas vider l'index.
 make test          # ou : python -m pytest tests/ -v
 ```
 
-87 tests, aucune infrastructure requise : ni PostgreSQL, ni Qdrant, ni Redis,
+97 tests, aucune infrastructure requise : ni PostgreSQL, ni Qdrant, ni Redis,
 ni clé Anthropic, ni modèle d'embeddings. Une suite qui exige une
 infrastructure n'est pas exécutée, donc ne protège de rien.
 
@@ -484,6 +514,7 @@ infrastructure n'est pas exécutée, donc ne protège de rien.
 | `test_securite.py` | injection par documents, masquage des secrets |
 | `test_memoire.py` | alternance des rôles, injection du résumé |
 | `test_ingestion.py` | iCloud, dispatch, lots, isolation des erreurs |
+| `test_import_rbi.py` | sélection des sources, règles de scan partagées |
 | `test_integration_qdrant.py` | ingestion → recherche de bout en bout (Qdrant local) |
 
 Le test d'intégration utilise le moteur Qdrant **embarqué** du client

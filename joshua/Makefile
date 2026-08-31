@@ -1,7 +1,7 @@
 # ═══════════════════════════════════════════════════════════════
 # Joshua — commandes de développement
 # ═══════════════════════════════════════════════════════════════
-.PHONY: install dev up down logs ingest scan index test migrate lint clean help
+.PHONY: install dev up down logs ingest import-rbi scan index test migrate lint clean help
 .DEFAULT_GOAL := help
 
 VENV    ?= .venv
@@ -33,6 +33,9 @@ logs: ## Suit les journaux de Joshua
 
 ingest: ## Ingère data/incoming/
 	$(PYTHON) scripts/ingest.py data/incoming/
+
+import-rbi: ## Importe le corpus documentaire du Rite Brith Israël
+	$(PYTHON) scripts/import_rbi.py
 
 scan: ## Inventorie la bibliothèque sans rien indexer
 	$(PYTHON) scripts/index_library.py --scan

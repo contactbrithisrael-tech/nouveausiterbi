@@ -226,6 +226,8 @@ def ingerer(
     tags: list[str] | None = None,
     progression: Callable[[str, Compteurs], None] | None = None,
     supprimer_absents: bool = False,
+    extensions: set[str] | None = None,
+    profondeur_max: int | None = None,
 ) -> Compteurs:
     """Ingère un dossier entier.
 
@@ -233,6 +235,13 @@ def ingerer(
     que les fichiers nouveaux ou modifiés. Le mode incrémental est le défaut
     parce que c'est celui qu'on exécute cent fois, alors qu'une reconstruction
     complète est un événement rare.
+
+    ``extensions`` et ``profondeur_max`` sont transmis tels quels à
+    ``parcourir``. Ils EXISTENT pour que l'inventaire préalable (mode
+    « --dry-run » d'un script d'import) et l'import réel parcourent
+    exactement le même ensemble de fichiers. Sans eux, un appelant pouvait
+    restreindre son inventaire puis lancer une ingestion non restreinte :
+    l'aperçu annonçait trois documents et l'import en avalait deux cents.
     """
     compteurs = Compteurs()
     assurer_collection(settings, provider.dimension)
@@ -242,7 +251,12 @@ def ingerer(
     vus_sur_disque: set[str] = set()
     dedup = DeduplicateurChunks()
 
-    for fichier in parcourir(racine, taille_max_mo=settings.INGEST_MAX_FILE_MB):
+    for fichier in parcourir(
+        racine,
+        extensions=extensions,
+        taille_max_mo=settings.INGEST_MAX_FILE_MB,
+        profondeur_max=profondeur_max,
+    ):
         compteurs.vus += 1
         chemin_str = str(fichier.chemin)
         vus_sur_disque.add(chemin_str)

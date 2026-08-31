@@ -78,6 +78,7 @@ def parcourir(
     racine: str | Path,
     extensions: set[str] | None = None,
     taille_max_mo: int = 512,
+    profondeur_max: int | None = None,
 ) -> Iterator[FichierDecouvert]:
     """Parcourt récursivement un dossier et produit les fichiers exploitables.
 
@@ -88,6 +89,11 @@ def parcourir(
     ``os.walk`` plutôt que ``Path.rglob`` : il permet d'élaguer les dossiers
     ignorés EN PLACE (via ``dirs[:]``), donc de ne jamais descendre dans un
     ``node_modules`` ou un dossier de corbeille.
+
+    ``profondeur_max=0`` limite le parcours aux fichiers de la racine. C'est
+    ce qui permet de désigner comme source un dossier qui contient AUSSI
+    autre chose (le dépôt d'un projet, un dossier personnel) sans aspirer
+    son arborescence entière.
     """
     racine = Path(racine).expanduser()
     if not racine.exists():
@@ -96,8 +102,16 @@ def parcourir(
     taille_max = taille_max_mo * 1024 * 1024
 
     for dossier, sous_dossiers, fichiers in os.walk(racine, followlinks=False):
-        sous_dossiers[:] = [d for d in sous_dossiers if d not in DOSSIERS_IGNORES and not d.startswith(".")]
         base = Path(dossier)
+        profondeur = len(base.relative_to(racine).parts)
+        if profondeur_max is not None and profondeur >= profondeur_max:
+            # Élagage en place : les sous-dossiers ne sont pas seulement
+            # ignorés, ils ne sont jamais ouverts.
+            sous_dossiers[:] = []
+        else:
+            sous_dossiers[:] = [
+                d for d in sous_dossiers if d not in DOSSIERS_IGNORES and not d.startswith(".")
+            ]
 
         for nom in fichiers:
             chemin = base / nom

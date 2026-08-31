@@ -254,3 +254,30 @@ def test_identifiants_de_chunk_deterministes(tmp_path, espions):
     attendus = [str(_uuid.uuid5(_uuid.UUID(doc_id), str(i))) for i in range(len(premiers))]
     assert len(set(premiers)) == len(premiers)  # pas de collision
     assert len(attendus) == len(premiers)
+
+
+def test_profondeur_max_limite_le_parcours(tmp_path):
+    """Un dossier source peut contenir autre chose que des documents.
+
+    Sans limite de profondeur, désigner la racine d'un dépôt comme source
+    aspirerait tout son arborescence.
+    """
+    (tmp_path / "sous" / "encore").mkdir(parents=True)
+    (tmp_path / "racine.pdf").write_bytes(b"%PDF")
+    (tmp_path / "sous" / "profond.pdf").write_bytes(b"%PDF")
+    (tmp_path / "sous" / "encore" / "tres_profond.pdf").write_bytes(b"%PDF")
+
+    assert {f.chemin_relatif for f in parcourir(tmp_path, profondeur_max=0)} == {"racine.pdf"}
+    assert {f.chemin_relatif for f in parcourir(tmp_path, profondeur_max=1)} == {
+        "racine.pdf",
+        "sous/profond.pdf",
+    }
+    assert len(list(parcourir(tmp_path))) == 3  # sans limite
+
+
+def test_filtre_par_extension(tmp_path):
+    (tmp_path / "doc.pdf").write_bytes(b"%PDF")
+    (tmp_path / "config.json").write_text("{}")
+    (tmp_path / "notes.md").write_text("# x")
+    trouves = {f.chemin_relatif for f in parcourir(tmp_path, extensions={".pdf", ".epub"})}
+    assert trouves == {"doc.pdf"}

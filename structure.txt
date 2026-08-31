@@ -115,6 +115,7 @@
 |   |-- pytest.ini
 |   |-- requirements.txt
 |   |-- scripts
+|   |   |-- import_rbi.py
 |   |   |-- index_library.py
 |   |   |-- ingest.py
 |   |   `-- reindex.py
@@ -123,6 +124,7 @@
 |       |-- conftest.py
 |       |-- test_chunking.py
 |       |-- test_deduplication.py
+|       |-- test_import_rbi.py
 |       |-- test_ingestion.py
 |       |-- test_integration_qdrant.py
 |       |-- test_memoire.py
@@ -145,4 +147,4 @@
 |   `-- test.mjs
 `-- traites.html
 
-28 directories, 118 files
+28 directories, 120 files
