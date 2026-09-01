@@ -1,0 +1,32 @@
+# Redirections Cloudflare Pages
+#
+# Le domaine brith-israel.org servait un site Wix. Les adresses de ce site-là
+# n'existent pas ici : sans redirection, chaque lien déjà partagé, référencé
+# par Google ou publié sur Facebook tomberait sur une page introuvable, et le
+# référencement accumulé depuis décembre 2025 serait perdu.
+#
+# ► À COMPLÉTER avec les adresses réelles de l'ancien site.
+#   Pour les obtenir : ouvrez https://www.brith-israel.org/sitemap.xml avant la
+#   bascule, ou relevez les pages dans l'éditeur Wix (Pages et menu).
+#   Chaque ligne s'écrit :  /ancienne-adresse  /nouvelle-page.html  301
+#   Le code 301 dit à Google que le déplacement est définitif et lui fait
+#   transférer le référencement vers la nouvelle adresse.
+
+# ── Blog Wix ──────────────────────────────────────────────────────────
+# L'article « Légitimité du Rite Brith Israël » publié sur le blog Wix
+# correspond à la page Légitimité de ce site.
+/post/*                     /legitimite.html            301
+/blog                       /legitimite.html            301
+/blog/*                     /legitimite.html            301
+
+# ── Pages usuelles d'un site Wix francophone ──────────────────────────
+# Décommentez et corrigez celles qui existaient réellement.
+# /accueil                  /index.html                 301
+# /a-propos                 /legitimite.html            301
+# /à-propos                 /legitimite.html            301
+# /contact                  /index.html#contact         301
+# /nous-rejoindre           /devenir-fm.html            301
+# /devenir-franc-macon      /devenir-fm.html            301
+# /membres                  /espace-membres.html        301
+# /galerie                  /galerie.html               301
+# /traites                  /traites.html               301
