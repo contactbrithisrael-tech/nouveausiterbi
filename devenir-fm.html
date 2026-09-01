@@ -60,7 +60,7 @@
 <a href="index.html" style="position:fixed;top:1rem;left:1rem;z-index:999;color:#c9a84c;font-family:Georgia,serif;font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;border:1px solid rgba(201,168,76,.4);padding:.4rem .9rem;background:rgba(13,13,13,.9);text-decoration:none;">← Accueil</a>
 
 <div class="hero">
-  <img id="header-seal" class="header-logo" src="" alt="Sceau RBI">
+  <img id="hero-seal" class="header-logo" src="" alt="Sceau RBI">
   <span class="hero__etoile">✡</span>
   <h1 class="hero__titre">Devenir Franc-Maçon</h1>
   <p class="hero__sous">Au sein du Rite Brith Israël</p>
@@ -222,6 +222,22 @@
     </div>
   </div>
   <div class="faq__item">
+    <div class="faq__question">Le Rite Brith Israël est-il un rite légitime ?</div>
+    <div class="faq__reponse">
+      C'est la question la plus légitime que l'on puisse poser, et elle mérite une réponse
+      documentée plutôt qu'une déclaration. Le Rite est jeune — fondé le 20 décembre 2025 —
+      et il ne revendique ni filiation antique ni reconnaissance par les obédiences dites
+      régulières au sens anglais. Sa légitimité repose sur des éléments vérifiables :
+      le parcours maçonnique de son fondateur au Rite Écossais Ancien et Accepté,
+      son appartenance au Suprême Conseil du 33<sup>e</sup> degré en Occitanie et à
+      l'Institution Maçonnique Universelle, l'adhésion du Rite à la Fédération Maçonnique
+      Internationale des Grades Supérieurs, et les traités signés avec des juridictions
+      souveraines sur quatre continents.
+      <br><br>
+      <a href="legitimite.html" style="color:var(--or);">→ Tout est détaillé sur la page Légitimité, filiation et vocabulaire</a>
+    </div>
+  </div>
+  <div class="faq__item">
     <div class="faq__question">Combien de temps dure le processus d'initiation ?</div>
     <div class="faq__reponse">
       Entre <strong style="color:var(--or);">12 et 18 mois</strong> en règle générale, entre le dépôt de votre dossier et votre initiation.
@@ -242,14 +258,7 @@
 
 <script src="assets/images.js"></script>
 <script src="assets/images-extra.js"></script>
-<script>
-  window.addEventListener('load', function() {
-    if(window.IMG && IMG.SEAL) {
-      var s = document.getElementById('header-seal');
-      if(s) s.src = IMG.SEAL;
-    }
-  });
-</script>
+
 
 </body>
 </html>

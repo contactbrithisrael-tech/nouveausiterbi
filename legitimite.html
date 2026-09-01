@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Légitimité, filiation et vocabulaire — Rite Brith Israël</title>
+  <meta name="description" content="D'où vient le Rite Brith Israël, sur quelles filiations il s'appuie, ce que signifient réellement ses titres — et ce qu'il ne prétend pas être.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://www.brith-israel.org/legitimite.html">
+  <meta property="og:type"        content="article">
+  <meta property="og:site_name"   content="Rite Brith Israël">
+  <meta property="og:locale"      content="fr_FR">
+  <meta property="og:title"       content="Légitimité, filiation et vocabulaire — Rite Brith Israël">
+  <meta property="og:description" content="D'où vient le Rite, sur quelles filiations il s'appuie, ce que signifient réellement ses titres — et ce qu'il ne prétend pas être.">
+  <meta property="og:url"         content="https://www.brith-israel.org/legitimite.html">
+  <meta property="og:image"       content="https://www.brith-israel.org/assets/og-image.jpg">
+  <style>
+    :root { --or:#c9a84c; --or2:#e8c96a; --fond:#0d0d0d; --fond2:#141414; --fond3:#1a1a1a; --texte:#e8e0d0; --gris:#8d8d8d; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { background:var(--fond); color:var(--texte); font-family:'Georgia',serif; min-height:100vh; line-height:1.75; }
+    img { max-width:100%; }
+
+    .retour { position:fixed; top:1rem; left:1rem; z-index:999; color:var(--or); font-size:.8rem;
+              letter-spacing:.1em; text-transform:uppercase; border:1px solid rgba(201,168,76,.4);
+              padding:.4rem .9rem; background:rgba(13,13,13,.9); text-decoration:none; }
+    .retour:hover { background:var(--or); color:var(--fond); }
+
+    .hero { text-align:center; padding:5rem 1.5rem 3rem;
+            background:radial-gradient(ellipse at center,rgba(201,168,76,.06) 0%,transparent 70%);
+            border-bottom:1px solid rgba(201,168,76,.2); }
+    .hero__logo { width:88px; height:88px; object-fit:contain; margin:0 auto 1.2rem; display:block; opacity:.92; }
+    .hero__titre { font-size:2.1rem; font-variant:small-caps; letter-spacing:.14em; color:var(--or); margin-bottom:.5rem; }
+    .hero__sous { font-size:.95rem; color:var(--gris); font-style:italic; }
+    .hero__intro { max-width:720px; margin:1.6rem auto 0; font-size:1rem; }
+
+    .sep { width:60px; height:1px; background:var(--or); margin:1.4rem auto; opacity:.5; }
+
+    main { max-width:880px; margin:0 auto; padding:0 1.5rem 4rem; }
+    section { padding:3.2rem 0 1rem; border-bottom:1px solid rgba(201,168,76,.13); }
+    section:last-of-type { border-bottom:none; }
+    h2 { font-variant:small-caps; letter-spacing:.13em; color:var(--or); font-size:1.5rem;
+         text-align:center; margin-bottom:.3rem; }
+    h3 { font-variant:small-caps; letter-spacing:.08em; color:var(--or2); font-size:1.05rem; margin:1.8rem 0 .5rem; }
+    p { margin-bottom:1rem; font-size:.95rem; }
+    strong { color:var(--or2); font-weight:normal; }
+    a { color:var(--or); }
+
+    .chapo { font-style:italic; color:var(--gris); text-align:center; max-width:640px;
+             margin:0 auto 1.8rem; font-size:.9rem; }
+
+    /* Deux colonnes « ce que le Rite est / n'est pas » */
+    .duo { display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; margin-top:1.5rem; }
+    @media(max-width:680px){ .duo{grid-template-columns:1fr;} }
+    .duo__col { background:var(--fond3); border:1px solid rgba(201,168,76,.22); padding:1.4rem 1.5rem; }
+    .duo__col--non { border-color:rgba(160,160,160,.22); }
+    .duo__titre { font-variant:small-caps; letter-spacing:.1em; font-size:.95rem; margin-bottom:.9rem; color:var(--or); }
+    .duo__col--non .duo__titre { color:var(--gris); }
+    .duo ul { list-style:none; }
+    .duo li { font-size:.88rem; padding-left:1.4rem; position:relative; margin-bottom:.7rem; line-height:1.65; }
+    .duo li::before { content:'✦'; position:absolute; left:0; color:var(--or); font-size:.75rem; top:.2rem; }
+    .duo__col--non li::before { content:'✕'; color:var(--gris); }
+
+    /* Frise du parcours */
+    .frise { position:relative; margin-top:2rem; }
+    .frise::before { content:''; position:absolute; left:19px; top:.6rem; bottom:.6rem; width:1px;
+                     background:linear-gradient(to bottom,var(--or),rgba(201,168,76,.1)); }
+    .jalon { display:flex; gap:1.3rem; padding-bottom:1.8rem; position:relative; }
+    .jalon__pastille { min-width:40px; height:40px; border:1px solid var(--or); border-radius:50%;
+                       display:flex; align-items:center; justify-content:center; font-size:.75rem;
+                       color:var(--or); background:var(--fond); flex-shrink:0; z-index:1; }
+    .jalon__titre { font-variant:small-caps; letter-spacing:.08em; color:var(--or); font-size:1rem; margin-bottom:.3rem; }
+    .jalon__texte { font-size:.9rem; color:var(--texte); }
+
+    /* Fiches d'affiliation */
+    .fiche { background:var(--fond2); border:1px solid rgba(201,168,76,.22);
+             border-left:2px solid var(--or); padding:1.5rem 1.6rem; margin-top:1.4rem; }
+    .fiche__entete { display:flex; align-items:baseline; gap:.8rem; flex-wrap:wrap; margin-bottom:.2rem; }
+    .fiche__sigle { color:var(--or); font-variant:small-caps; letter-spacing:.12em; font-size:1.05rem; }
+    .fiche__lieu { font-size:.75rem; color:var(--gris); font-style:italic; }
+    .fiche__nom { font-size:.85rem; color:var(--gris); margin-bottom:.9rem; }
+    .fiche dl { display:grid; grid-template-columns:auto 1fr; gap:.45rem 1rem; font-size:.87rem; }
+    @media(max-width:600px){ .fiche dl{grid-template-columns:1fr; gap:.15rem;} .fiche dd{margin-bottom:.7rem;} }
+    .fiche dt { color:var(--or2); white-space:nowrap; }
+    .fiche dd { color:var(--texte); }
+
+    /* Lexique */
+    .lexique__item { border-bottom:1px solid rgba(201,168,76,.13); padding:1.2rem 0; }
+    .lexique__item:last-child { border-bottom:none; }
+    .lexique__terme { color:var(--or); font-size:.98rem; margin-bottom:.45rem; font-variant:small-caps; letter-spacing:.06em; }
+    .lexique__def { font-size:.9rem; }
+    .lexique__def em { color:var(--gris); }
+
+    .note { background:rgba(201,168,76,.06); border:1px solid rgba(201,168,76,.25);
+            padding:1.2rem 1.5rem; margin:1.5rem 0; font-size:.9rem; }
+    .note--sobre { background:rgba(140,140,140,.05); border-color:rgba(140,140,140,.22); }
+
+    .acompleter { background:rgba(201,168,76,.16); border-bottom:1px dashed var(--or);
+                  color:var(--or2); padding:0 .3rem; font-style:italic; }
+
+    .pied { text-align:center; padding:3rem 1.5rem 4rem;
+            background:radial-gradient(ellipse at center,rgba(201,168,76,.05) 0%,transparent 70%);
+            border-top:1px solid rgba(201,168,76,.15); }
+    .pied p { color:var(--gris); font-style:italic; font-size:.9rem; }
+    .pied a { text-decoration:none; }
+    .pied a:hover { text-decoration:underline; }
+  </style>
+</head>
+<body>
+
+<a href="index.html" class="retour">← Accueil</a>
+
+<div class="hero">
+  <img id="hero-seal" class="hero__logo" src="" alt="Sceau du Rite Brith Israël">
+  <h1 class="hero__titre">Légitimité, filiation et vocabulaire</h1>
+  <p class="hero__sous">Ce sur quoi le Rite s'appuie — et ce qu'il ne prétend pas être</p>
+  <div class="sep"></div>
+  <p class="hero__intro">
+    Un rite jeune doit s'expliquer. Cette page répond sans détour aux trois questions
+    qu'un visiteur, profane ou maçon, est en droit de poser : d'où vient ce Rite,
+    à quoi son fondateur est-il rattaché, et pourquoi son vocabulaire sonne-t-il
+    si solennel ?
+  </p>
+</div>
+
+<main>
+
+  <!-- ────────────────────────────────────────────────────────────
+       1. CE QUE LE RITE EST — ET N'EST PAS
+  ───────────────────────────────────────────────────────────── -->
+  <section id="cadrage">
+    <h2>Ce que le Rite est, ce qu'il n'est pas</h2>
+    <div class="sep"></div>
+    <p class="chapo">
+      La première marque de sérieux, en matière maçonnique, est de dire clairement
+      ce que l'on ne revendique pas.
+    </p>
+
+    <div class="duo">
+      <div class="duo__col">
+        <div class="duo__titre">Ce que le Rite est</div>
+        <ul>
+          <li>Un rite maçonnique <strong>fondé le 20 décembre 2025</strong> — donc un rite jeune, qui assume sa date de naissance.</li>
+          <li>Un système en <strong>33 degrés</strong> articulé sur les Sephiroth et les 22 Sentiers de l'Arbre de Vie.</li>
+          <li>Une juridiction <strong>souveraine et indépendante</strong>, liée par traités à d'autres juridictions souveraines.</li>
+          <li>Un rite <strong>mixte</strong>, ouvert aux Frères et aux Sœurs.</li>
+          <li>Un rite <strong>déiste</strong> : il demande la croyance en un principe créateur, sans imposer de confession.</li>
+        </ul>
+      </div>
+      <div class="duo__col duo__col--non">
+        <div class="duo__titre">Ce que le Rite n'est pas</div>
+        <ul>
+          <li>Il ne prétend <strong>pas</strong> à une filiation antique ininterrompue, ni à la découverte d'une tradition perdue.</li>
+          <li>Il n'est <strong>pas</strong> reconnu par les obédiences dites régulières au sens de la Grande Loge Unie d'Angleterre — et ne le revendique pas.</li>
+          <li>Il ne se dit <strong>supérieur</strong> à aucune obédience, aucun rite, aucune juridiction.</li>
+          <li>Il ne vend <strong>aucun</strong> grade, aucun titre, aucune patente.</li>
+          <li>Il n'est <strong>pas</strong> une organisation confessionnelle, ni un mouvement communautaire ou politique.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note note--sobre">
+      <strong>Sur la question de la régularité.</strong>
+      La Franc-Maçonnerie mondiale se partage entre plusieurs familles qui ne se
+      reconnaissent pas entre elles. Le Rite Brith Israël appartient à la famille
+      des juridictions <strong>indépendantes et souveraines</strong>, qui fondent
+      leur légitimité sur leurs traités d'amitié et de reconnaissance mutuelle,
+      et non sur une reconnaissance par la Grande Loge Unie d'Angleterre.
+      Cette distinction n'est pas un défaut à masquer : c'est un choix
+      d'appartenance, et il est plus honnête de l'énoncer que de laisser croire
+      à autre chose.
+    </div>
+  </section>
+
+  <!-- ────────────────────────────────────────────────────────────
+       2. LE PARCOURS DU FONDATEUR
+  ───────────────────────────────────────────────────────────── -->
+  <section id="parcours">
+    <h2>Le parcours du fondateur au REAA</h2>
+    <div class="sep"></div>
+    <p class="chapo">
+      Un rite ne se fonde pas depuis nulle part. Voici le chemin maçonnique
+      qui précède la fondation du Rite Brith Israël.
+    </p>
+
+    <div class="frise">
+      <div class="jalon">
+        <div class="jalon__pastille">1°</div>
+        <div>
+          <div class="jalon__titre">Initiation aux grades symboliques</div>
+          <div class="jalon__texte">
+            Initié, passé Compagnon puis élevé à la Maîtrise
+            <span class="acompleter">[obédience et années à compléter]</span>.
+            Les trois premiers degrés — Apprenti, Compagnon, Maître — constituent
+            le socle sans lequel aucun grade ultérieur n'a de sens.
+          </div>
+        </div>
+      </div>
+      <div class="jalon">
+        <div class="jalon__pastille">4°<br>30°</div>
+        <div>
+          <div class="jalon__titre">Les grades de perfection du REAA</div>
+          <div class="jalon__texte">
+            Parcours des degrés du <strong>Rite Écossais Ancien et Accepté</strong>,
+            de la Loge de Perfection au Chapitre, de l'Aréopage au Tribunal
+            <span class="acompleter">[juridiction et années à compléter]</span>.
+          </div>
+        </div>
+      </div>
+      <div class="jalon">
+        <div class="jalon__pastille">33°</div>
+        <div>
+          <div class="jalon__titre">Élévation au 33e et dernier degré du REAA</div>
+          <div class="jalon__texte">
+            Élevé au grade de <strong>Souverain Grand Inspecteur Général, 33e du REAA</strong>
+            <span class="acompleter">[date et Suprême Conseil ayant conféré le grade, à compléter]</span>.
+            C'est ce grade — et lui seul — qui autorise à siéger dans un Suprême Conseil du 33e degré.
+          </div>
+        </div>
+      </div>
+      <div class="jalon">
+        <div class="jalon__pastille">96°</div>
+        <div>
+          <div class="jalon__titre">Rite de Memphis-Misraïm</div>
+          <div class="jalon__texte">
+            Parvenu au <strong>96e degré</strong> de l'échelle de Memphis-Misraïm
+            <span class="acompleter">[Souverain Sanctuaire et année, à compléter]</span>.
+            Ce chiffre ne « dépasse » pas le 33e : il appartient à une autre échelle,
+            celle d'un autre rite, qui compte simplement ses degrés autrement.
+          </div>
+        </div>
+      </div>
+      <div class="jalon">
+        <div class="jalon__pastille">✡</div>
+        <div>
+          <div class="jalon__titre">Fondation du Rite Brith Israël — 20 décembre 2025</div>
+          <div class="jalon__texte">
+            Fondation d'un rite en 33 degrés articulé sur la Kabbale, nommé en mémoire
+            d'Israël Darmon, grand-père du fondateur, juif séfarade d'Oran engagé dans
+            les Corps Francs d'Afrique et présent au débarquement de Provence.
+            La Loge Mère <strong>BERESHIT n°00</strong> est inaugurée le 23 février 2026.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ────────────────────────────────────────────────────────────
+       3. LES RATTACHEMENTS
+  ───────────────────────────────────────────────────────────── -->
+  <section id="affiliations">
+    <h2>Les rattachements institutionnels</h2>
+    <div class="sep"></div>
+    <p class="chapo">
+      Trois rattachements distincts, qu'il ne faut pas confondre : un Suprême Conseil
+      qui atteste d'un grade, une institution internationale, une fédération qui
+      apporte un cadre administratif concret.
+    </p>
+
+    <div class="fiche">
+      <div class="fiche__entete">
+        <span class="fiche__sigle">Suprême Conseil du 33e degré en Occitanie</span>
+        <span class="fiche__lieu">🇫🇷 Orient de Toulouse</span>
+      </div>
+      <p class="fiche__nom">Suprême Conseil du 33° Degré en Occitanie — S∴G∴C∴ Christian Belloc, 33°</p>
+      <dl>
+        <dt>Nature du lien</dt>
+        <dd>Appartenance personnelle du fondateur, en qualité de membre du Suprême Conseil.</dd>
+        <dt>Ce que cela atteste</dt>
+        <dd>Le 33e degré du REAA n'est pas auto-attribué : il est reconnu et porté par un corps du 33e degré constitué, extérieur au Rite Brith Israël.</dd>
+        <dt>Lien entre juridictions</dt>
+        <dd>Traité d'Amitié et de Reconnaissance Mutuelle (2026) : échange de garants d'amitié, participation croisée aux Ateliers, échange des mots de semestre, droits identiques pour les membres des deux puissances.</dd>
+      </dl>
+    </div>
+
+    <div class="fiche">
+      <div class="fiche__entete">
+        <span class="fiche__sigle">I∴M∴U∴</span>
+        <span class="fiche__lieu">🇫🇷 France — International</span>
+      </div>
+      <p class="fiche__nom">L'Institution Maçonnique Universelle — Président mondial : S∴G∴C∴ Christian Belloc · Grand Chancelier : Jean-Noël Raynaud</p>
+      <dl>
+        <dt>Nature du lien</dt>
+        <dd>Appartenance personnelle du fondateur à l'Institution, et traité liant l'IMU au Rite Brith Israël.</dd>
+        <dt>Ce que cela apporte</dt>
+        <dd>Une inscription dans un réseau maçonnique international structuré, au-delà du seul cercle des traités bilatéraux.</dd>
+        <dt>Contenu du traité</dt>
+        <dd>Participation aux Ateliers dans le strict respect des grades et des rites, échange annuel des mots de semestre, droits et garanties identiques pour les membres de chaque puissance.</dd>
+      </dl>
+    </div>
+
+    <div class="fiche">
+      <div class="fiche__entete">
+        <span class="fiche__sigle">F∴M∴I∴G∴S∴</span>
+        <span class="fiche__lieu">🇫🇷 France — association déclarée n° W832022585</span>
+      </div>
+      <p class="fiche__nom">Fédération Maçonnique Internationale des Grades Supérieurs — Président : Joseph Sercia, 33° REAA (Cerneau) · Vice-président : Ollivier Chebrou de Lespinats, 33° REAA</p>
+      <dl>
+        <dt>Nature du lien</dt>
+        <dd>Le Rite Brith Israël est <strong>membre adhérent</strong> de la Fédération depuis le 2 février 2026.</dd>
+        <dt>Ce que cela apporte</dt>
+        <dd>Un cadre concret et vérifiable : assurance en responsabilité civile pour les membres, passeports maçonniques et timbres annuels édités par la Fédération.</dd>
+        <dt>Cotisation</dt>
+        <dd>20 € par membre adhérent et par an.</dd>
+      </dl>
+    </div>
+
+    <div class="note">
+      <strong>Pourquoi ces trois-là et pas d'autres ?</strong>
+      Parce qu'ils ne disent pas la même chose. Le Suprême Conseil d'Occitanie
+      atteste d'un <em>grade</em>. L'IMU atteste d'une <em>appartenance</em> à un
+      réseau international. La FMIGS apporte une <em>couverture administrative
+      et assurantielle</em> réelle. Les vingt-six traités signés avec des
+      juridictions étrangères, eux, attestent d'autre chose encore : la
+      reconnaissance par des pairs. Chacun de ces documents est consultable dans
+      la page <a href="traites.html">Traités &amp; Obédiences alliées</a>.
+    </div>
+  </section>
+
+  <!-- ────────────────────────────────────────────────────────────
+       4. LE VOCABULAIRE
+  ───────────────────────────────────────────────────────────── -->
+  <section id="lexique">
+    <h2>Le vocabulaire, et pourquoi il sonne pompeux</h2>
+    <div class="sep"></div>
+    <p class="chapo">
+      « Souverain Grand Commandeur », « Très Illustre Frère », « Suprême Conseil » :
+      lu de l'extérieur, ce vocabulaire paraît démesuré. Il mérite d'être traduit
+      plutôt que défendu.
+    </p>
+
+    <p>
+      La Franc-Maçonnerie du XVIII<sup>e</sup> siècle a emprunté son vocabulaire à la
+      chevalerie et à la diplomatie de son temps. Elle a gardé ces mots pendant trois
+      siècles, comme une langue liturgique qu'on ne modernise pas. Le résultat est
+      qu'un titre maçonnique décrit aujourd'hui une <strong>fonction administrative</strong>
+      dans des termes qui, hors du contexte, évoquent une dignité princière.
+      Ce décalage est réel, et il vaut mieux le nommer que faire semblant de ne pas le voir.
+    </p>
+
+    <div class="lexique__item">
+      <div class="lexique__terme">Souverain Grand Commandeur</div>
+      <div class="lexique__def">
+        <em>Ce que ça évoque :</em> un souverain. <br>
+        <em>Ce que c'est :</em> le titre statutaire, dans tous les Suprêmes Conseils du
+        monde depuis 1801, de celui qui préside le corps du 33e degré. L'équivalent
+        exact d'un président d'association, dans le vocabulaire d'origine. Le mot
+        « souverain » y qualifie l'indépendance de la juridiction, pas la personne.
+      </div>
+    </div>
+
+    <div class="lexique__item">
+      <div class="lexique__terme">T∴I∴F∴ — « Très Illustre Frère »</div>
+      <div class="lexique__def">
+        <em>Ce que ça évoque :</em> une auto-célébration. <br>
+        <em>Ce que c'est :</em> une formule d'adresse rituelle, comme « Maître » pour
+        un avocat ou « Excellence » pour un ambassadeur. Elle s'emploie
+        <strong>entre maçons, en tenue</strong> — jamais pour se présenter au monde
+        profane. C'est pourquoi elle a été retirée des pages publiques de ce site.
+      </div>
+    </div>
+
+    <div class="lexique__item">
+      <div class="lexique__terme">Suprême Conseil</div>
+      <div class="lexique__def">
+        <em>Ce que ça évoque :</em> une autorité au-dessus des autres. <br>
+        <em>Ce que c'est :</em> le nom technique de l'organe qui administre les degrés
+        de 4 à 33 d'un rite. « Suprême » signifie ici « dernier de la hiérarchie
+        des ateliers », comme on dit « cour suprême » — le dernier échelon, pas le
+        plus puissant du monde.
+      </div>
+    </div>
+
+    <div class="lexique__item">
+      <div class="lexique__terme">33e degré · 96e degré · 100e degré</div>
+      <div class="lexique__def">
+        <em>Ce que ça évoque :</em> une surenchère de chiffres. <br>
+        <em>Ce que c'est :</em> des échelles différentes, non comparables entre elles.
+        Le REAA compte 33 degrés, le Rite de Misraïm 90, et Memphis-Misraïm 95, 97
+        ou 99 selon les obédiences. Un 96e de Memphis n'est pas « trois fois
+        plus » qu'un 33e du REAA : il est ailleurs. Aligner plusieurs chiffres
+        derrière un nom est une pratique répandue, mais elle brouille plus qu'elle
+        n'informe — raison pour laquelle ce site n'affiche que le grade pertinent
+        au contexte.
+      </div>
+    </div>
+
+    <div class="lexique__item">
+      <div class="lexique__terme">A∴L∴G∴G∴A∴D∴L'∴U∴ et les points en triangle</div>
+      <div class="lexique__def">
+        <em>Ce que ça évoque :</em> un code ésotérique. <br>
+        <em>Ce que c'est :</em> « À la Gloire du Grand Architecte de l'Univers »,
+        formule d'ouverture des documents maçonniques. Les trois points en triangle
+        sont une abréviation maçonnique attestée depuis 1774 — l'équivalent de notre
+        point abréviatif ordinaire.
+      </div>
+    </div>
+
+    <div class="lexique__item">
+      <div class="lexique__terme">« Mondial », « Universel », « International »</div>
+      <div class="lexique__def">
+        <em>Ce que ça évoque :</em> une exagération de taille. <br>
+        <em>Ce que c'est :</em> dans l'usage maçonnique, ces mots décrivent une
+        <strong>vocation</strong> — accueillir sans distinction d'origine ou de
+        nation — et non un effectif. Comme ils sont régulièrement lus dans l'autre
+        sens, ce site les emploie désormais avec parcimonie.
+      </div>
+    </div>
+
+    <div class="note">
+      <strong>La règle que s'applique ce site.</strong>
+      Les titres rituels restent dans les Loges et sur les documents internes, où ils
+      ont leur sens et leur beauté. Les pages publiques, elles, parlent la langue de
+      celui qui les lit : des noms, des dates, des faits vérifiables. Un rite qui a
+      quelque chose à montrer n'a pas besoin de titres pour l'annoncer.
+    </div>
+  </section>
+
+  <!-- ────────────────────────────────────────────────────────────
+       5. VÉRIFIER
+  ───────────────────────────────────────────────────────────── -->
+  <section id="verifier">
+    <h2>Vérifier par vous-même</h2>
+    <div class="sep"></div>
+    <p>
+      Rien de ce qui précède ne demande d'être cru sur parole. Les pièces sont en ligne :
+    </p>
+    <div class="duo">
+      <div class="duo__col">
+        <div class="duo__titre">Les documents</div>
+        <ul>
+          <li><a href="traites.html">Les traités signés</a>, avec pour chacun le nom du signataire, la juridiction, le pays et la date.</li>
+          <li>Les Constitutions du Rite, consultables dans <a href="espace-membres.html">l'Espace Membres</a>.</li>
+          <li>Les rituels publiés : <em>L'Alliance de Lumière — Tome I</em>, disponible en librairie en ligne.</li>
+        </ul>
+      </div>
+      <div class="duo__col">
+        <div class="duo__titre">La démarche</div>
+        <ul>
+          <li>Écrire au Rite pour poser une question précise : une réponse précise sera faite.</li>
+          <li>Demander un tuilage à un Frère ou une Sœur du Rite si vous êtes vous-même initié.</li>
+          <li>Interroger directement les juridictions signataires : leurs coordonnées figurent sur leurs propres sites.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<div class="pied">
+  <div class="sep"></div>
+  <p>Une question sur ce qui précède ? Elle sera lue et recevra une réponse.</p>
+  <p><a href="mailto:contact.brith.israel@gmail.com">contact.brith.israel@gmail.com</a></p>
+  <p style="font-size:.78rem;margin-top:1.2rem;">Suprême Conseil du Rite Brith Israël — Provence, France</p>
+</div>
+
+<!-- images.js injecte le sceau par l'id "hero-seal" (setImg). Rien d'autre à faire ici. -->
+<script src="assets/images.js"></script>
+
+</body>
+</html>

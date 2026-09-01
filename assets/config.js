@@ -20,6 +20,7 @@ var RBI_CONFIG = {
   { label: "Chefs de l'Ordre", href: "#chefs"  },
   { label: "Publications",     href: "#livres" },
   { label: "Traités",          href: "traites.html" },
+  { label: "Légitimité",       href: "legitimite.html" },
   { label: "Devenir FM",       href: "devenir-fm.html", style: "cta" },
   { label: "Tuilage",          href: "#tuilage", style: "discret" },
   { label: "Espace Membres",   href: "espace-membres.html" },
@@ -39,8 +40,8 @@ var RBI_CONFIG = {
     bandeau:   "A∴L∴G∴G∴A∴D∴L'∴U∴ — ב∴ס∴ד∴",
     titre_fr:  "Rite Brith Israël®",
     titre_he:  "ברית ישראל",
-    subtitle:  "Rite Maçonnique Historique d'inspiration Kabbalistique en 33 degrés.",
-    subtitle2: "Alliance de Lumière entre les Peuples, fidélité à la Tradition Hébraïque, universalité de la Franc-Maçonnerie.",
+    subtitle:  "Rite maçonnique d'inspiration kabbalistique, en 33 degrés.",
+    subtitle2: "Une Alliance de Lumière entre les peuples : fidélité à la Tradition hébraïque, ouverture à la Franc-Maçonnerie universelle.",
     btn_decouvrir: "Découvrir le Rite",
     btn_rejoindre: "Devenir Franc-Maçon"
   },
@@ -50,7 +51,7 @@ var RBI_CONFIG = {
   ────────────────────────────────────────────── */
   rite: {
     titre: "Le Rite Brith Israël",
-    intro: "Fondé par le T∴I∴F∴ Mickaël DARMON 33e, le Rite Brith Israël est un Rite Maçonnique Kabbalistique en 33 degrés puisant ses sources dans la Tradition Hébraïque, la Kabbale et la Franc-Maçonnerie universelle. Son nom honore la mémoire d'Israël DARMON, pilier spirituel et inspirateur du Rite.",
+    intro: "Fondé en 2025 par Mickaël Darmon, 33e du Rite Écossais Ancien et Accepté, le Rite Brith Israël est un rite maçonnique d'inspiration kabbalistique en 33 degrés, qui puise ses sources dans la Tradition hébraïque, la Kabbale et la Franc-Maçonnerie universelle. Son nom honore la mémoire d'Israël Darmon, grand-père du fondateur et inspirateur du Rite.",
     cartes: [
       {
         icone: "✡",
@@ -60,12 +61,12 @@ var RBI_CONFIG = {
       {
         icone: "△",
         titre: "33 Degrés",
-        texte: "Un parcours initiatique structuré en 33 degrés, des Loges de Perfection au Suprême Conseil, guidant le Frère vers la Lumière."
+        texte: "Un parcours initiatique structuré en 33 degrés, des Loges symboliques aux Ateliers de perfection, que chaque Frère et chaque Sœur parcourt à son rythme."
       },
       {
         icone: "☆",
         titre: "Alliance Universelle",
-        texte: "Ouvert à tous les Frères réguliers, le Rite tisse des liens d'amitié et de fraternité avec les Obédiences du monde entier."
+        texte: "Le Rite entretient des traités d'amitié et de reconnaissance mutuelle avec des juridictions souveraines sur quatre continents."
       }
     ]
   },
@@ -78,10 +79,10 @@ var RBI_CONFIG = {
     membres: [
       /* ── Souverain Grand Commandeur ── */
       {
-        nom:    "T∴I∴F∴ Mickaël DARMON",
-        grade:  "33°-96°",
+        nom:    "Mickaël DARMON",
+        grade:  "33°",
         titre:  "Souverain Grand Commandeur",
-        role:   "Fondateur et Grand Maître",
+        role:   "Fondateur du Rite",
         img_id: "photo-darmon",   // ID injecté par images.js
         rang:   "sgc"
       },
@@ -249,7 +250,7 @@ var RBI_CONFIG = {
   ────────────────────────────────────────────── */
   footer: {
     hebrew:  "ברית ישראל",
-    ligne1:  "Suprême Conseil Mondial du Rite Brith Israël",
+    ligne1:  "Suprême Conseil du Rite Brith Israël",
     ligne2:  "© 2025 Rite Brith Israël — Tous droits réservés"
   }
 
