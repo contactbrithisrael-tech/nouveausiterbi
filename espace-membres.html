@@ -1043,7 +1043,7 @@
   <!-- TOME I -->
   <div class="livre-carte">
     <div class="livre-carte__cover">
-      <img id="cover-tome1-membres" src="" alt="L'Alliance de Lumière" onerror="this.parentElement.innerHTML='📖'">
+      <img id="cover-tome1-membres" src="" alt="L'Alliance de Lumière">
     </div>
     <div class="livre-carte__info">
       <div class="livre-carte__titre">L'Alliance de Lumière</div>
@@ -1060,7 +1060,7 @@
   <!-- GUIDE DE SURVIE -->
   <div class="livre-carte">
     <div class="livre-carte__cover">
-      <img id="cover-guide-membres" src="" alt="Guide de Survie" onerror="this.parentElement.innerHTML='📚'">
+      <img id="cover-guide-membres" src="" alt="Guide de Survie">
     </div>
     <div class="livre-carte__info">
       <div class="livre-carte__titre">Guide de Survie pour Franc-Maçon Désemparé</div>
@@ -1071,6 +1071,23 @@
         pour tout Franc-Maçon en quête de repères.
       </div>
       <a class="btn btn-or" href="https://amzn.eu/d/03LwhX1a" target="_blank" rel="noopener">Commander sur Amazon</a>
+    </div>
+  </div>
+
+  <!-- DU PÉTRIN AU COMPAS -->
+  <div class="livre-carte">
+    <div class="livre-carte__cover">
+      <img id="cover-petrin-membres" src="" alt="Du Pétrin au Compas">
+    </div>
+    <div class="livre-carte__info">
+      <div class="livre-carte__titre">Du Pétrin au Compas</div>
+      <div class="livre-carte__sous">Roman — « Quand on cherche un secret, on trouve une vérité » · 9 juillet 2026</div>
+      <div class="livre-carte__desc">
+        Un roman. Laure Silvestri, journaliste d'investigation à Marseille, enquête sur les
+        mardis soir de son compagnon boulanger. Ce n'est pas ce qu'elle croyait : c'est une
+        Loge. Et ce qu'elle commence sans l'avoir prévu, c'est une initiation.
+      </div>
+      <a class="btn btn-or" href="https://amzn.eu/d/05ZcIJ0g" target="_blank" rel="noopener">Commander sur Amazon</a>
     </div>
   </div>
 
@@ -1321,15 +1338,11 @@
     alert('Le formulaire PDF ' + type + ' sera disponible prochainement.\nContactez contact.brith.israel@gmail.com pour l\'obtenir.');
   }
 
-  // ── Injecter les couvertures depuis images.js si disponibles ──
-  window.addEventListener('load', function() {
-    if (window.IMG) {
-      var c1 = document.getElementById('cover-tome1-membres');
-      var c2 = document.getElementById('cover-guide-membres');
-      if (c1 && IMG.BOOK_ALLIANCE) c1.src = IMG.BOOK_ALLIANCE;
-      if (c2 && IMG.BOOK_GUIDE)    c2.src = IMG.BOOK_GUIDE;
-    }
-  });
+  // Les couvertures sont injectées par assets/images.js, qui les pose sur
+  // les identifiants cover-tome1-membres, cover-guide-membres et
+  // cover-petrin-membres. Le code qui se trouvait ici lisait window.IMG,
+  // que images.js n'expose pas : ces couvertures ne se sont jamais
+  // affichées depuis l'origine.
 </script>
 
 <script src="assets/config.js"></script>
