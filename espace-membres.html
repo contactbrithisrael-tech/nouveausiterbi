@@ -253,6 +253,56 @@
        sans cette règle, un bouton plein affiche du texte or sur fond or. */
     .doc-card a.btn-or,
     .doc-card a.btn-or:hover { color: var(--fond); }
+
+    /* ── Porte de tuilage ── */
+    .porte {
+      position: fixed; inset: 0; z-index: 500;
+      background: radial-gradient(ellipse at center, rgba(201,168,76,.07) 0%, var(--fond) 70%);
+      display: flex; align-items: center; justify-content: center;
+      padding: 1.5rem; overflow-y: auto;
+    }
+    .porte[hidden] { display: none; }
+    .porte__cadre {
+      max-width: 460px; width: 100%; text-align: center;
+      border: 1px solid rgba(201,168,76,.3);
+      background: rgba(13,13,13,.85);
+      padding: 2.5rem 2rem;
+    }
+    .porte__etoile { font-size: 2rem; color: var(--or); margin-bottom: .8rem; }
+    .porte__titre {
+      font-size: 1.8rem; font-variant: small-caps; letter-spacing: .18em;
+      color: var(--or); margin-bottom: .8rem;
+    }
+    .porte__intro { font-size: .9rem; line-height: 1.8; color: var(--texte); }
+    .porte__sep { width: 60px; height: 1px; background: var(--or); opacity: .5; margin: 1.5rem auto; }
+    .porte__label {
+      display: block; text-align: left; margin-bottom: .4rem;
+      font-size: .78rem; letter-spacing: .1em; text-transform: uppercase; color: var(--or);
+    }
+    .porte__champ { margin-bottom: 1.2rem; text-align: center; }
+    .porte__btn { width: 100%; margin-top: .4rem; }
+    .porte__erreur {
+      color: #d98b8b; font-size: .88rem; font-style: italic;
+      margin-bottom: 1rem; line-height: 1.6;
+    }
+    .porte__erreur[hidden] { display: none; }
+    .porte__pied { margin-top: 1.6rem; font-size: .8rem; }
+    .porte__pied a { color: var(--gris); text-decoration: none; }
+    .porte__pied a:hover { color: var(--or); }
+
+    /* Liste des souhaits du formulaire annuaire */
+    .souhaits { display: grid; gap: .7rem; }
+    .souhaits label {
+      display: flex; align-items: flex-start; gap: .7rem;
+      text-transform: none; letter-spacing: 0; font-size: .9rem;
+      cursor: pointer; line-height: 1.6;
+      background: rgba(201,168,76,.05);
+      border: 1px solid rgba(201,168,76,.18);
+      padding: .8rem 1rem; transition: border-color .2s, background .2s;
+    }
+    .souhaits label:hover { border-color: rgba(201,168,76,.45); background: rgba(201,168,76,.09); }
+    .souhaits input { width: auto; margin-top: .3rem; flex-shrink: 0; }
+    .souhaits strong { color: var(--or); font-weight: normal; }
     .doc-card .bientot {
       font-size: .75rem;
       color: var(--gris);
@@ -376,6 +426,49 @@
   </style>
 </head>
 <body>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     TUILAGE D'ACCÈS
+
+     La page était entièrement publique. Elle l'est moins désormais :
+     ses formulaires et ses documents ne s'affichent qu'après les deux
+     questions d'usage.
+
+     ► Il faut savoir ce que cela vaut. Un tuilage en JavaScript écarte
+       le curieux et le moteur d'indexation, pas quelqu'un qui sait
+       ouvrir le code source d'une page. Rien de secret ne doit donc
+       figurer dans ce fichier : la véritable protection tient à ce que
+       les documents sensibles restent hors du dépôt, et à ce que les
+       réponses aux formulaires partent vers une boîte privée.
+═══════════════════════════════════════════════════════════════ -->
+<div id="tuilage-porte" class="porte" hidden>
+  <div class="porte__cadre">
+    <div class="porte__etoile">✡</div>
+    <h1 class="porte__titre">Tuilage</h1>
+    <p class="porte__intro">
+      Cet espace est réservé aux Frères et aux Sœurs.<br>
+      Avant d'entrer, veuillez répondre aux questions d'usage.
+    </p>
+    <div class="porte__sep"></div>
+
+    <form id="porte-form" autocomplete="off">
+      <label class="porte__label" for="porte-q1">D'où venez-vous ?</label>
+      <input class="porte__champ" id="porte-q1" type="text" required>
+
+      <label class="porte__label" for="porte-q2">Quel âge avez-vous ?</label>
+      <input class="porte__champ" id="porte-q2" type="text" required>
+
+      <p class="porte__erreur" id="porte-erreur" hidden></p>
+      <button class="btn btn-or porte__btn" type="submit">Entrer</button>
+    </form>
+
+    <p class="porte__pied">
+      <a href="index.html">← Retour à l'accueil</a>
+    </p>
+  </div>
+</div>
+
+<div id="contenu-membres" hidden>
 
 <!-- HEADER -->
 <div class="header">
@@ -815,22 +908,54 @@
       <hr class="sep-section form-full">
 
       <div class="form-full">
-        <label style="display:flex;align-items:center;gap:.6rem;text-transform:none;letter-spacing:0;font-size:.9rem;cursor:pointer;">
-          <input type="checkbox" name="accord_partage" style="width:auto;" required>
-          <span>J'autorise le Suprême Conseil à partager mes coordonnées avec les autres membres du Rite Brith Israël, après vérification de mon identité maçonnique.</span>
+        <p style="color:var(--or);font-variant:small-caps;letter-spacing:.1em;margin-bottom:.6rem;">Ce que vous souhaitez</p>
+        <p style="font-size:.85rem;color:var(--gris);margin-bottom:1rem;">
+          Cochez ce qui vous convient. Rien ne vous sera envoyé au-delà de ce que vous
+          demandez ici, et chaque case se retire ensuite sur simple courriel.
+        </p>
+      </div>
+
+      <div class="form-full souhaits">
+        <label>
+          <input type="checkbox" name="souhait" value="Être rappelé par téléphone">
+          <span><strong>Être rappelé.</strong> Un Officier du Rite vous appelle pour échanger de vive voix.</span>
+        </label>
+        <label>
+          <input type="checkbox" name="souhait" value="Recevoir les dates de tenues">
+          <span><strong>Recevoir les dates de tenues.</strong> Le calendrier des travaux, communiqué à l'avance.</span>
+        </label>
+        <label>
+          <input type="checkbox" name="souhait" value="Recevoir les convocations">
+          <span><strong>Recevoir les convocations.</strong> Les planches de convocation aux tenues et aux événements du Rite.</span>
+        </label>
+        <label>
+          <input type="checkbox" name="souhait" value="Figurer à l'annuaire">
+          <span><strong>Figurer à l'annuaire.</strong> Être mis en relation avec les Frères et Sœurs du Rite.</span>
+        </label>
+      </div>
+
+      <hr class="sep-section form-full">
+
+      <div class="form-full">
+        <label style="display:flex;align-items:flex-start;gap:.6rem;text-transform:none;letter-spacing:0;font-size:.9rem;cursor:pointer;">
+          <input type="checkbox" name="accord_partage" style="width:auto;margin-top:.3rem;">
+          <span>J'autorise le Suprême Conseil à partager mes coordonnées avec les autres membres du Rite Brith Israël, après vérification de mon identité maçonnique.
+            <em style="color:var(--gris);display:block;margin-top:.3rem;">Cette autorisation n'est nécessaire que pour figurer à l'annuaire. Elle ne l'est pas pour être rappelé, ni pour recevoir les tenues et les convocations.</em></span>
         </label>
       </div>
 
     </div>
 
     <div class="form-footer">
-      <button type="submit" class="btn btn-or">Partager mes coordonnées</button>
+      <button type="submit" class="btn btn-or">Transmettre mes coordonnées</button>
     </div>
   </form>
 
   <div class="msg-success" id="msg-annuaire">
     ✡ Vos coordonnées ont bien été transmises.<br>
-    Vous recevrez un email de confirmation avant toute mise en relation. Que la Lumière vous guide, F∴.
+    Vous recevrez ce que vous avez demandé — rappel, dates de tenues, convocations — et rien
+    d'autre. Aucune mise en relation ne sera faite sans un courriel de confirmation préalable.
+    Que la Lumière vous guide, F∴.
   </div>
 
   <p class="confidentialite">
@@ -957,8 +1082,73 @@
 
 </section>
 
+</div><!-- /#contenu-membres -->
+
 
 <script>
+  /* ── Porte de tuilage ──────────────────────────────────────────
+     Mêmes questions que le tuilage de l'accueil. La reconnaissance
+     vaut pour l'onglet du navigateur : on ne la garde pas au-delà,
+     un poste partagé ne doit pas rester ouvert.
+  ─────────────────────────────────────────────────────────────── */
+  (function () {
+    var porte   = document.getElementById('tuilage-porte');
+    var contenu = document.getElementById('contenu-membres');
+    var CLE     = 'rbi-tuilage-membres';
+
+    var REPONSES = {
+      q1: ['de saint jean', 'saint jean', 'du saint jean', 'de chez saint jean',
+           'loge de saint jean', 'loge saint jean', 'loge de st jean', 'loge st jean',
+           'de la loge saint jean', 'de la loge st jean', 'de st jean', 'st jean'],
+      q2: ['3 ans', 'trois ans', '5 ans', 'cinq ans', '7 ans', 'sept ans',
+           '3', '5', '7', '3 5 7', '3 5 et 7', 'trois cinq sept', 'trois cinq et sept',
+           '7 ans et plus', 'sept ans et plus', '7 et plus', 'sept et plus',
+           'plus de 7', 'plus de sept', '3ans', '5ans', '7ans']
+    };
+
+    // Insensible à la casse, aux accents et à la ponctuation.
+    function normaliser(v) {
+      return (v || '').toLowerCase()
+        .normalize('NFD').replace(/[̀-ͯ]/g, '')
+        .replace(/[.,;:!?'’·∴-]/g, ' ')
+        .replace(/\s+/g, ' ').trim();
+    }
+
+    function ouvrir() {
+      porte.hidden = true;
+      contenu.hidden = false;
+    }
+
+    var reconnu = false;
+    try { reconnu = sessionStorage.getItem(CLE) === 'oui'; } catch (e) { /* navigation privée */ }
+
+    if (reconnu) { ouvrir(); }
+    else { porte.hidden = false; }
+
+    var form = document.getElementById('porte-form');
+    var erreur = document.getElementById('porte-erreur');
+    var essais = 0;
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var r1 = normaliser(document.getElementById('porte-q1').value);
+      var r2 = normaliser(document.getElementById('porte-q2').value);
+      var ok = REPONSES.q1.indexOf(r1) !== -1 && REPONSES.q2.indexOf(r2) !== -1;
+
+      if (ok) {
+        try { sessionStorage.setItem(CLE, 'oui'); } catch (e2) { /* sans mémoire, tant pis */ }
+        ouvrir();
+        return;
+      }
+
+      essais++;
+      erreur.hidden = false;
+      erreur.textContent = essais >= 3
+        ? "Je ne saurais vous reconnaître, Profane. Si vous êtes Frère ou Sœur et que l'accès vous est refusé, écrivez à contact.brith.israel@gmail.com."
+        : "Ce n'est pas la réponse attendue. Reprenez, F∴.";
+    });
+  })();
+
   // ── Navigation onglets ──
   function afficherSection(id) {
     document.querySelectorAll('.section').forEach(s => s.classList.remove('actif'));
@@ -976,17 +1166,104 @@
     }
   }
 
-  // ── Soumission formulaire (simulation — à connecter au backend) ──
+  /* ═══════════════════════════════════════════════════════════════
+     ENVOI DES FORMULAIRES
+
+     Jusqu'ici, soumettre() n'envoyait rien : il masquait le formulaire
+     et affichait le message de succès. Les demandes reçues n'arrivaient
+     donc nulle part.
+
+     Deux modes, sans serveur à installer :
+
+     ► RBI_FORM_ENDPOINT renseigné — la réponse part directement vers ce
+       service (Formspree, Netlify Forms, Google Apps Script…). C'est le
+       mode à privilégier : le Frère n'a rien à faire de plus.
+       Pour Formspree : créer un formulaire sur formspree.io et coller
+       ici l'adresse fournie, du type https://formspree.io/f/xxxxxxxx
+
+     ► Laissé vide — repli par courriel. Le navigateur ouvre le logiciel
+       de messagerie du visiteur avec toutes ses réponses déjà écrites ;
+       il lui reste à appuyer sur Envoyer. Cela fonctionne partout, sans
+       inscription et sans tiers, mais demande un geste de plus.
+  ═══════════════════════════════════════════════════════════════ */
+  var RBI_FORM_ENDPOINT = '';           // ← coller ici l'adresse du service
+  var RBI_FORM_EMAIL    = 'contact.brith.israel@gmail.com';
+
+  var RBI_FORM_OBJETS = {
+    'form-adhesion': "Demande d'adhésion individuelle",
+    'form-patente' : "Demande de patente",
+    'form-annuaire': "Coordonnées, convocations et annuaire"
+  };
+
+  // Rassemble les réponses en texte lisible. Les cases à cocher de même
+  // nom sont regroupées sur une seule ligne.
+  function rassembler(form) {
+    var lignes = [], vus = {};
+    Array.prototype.forEach.call(form.elements, function (ch) {
+      if (!ch.name || ch.type === 'submit' || ch.type === 'button') return;
+      if (ch.type === 'file') {
+        if (ch.files && ch.files[0]) lignes.push(ch.name + ' : ' + ch.files[0].name + ' (à joindre)');
+        return;
+      }
+      if (ch.type === 'checkbox') {
+        if (vus[ch.name]) return;
+        vus[ch.name] = true;
+        var coches = Array.prototype.filter
+          .call(form.querySelectorAll('[name="' + ch.name + '"]'), function (c) { return c.checked; })
+          .map(function (c) { return c.value === 'on' ? 'oui' : c.value; });
+        lignes.push(ch.name + ' : ' + (coches.length ? coches.join(', ') : '—'));
+        return;
+      }
+      if (ch.type === 'radio' && !ch.checked) return;
+      lignes.push(ch.name + ' : ' + (ch.value || '—'));
+    });
+    return lignes.join('\n');
+  }
+
+  function confirmer(form, msg, parCourriel) {
+    if (parCourriel && !msg.querySelector('.msg-courriel')) {
+      var p = document.createElement('p');
+      p.className = 'msg-courriel';
+      p.style.cssText = 'margin-top:1rem;font-size:.88rem;font-style:italic;opacity:.85;';
+      p.textContent = "Votre logiciel de messagerie vient de s'ouvrir avec vos réponses. " +
+                      "Il ne reste qu'à appuyer sur Envoyer. S'il ne s'est pas ouvert, écrivez-nous à " +
+                      RBI_FORM_EMAIL + ".";
+      msg.appendChild(p);
+    }
+    form.style.display = 'none';
+    msg.classList.add('visible');
+    window.scrollTo({ top: msg.offsetTop - 100, behavior: 'smooth' });
+  }
+
   function soumettre(e, formId, msgId) {
     e.preventDefault();
     var form = document.getElementById(formId);
     var msg  = document.getElementById(msgId);
+    var objet = RBI_FORM_OBJETS[formId] || 'Formulaire du Rite Brith Israël';
 
-    // TODO: envoyer par fetch/AJAX vers un endpoint (Formspree, Netlify Forms, etc.)
-    // Simulation :
-    form.style.display = 'none';
-    msg.classList.add('visible');
-    window.scrollTo({ top: msg.offsetTop - 100, behavior: 'smooth' });
+    if (RBI_FORM_ENDPOINT) {
+      var donnees = new FormData(form);
+      donnees.append('_subject', objet);
+      fetch(RBI_FORM_ENDPOINT, { method: 'POST', body: donnees, headers: { Accept: 'application/json' } })
+        .then(function (r) {
+          if (!r.ok) throw new Error(r.status);
+          confirmer(form, msg);
+        })
+        .catch(function () {
+          // L'envoi a échoué : plutôt que de laisser le Frère sans recours,
+          // on bascule sur le courriel avec ses réponses déjà saisies.
+          window.location.href = 'mailto:' + RBI_FORM_EMAIL +
+            '?subject=' + encodeURIComponent(objet) +
+            '&body=' + encodeURIComponent(rassembler(form));
+          confirmer(form, msg, true);
+        });
+      return;
+    }
+
+    window.location.href = 'mailto:' + RBI_FORM_EMAIL +
+      '?subject=' + encodeURIComponent(objet) +
+      '&body=' + encodeURIComponent(rassembler(form));
+    confirmer(form, msg, true);
   }
 
   // ── Téléchargement PDF (placeholder) ──
@@ -1009,53 +1286,11 @@
 <script src="assets/images.js"></script>
 <script src="assets/images-extra.js"></script>
 
-<!-- ── LECTEUR MUSICAL ── -->
-<div id="music-player" style="
-  position:fixed; bottom:1.2rem; right:1.2rem; z-index:999;
-  background:rgba(13,13,13,.92); border:1px solid rgba(201,168,76,.4);
-  padding:.7rem 1rem; display:flex; align-items:center; gap:.8rem;
-  font-family:Georgia,serif; backdrop-filter:blur(6px);
-  box-shadow:0 4px 20px rgba(0,0,0,.5);
-">
-  <iframe id="yt-player"
-    src="https://www.youtube.com/embed/gBY6-s9bmGM?list=RDgBY6-s9bmGM&enablejsapi=1&autoplay=0&controls=0"
-    width="0" height="0" frameborder="0" allow="autoplay" style="display:none;">
-  </iframe>
-  <span style="font-size:1.1rem;">🎵</span>
-  <span style="color:#c9a84c;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;">Musique du Rite</span>
-  <button id="music-toggle" onclick="toggleMusic()" style="
-    background:var(--or,#c9a84c);border:none;color:#0d0d0d;
-    padding:.3rem .8rem;font-size:.75rem;letter-spacing:.1em;
-    text-transform:uppercase;font-family:Georgia,serif;cursor:pointer;
-  ">▶ Play</button>
-  <button onclick="document.getElementById('music-player').style.display='none'" style="
-    background:transparent;border:none;color:#888;font-size:1rem;cursor:pointer;
-  ">✕</button>
-</div>
-<script>
-  var playing = false;
-  var player;
-  function onYouTubeIframeAPIReady() {
-    player = new YT.Player('yt-player', {
-      videoId: 'gBY6-s9bmGM',
-      playerVars: { listType:'playlist', list:'RDgBY6-s9bmGM', autoplay:0, controls:0 }
-    });
-  }
-  function toggleMusic() {
-    if (!player) return;
-    if (playing) {
-      player.pauseVideo();
-      document.getElementById('music-toggle').textContent = '▶ Play';
-    } else {
-      player.playVideo();
-      document.getElementById('music-toggle').textContent = '⏸ Pause';
-    }
-    playing = !playing;
-  }
-  var tag = document.createElement('script');
-  tag.src = "https://www.youtube.com/iframe_api";
-  document.head.appendChild(tag);
-</script>
+<!-- ── MUSIQUE DU RITE ──
+     Le lecteur et le son sont dans assets/musique.js : synthèse par le
+     navigateur, sans YouTube, sans fichier et sans traceur. -->
+<script src="assets/musique.js"></script>
+
 
 </body>
 </html>
