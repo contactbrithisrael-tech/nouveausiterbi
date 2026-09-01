@@ -9,16 +9,16 @@ que Joshua répondra quand un Frère demandera à quelle Séphira correspond
 son grade — et une réponse fausse sur ce point est pire qu'une absence de
 réponse.
 
-> **Points 1 et 2 tranchés le 01/09/2026** par le Souverain Grand
-> Commandeur. Les textes ont été lus — les rituels pour les Séphiroth,
-> la Constitution pour les ateliers —, la Roue et la carte ont été
-> corrigées. Le détail est conservé ci-dessous, parce qu'une correction
-> dont on a perdu le motif finit par être défaite.
+> **Les quatre arbitrages de fond sont rendus**, les 1ᵉʳ et 2 septembre
+> 2026, par le Souverain Grand Commandeur. Les textes ont été lus — les
+> rituels pour les Séphiroth, les noms et les lettres, la Constitution
+> pour les ateliers —, la Roue et la carte ont été mises d'accord avec
+> eux. Le détail est conservé ci-dessous, parce qu'une correction dont on
+> a perdu le motif finit par être défaite.
 >
-> **Points 1 à 3 tranchés, plus le 4ᵉ ZAKAÏ et l'âge du Me'ubin.** Restent
-> ouverts : les lettres des 22 Sentiers (point 4 — deux systèmes
-> incompatibles), la borne des 30ᵉ à 32ᵉ, le 3ᵉ ADON, le 33ᵉ sans texte,
-> et les trois ouvrages transversaux.
+> **Points 1 à 4 tranchés**, plus le 4ᵉ ZAKAÏ et l'âge du Me'ubin. Ne
+> restent que des questions de moindre portée : la borne des 30ᵉ à 32ᵉ,
+> le 3ᵉ ADON, le 33ᵉ sans texte, et les trois ouvrages transversaux.
 
 ---
 
@@ -166,45 +166,40 @@ La Roue du site portait déjà HARUACH : **elle n'avait pas tort, et rien
 n'a été changé.** C'est le **Tome III** qui fait exception en écrivant
 « 18° CHAYIM — La Vie », et c'est lui qu'il faudrait reprendre.
 
-## 4. Les lettres des 22 Sentiers — DEUX SYSTÈMES, non tranché
+## 4. Les lettres des 22 Sentiers — TRANCHÉ : Aleph → Tav
 
-C'est le désaccord le plus étendu du corpus, et il n'apparaît qu'en
-mettant les deux tables côte à côte.
+**Arbitré par le Souverain Grand Commandeur le 02/09/2026** :
 
-**Les noms et les Sentiers concordent** pour les 11ᵉ à 17ᵉ : NISTAR,
-NATIV, GISHRA, ROSH, SOFER, PATA'H, TZEMAH, et les mêmes trajets d'une
-Séphira à l'autre. **Les lettres, non.**
+> « C'est le rituel qui fait foi. Les lettres : Aleph, 1 à 10, Yod ; puis
+> on reprend d'Aleph à Tav. »
 
-| Degré | Recueil des rituels | Tome III et Roue |
-|---|---|---|
-| 11ᵉ | Yod (10ᵉ lettre) | **Aleph** (1ʳᵉ) |
-| 12ᵉ | Lamed (12ᵉ) | **Beth** (2ᵉ) |
-| 13ᵉ | Mem (13ᵉ) | **Guimel** (3ᵉ) |
-| … | … | … |
-| 18ᵉ | Tsadé (18ᵉ) | **Heth** (8ᵉ) |
-| 22ᵉ | Tav (22ᵉ) | **Lamed** (12ᵉ) |
-| 23ᵉ | Aleph — reprise | **Mem** (13ᵉ) |
-| 32ᵉ | Tav — de nouveau | **Tav** (22ᵉ) |
+C'est la structure même du *Sefer Yetsirah*, et elle explique le compte
+en deux temps :
 
-Deux logiques, donc :
+1. **Les dix Séphiroth portent les nombres**, de un à dix — que l'hébreu
+   écrit avec les lettres **Aleph (1) à Yod (10)**. Ce sont les dix
+   premiers degrés : les lettres y valent comme **chiffres**, non comme
+   sentiers.
+2. **Puis on reprend à Aleph** pour les vingt-deux Sentiers, jusqu'à Tav.
+   Ce sont les degrés **11ᵉ à 32ᵉ** : les lettres y valent comme
+   **lettres**, chacune reliant deux Séphiroth.
 
-- **Le Recueil** donne au degré la lettre du même rang — 12ᵉ degré, 12ᵉ
-  lettre — puis reprend à Aleph au 23ᵉ.
-- **Le Tome III et la Roue** déroulent les vingt-deux lettres dans
-  l'ordre sur les vingt-deux degrés : Aleph au 11ᵉ, Tav au 32ᵉ.
+D'où la règle, simple et sans reste : **11ᵉ = Aleph, 12ᵉ = Beth, …,
+32ᵉ = Tav.** Vingt-deux lettres sur vingt-deux degrés.
 
-Une observation, qui n'est pas une décision : la table du Recueil se
-contredit elle-même. **Tav y paraît deux fois** (22ᵉ et 32ᵉ), **le 24ᵉ
-KEDEM y figure deux fois** avec deux lettres différentes (Beth, puis
-Teth), **Kaf n'y paraît jamais**, et le 29ᵉ porte un « Mem final » qui
-n'est pas une lettre distincte des vingt-deux. Le système du Tome III,
-lui, épuise exactement les vingt-deux lettres sur les vingt-deux degrés,
-sans reste ni répétition — ce qui est précisément ce qu'annonce le Sefer
-Yetsirah.
+C'est ce que portent déjà **la Roue du site et le Tome III** : vérifié
+degré par degré, sans un écart. **Rien n'a eu à être corrigé.**
 
-Cela n'emporte pas la décision : c'est au Souverain Grand Commandeur de
-dire lequel des deux fait foi. Mais si c'est le Recueil, sa table
-demande d'abord d'être reprise.
+### Ce qui reste à reprendre
+
+La table du **Recueil des rituels** suit l'autre logique — elle donne au
+degré la lettre du même rang (12ᵉ degré, 12ᵉ lettre), puis repart
+d'Aleph au 23ᵉ. Elle se contredit d'ailleurs elle-même : **Tav y paraît
+deux fois** (22ᵉ et 32ᵉ), **le 24ᵉ KEDEM y figure deux fois** avec deux
+lettres différentes, **Kaf n'y paraît jamais**, et le 29ᵉ porte un
+« Mem final » qui n'est pas une des vingt-deux.
+
+C'est donc cette table qu'il faut reprendre — non la Roue.
 
 ## 5. Points mineurs
 
@@ -256,25 +251,30 @@ trop restrictif, mais mieux vaut un texte trop fermé qu'un texte ouvert
 
 ## Ce que j'attends de vous
 
-Les points 1, 2 et 3 sont tranchés et appliqués, ainsi que le 4ᵉ ZAKAÏ
-et l'âge du Me'ubin. Reste **une seule vraie question** :
+Les points 1 à 4 sont tranchés et appliqués, ainsi que le 4ᵉ ZAKAÏ et
+l'âge du Me'ubin. **Plus aucun arbitrage de fond n'est en attente.**
 
-- **les lettres des 22 Sentiers** (point 4) : deux systèmes
-  incompatibles, sur vingt-deux degrés. C'est le dernier arbitrage de
-  fond.
-
-Et quatre points de moindre portée :
+Restent quatre points de moindre portée :
 
 - les 30ᵉ à 32ᵉ : Chapitre ou Aréopage ? Aucun texte ne le dit ;
 - le 3ᵉ ADON : Hod seul, ou Hod – Netzach ;
 - le 33ᵉ, qu'aucun texte ne couvre — est-ce voulu ?
 - les trois ouvrages transversaux, dont la plage d'accès n'est pas fixée.
 
-**Ce qu'il faudrait reprendre dans les documents eux-mêmes**, une fois
-ces décisions prises : la graphie MEVIN dans le sommaire du Tome II et
-dans le Manuel d'Architecture ; le nom CHAYIM au 18ᵉ du Tome III ; l'âge
-de 840 ans dans le tableau du Tome II ; la phrase de la Bible du Rite qui
-annonce un Consistoire au Volume III.
+**Ce qu'il faudrait reprendre dans les documents eux-mêmes**, maintenant
+que les décisions sont prises :
+
+- la graphie **MEVIN** dans le sommaire et les tableaux du Tome II, et
+  dans le Manuel d'Architecture Sacrée — le rituel dit ME'UBIN ;
+- le nom **CHAYIM** au 18ᵉ du Tome III — le rituel dit HARUACH ;
+- l'**âge de 840 ans** dans le tableau du Tome II — le catéchisme dit 63 ;
+- la **table des lettres** du Recueil des rituels — la règle est
+  Aleph au 11ᵉ, Tav au 32ᵉ ;
+- la phrase de la **Bible du Rite** qui annonce un Consistoire au
+  Volume III — le Rite n'en a pas.
+
+Aucun de ces cinq points ne touche le site ni Joshua : tous portent sur
+les documents, qui devront être remis d'accord avec ce qui a été tranché.
 
 Et, s'il faut aller au bout : la phrase de la *Bible du Rite* qui annonce
 un « Consistoire » au Volume III devrait être reprise, sans quoi le
