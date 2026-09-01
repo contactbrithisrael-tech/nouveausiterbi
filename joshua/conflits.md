@@ -16,10 +16,10 @@ réponse.
 > eux. Le détail est conservé ci-dessous, parce qu'une correction dont on
 > a perdu le motif finit par être défaite.
 >
-> **Tous les conflits doctrinaux sont résolus.** Les rituels avaient
-> effectivement toutes les réponses. Ne reste qu'une décision
-> d'administration — la plage d'accès des trois ouvrages transversaux —
-> que nul rituel n'a vocation à trancher.
+> **Tous les points sont résolus.** Les rituels avaient effectivement
+> toutes les réponses ; la dernière décision — la plage d'accès des
+> ouvrages transversaux — a été rendue le 2 septembre. Rien n'est plus
+> en attente.
 
 ---
 
@@ -268,27 +268,34 @@ au 33ᵉ**, et ce n'est pas un manque à combler. Joshua refuse déjà d'y
 ouvrir une épreuve, faute de corpus — il le fait maintenant pour la bonne
 raison.
 
-## 8. Les trois ouvrages transversaux — la seule décision qui reste
+## 8. Les trois ouvrages transversaux — TRANCHÉ
 
-*Architecture Sacrée*, *Pirké Avot* et *L'Alliance de Lumière*
-n'appartiennent à aucun degré. Ce n'est pas une question doctrinale : les
-rituels n'ont pas à dire qui peut lire quoi. C'est une décision
-d'administration, et elle vous revient.
+**Arbitré par le Souverain Grand Commandeur le 02/09/2026** :
 
-L'état actuel applique la prudence — chacun est traité au degré le plus
-élevé qu'il aborde, ce qui met *Architecture Sacrée* au 32ᵉ, donc
-invisible pour presque tous. C'est probablement trop fermé pour un
-ouvrage qui expose la structure que la Roue publie déjà sur le site.
+> « À partir du 11 on est dans les chemins. »
 
-Trois lignes suffiraient à trancher :
+La phrase règle le cas le plus délicat, et d'une façon plus juste que ma
+proposition. *Architecture Sacrée* n'est pas d'un seul tenant : elle
+traite les dix Séphiroth, **puis** les vingt-deux Sentiers. La coupure
+tombe au 11ᵉ, là où commencent les chemins.
 
-- **L'Alliance de Lumière** est déjà public — 1ᵉʳ degré, ou même visiteur ;
-- **Pirké Avot** est de la sagesse hébraïque, sans contenu de grade —
-  1ᵉʳ degré paraîtrait juste ;
-- **Architecture Sacrée** expose les dix Séphiroth et les vingt-deux
-  Sentiers, soit ce que la Roue montre publiquement — 1ᵉʳ ou 11ᵉ degré,
-  selon que vous jugez la matière des Sentiers accessible avant de les
-  recevoir.
+Elle n'est donc pas à poser d'un bloc à un degré : ses pages sur les
+Séphiroth relèvent des **1ᵉʳ à 10ᵉ**, celles sur les Sentiers des **11ᵉ à
+32ᵉ**. C'est l'indexation par le contenu qui place chaque passage — le
+mécanisme existe déjà, il suffisait de ne pas l'écraser par une plage
+unique.
+
+Les deux autres suivent :
+
+| Ouvrage | Accès | Motif |
+|---|---|---|
+| **Architecture Sacrée** | 1ᵉʳ – 32ᵉ, passage par passage | Séphiroth jusqu'au 10ᵉ, Sentiers à partir du 11ᵉ |
+| **Pirké Avot** | 1ᵉʳ | Sagesse hébraïque, sans contenu de grade |
+| **L'Alliance de Lumière** | 1ᵉʳ, et public | En vente en librairie ; rien qui demande un degré |
+
+**Plus aucun ouvrage n'est transversal.** La règle de prudence est
+conservée dans `corpus.json` pour un ouvrage futur, mais elle ne
+s'applique plus à personne.
 
 ## Ce qu'il reste à faire
 
@@ -305,8 +312,8 @@ encore les formes anciennes.
 | Recueil — table des lettres | Yod au 11ᵉ, Tav deux fois, KEDEM deux fois, Kaf jamais | Aleph au 11ᵉ, Tav au 32ᵉ |
 | Bible du Rite, Vol. I et II | « le Consistoire » au Volume III | le Rite n'en a pas |
 
-Et **une seule décision** vous revient encore, qui n'est pas doctrinale :
-la plage d'accès des trois ouvrages transversaux, au point 8 ci-dessus.
+**Plus aucune décision n'est en attente.** Les huit points sont
+tranchés, et la Roue comme la carte sont d'accord avec les textes.
 
 ---
 
