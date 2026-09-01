@@ -167,13 +167,14 @@ var RBI_CONFIG = {
         ]
       },
       {
-        // Lien de commande à renseigner : ce titre n'apparaît nulle part en ligne.
         img_id:   "book-petrin",
         titre:    "Du Pétrin au Compas",
-        sous:     "Mickaël DARMON",
+        sous:     "Mickaël DARMON — Amazon KDP",
         desc:     "Du pétrin du boulanger au compas de l'architecte : le passage du travail de la matière à celui de l'esprit, au fil de la démarche maçonnique.",
         placeholder: "P",
-        liens: []
+        liens: [
+          { label: "Amazon", url: "https://amzn.eu/d/05ZcIJ0g", style: "primary" }
+        ]
       }
     ]
   },
