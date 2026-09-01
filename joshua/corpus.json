@@ -1,6 +1,6 @@
 {
-  "$commentaire": "Carte du corpus du Rite Brith Israël, destinée à Joshua. Les 33 degrés viennent de la Roue des Degrés du site ; les ouvrages et leurs plages de degrés viennent de l'INDEX CORPUS RBI du 28 avril 2026. Aucune plage n'est supposée. Voir conflits.md : la Roue et les instructions de Joshua ne concordent pas sur plusieurs degrés, et cela doit être arbitré avant tout indexage.",
-  "version": "2.0.0",
+  "$commentaire": "Carte du corpus du Rite Brith Israël, destinée à Joshua. Les 33 degrés viennent de la Roue des Degrés du site ; les ouvrages et leurs plages de degrés viennent de l'INDEX CORPUS RBI du 28 avril 2026. Aucune plage n'est supposée. Les degrés 7 à 10 ont été arbitrés le 01/09/2026 d'après les rituels eux-mêmes (Tome II) : voir conflits.md, qui conserve la trace de ce qui divergeait et de ce qui reste à trancher.",
+  "version": "2.1.0",
   "etabli_le": "2026-09-01",
   "dossier_drive": "https://drive.google.com/drive/folders/1HKyI7v6s7uFR7Tng80easrtZvv6B7vpl",
   "index_drive": "https://docs.google.com/document/d/1XHpmPaUdVky7h56pSCPzkz3dBPNolAgPFwjsbgsSofc/edit",
@@ -497,8 +497,8 @@
       "degre": 7,
       "nom": "MASKIL",
       "hebreu": "מַשְׂכִּיל",
-      "traduction": "Sage / Érudit",
-      "sephira": "Binah",
+      "traduction": "L'Éclairé",
+      "sephira": "Da'at (entrevue)",
       "corps": "perfection",
       "equivalent_reaa": "Prévôt et Juge",
       "decors": "Noir et Or, chariot et glaive, lettre Zayin",
@@ -516,14 +516,15 @@
           "pages": null
         }
       ],
-      "etat": "declare"
+      "etat": "declare",
+      "atteste_par": "Tome II — Loges de Perfection, rituels intégraux : tableau de la progression séphirotique, et corps du rituel de chaque degré. Arbitré par le Souverain Grand Commandeur le 01/09/2026."
     },
     {
       "degre": 8,
       "nom": "ME'UBIN",
       "hebreu": "מְעֻבָּן",
-      "traduction": "Expert / Accompli",
-      "sephira": "Hokhmah",
+      "traduction": "L'Intelligent",
+      "sephira": "Binah",
       "corps": "perfection",
       "equivalent_reaa": "Intendant des Bâtiments",
       "decors": "Noir et Or, balance et glaive de justice, lettre Het",
@@ -541,14 +542,15 @@
           "pages": null
         }
       ],
-      "etat": "declare"
+      "etat": "declare",
+      "atteste_par": "Tome II — Loges de Perfection, rituels intégraux : tableau de la progression séphirotique, et corps du rituel de chaque degré. Arbitré par le Souverain Grand Commandeur le 01/09/2026."
     },
     {
       "degre": 9,
       "nom": "HAMA'ATIK",
       "hebreu": "הַמַּעְתִּיק",
-      "traduction": "Celui qui Transcende",
-      "sephira": "Kether",
+      "traduction": "Le Transmetteur",
+      "sephira": "Hokhmah",
       "corps": "perfection",
       "equivalent_reaa": "Maître Élu des Neuf",
       "decors": "Bleu nuit et Argent, Arche d'Alliance dorée, lettre Tet",
@@ -566,14 +568,15 @@
           "pages": null
         }
       ],
-      "etat": "declare"
+      "etat": "declare",
+      "atteste_par": "Tome II — Loges de Perfection, rituels intégraux : tableau de la progression séphirotique, et corps du rituel de chaque degré. Arbitré par le Souverain Grand Commandeur le 01/09/2026."
     },
     {
       "degre": 10,
       "nom": "KADOSH",
       "hebreu": "קָדוֹשׁ",
-      "traduction": "Saint / Consacré",
-      "sephira": "Kether – Malkuth",
+      "traduction": "Le Saint",
+      "sephira": "Kether (entrevue)",
       "corps": "perfection",
       "equivalent_reaa": "Illustre Élu des Quinze",
       "decors": "Gris-Bleu et Or, tente du Tabernacle, lettre Yod",
@@ -591,7 +594,8 @@
           "pages": null
         }
       ],
-      "etat": "declare"
+      "etat": "declare",
+      "atteste_par": "Tome II — Loges de Perfection, rituels intégraux : tableau de la progression séphirotique, et corps du rituel de chaque degré. Arbitré par le Souverain Grand Commandeur le 01/09/2026."
     },
     {
       "degre": 11,

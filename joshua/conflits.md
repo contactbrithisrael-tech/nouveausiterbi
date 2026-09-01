@@ -9,30 +9,80 @@ que Joshua répondra quand un Frère demandera à quelle Séphira correspond
 son grade — et une réponse fausse sur ce point est pire qu'une absence de
 réponse.
 
-Rien n'a été tranché ici. Les instructions de Joshua le disent
-elles-mêmes : *« En cas de doute doctrinal, DEMANDER — ne jamais
-inventer. »* La carte `corpus.json` suit la Roue du site, faute de mieux,
-et attend votre arbitrage.
+> **Point 1 tranché le 01/09/2026** par le Souverain Grand Commandeur :
+> *« Regarde les rituels pour 7-10, et c'est ME'UBIN. »* Les rituels ont
+> été lus, la Roue et la carte ont été corrigées. Le détail est conservé
+> ci-dessous, parce qu'une correction dont on a perdu le motif finit par
+> être défaite.
+>
+> Les points 2 à 5 attendent toujours.
 
 ---
 
-## 1. Les Séphiroth des degrés 7 à 10
+## 1. Les Séphiroth des degrés 7 à 10 — TRANCHÉ
 
-| Degré | Roue des Degrés (site) | Instructions Joshua |
-|---|---|---|
-| 7° MASKIL | Binah | **Da'at** |
-| 8° | **ME'UBIN** — Hokhmah | **Mevin** — **Binah** |
-| 9° HAMA'ATIK | Kether | **Hokhmah** |
-| 10° KADOSH | Kether – Malkuth | **Kether** |
+**Ce sont les rituels qui font foi.** Le Tome II — *Loges de Perfection,
+rituels intégraux* — porte en tête un tableau de la progression
+séphirotique, et chaque rituel redit sa Séphira dans son propre
+catéchisme. Les deux concordent.
 
-Quatre degrés sur sept, dans le même corps, portent deux attributions
-différentes. Le 8ᵉ porte en outre **deux noms** : ME'UBIN sur la Roue,
-Mevin dans les instructions.
+| Degré | Nom | Signification | Séphira |
+|---|---|---|---|
+| 7ᵉ | MASKIL (משכיל) | L'Éclairé | **Da'at (entrevue)** |
+| 8ᵉ | **ME'UBIN** (מבין) | L'Intelligent | **Binah** |
+| 9ᵉ | HAMA'ATIK (המעתיק) | Le Transmetteur | **Hokhmah** |
+| 10ᵉ | KADOSH (קדוש) | Le Saint | **Kether (entrevue)** |
 
-L'écart n'est pas aléatoire : les instructions font entrer **Da'at** dans
-la série, ce que la Roue ne fait pas. Or Da'at n'est pas une Séphira au
-sens strict — l'introduire décale toutes les correspondances suivantes.
-C'est une question de doctrine, pas de saisie.
+La Roue du site portait les quatre Séphiroth **décalées d'un cran** —
+Binah, Hokhmah, Kether, Kether–Malkuth — parce qu'elle ne faisait pas
+entrer Da'at dans la série. Or le rituel du 7ᵉ le dit expressément :
+
+> « Le 7e degré ne correspond pas à une Séphira visible sur l'Arbre de
+> Vie. Il correspond à DA'AT — la Séphira cachée, le "non-Séphira", le
+> point de passage entre les sept Séphiroth inférieures et le Triangle
+> Supérieur. »
+
+Et il ajoute que **Da'at ne peut être pleinement révélée qu'au 33ᵉ** :
+au 7ᵉ, le Maskil ne fait que l'entrevoir. De même pour Kether au 10ᵉ —
+« *le 10ᵉ degré n'est pas un aboutissement, c'est une PORTE* ». D'où les
+deux mentions « entrevue », qui ne sont pas une nuance de style.
+
+**Le 8ᵉ s'appelle ME'UBIN**, et c'est le rituel lui-même qui le dit :
+« *Relevez-vous, ME'UBIN, 8ème Degré du Rite Brith Israël !* » Le
+Recueil des rituels ne connaît que cette forme — douze occurrences,
+aucune de MEVIN : « Rituel du 8ème degré : ME'UBIN », « le Serment du
+Me'ubin », « Loge de Me'ubinim », « l'Âge des Me'ubinim ».
+
+### Ce qui traîne encore la forme MEVIN
+
+Deux documents portent l'ancienne graphie et devraient être repris :
+
+- **Tome II** : son *sommaire* et ses *tableaux récapitulatifs* écrivent
+  MEVIN six fois, alors que le corps du rituel, dans le même fichier,
+  écrit ME'UBIN vingt fois. C'est un vestige, mais un vestige qui se lit
+  en premier.
+- **Manuel d'Architecture Sacrée — Sephiroth** : trois occurrences de
+  MEVIN, dont le titre de la section du 8ᵉ.
+
+### Une divergence trouvée en chemin
+
+L'**âge du Me'ubin** n'est pas le même dans les deux rituels : le
+Recueil dit *« Soixante-Trois (63) ans — le nombre sacré »*, le Tome II
+dit *840 ans* dans son tableau. Ce n'est pas le point qui était posé,
+mais il vaut d'être tranché avant qu'un Frère ne pose la question.
+
+### Reste aussi le 4ᵉ
+
+Le tableau du Tome II donne **TIPHERETH** seul pour le 4ᵉ ZAKAÏ, quand
+la Roue et la carte portent « Tiphereth – Yesod ». Le 4ᵉ n'était pas
+dans la question posée : il n'a pas été touché.
+
+### Ce qui a été corrigé
+
+- `roue.html` : les quatre Séphiroth, et les traductions françaises
+  alignées sur celles du rituel (« L'Éclairé » plutôt que « Sage /
+  Érudit », etc.).
+- `joshua/corpus.json` : idem, avec la mention de l'attestation.
 
 ## 2. Le Consistoire existe-t-il ?
 
@@ -88,7 +138,14 @@ trop restrictif, mais mieux vaut un texte trop fermé qu'un texte ouvert
 
 ## Ce que j'attends de vous
 
-Pour chacun des cinq points : votre décision. La Roue du site et les
-instructions de Joshua devront ensuite être alignées sur elle — sans
-quoi le site et le bot continueront de se contredire devant les mêmes
-Frères.
+Le point 1 est tranché et appliqué. Restent les points 2 à 5, plus les
+trois questions ouvertes par la lecture des rituels :
+
+- le nom MEVIN à reprendre dans le Tome II (sommaire et tableaux) et
+  dans le Manuel d'Architecture Sacrée ;
+- l'âge du Me'ubin : 63 ans ou 840 ans ;
+- le 4ᵉ ZAKAÏ : Tiphereth seul, ou Tiphereth – Yesod.
+
+La Roue du site et les instructions de Joshua devront être alignées sur
+chaque décision — sans quoi le site et le bot continueront de se
+contredire devant les mêmes Frères.
