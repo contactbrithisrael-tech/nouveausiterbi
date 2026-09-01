@@ -15,7 +15,7 @@ réponse.
 > corrigées. Le détail est conservé ci-dessous, parce qu'une correction
 > dont on a perdu le motif finit par être défaite.
 >
-> Les points 3 à 5 attendent toujours, avec quatre questions ouvertes en
+> Les points 3 à 6 attendent toujours, avec quatre questions ouvertes en
 > chemin : la graphie MEVIN qui subsiste dans deux documents, l'âge du
 > Me'ubin, le 4ᵉ ZAKAÏ, et la borne des 30ᵉ à 32ᵉ.
 
@@ -152,7 +152,36 @@ tombent. C'est la seule question qui reste ouverte sur ce point.
   son Monde et l'article qui l'atteste.
 - Joshua connaît la classification et la restitue avec ses Mondes.
 
-## 3. Points mineurs
+## 3. Le nom du 18ᵉ : HARUACH ou CHAYIM ?
+
+Trouvé en vérifiant la couverture du corpus, et non des moindres.
+
+Le **Tome III — Les 22 Sentiers, rituels intégraux**, approuvé par le
+Suprême Conseil comme manuel de référence pour les 11ᵉ à 18ᵉ degrés,
+donne la table des huit premiers Sentiers :
+
+| Degré | Tome III | Lettre | Sentier | Roue du site |
+|---|---|---|---|---|
+| 11ᵉ | NISTAR | Aleph א | Kether→Hokhmah | NISTAR |
+| 12ᵉ | NATIV | Beth ב | Kether→Binah | NATIV |
+| 13ᵉ | GISHRA | Guimel ג | Kether→Tiphéret | GISHRA |
+| 14ᵉ | ROSH | Daleth ד | Hokhmah→Hesed | ROSH |
+| 15ᵉ | SOFER | Hé ה | Hokhmah→Tiphéret | SOFER |
+| 16ᵉ | PATA'H | Vav ו | Hokhmah→Da'at | PATA'H |
+| 17ᵉ | TZEMAH | Zayin ז | Binah→Geburah | TZEMAH |
+| 18ᵉ | **CHAYIM** (חַיִּים) | Chet ח | Binah→Chesed | **HARUACH** |
+
+Sept noms sur huit concordent. Le huitième non — et c'est le 18ᵉ, le
+degré le plus visible du Rite après les trois premiers.
+
+Le Tome III le décrit ainsi : « 18° CHAYIM — Chet ח — Binah→Chesed —
+Aaron et l'encensoir. La Vie. LECHAIM. » *Chayim* est la Vie ;
+*Ha-Ruach* est l'Esprit. Ce ne sont pas deux traductions d'un même mot.
+
+C'est le même cas que ME'UBIN au 8ᵉ, et il se tranche de la même façon :
+en disant lequel des deux est le nom du grade. Rien n'a été touché.
+
+## 4. Points mineurs
 
 - **3° ADON** : « Hod – Netzach » sur la Roue, « Hod » seul dans l'index.
 - **4° ZAKAÏ** : « Tiphereth – Yesod » sur la Roue, « Tiphereth » seul
@@ -161,7 +190,7 @@ tombent. C'est la seule question qui reste ouverte sur ce point.
   fiche, et en « 11°-32° » dans son récapitulatif. La carte retient
   11-32.
 
-## 4. Le 33ᵉ degré n'a aucun texte
+## 5. Le 33ᵉ degré n'a aucun texte
 
 Trente-deux degrés sur trente-trois sont pourvus. Le **33ᵉ — KETHER
 ATZILUTH** n'est couvert par aucun ouvrage de l'index : ni le Recueil
@@ -171,7 +200,7 @@ Ce n'est peut-être pas une lacune : un grade qui ne se transmet qu'en
 personne n'a pas à figurer dans un corpus indexé. Mais il faut le
 décider, et non le laisser au hasard.
 
-## 5. Ouvrages sans degré assigné
+## 6. Ouvrages sans degré assigné
 
 Trois ouvrages sont transversaux — ils n'appartiennent à aucun degré :
 
@@ -191,14 +220,16 @@ trop restrictif, mais mieux vaut un texte trop fermé qu'un texte ouvert
 
 ## Ce que j'attends de vous
 
-Les points 1 et 2 sont tranchés et appliqués. Restent les points 3 à 5,
+Les points 1 et 2 sont tranchés et appliqués. Restent les points 3 à 6,
 plus les quatre questions ouvertes par la lecture des textes :
 
 - le nom MEVIN à reprendre dans le Tome II (sommaire et tableaux) et
   dans le Manuel d'Architecture Sacrée ;
 - l'âge du Me'ubin : 63 ans ou 840 ans ;
 - le 4ᵉ ZAKAÏ : Tiphereth seul, ou Tiphereth – Yesod ;
-- les 30ᵉ à 32ᵉ : Chapitre ou Aréopage ? Aucun texte ne le dit.
+- les 30ᵉ à 32ᵉ : Chapitre ou Aréopage ? Aucun texte ne le dit ;
+- le 18ᵉ : HARUACH, comme le porte la Roue, ou CHAYIM, comme l'écrit le
+  Tome III ?
 
 Et, s'il faut aller au bout : la phrase de la *Bible du Rite* qui annonce
 un « Consistoire » au Volume III devrait être reprise, sans quoi le

@@ -29,35 +29,62 @@ chaque mode peut atteindre.
 
 ## Ce qui est établi
 
-`corpus.json` cartographie **les 33 degrés**, extraits de la Roue des
-Degrés du site, qui fait autorité. Pour chacun : son nom hébreu, sa
-traduction, sa Séphira, son corps de rattachement, son équivalent au REAA
-et ses décors.
+`corpus.json` cartographie **les 33 degrés**. La Roue des Degrés du site
+en donne la liste ; là où elle diverge d'un rituel, c'est le rituel qui
+fait autorité — deux arbitrages l'ont déjà établi, voir `conflits.md`.
 
-Les degrés se répartissent en cinq corps :
+Pour chaque degré : son nom hébreu, sa traduction, sa Séphira, son corps
+de rattachement, son équivalent au REAA et ses décors.
 
-| Corps | Degrés |
-|---|---|
-| Loges Symboliques | 1 – 3 |
-| Loges de Perfection | 4 – 10 |
-| Chapitre — 22 Sentiers | 11 – 30 |
-| Consistoire | 31 – 32 |
-| Suprême Conseil | 33 |
+Les ateliers se répartissent en **trois catégories**, une par Monde
+opératif — article 6 de la Constitution —, plus le Suprême Conseil des
+articles 7 et 8 :
+
+| Corps | Monde | Degrés |
+|---|---|---|
+| Loges Symboliques | Olam Assiah — l'Action | 1 – 3 |
+| Loges de Perfection | Olam Yetzirah — la Formation | 4 – 10 |
+| Chapitres et Aréopages | Olam Beriah — la Création | 11 – 32 |
+| Suprême Conseil | — | 33 |
+
+Il n'y a **pas de Consistoire** : le mot appartient au Rite Écossais, et
+la Constitution du Brith Israël ne le connaît pas.
 
 ## Ce qui manque
 
-**Douze ouvrages sont déclarés, et trente-deux degrés sur trente-trois
+**Quatorze ouvrages sont déclarés, et trente-deux degrés sur trente-trois
 sont pourvus d'au moins un texte.** Le 33ᵉ n'est couvert par aucun.
 
-Deux choses manquent encore, et aucune ne s'invente :
+Mais tous les textes ne se valent pas, et le compte brut trompe. Ce qui
+compte, c'est si un degré dispose d'un ouvrage QUI LUI EST CONSACRÉ, ou
+seulement d'un ouvrage qui l'englobe avec vingt et un autres :
+
+| Degrés | Ce qui les couvre | État |
+|---|---|---|
+| 1 – 3 | un rituel **par degré** (Oved, Boneh, Adon), plus le Tome I et la Bible du Rite | solide |
+| 4 – 10 | le **Tome II**, rituels intégraux des Loges de Perfection | solide |
+| 11 – 18 | le **Tome III**, rituels intégraux, et la **Bible du Rite Tome III** | solide |
+| 19 – 32 | le Recueil intégral et *Les Trente-Deux Voies* — deux ouvrages qui couvrent vingt-deux degrés chacun | mince |
+| 33 | rien | vide |
+
+Le *Plan Maître Tome III* est un **plan de rédaction**, non un ouvrage
+d'instruction : il dit ce qui sera écrit, non ce qui s'enseigne. Il ne
+doit pas être compté comme une source de degré, et c'est l'avoir compté
+qui a longtemps fait croire les 19ᵉ à 32ᵉ pourvus.
+
+Trois choses manquent encore, et aucune ne s'invente :
 
 1. **Les pages.** Aucun rattachement ne porte de plage de pages. Sans
    elles, Joshua peut lire un ouvrage mais ne peut citer aucune
    référence — or citer est sa règle première.
-2. **Les arbitrages doctrinaux.** Voir `conflits.md` : la Roue du site et
-   les instructions de Joshua se contredisent sur les Séphiroth des
-   degrés 7 à 10, sur le nom du 8ᵉ, et sur l'existence d'un Consistoire.
-   Indexer avant d'avoir tranché reviendrait à graver une erreur.
+2. **Les rituels des 19ᵉ à 32ᵉ, et du 33ᵉ.** Le Tome III s'arrête au
+   18ᵉ. Au-delà, aucun texte propre à un degré : un questionnaire tiré de
+   là interroge sur de la kabbale générale, non sur l'instruction d'un
+   grade.
+3. **Les arbitrages doctrinaux qui restent.** Voir `conflits.md`. Les
+   Séphiroth des 7ᵉ à 10ᵉ et l'existence du Consistoire sont tranchées ;
+   le nom du 18ᵉ — HARUACH ou CHAYIM — ne l'est pas. Indexer avant
+   d'avoir tranché reviendrait à graver une erreur.
 
 ---
 

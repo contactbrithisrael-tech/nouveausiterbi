@@ -1,6 +1,6 @@
 {
   "$commentaire": "Carte du corpus du Rite Brith Israël, destinée à Joshua. Les 33 degrés viennent de la Roue des Degrés du site ; les ouvrages et leurs plages de degrés viennent de l'INDEX CORPUS RBI du 28 avril 2026. Aucune plage n'est supposée. Les degrés 7 à 10 et la classification des ateliers ont été arbitrés le 01/09/2026 d'après les rituels eux-mêmes (Tome II) : voir conflits.md, qui conserve la trace de ce qui divergeait et de ce qui reste à trancher.",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "etabli_le": "2026-09-01",
   "dossier_drive": "https://drive.google.com/drive/folders/1HKyI7v6s7uFR7Tng80easrtZvv6B7vpl",
   "index_drive": "https://docs.google.com/document/d/1XHpmPaUdVky7h56pSCPzkz3dBPNolAgPFwjsbgsSofc/edit",
@@ -175,6 +175,48 @@
       "statut": "a_indexer"
     },
     {
+      "id": "tome-3-rituels",
+      "titre": "Tome III — Les 22 Sentiers, rituels intégraux (11ᵉ–18ᵉ)",
+      "nature": "rituel",
+      "degres_couverts": [
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18
+      ],
+      "transversal": false,
+      "format": "docx",
+      "diffusion": "membres",
+      "source": "corpus_rbi/RBI TOME III COMPLET.docx",
+      "statut": "a_indexer",
+      "remarque": "« Approuvé par le Suprême Conseil Mondial Brith Israël comme manuel de référence pour les travaux rituéliques des 11ème au 18ème degrés. » Couvre les huit premiers Sentiers, chaque grade en douze sections. Absent de la carte jusqu'au 02/09/2026."
+    },
+    {
+      "id": "bible-du-rite-t3",
+      "titre": "La Bible du Rite, Tome III — Les 22 Sentiers, grades 11ᵉ–18ᵉ",
+      "nature": "encyclopedie",
+      "degres_couverts": [
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18
+      ],
+      "transversal": false,
+      "format": "docx",
+      "diffusion": "membres",
+      "source": "corpus_rbi/RBI BIBLE TOME III 11 18.docx",
+      "statut": "a_indexer",
+      "remarque": "Encyclopédie pédagogique. Fait suite aux Tomes I et II, qui couvraient les dix Séphiroth. Absente de la carte jusqu'au 02/09/2026."
+    },
+    {
       "id": "recueil-integral",
       "titre": "Recueil des rituels Brith Israël — intégral",
       "nature": "rituel",
@@ -284,7 +326,8 @@
       "format": "md",
       "diffusion": "membres",
       "source": "https://drive.google.com/file/d/1D2KVoXjFn9zjpnWnNCzFI2YQIfFN4-m6/view",
-      "statut": "a_indexer"
+      "statut": "a_indexer",
+      "remarque": "PLAN de rédaction du Tome III, non un ouvrage d'instruction : il dit ce qui sera écrit, non ce qui s'enseigne. À ce jour, seuls les 11ᵉ à 18ᵉ existent réellement (voir tome-3-rituels et bible-du-rite-t3)."
     },
     {
       "id": "architecture-sacree",
@@ -612,6 +655,14 @@
       "decors": "Havane et Cramoisi, tête de bélier sacré, lettre Aleph",
       "sources": [
         {
+          "ouvrage": "bible-du-rite-t3",
+          "pages": null
+        },
+        {
+          "ouvrage": "tome-3-rituels",
+          "pages": null
+        },
+        {
           "ouvrage": "recueil-integral",
           "pages": null
         },
@@ -636,6 +687,14 @@
       "equivalent_reaa": "Grand Maître Architecte",
       "decors": "Noir, Étoile de David, Boussole et Sel — Kether→Binah",
       "sources": [
+        {
+          "ouvrage": "bible-du-rite-t3",
+          "pages": null
+        },
+        {
+          "ouvrage": "tome-3-rituels",
+          "pages": null
+        },
         {
           "ouvrage": "recueil-integral",
           "pages": null
@@ -662,6 +721,14 @@
       "decors": "Rose et Vert, Arbre de Vie et Pont sur les eaux — Kether→Tiphereth",
       "sources": [
         {
+          "ouvrage": "bible-du-rite-t3",
+          "pages": null
+        },
+        {
+          "ouvrage": "tome-3-rituels",
+          "pages": null
+        },
+        {
           "ouvrage": "recueil-integral",
           "pages": null
         },
@@ -686,6 +753,14 @@
       "equivalent_reaa": "Grand Élu Parfait et Sublime Maçon",
       "decors": "Blanc et Pourpre, Buisson Ardent et Palmier de Justice — Hokhmah→Hesed",
       "sources": [
+        {
+          "ouvrage": "bible-du-rite-t3",
+          "pages": null
+        },
+        {
+          "ouvrage": "tome-3-rituels",
+          "pages": null
+        },
         {
           "ouvrage": "recueil-integral",
           "pages": null
@@ -712,6 +787,14 @@
       "decors": "Noir et Or, Pyramides sous l'orage, Parchemin et Stylet — Hokhmah→Tiphereth",
       "sources": [
         {
+          "ouvrage": "bible-du-rite-t3",
+          "pages": null
+        },
+        {
+          "ouvrage": "tome-3-rituels",
+          "pages": null
+        },
+        {
           "ouvrage": "recueil-integral",
           "pages": null
         },
@@ -736,6 +819,14 @@
       "equivalent_reaa": "Prince de Jérusalem",
       "decors": "Bordeaux et Argent, Trône de Justice et Balance — Hokhmah→Da'at",
       "sources": [
+        {
+          "ouvrage": "bible-du-rite-t3",
+          "pages": null
+        },
+        {
+          "ouvrage": "tome-3-rituels",
+          "pages": null
+        },
         {
           "ouvrage": "recueil-integral",
           "pages": null
@@ -762,6 +853,14 @@
       "decors": "Bleu Royal et Or, Shofar versant l'huile — Binah→Geburah",
       "sources": [
         {
+          "ouvrage": "bible-du-rite-t3",
+          "pages": null
+        },
+        {
+          "ouvrage": "tome-3-rituels",
+          "pages": null
+        },
+        {
           "ouvrage": "recueil-integral",
           "pages": null
         },
@@ -786,6 +885,14 @@
       "equivalent_reaa": "Souverain Prince Rose-Croix",
       "decors": "Vert et Or, Encensoir et Cœur Rayonnant, Corne d'Huile — Binah→Tiphereth",
       "sources": [
+        {
+          "ouvrage": "bible-du-rite-t3",
+          "pages": null
+        },
+        {
+          "ouvrage": "tome-3-rituels",
+          "pages": null
+        },
         {
           "ouvrage": "recueil-integral",
           "pages": null
