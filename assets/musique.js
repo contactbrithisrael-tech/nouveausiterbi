@@ -11,13 +11,26 @@
    comptée pour lui. Extraire la bande son pour l'héberger ici ne le
    ferait pas — et serait une contrefaçon.
 
-   ── Ce qui protège les visiteurs ───────────────────────────────
-   1. Rien n'est chargé tant que personne ne clique. Tant que le
-      bouton n'est pas actionné, aucune requête ne part vers Google
-      et aucun traceur n'est déposé. Un visiteur qui ne veut pas de
-      musique n'est jamais vu par YouTube.
-   2. Le lecteur est celui de youtube-nocookie.com, qui ne dépose
-      pas de cookie publicitaire.
+   ── Le démarrage : ce qu'aucun site ne peut contourner ─────────
+   Aucun navigateur n'autorise un site à produire du son avant que
+   le visiteur n'ait touché la page. La règle est absolue et vaut
+   pour tous les sites du monde, YouTube compris. Un site qui
+   semble démarrer seul fait en réalité ce que fait celui-ci :
+
+     1. la musique part dès l'ouverture, mais en sourdine — ce que
+        les navigateurs autorisent ;
+     2. au tout premier geste du visiteur, quel qu'il soit — un
+        clic, une touche, un défilement, un doigt sur l'écran — le
+        son monte en fondu.
+
+   Le visiteur n'a donc rien à chercher ni à cliquer : la musique
+   arrive d'elle-même dès qu'il commence à lire.
+
+   ── D'une page à l'autre ───────────────────────────────────────
+   Le choix du visiteur et l'endroit du morceau sont retenus le
+   temps de la visite. Qui demande le silence ne le redemande pas à
+   chaque page ; qui écoute reprend là où il en était plutôt qu'au
+   début.
 
    ── Réglages ───────────────────────────────────────────────────
    Tout se modifie dans REGLAGES ci-dessous. Pour changer de
@@ -25,15 +38,12 @@
    les onze caractères qui suivent « youtu.be/ » ou « ?v= ».
 
    ── Usage ──────────────────────────────────────────────────────
-   Inclure <script src="assets/musique.js?v=20260901b"></script>
+   Inclure <script src="assets/musique.js?v=20260901c"></script>
    avant la fermeture du <body>. Le numéro de version n'est pas
    décoratif : _headers conserve les fichiers d'assets un an, et
    c'est le changement d'adresse qui force les navigateurs à
    reprendre la nouvelle version. Modifier ce fichier sans changer
    le numéro revient à ne rien publier du tout.
-
-   Le son ne démarre jamais sans un clic : les navigateurs
-   l'interdisent, et c'est heureux.
 ════════════════════════════════════════════════════════════════ */
 
 (function () {
@@ -43,21 +53,36 @@
   var VIDEO = '_pGXBoOsrJI';
 
   var REGLAGES = {
-    volume:       35,      // volume final, de 0 à 100
-    fondu:        2500,    // durée du fondu d'ouverture et de fermeture, en ms
+    volume:       18,      // volume final, de 0 à 100 — volontairement discret
+    fondu:        3000,    // durée du fondu d'ouverture et de fermeture, en ms
     positionCoin: 'right'  // 'right' ou 'left'
   };
 
-  var lecteur = null;      // l'objet YT.Player
+  // Mémoire de la visite : le choix du visiteur, et où il en est.
+  var CLE_CHOIX = 'rbi-musique';
+  var CLE_TEMPS = 'rbi-musique-t';
+
+  var lecteur = null;
   var joue = false;
+  var sourdine = true;       // vrai tant qu'aucun geste n'a eu lieu
   var fonduEnCours = null;
   var apiDemandee = false;
+  var majInterface = null;   // fixée par construireLecteur()
+  var boiteLecteur = null;   // le cadre visible, idem
 
-  /* ── Chargement de l'API, une seule fois, et seulement sur clic ── */
+  /* ── Mémoire, tolérante aux navigations privées verrouillées ──── */
+  function lire(cle, defaut) {
+    try { var v = sessionStorage.getItem(cle); return v === null ? defaut : v; }
+    catch (e) { return defaut; }
+  }
+  function ecrire(cle, valeur) {
+    try { sessionStorage.setItem(cle, valeur); } catch (e) { /* sans importance */ }
+  }
+
+  /* ── Chargement de l'API, une seule fois ───────────────────────── */
   function chargerAPI(quandPrete, siEchec) {
     if (window.YT && window.YT.Player) { quandPrete(); return; }
 
-    // Une autre page a pu lancer le chargement : on s'y raccroche.
     if (!apiDemandee) {
       apiDemandee = true;
       var s = document.createElement('script');
@@ -66,26 +91,26 @@
       document.head.appendChild(s);
     }
 
-    // L'API prévient par une fonction globale, qu'on n'écrase pas si
-    // elle existe déjà.
     var precedent = window.onYouTubeIframeAPIReady;
     window.onYouTubeIframeAPIReady = function () {
       if (typeof precedent === 'function') precedent();
       quandPrete();
     };
 
-    // Réseau coupé, extension qui bloque, API qui ne répond pas :
-    // sans garde-fou le bouton resterait figé sur « Chargement… ».
+    // Réseau coupé, extension qui bloque, API muette : sans garde-fou
+    // le bouton resterait figé sur « Chargement… ».
     setTimeout(function () {
       if (!window.YT || !window.YT.Player) siEchec();
     }, 8000);
   }
 
   /* ── Le lecteur : un point invisible, jamais display:none ────────
-     Un iframe caché par display:none voit sa lecture refusée par
+     Un iframe masqué par display:none voit sa lecture refusée par
      plusieurs navigateurs. On le réduit donc à un pixel transparent
      que rien ne peut cliquer. */
   function construirePlayer(quandPret, siEchec) {
+    if (document.getElementById('rbi-yt')) return;
+
     var hote = document.createElement('div');
     hote.id = 'rbi-yt';
     hote.style.cssText =
@@ -93,11 +118,14 @@
       'opacity:.01;pointer-events:none;z-index:-1;';
     document.body.appendChild(hote);
 
+    var reprise = parseInt(lire(CLE_TEMPS, '0'), 10);
+
     lecteur = new window.YT.Player('rbi-yt', {
       videoId: VIDEO,
       host: 'https://www.youtube-nocookie.com',
       playerVars: {
         autoplay: 1,
+        mute: 1,               // seule façon d'être autorisé à démarrer seul
         controls: 0,
         disablekb: 1,
         fs: 0,
@@ -105,14 +133,18 @@
         rel: 0,
         playsinline: 1,
         loop: 1,
-        playlist: VIDEO   // exigé par YouTube pour boucler une seule vidéo
+        playlist: VIDEO,       // exigé par YouTube pour boucler une seule vidéo
+        start: reprise > 0 ? reprise : 0
       },
       events: {
         onReady: quandPret,
         onError: siEchec,
         onStateChange: function (e) {
           // Filet de sécurité : certaines vidéos ignorent loop.
-          if (e.data === window.YT.PlayerState.ENDED && joue) lecteur.playVideo();
+          if (e.data === window.YT.PlayerState.ENDED && joue) {
+            ecrire(CLE_TEMPS, '0');
+            lecteur.playVideo();
+          }
         }
       }
     });
@@ -137,15 +169,56 @@
     }, 50);
   }
 
+  /* ── Le premier geste, quel qu'il soit, lève la sourdine ───────── */
+  function guetterLePremierGeste() {
+    var gestes = ['pointerdown', 'touchstart', 'keydown', 'wheel', 'scroll'];
+
+    function retirer() {
+      gestes.forEach(function (g) { window.removeEventListener(g, lever, true); });
+    }
+
+    function lever(e) {
+      // Un geste porté sur le lecteur lui-même appartient à son bouton.
+      // Sans cette réserve, un clic sur « Activer le son » lèverait la
+      // sourdine ici, puis le clic serait lu comme une demande d'arrêt :
+      // la musique se couperait au moment même où on l'allume.
+      if (e && e.target && e.target.nodeType === 1 &&
+          boiteLecteur && boiteLecteur.contains(e.target)) return;
+
+      retirer();
+      if (!sourdine || !joue) return;
+      sourdine = false;
+      if (!lecteur || !lecteur.unMute) return;
+      lecteur.setVolume(0);
+      lecteur.unMute();
+      lecteur.playVideo();   // iOS peut avoir refusé le démarrage en sourdine
+      fondre(REGLAGES.volume);
+      if (majInterface) majInterface();
+    }
+
+    gestes.forEach(function (g) {
+      window.addEventListener(g, lever, { capture: true, passive: true });
+    });
+  }
+
+  /* ── Retenir l'endroit du morceau, pour la page suivante ───────── */
+  setInterval(function () {
+    if (joue && lecteur && lecteur.getCurrentTime) {
+      var t = lecteur.getCurrentTime();
+      if (t > 0) ecrire(CLE_TEMPS, String(Math.floor(t)));
+    }
+  }, 5000);
+
   function arreter() {
     joue = false;
+    ecrire(CLE_CHOIX, 'off');
     if (!lecteur) return;
     fondre(0, function () { if (lecteur && lecteur.pauseVideo) lecteur.pauseVideo(); });
   }
 
   /* ── Le lecteur visible ─────────────────────────────────────────── */
   function construireLecteur() {
-    if (document.getElementById('music-player')) return; // déjà en place
+    if (document.getElementById('music-player')) return;
 
     var coin = REGLAGES.positionCoin === 'left' ? 'left:1.2rem;' : 'right:1.2rem;';
     var boite = document.createElement('div');
@@ -162,13 +235,10 @@
     note.style.cssText = 'font-size:1.05rem;color:#c9a84c;';
 
     var titre = document.createElement('span');
-    titre.textContent = 'Musique du Rite';
     titre.style.cssText = 'color:#c9a84c;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;';
 
     var bouton = document.createElement('button');
     bouton.type = 'button';
-    bouton.textContent = '▶ Écouter';
-    bouton.setAttribute('aria-label', 'Démarrer la musique du Rite');
     bouton.style.cssText =
       'background:#c9a84c;border:none;color:#0d0d0d;padding:.3rem .8rem;' +
       'font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;' +
@@ -180,18 +250,24 @@
     fermer.setAttribute('aria-label', 'Masquer le lecteur');
     fermer.style.cssText = 'background:transparent;border:none;color:#888;font-size:1rem;cursor:pointer;';
 
-    function enEcoute() {
-      bouton.textContent = '⏸ Silence';
-      bouton.setAttribute('aria-label', 'Arrêter la musique du Rite');
+    // L'affichage suit trois états : à l'arrêt, en attente d'un geste,
+    // et en train de jouer.
+    majInterface = function () {
+      if (!joue) {
+        titre.textContent = 'Musique du Rite';
+        bouton.textContent = '▶ Écouter';
+        bouton.setAttribute('aria-label', 'Démarrer la musique du Rite');
+      } else if (sourdine) {
+        titre.textContent = 'Musique du Rite';
+        bouton.textContent = '♪ Activer le son';
+        bouton.setAttribute('aria-label', 'Activer le son de la musique');
+      } else {
+        titre.textContent = 'Musique du Rite';
+        bouton.textContent = '⏸ Silence';
+        bouton.setAttribute('aria-label', 'Arrêter la musique du Rite');
+      }
       bouton.disabled = false;
-      titre.textContent = 'Musique du Rite';
-    }
-
-    function auRepos() {
-      bouton.textContent = '▶ Écouter';
-      bouton.setAttribute('aria-label', 'Démarrer la musique du Rite');
-      bouton.disabled = false;
-    }
+    };
 
     function indisponible(raison) {
       joue = false;
@@ -202,17 +278,15 @@
       bouton.style.cursor = 'default';
     }
 
-    bouton.addEventListener('click', function () {
-      if (joue) { arreter(); auRepos(); return; }
-
+    function lancer(avecSon) {
       joue = true;
+      ecrire(CLE_CHOIX, 'on');
 
-      // Deuxième écoute et suivantes : le lecteur existe déjà.
       if (lecteur && lecteur.playVideo) {
-        lecteur.setVolume(0);
+        if (avecSon) { sourdine = false; lecteur.setVolume(0); lecteur.unMute(); }
         lecteur.playVideo();
-        fondre(REGLAGES.volume);
-        enEcoute();
+        if (avecSon) fondre(REGLAGES.volume);
+        majInterface();
         return;
       }
 
@@ -223,14 +297,21 @@
         function () {
           construirePlayer(
             function () {
-              if (!joue) { lecteur.pauseVideo(); auRepos(); return; }
-              lecteur.setVolume(0);
-              lecteur.playVideo();
-              fondre(REGLAGES.volume);
-              enEcoute();
+              if (!joue) { lecteur.pauseVideo(); majInterface(); return; }
+              if (avecSon) {
+                sourdine = false;
+                lecteur.setVolume(0);
+                lecteur.unMute();
+                lecteur.playVideo();
+                fondre(REGLAGES.volume);
+              } else {
+                lecteur.mute();
+                lecteur.playVideo();
+                guetterLePremierGeste();
+              }
+              majInterface();
             },
             function (e) {
-              // 101 et 150 : le propriétaire interdit l'intégration.
               var code = e && e.data;
               indisponible(code === 101 || code === 150
                 ? 'Intégration refusée par la vidéo'
@@ -240,6 +321,11 @@
         },
         function () { indisponible('Musique momentanément indisponible'); }
       );
+    }
+
+    bouton.addEventListener('click', function () {
+      if (joue && !sourdine) { arreter(); majInterface(); return; }
+      lancer(true);   // un clic sur le bouton est un geste : le son peut sortir
     });
 
     fermer.addEventListener('click', function () {
@@ -252,6 +338,12 @@
     boite.appendChild(bouton);
     boite.appendChild(fermer);
     document.body.appendChild(boite);
+    boiteLecteur = boite;
+
+    majInterface();
+
+    // Démarrage d'office, sauf si le visiteur a demandé le silence.
+    if (lire(CLE_CHOIX, 'on') !== 'off') lancer(false);
   }
 
   // Une page masquée ne doit pas continuer à sonner dans un onglet oublié.
