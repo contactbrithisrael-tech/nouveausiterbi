@@ -1,0 +1,11 @@
+# Rite Brith Israël — https://www.brith-israel.org
+#
+# Le site officiel est intégralement indexable. Les déploiements de
+# prévisualisation (*.pages.dev) sont exclus par l'en-tête X-Robots-Tag
+# posé dans functions/_middleware.js : un robots.txt ne peut pas faire
+# cette distinction, puisqu'il est servi à l'identique sur tous les hôtes.
+
+User-agent: *
+Allow: /
+
+Sitemap: https://www.brith-israel.org/sitemap.xml
