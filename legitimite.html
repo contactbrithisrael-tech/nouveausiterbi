@@ -50,6 +50,8 @@
 
     /* Deux colonnes « ce que le Rite est / n'est pas » */
     .duo { display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; margin-top:1.5rem; }
+    .duo--trois { grid-template-columns:repeat(3,1fr); }
+    @media(max-width:900px){ .duo--trois{grid-template-columns:1fr;} }
     @media(max-width:680px){ .duo{grid-template-columns:1fr;} }
     .duo__col { background:var(--fond3); border:1px solid rgba(201,168,76,.22); padding:1.4rem 1.5rem; }
     .duo__col--non { border-color:rgba(160,160,160,.22); }
@@ -152,7 +154,7 @@
         <ul>
           <li>Il ne prétend <strong>pas</strong> à une filiation antique ininterrompue, ni à la découverte d'une tradition perdue ou d'un manuscrit retrouvé.</li>
           <li>Il n'apporte <strong>aucune révélation</strong> et n'ajoute rien aux sources : tout ce qu'il enseigne est consultable ailleurs, par n'importe qui.</li>
-          <li>Il n'est <strong>pas une obédience</strong> : il ne fédère pas des obédiences existantes et ne se substitue pas à celle de ses membres.</li>
+          <li>Il n'est <strong>pas une obédience</strong> : le Suprême Conseil est un Ordre qui administre un rite, et ne se substitue pas à l'obédience de ses membres.</li>
           <li>Il ne revendique <strong>pas</strong> la régularité de reconnaissance au sens des douze points, dont il ne remplit pas tous les critères — il se reconnaît dans la régularité initiatique de la Règle en 7 points.</li>
           <li>Il ne se dit <strong>supérieur</strong> à aucune obédience, aucun rite, aucune juridiction.</li>
           <li>Il ne vend <strong>aucun</strong> grade, aucun titre, aucune patente.</li>
@@ -239,7 +241,7 @@
       Une bonne part des malentendus sur la légitimité vient d'une confusion de
       vocabulaire, qu'il vaut la peine de dissiper avant d'aller plus loin.
     </p>
-    <div class="duo">
+    <div class="duo duo--trois">
       <div class="duo__col">
         <div class="duo__titre">Une obédience</div>
         <ul>
@@ -249,21 +251,33 @@
         </ul>
       </div>
       <div class="duo__col">
-        <div class="duo__titre">Un rite, un ordre</div>
+        <div class="duo__titre">Un rite</div>
         <ul>
-          <li>Un <strong>système de grades et de rituels</strong> : une manière de travailler, pas une administration.</li>
+          <li>Un <strong>système de grades et de rituels</strong> : une manière de travailler, non une administration.</li>
           <li>Plusieurs obédiences peuvent pratiquer le même rite ; une même obédience peut en pratiquer plusieurs.</li>
           <li>Exemples : Rite Écossais Ancien et Accepté, Rite Français, Memphis-Misraïm.</li>
         </ul>
       </div>
+      <div class="duo__col">
+        <div class="duo__titre">Un ordre</div>
+        <ul>
+          <li>Le <strong>corps qui administre un rite</strong> : il en garde la doctrine, en fixe les rituels et en délivre les grades.</li>
+          <li>Il ne fédère pas des Loges venues d'ailleurs ; il veille sur un système et sur ceux qui le pratiquent.</li>
+          <li>Exemples : les Suprêmes Conseils du 33<sup>e</sup> degré, les Souverains Sanctuaires de Memphis-Misraïm.</li>
+        </ul>
+      </div>
     </div>
     <p style="margin-top:1.2rem;">
-      Le Rite Brith Israël est un <strong>rite</strong>, administré par un Suprême Conseil.
-      Il ne demande à personne de quitter son obédience et ne prétend en fédérer aucune.
-      Cela dit — et il vaut mieux le dire soi-même — le Rite initie au 1<sup>er</sup> degré
-      et accorde des patentes à ses Ateliers : sur ces deux points, il exerce une
-      activité que l'on attend d'ordinaire d'une obédience. La distinction éclaire
-      le débat, elle ne le clôt pas.
+      Le <strong>Suprême Conseil du Rite Brith Israël est un Ordre, et il administre un
+      rite</strong> — le Rite Brith Israël. Ce n'est pas une obédience : il ne demande à
+      personne de quitter la sienne et ne prétend en fédérer aucune. Un Frère peut relever
+      du Rite sans rien changer à son appartenance obédiencielle.
+    </p>
+    <p>
+      Cela dit — et il vaut mieux le dire soi-même — l'Ordre initie au 1<sup>er</sup> degré
+      et accorde des patentes à ses Ateliers : sur ces deux points, il exerce une activité
+      que l'on attend d'ordinaire d'une obédience. La distinction éclaire le débat, elle ne
+      le clôt pas.
     </p>
 
     <h3>« Régularité » désigne deux choses très différentes</h3>
