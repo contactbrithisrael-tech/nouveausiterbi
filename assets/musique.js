@@ -21,10 +21,15 @@
    Tout se modifie dans REGLAGES ci-dessous.
 
    ── Usage ──────────────────────────────────────────────────────
-   Inclure <script src="assets/musique.js"></script> avant la
-   fermeture du <body>. Le lecteur se construit tout seul. Le son ne
-   démarre jamais sans un clic : les navigateurs l'interdisent, et
-   c'est heureux.
+   Inclure <script src="assets/musique.js?v=20260901"></script> avant
+   la fermeture du <body>. Le numéro de version n'est pas décoratif :
+   _headers conserve les fichiers d'assets un an, et c'est le
+   changement d'adresse qui force les navigateurs à reprendre la
+   nouvelle version. Modifier ce fichier sans changer le numéro
+   revient à ne rien publier du tout.
+
+   Le lecteur se construit tout seul. Le son ne démarre jamais sans un
+   clic : les navigateurs l'interdisent, et c'est heureux.
 ════════════════════════════════════════════════════════════════ */
 
 (function () {
