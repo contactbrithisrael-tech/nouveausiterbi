@@ -249,6 +249,10 @@
       transition: all .2s;
     }
     .doc-card a:hover { background: var(--or); color: var(--fond); }
+    /* .doc-card a impose la couleur or et l'emporte en spécificité sur .btn-or :
+       sans cette règle, un bouton plein affiche du texte or sur fond or. */
+    .doc-card a.btn-or,
+    .doc-card a.btn-or:hover { color: var(--fond); }
     .doc-card .bientot {
       font-size: .75rem;
       color: var(--gris);
@@ -402,11 +406,12 @@
      SECTION 0 : JOSHUA
 ═══════════════════════════════════════════ -->
 <section class="section actif" id="joshua">
-  <h2 class="section__titre">Joshua — Assistant d'Étude</h2>
+  <h2 class="section__titre">Joshua — l'IA du Rite</h2>
   <div class="section__sep"></div>
   <p class="section__intro">
-    Joshua répond à vos questions à partir des ouvrages du Rite, et cite
-    ses sources — ouvrage et page — pour chaque affirmation.<br>
+    Joshua est l'<strong>intelligence artificielle du Rite Brith Israël</strong>,
+    réservée aux membres de l'Ordre. Il répond à vos questions à partir des seuls
+    ouvrages du Rite, et cite ses sources — ouvrage et page — pour chaque affirmation.<br>
     Il ne répond jamais de mémoire : ce qui ne figure pas dans les textes,
     il dit ne pas le savoir.
   </p>
@@ -434,6 +439,17 @@
         seuls. Un texte d'un degré supérieur n'apparaît pas dans les
         réponses, et son existence n'est pas mentionnée.<br>
         Votre degré est fixé par le Souverain Grand Commandeur.
+      </p>
+    </div>
+
+    <div class="doc-card">
+      <div class="doc-card__icone">⊘</div>
+      <h3 class="doc-card__titre">Ce que Joshua n'est pas</h3>
+      <p class="doc-card__desc">
+        Ce n'est pas une IA généraliste à qui l'on demanderait son avis. Elle
+        ne commente pas, ne tranche pas les questions doctrinales et ne remplace
+        ni l'instruction en Loge ni le Vénérable Maître.<br>
+        Ce qu'elle ne trouve pas dans les textes, elle ne l'invente pas.
       </p>
     </div>
   </div>

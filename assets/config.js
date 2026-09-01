@@ -81,6 +81,11 @@ var RBI_CONFIG = {
         icone: "☆",
         titre: "Alliance Universelle",
         texte: "Le Rite entretient des traités d'amitié et de reconnaissance mutuelle avec des juridictions souveraines sur quatre continents."
+      },
+      {
+        icone: "◈",
+        titre: "Joshua, l'IA du Rite",
+        texte: "Une intelligence artificielle nourrie des seuls ouvrages du Rite, qui cite ouvrage et page pour chaque réponse et ne répond jamais de mémoire. Réservée aux membres de l'Ordre, elle n'ouvre à chacun que les textes de son degré."
       }
     ]
   },
