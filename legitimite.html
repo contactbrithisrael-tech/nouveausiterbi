@@ -62,6 +62,27 @@
     .duo li::before { content:'✦'; position:absolute; left:0; color:var(--or); font-size:.75rem; top:.2rem; }
     .duo__col--non li::before { content:'✕'; color:var(--gris); }
 
+    /* Invitation aux Frères et Sœurs d'autres rites.
+       Encadrée et non simplement titrée : c'est une adresse directe au
+       lecteur, au milieu d'une page qui, jusque-là, expose des faits. */
+    .invite { background:var(--fond3); border:1px solid rgba(201,168,76,.35);
+              border-left:3px solid var(--or); padding:1.8rem 1.9rem; margin-top:1.6rem; }
+    .invite__titre { font-variant:small-caps; letter-spacing:.1em; font-size:1rem;
+                     color:var(--or); margin-bottom:1rem; }
+    .invite p { margin-bottom:.9rem; }
+    .invite ul { list-style:none; margin:1rem 0 1.2rem; }
+    .invite li { font-size:.9rem; padding-left:1.4rem; position:relative;
+                 margin-bottom:.55rem; line-height:1.6; color:var(--texte); }
+    .invite li::before { content:'✦'; position:absolute; left:0; color:var(--or);
+                         font-size:.75rem; top:.25rem; }
+    .invite__geste { display:inline-block; margin-top:.4rem; padding:.65rem 1.4rem;
+                     border:1px solid var(--or); color:var(--or); text-decoration:none;
+                     font-size:.78rem; letter-spacing:.12em; text-transform:uppercase;
+                     transition:all .2s; }
+    .invite__geste:hover { background:var(--or); color:var(--fond); }
+    .invite__note { font-size:.82rem; color:var(--gris); margin-top:1.2rem;
+                    margin-bottom:0; line-height:1.65; }
+
     /* Frise du parcours */
     .frise { position:relative; margin-top:2rem; }
     .frise::before { content:''; position:absolute; left:19px; top:.6rem; bottom:.6rem; width:1px;
@@ -929,6 +950,45 @@
           <li>Interroger directement les juridictions signataires : leurs coordonnées figurent sur leurs propres sites.</li>
         </ul>
       </div>
+    </div>
+  </section>
+
+  <!-- ── Invitation aux Frères et Sœurs d'autres rites ────────────────
+       Elle vient APRÈS « Vérifier par vous-même » : on ne convie pas
+       quelqu'un chez soi avant de lui avoir donné les moyens de savoir
+       chez qui il entre. -->
+  <section id="visiter">
+    <h2>Vous êtes Frère ou Sœur d'un autre rite</h2>
+    <div class="sep"></div>
+    <div class="invite">
+      <div class="invite__titre">Venez voir, et posez vos questions</div>
+      <p>
+        Ce Rite se laisse regarder. Si vous avez été régulièrement initié — quel que soit
+        votre rite, quelle que soit votre obédience —, vous êtes invité à venir vous
+        renseigner directement, et à demander tout ce que vous voudrez savoir.
+      </p>
+      <p>
+        <strong>Joshua</strong>, l'assistant d'étude du Rite, reçoit les visiteurs après
+        tuilage. Il répond à partir des textes, cite ses sources, et dit ce qu'il ne sait
+        pas. Ce qu'on peut lui demander :
+      </p>
+      <ul>
+        <li>D'où vient ce Rite, de quoi il se réclame, et ce qu'il ne revendique pas.</li>
+        <li>Ce que « hébraïque et kabbalistique » veut dire quand on le prend au sérieux.</li>
+        <li>Comment les trente-trois degrés se lisent sur l'Arbre des Sephiroth.</li>
+        <li>Ce qui correspond à ce que vous pratiquez déjà — et ce qui n'y correspond pas.</li>
+        <li>Comment on y entre, ou comment on y ouvre une Loge, si la question vous vient.</li>
+      </ul>
+      <a class="invite__geste" href="https://joshua-studio.onrender.com/joshua"
+         target="_blank" rel="noopener">Venir poser une question</a>
+      <p class="invite__note">
+        Un tuilage vous sera demandé — vous en feriez autant. Aucun contenu de rituel
+        n'est communiqué à qui n'en a pas reçu les degrés : cela vaut chez nous comme
+        chez vous, et ce n'est pas une réserve, c'est un usage. Le reste est ouvert.<br>
+        Vous préférez écrire à un homme plutôt qu'à une machine ?
+        <a href="mailto:contact.brith.israel@gmail.com">contact.brith.israel@gmail.com</a> —
+        toute question reçoit une réponse.
+      </p>
     </div>
   </section>
 
