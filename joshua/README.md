@@ -11,6 +11,22 @@ depuis ici — jamais l'inverse.
 
 ---
 
+## Où sont les textes
+
+Dossier CORPUS RBI sur le Drive du Rite :
+<https://drive.google.com/drive/folders/1HKyI7v6s7uFR7Tng80easrtZvv6B7vpl>
+
+Index détaillé, tenu à jour par le Souverain Grand Commandeur :
+<https://docs.google.com/document/d/1XHpmPaUdVky7h56pSCPzkz3dBPNolAgPFwjsbgsSofc/edit>
+
+## Où tourne Joshua
+
+Joshua est un bot Telegram, `@RiteBrithIsraelBot`, servi par un Worker
+Cloudflare. Il fonctionne à trois modes : Public, Frère/Sœur et Souverain
+Grand Commandeur, chacun avec son propre modèle et son propre périmètre.
+La carte ci-dessous vaut pour les trois — c'est elle qui décide de ce que
+chaque mode peut atteindre.
+
 ## Ce qui est établi
 
 `corpus.json` cartographie **les 33 degrés**, extraits de la Roue des
@@ -30,14 +46,18 @@ Les degrés se répartissent en cinq corps :
 
 ## Ce qui manque
 
-**Trois degrés sur trente-trois sont rattachés à un ouvrage.** Le Tome I
-de *L'Alliance de Lumière* couvre les degrés 1 à 3. Les degrés **4 à 33
-attendent leurs textes**.
+**Douze ouvrages sont déclarés, et trente-deux degrés sur trente-trois
+sont pourvus d'au moins un texte.** Le 33ᵉ n'est couvert par aucun.
 
-Ces rattachements ne se devinent pas. Un ouvrage attribué au mauvais degré
-ouvrirait un texte à des Frères qui n'y ont pas droit ; une page inventée
-ferait citer à Joshua une source qui n'existe pas. Les cases sont donc
-laissées vides plutôt que remplies au jugé.
+Deux choses manquent encore, et aucune ne s'invente :
+
+1. **Les pages.** Aucun rattachement ne porte de plage de pages. Sans
+   elles, Joshua peut lire un ouvrage mais ne peut citer aucune
+   référence — or citer est sa règle première.
+2. **Les arbitrages doctrinaux.** Voir `conflits.md` : la Roue du site et
+   les instructions de Joshua se contredisent sur les Séphiroth des
+   degrés 7 à 10, sur le nom du 8ᵉ, et sur l'existence d'un Consistoire.
+   Indexer avant d'avoir tranché reviendrait à graver une erreur.
 
 ---
 
@@ -122,7 +142,12 @@ Vénérable Maître.
 python3 joshua/verifier.py
 ```
 
-Contrôle que les 33 degrés sont présents et sans doublon, que chaque
-source renvoie à un ouvrage déclaré, que les degrés annoncés par un
-ouvrage correspondent bien à ceux qui le citent, et que rien n'est marqué
-`indexe` sans pages.
+Contrôle que les 33 degrés sont présents et sans doublon, qu'aucun n'est
+rattaché à deux corps ni à aucun, que chaque source renvoie à un ouvrage
+déclaré, que les degrés annoncés par un ouvrage correspondent bien à ceux
+qui le citent, et que rien n'est marqué `indexe` sans pages.
+
+Le vérificateur a été éprouvé sur sept cartes volontairement fausses —
+degré manquant, degré en double, source orpheline, ouvrage et degrés qui
+se contredisent, texte indexé sans pages, état inventé, degré rattaché à
+deux corps. Les sept sont détectées.
