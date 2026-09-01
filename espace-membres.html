@@ -1172,21 +1172,38 @@
      et affichait le message de succès. Les demandes reçues n'arrivaient
      donc nulle part.
 
-     Deux modes, sans serveur à installer :
+     Le service retenu est FormSubmit, pour une raison simple : il ne
+     demande aucune inscription. On poste vers une adresse construite
+     avec le courriel de destination, et la première demande reçue
+     déclenche un message de validation à ouvrir une fois. Ensuite tout
+     arrive directement dans la boîte du Rite.
 
-     ► RBI_FORM_ENDPOINT renseigné — la réponse part directement vers ce
-       service (Formspree, Netlify Forms, Google Apps Script…). C'est le
-       mode à privilégier : le Frère n'a rien à faire de plus.
-       Pour Formspree : créer un formulaire sur formspree.io et coller
-       ici l'adresse fournie, du type https://formspree.io/f/xxxxxxxx
+     ► À FAIRE UNE SEULE FOIS — envoyer une demande d'essai depuis le
+       formulaire, puis ouvrir le courriel de FormSubmit et cliquer sur
+       le lien d'activation. Sans cette étape, rien n'arrive.
 
-     ► Laissé vide — repli par courriel. Le navigateur ouvre le logiciel
-       de messagerie du visiteur avec toutes ses réponses déjà écrites ;
-       il lui reste à appuyer sur Envoyer. Cela fonctionne partout, sans
-       inscription et sans tiers, mais demande un geste de plus.
+     Deux autres routes possibles, en changeant la seule ligne
+     RBI_FORM_ENDPOINT ci-dessous :
+
+     ► Formspree — créer un formulaire sur formspree.io et coller
+       l'adresse fournie, du type https://formspree.io/f/xxxxxxxx
+     ► Vide — repli par courriel : le navigateur ouvre la messagerie du
+       visiteur avec ses réponses déjà écrites, il lui reste à envoyer.
+       Ce repli sert aussi de filet si l'envoi échoue.
+
+     ── Une réserve qui mérite d'être écrite ──────────────────────
+     L'appartenance maçonnique relève des convictions philosophiques :
+     le RGPD la range parmi les données sensibles. Or ces réponses
+     transitent par un service tiers gratuit.
+
+     Si cela pose question, la route la plus sûre est celle déjà retenue
+     pour l'adhésion : un formulaire Google, où les réponses restent dans
+     le compte du Rite sans relais extérieur. Il suffit alors de
+     remplacer ce formulaire par un bouton, comme dans la section
+     Adhésion.
   ═══════════════════════════════════════════════════════════════ */
-  var RBI_FORM_ENDPOINT = '';           // ← coller ici l'adresse du service
   var RBI_FORM_EMAIL    = 'contact.brith.israel@gmail.com';
+  var RBI_FORM_ENDPOINT = 'https://formsubmit.co/ajax/' + RBI_FORM_EMAIL;
 
   var RBI_FORM_OBJETS = {
     'form-adhesion': "Demande d'adhésion individuelle",
@@ -1243,14 +1260,27 @@
     if (RBI_FORM_ENDPOINT) {
       var donnees = new FormData(form);
       donnees.append('_subject', objet);
+      donnees.append('_template', 'table');   // courriel présenté en tableau
+      donnees.append('_captcha', 'false');    // inutile ici, et bloquant en AJAX
+      // Un bouton qui ne réagit pas fait croire à une page morte.
+      var bouton = form.querySelector('[type="submit"]');
+      var libelle = bouton ? bouton.textContent : '';
+      if (bouton) { bouton.disabled = true; bouton.textContent = 'Envoi…'; }
+
       fetch(RBI_FORM_ENDPOINT, { method: 'POST', body: donnees, headers: { Accept: 'application/json' } })
-        .then(function (r) {
-          if (!r.ok) throw new Error(r.status);
+        .then(function (r) { return r.json().catch(function () { return { success: r.ok }; }); })
+        .then(function (rep) {
+          // FormSubmit peut répondre 200 en signalant un refus dans le corps :
+          // on ne se fie donc pas au seul code HTTP.
+          var ok = rep && (rep.success === true || rep.success === 'true' || rep.ok === true);
+          if (!ok) throw new Error(rep && rep.message ? rep.message : 'refus du service');
+          if (bouton) { bouton.disabled = false; bouton.textContent = libelle; }
           confirmer(form, msg);
         })
         .catch(function () {
           // L'envoi a échoué : plutôt que de laisser le Frère sans recours,
           // on bascule sur le courriel avec ses réponses déjà saisies.
+          if (bouton) { bouton.disabled = false; bouton.textContent = libelle; }
           window.location.href = 'mailto:' + RBI_FORM_EMAIL +
             '?subject=' + encodeURIComponent(objet) +
             '&body=' + encodeURIComponent(rassembler(form));
