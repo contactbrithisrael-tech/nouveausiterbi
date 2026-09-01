@@ -81,6 +81,11 @@
     setImg('book-guide',    IMG.BOOK_GUIDE);
     setImg('book-petrin',    IMG.BOOK_PETRIN);
 
+    // Espace Membres : les mêmes couvertures, sur d'autres identifiants.
+    setImg('cover-tome1-membres',  IMG.BOOK_ALLIANCE);
+    setImg('cover-guide-membres',  IMG.BOOK_GUIDE);
+    setImg('cover-petrin-membres', IMG.BOOK_PETRIN);
+
     // Stocker les 4e de couv sur les éléments pour la lightbox
     var b1 = document.getElementById('book-alliance');
     var b2 = document.getElementById('book-guide');
