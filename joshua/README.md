@@ -52,7 +52,7 @@ la Constitution du Brith Israël ne le connaît pas.
 
 ## Ce qui manque
 
-**Quatorze ouvrages sont déclarés, et trente-deux degrés sur trente-trois
+**Quinze ouvrages sont déclarés, et trente-deux degrés sur trente-trois
 sont pourvus d'au moins un texte.** Le 33ᵉ n'est couvert par aucun.
 
 Mais tous les textes ne se valent pas, et le compte brut trompe. Ce qui
@@ -64,35 +64,43 @@ seulement d'un ouvrage qui l'englobe avec vingt et un autres :
 | 1 – 3 | un rituel **par degré** (Oved, Boneh, Adon), plus le Tome I et la Bible du Rite | solide |
 | 4 – 10 | le **Tome II**, rituels intégraux des Loges de Perfection | solide |
 | 11 – 18 | le **Tome III**, rituels intégraux, et la **Bible du Rite Tome III** | solide |
-| 19 – 32 | le Recueil intégral et *Les Trente-Deux Voies* — deux ouvrages qui couvrent vingt-deux degrés chacun | mince |
+| 19 – 25 | le **Tome IV** | solide, à confirmer |
+| 26 – 32 | le Recueil intégral et *Les Trente-Deux Voies* — deux ouvrages qui couvrent vingt-deux degrés chacun | mince |
 | 33 | rien | vide |
+
+Le **Tome V** reste à écrire : c'est lui qui pourvoira les 26ᵉ à 32ᵉ.
 
 Le *Plan Maître Tome III* est un **plan de rédaction**, non un ouvrage
 d'instruction : il dit ce qui sera écrit, non ce qui s'enseigne. Il ne
 doit pas être compté comme une source de degré, et c'est l'avoir compté
-qui a longtemps fait croire les 19ᵉ à 32ᵉ pourvus.
+qui avait fait croire les 26ᵉ à 32ᵉ pourvus.
 
-### Annoncé mais non fourni
+### Le Tome IV : porté sur la carte, mais non vérifié
 
-Le **Tome IV** existe — le Souverain Grand Commandeur l'a signalé le
-02/09/2026 — mais il n'est pas dans `corpus_rbi/`, et aucun ouvrage du
-corpus ne l'annonce. Il n'est donc pas porté sur la carte : on ne
-cartographie pas un texte qu'on n'a pas lu.
+Le **Tome IV** couvre les 19ᵉ à 25ᵉ. Il a été versé dans Joshua Studio et
+il est indexé, mais il n'est **pas dans `corpus_rbi/`** : sa plage vient
+de la parole du Souverain Grand Commandeur, non de la lecture du fichier.
 
-Dès qu'il sera versé, il faudra en relever la plage réelle de degrés
-comme cela a été fait pour le Tome III — dont la carte annonçait 11-32
-là où le fichier couvre 11-18. Si le Tome IV prend la suite au 19ᵉ, la
-ligne « 19 – 32, mince » du tableau ci-dessus change du tout au tout.
+Elle est donc **à confirmer sur le texte lui-même**, comme l'a exigé le
+Tome III — annoncé 11-32 sur la carte, couvrant en fait 11-18. Verser le
+fichier au dépôt suffira à trancher.
+
+Il serait présent **en double** dans la bibliothèque du studio. Un
+doublon d'empreinte identique est écarté à l'import et inscrit au
+registre des doublons ; mais deux *exports différents* du même ouvrage
+ont deux empreintes, passent tous les deux, et pèsent alors double dans
+les tirages du questionnaire. Cela se règle d'un bouton sur la page
+Bibliothèque.
 
 Trois choses manquent encore, et aucune ne s'invente :
 
 1. **Les pages.** Aucun rattachement ne porte de plage de pages. Sans
    elles, Joshua peut lire un ouvrage mais ne peut citer aucune
    référence — or citer est sa règle première.
-2. **Les rituels des 19ᵉ à 32ᵉ, et du 33ᵉ.** Le Tome III s'arrête au
-   18ᵉ. Au-delà, aucun texte propre à un degré : un questionnaire tiré de
-   là interroge sur de la kabbale générale, non sur l'instruction d'un
-   grade.
+2. **Les rituels des 26ᵉ à 32ᵉ, et du 33ᵉ.** Le Tome IV s'arrête au 25ᵉ
+   et le Tome V reste à écrire. Au-delà du 25ᵉ, aucun texte propre à un
+   degré : un questionnaire tiré de là interroge sur de la kabbale
+   générale, non sur l'instruction d'un grade.
 3. **Les arbitrages doctrinaux qui restent.** Voir `conflits.md`. Les
    Séphiroth des 7ᵉ à 10ᵉ et l'existence du Consistoire sont tranchées ;
    le nom du 18ᵉ — HARUACH ou CHAYIM — ne l'est pas. Indexer avant

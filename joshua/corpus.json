@@ -1,6 +1,6 @@
 {
   "$commentaire": "Carte du corpus du Rite Brith Israël, destinée à Joshua. Les 33 degrés viennent de la Roue des Degrés du site ; les ouvrages et leurs plages de degrés viennent de l'INDEX CORPUS RBI du 28 avril 2026. Aucune plage n'est supposée. Les degrés 7 à 10 et la classification des ateliers ont été arbitrés le 01/09/2026 d'après les rituels eux-mêmes (Tome II) : voir conflits.md, qui conserve la trace de ce qui divergeait et de ce qui reste à trancher.",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "etabli_le": "2026-09-01",
   "dossier_drive": "https://drive.google.com/drive/folders/1HKyI7v6s7uFR7Tng80easrtZvv6B7vpl",
   "index_drive": "https://docs.google.com/document/d/1XHpmPaUdVky7h56pSCPzkz3dBPNolAgPFwjsbgsSofc/edit",
@@ -215,6 +215,27 @@
       "source": "corpus_rbi/RBI BIBLE TOME III 11 18.docx",
       "statut": "a_indexer",
       "remarque": "Encyclopédie pédagogique. Fait suite aux Tomes I et II, qui couvraient les dix Séphiroth. Absente de la carte jusqu'au 02/09/2026."
+    },
+    {
+      "id": "tome-4",
+      "titre": "Tome IV — les Sentiers, grades 19ᵉ à 25ᵉ",
+      "nature": "rituel",
+      "degres_couverts": [
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25
+      ],
+      "transversal": false,
+      "format": "inconnu",
+      "diffusion": "membres",
+      "source": "versé dans Joshua Studio ; absent de corpus_rbi/ dans le dépôt",
+      "statut": "a_indexer",
+      "atteste_par": "Déclaré par le Souverain Grand Commandeur le 02/09/2026 : « Y a le Tome IV aussi. Tu as jusqu'à 25. »",
+      "remarque": "Le fichier n'est pas dans le dépôt : la plage 19-25 vient de la parole du Souverain Grand Commandeur, non de la lecture du texte. À CONFIRMER sur le fichier lui-même, comme l'a exigé le Tome III — annoncé 11-32, couvrant en fait 11-18. Il serait présent en double dans la bibliothèque du studio : un doublon d'empreinte identique est écarté à l'import, mais deux exports différents du même ouvrage passent tous deux et pèsent double dans les tirages du questionnaire."
     },
     {
       "id": "recueil-integral",
@@ -919,6 +940,10 @@
       "decors": "Bleu nuit et Argent, Arche d'Alliance et Chérubins — Binah→Da'at",
       "sources": [
         {
+          "ouvrage": "tome-4",
+          "pages": null
+        },
+        {
           "ouvrage": "recueil-integral",
           "pages": null
         },
@@ -943,6 +968,10 @@
       "equivalent_reaa": "Vénérable Grand Maître",
       "decors": "Orange Cuivré, Visage Solaire Rayonnant — Hesed→Tiphereth",
       "sources": [
+        {
+          "ouvrage": "tome-4",
+          "pages": null
+        },
         {
           "ouvrage": "recueil-integral",
           "pages": null
@@ -969,6 +998,10 @@
       "decors": "Gris Perle et Argent, Tourbillon de Feu, Shin rouge — Hesed→Netzah",
       "sources": [
         {
+          "ouvrage": "tome-4",
+          "pages": null
+        },
+        {
           "ouvrage": "recueil-integral",
           "pages": null
         },
@@ -993,6 +1026,10 @@
       "equivalent_reaa": "Chevalier Royal Hache",
       "decors": "Bleu et Or, Triangle d'Étoiles et Sceau de Vérité — Geburah→Tiphereth",
       "sources": [
+        {
+          "ouvrage": "tome-4",
+          "pages": null
+        },
         {
           "ouvrage": "recueil-integral",
           "pages": null
@@ -1019,6 +1056,10 @@
       "decors": "Noir et Argent, Ailes déployées et Plume royale — Geburah→Hod",
       "sources": [
         {
+          "ouvrage": "tome-4",
+          "pages": null
+        },
+        {
           "ouvrage": "recueil-integral",
           "pages": null
         },
@@ -1044,6 +1085,10 @@
       "decors": "Jaune d'Or, Serpent Gardien et Gerbe de Blé, Clé d'Or — Tiphereth→Netzah",
       "sources": [
         {
+          "ouvrage": "tome-4",
+          "pages": null
+        },
+        {
           "ouvrage": "recueil-integral",
           "pages": null
         },
@@ -1068,6 +1113,10 @@
       "equivalent_reaa": "Chevalier du Serpent d'Airain",
       "decors": "Blanc-Crème, Rouleaux de la Loi Torah — Tiphereth→Hod",
       "sources": [
+        {
+          "ouvrage": "tome-4",
+          "pages": null
+        },
         {
           "ouvrage": "recueil-integral",
           "pages": null
