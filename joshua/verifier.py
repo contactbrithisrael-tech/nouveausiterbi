@@ -22,7 +22,7 @@ def verifier(chemin):
         c = json.load(f)
 
     fautes = []
-    reserves = []
+    reserves = {}
 
     degres = c.get("degres", [])
     ouvrages = {o["id"]: o for o in c.get("ouvrages", [])}
@@ -81,7 +81,9 @@ def verifier(chemin):
                 fautes.append("degré %s : ouvrage « %s » marqué indexé sans pages — "
                               "Joshua ne pourrait citer aucune référence" % (n, oid))
             elif etat == "declare" and not s.get("pages"):
-                reserves.append("degré %s : pages de « %s » encore à renseigner" % (n, oid))
+                # Regroupé par ouvrage : une ligne par degré donnerait
+                # cent lignes identiques, que plus personne ne lit.
+                reserves.setdefault(oid, []).append(n)
 
     # ── Les deux sens doivent concorder ───────────────────────────
     for oid, o in ouvrages.items():
@@ -108,9 +110,11 @@ def verifier(chemin):
     print("  degrés en attente        : %d" % (33 - len(couverts)))
 
     if reserves:
-        print("\nÀ compléter (%d) :" % len(reserves))
-        for r in reserves:
-            print("  · %s" % r)
+        print("\nPages à renseigner :")
+        for oid in sorted(reserves):
+            d = reserves[oid]
+            plage = ("degrés %d-%d" % (min(d), max(d))) if len(d) > 1 else ("degré %d" % d[0])
+            print("  · %-22s %s (%d)" % (oid, plage, len(d)))
 
     if fautes:
         print("\nINCOHÉRENCES (%d) :" % len(fautes))

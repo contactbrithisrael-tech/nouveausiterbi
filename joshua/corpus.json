@@ -1,7 +1,9 @@
 {
-  "$commentaire": "Carte du corpus du Rite Brith Israël, destinée à Joshua. Les 33 degrés sont extraits de la Roue des Degrés du site, qui fait autorité. Les rattachements aux ouvrages sont à compléter : ils ne se devinent pas, et une source inventée serait pire que pas de source.",
-  "version": "1.0.0",
+  "$commentaire": "Carte du corpus du Rite Brith Israël, destinée à Joshua. Les 33 degrés viennent de la Roue des Degrés du site ; les ouvrages et leurs plages de degrés viennent de l'INDEX CORPUS RBI du 28 avril 2026. Aucune plage n'est supposée. Voir conflits.md : la Roue et les instructions de Joshua ne concordent pas sur plusieurs degrés, et cela doit être arbitré avant tout indexage.",
+  "version": "2.0.0",
   "etabli_le": "2026-09-01",
+  "dossier_drive": "https://drive.google.com/drive/folders/1HKyI7v6s7uFR7Tng80easrtZvv6B7vpl",
+  "index_drive": "https://docs.google.com/document/d/1XHpmPaUdVky7h56pSCPzkz3dBPNolAgPFwjsbgsSofc/edit",
   "corps": [
     {
       "code": "symbolique",
@@ -74,30 +76,259 @@
   ],
   "ouvrages": [
     {
-      "id": "alliance-lumiere-t1",
-      "titre": "Brith Israël — L'Alliance de Lumière, Tome I",
+      "id": "oved-1",
+      "titre": "RBI OVED — 1er degré complet",
       "nature": "rituel",
-      "auteur": "Mickaël Darmon",
+      "degres_couverts": [
+        1
+      ],
+      "transversal": false,
+      "format": "pdf",
+      "diffusion": "membres",
+      "source": "https://drive.google.com/file/d/1WjJeRgXLlXCjyXxZuWs11NWCF87cIL4T/view",
+      "statut": "a_indexer"
+    },
+    {
+      "id": "boneh-2",
+      "titre": "RBI BONEH — 2e degré complet",
+      "nature": "rituel",
+      "degres_couverts": [
+        2
+      ],
+      "transversal": false,
+      "format": "pdf",
+      "diffusion": "membres",
+      "source": "https://drive.google.com/file/d/1w7b2EBEx0Aj1ExxGzEVqkpbhphBnuY_q/view",
+      "statut": "a_indexer"
+    },
+    {
+      "id": "adon-3",
+      "titre": "RBI ADON — 3e degré complet",
+      "nature": "rituel",
+      "degres_couverts": [
+        3
+      ],
+      "transversal": false,
+      "format": "pdf",
+      "diffusion": "membres",
+      "source": "https://drive.google.com/file/d/1cXZNF_9NmswTiWb4l8mGwuBJVxJteda7/view",
+      "statut": "a_indexer"
+    },
+    {
+      "id": "tome-2",
+      "titre": "Tome II — Loges de Perfection, rituels intégraux",
+      "nature": "rituel",
+      "degres_couverts": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "transversal": false,
+      "format": "pdf",
+      "diffusion": "membres",
+      "source": "https://drive.google.com/file/d/1BKHYOYkwFMFbHcF2ijFoBT-6Lw1Xav6t/view",
+      "statut": "a_indexer"
+    },
+    {
+      "id": "tome-1",
+      "titre": "Tome I — rituel intégral (paginé)",
+      "nature": "rituel",
       "degres_couverts": [
         1,
         2,
         3
       ],
-      "statut": "a_indexer",
-      "diffusion": "membres uniquement"
+      "transversal": false,
+      "format": "docx",
+      "diffusion": "membres",
+      "source": "https://drive.google.com/file/d/1p2qSGPstCNWhWT3-iCTrByG9uWAPlh7u/view",
+      "statut": "a_indexer"
+    },
+    {
+      "id": "bible-du-rite",
+      "titre": "RBI — Bible du Rite, Tomes I & II",
+      "nature": "encyclopedie",
+      "degres_couverts": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "transversal": false,
+      "format": "pdf",
+      "diffusion": "membres",
+      "source": "https://drive.google.com/file/d/1yKCfLLr-zTWNHRmFLspxlF1ph6gGtdcr/view",
+      "statut": "a_indexer"
+    },
+    {
+      "id": "recueil-integral",
+      "titre": "Recueil des rituels Brith Israël — intégral",
+      "nature": "rituel",
+      "degres_couverts": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32
+      ],
+      "transversal": false,
+      "format": "pdf",
+      "diffusion": "membres",
+      "source": "https://drive.google.com/file/d/1-pzqIFc2IsOn1R1tHLhvh_aUcaXSz0FI/view",
+      "statut": "a_indexer"
+    },
+    {
+      "id": "trente-deux-voies",
+      "titre": "Les Trente-Deux Voies — Sefer Yetsirah commenté",
+      "nature": "kabbale",
+      "degres_couverts": [
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32
+      ],
+      "transversal": false,
+      "format": "pdf",
+      "diffusion": "membres",
+      "source": "https://drive.google.com/file/d/16MQj6ycyi3sPZix5GwEcNbwfRSweeAa5/view",
+      "statut": "a_indexer"
+    },
+    {
+      "id": "master-plan-t3",
+      "titre": "Plan Maître Tome III — les 22 Sentiers et la Couronne",
+      "nature": "plan",
+      "degres_couverts": [
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32
+      ],
+      "transversal": false,
+      "format": "md",
+      "diffusion": "membres",
+      "source": "https://drive.google.com/file/d/1D2KVoXjFn9zjpnWnNCzFI2YQIfFN4-m6/view",
+      "statut": "a_indexer"
+    },
+    {
+      "id": "architecture-sacree",
+      "titre": "Architecture Sacrée Brith Israël — 10 Sephiroth et 22 Sentiers",
+      "nature": "instruction",
+      "degres_couverts": [],
+      "transversal": true,
+      "format": "docx",
+      "diffusion": "membres",
+      "source": "https://drive.google.com/file/d/1cg3NBF7p8uQTpSFTQ6rstVr2QyeLEx6U/view",
+      "statut": "a_indexer"
+    },
+    {
+      "id": "pirke-avot",
+      "titre": "Pirké Avot — édition RBI",
+      "nature": "sagesse",
+      "degres_couverts": [],
+      "transversal": true,
+      "format": "pdf",
+      "diffusion": "membres",
+      "source": "https://drive.google.com/file/d/1td4_Mb1stO7B4gGRsL1Dod6fb5CeWy5t/view",
+      "statut": "a_indexer"
+    },
+    {
+      "id": "alliance-lumiere",
+      "titre": "Brith Israël — L'Alliance de Lumière",
+      "nature": "livre",
+      "degres_couverts": [],
+      "transversal": true,
+      "format": "pdf",
+      "diffusion": "public",
+      "source": "https://drive.google.com/file/d/1TWnbqm-Zm6EjxdoDCx7tyKKaZYsGdOpn/view",
+      "statut": "a_indexer"
     }
   ],
   "regles_acces": {
     "principe": "Un membre du degré N accède aux ouvrages des degrés 1 à N inclus, et à aucun autre.",
     "degre_fixe_par": "Souverain Grand Commandeur",
     "silence_sur_le_superieur": true,
-    "note_silence": "Un texte d'un degré supérieur ne doit ni apparaître dans les réponses, ni être mentionné comme existant. Répondre « ce document existe mais votre degré ne vous y donne pas accès » est déjà une divulgation : cela révèle qu'il y a quelque chose à savoir, et à quel degré le chercher. Joshua répond comme si le texte n'existait pas."
+    "note_silence": "Un texte d'un degré supérieur ne doit ni apparaître dans les réponses, ni être mentionné comme existant. Répondre « ce document existe mais votre degré ne vous y donne pas accès » est déjà une divulgation : cela révèle qu'il y a quelque chose à savoir, et à quel degré le chercher. Joshua répond comme si le texte n'existait pas.",
+    "transversal": "Un ouvrage marqué transversal n'est pas rattaché à un degré : sa plage d'accès doit être fixée explicitement avant indexage, faute de quoi il est traité au degré le plus élevé qu'il aborde."
   },
   "regles_reponse": {
     "citation_obligatoire": "Chaque affirmation cite son ouvrage et sa page.",
     "hors_corpus": "Ce qui ne figure pas dans les textes accessibles : Joshua dit ne pas le savoir.",
     "pas_de_doctrine": "Joshua ne tranche aucune question doctrinale et ne commente pas.",
-    "pas_de_substitution": "Joshua ne remplace ni l'instruction en Loge, ni le Vénérable Maître."
+    "pas_de_substitution": "Joshua ne remplace ni l'instruction en Loge, ni le Vénérable Maître.",
+    "pas_de_pattern_reaa": "Ne jamais répondre avec du contenu du REAA, du Rite Français ou du RER : le Rite Brith Israël a sa propre identité kabbalistique."
   },
   "degres": [
     {
@@ -111,7 +342,19 @@
       "decors": "Ruban blanc, tablier d'apprenti, équerre et niveau",
       "sources": [
         {
-          "ouvrage": "alliance-lumiere-t1",
+          "ouvrage": "oved-1",
+          "pages": null
+        },
+        {
+          "ouvrage": "tome-1",
+          "pages": null
+        },
+        {
+          "ouvrage": "bible-du-rite",
+          "pages": null
+        },
+        {
+          "ouvrage": "recueil-integral",
           "pages": null
         }
       ],
@@ -128,7 +371,19 @@
       "decors": "Ruban bleu ciel, fil à plomb, étoile flamboyante",
       "sources": [
         {
-          "ouvrage": "alliance-lumiere-t1",
+          "ouvrage": "boneh-2",
+          "pages": null
+        },
+        {
+          "ouvrage": "tome-1",
+          "pages": null
+        },
+        {
+          "ouvrage": "bible-du-rite",
+          "pages": null
+        },
+        {
+          "ouvrage": "recueil-integral",
           "pages": null
         }
       ],
@@ -145,7 +400,19 @@
       "decors": "Ruban noir, compas ouvert, branche d'acacia",
       "sources": [
         {
-          "ouvrage": "alliance-lumiere-t1",
+          "ouvrage": "adon-3",
+          "pages": null
+        },
+        {
+          "ouvrage": "tome-1",
+          "pages": null
+        },
+        {
+          "ouvrage": "bible-du-rite",
+          "pages": null
+        },
+        {
+          "ouvrage": "recueil-integral",
           "pages": null
         }
       ],
@@ -160,8 +427,21 @@
       "corps": "perfection",
       "equivalent_reaa": "Maître Secret",
       "decors": "Bleu ciel et Or, triangle rayonnant, lettre Yod",
-      "sources": [],
-      "etat": "a_fournir"
+      "sources": [
+        {
+          "ouvrage": "tome-2",
+          "pages": null
+        },
+        {
+          "ouvrage": "bible-du-rite",
+          "pages": null
+        },
+        {
+          "ouvrage": "recueil-integral",
+          "pages": null
+        }
+      ],
+      "etat": "declare"
     },
     {
       "degre": 5,
@@ -172,8 +452,21 @@
       "corps": "perfection",
       "equivalent_reaa": "Maître Parfait",
       "decors": "Cramoisi et Or, épée flamboyante, lettre He",
-      "sources": [],
-      "etat": "a_fournir"
+      "sources": [
+        {
+          "ouvrage": "tome-2",
+          "pages": null
+        },
+        {
+          "ouvrage": "bible-du-rite",
+          "pages": null
+        },
+        {
+          "ouvrage": "recueil-integral",
+          "pages": null
+        }
+      ],
+      "etat": "declare"
     },
     {
       "degre": 6,
@@ -184,8 +477,21 @@
       "corps": "perfection",
       "equivalent_reaa": "Secrétaire Intime",
       "decors": "Rouge et Argent, calice et rameaux d'olivier, lettre Vav",
-      "sources": [],
-      "etat": "a_fournir"
+      "sources": [
+        {
+          "ouvrage": "tome-2",
+          "pages": null
+        },
+        {
+          "ouvrage": "bible-du-rite",
+          "pages": null
+        },
+        {
+          "ouvrage": "recueil-integral",
+          "pages": null
+        }
+      ],
+      "etat": "declare"
     },
     {
       "degre": 7,
@@ -196,8 +502,21 @@
       "corps": "perfection",
       "equivalent_reaa": "Prévôt et Juge",
       "decors": "Noir et Or, chariot et glaive, lettre Zayin",
-      "sources": [],
-      "etat": "a_fournir"
+      "sources": [
+        {
+          "ouvrage": "tome-2",
+          "pages": null
+        },
+        {
+          "ouvrage": "bible-du-rite",
+          "pages": null
+        },
+        {
+          "ouvrage": "recueil-integral",
+          "pages": null
+        }
+      ],
+      "etat": "declare"
     },
     {
       "degre": 8,
@@ -208,8 +527,21 @@
       "corps": "perfection",
       "equivalent_reaa": "Intendant des Bâtiments",
       "decors": "Noir et Or, balance et glaive de justice, lettre Het",
-      "sources": [],
-      "etat": "a_fournir"
+      "sources": [
+        {
+          "ouvrage": "tome-2",
+          "pages": null
+        },
+        {
+          "ouvrage": "bible-du-rite",
+          "pages": null
+        },
+        {
+          "ouvrage": "recueil-integral",
+          "pages": null
+        }
+      ],
+      "etat": "declare"
     },
     {
       "degre": 9,
@@ -220,8 +552,21 @@
       "corps": "perfection",
       "equivalent_reaa": "Maître Élu des Neuf",
       "decors": "Bleu nuit et Argent, Arche d'Alliance dorée, lettre Tet",
-      "sources": [],
-      "etat": "a_fournir"
+      "sources": [
+        {
+          "ouvrage": "tome-2",
+          "pages": null
+        },
+        {
+          "ouvrage": "bible-du-rite",
+          "pages": null
+        },
+        {
+          "ouvrage": "recueil-integral",
+          "pages": null
+        }
+      ],
+      "etat": "declare"
     },
     {
       "degre": 10,
@@ -232,8 +577,21 @@
       "corps": "perfection",
       "equivalent_reaa": "Illustre Élu des Quinze",
       "decors": "Gris-Bleu et Or, tente du Tabernacle, lettre Yod",
-      "sources": [],
-      "etat": "a_fournir"
+      "sources": [
+        {
+          "ouvrage": "tome-2",
+          "pages": null
+        },
+        {
+          "ouvrage": "bible-du-rite",
+          "pages": null
+        },
+        {
+          "ouvrage": "recueil-integral",
+          "pages": null
+        }
+      ],
+      "etat": "declare"
     },
     {
       "degre": 11,
@@ -244,8 +602,21 @@
       "corps": "chapitre",
       "equivalent_reaa": "Sublime Chevalier Élu",
       "decors": "Havane et Cramoisi, tête de bélier sacré, lettre Aleph",
-      "sources": [],
-      "etat": "a_fournir"
+      "sources": [
+        {
+          "ouvrage": "recueil-integral",
+          "pages": null
+        },
+        {
+          "ouvrage": "trente-deux-voies",
+          "pages": null
+        },
+        {
+          "ouvrage": "master-plan-t3",
+          "pages": null
+        }
+      ],
+      "etat": "declare"
     },
     {
       "degre": 12,
@@ -256,8 +627,21 @@
       "corps": "chapitre",
       "equivalent_reaa": "Grand Maître Architecte",
       "decors": "Noir, Étoile de David, Boussole et Sel — Kether→Binah",
-      "sources": [],
-      "etat": "a_fournir"
+      "sources": [
+        {
+          "ouvrage": "recueil-integral",
+          "pages": null
+        },
+        {
+          "ouvrage": "trente-deux-voies",
+          "pages": null
+        },
+        {
+          "ouvrage": "master-plan-t3",
+          "pages": null
+        }
+      ],
+      "etat": "declare"
     },
     {
       "degre": 13,
@@ -268,8 +652,21 @@
       "corps": "chapitre",
       "equivalent_reaa": "Chevalier de Royal Arch",
       "decors": "Rose et Vert, Arbre de Vie et Pont sur les eaux — Kether→Tiphereth",
-      "sources": [],
-      "etat": "a_fournir"
+      "sources": [
+        {
+          "ouvrage": "recueil-integral",
+          "pages": null
+        },
+        {
+          "ouvrage": "trente-deux-voies",
+          "pages": null
+        },
+        {
+          "ouvrage": "master-plan-t3",
+          "pages": null
+        }
+      ],
+      "etat": "declare"
     },
     {
       "degre": 14,
@@ -280,8 +677,21 @@
       "corps": "chapitre",
       "equivalent_reaa": "Grand Élu Parfait et Sublime Maçon",
       "decors": "Blanc et Pourpre, Buisson Ardent et Palmier de Justice — Hokhmah→Hesed",
-      "sources": [],
-      "etat": "a_fournir"
+      "sources": [
+        {
+          "ouvrage": "recueil-integral",
+          "pages": null
+        },
+        {
+          "ouvrage": "trente-deux-voies",
+          "pages": null
+        },
+        {
+          "ouvrage": "master-plan-t3",
+          "pages": null
+        }
+      ],
+      "etat": "declare"
     },
     {
       "degre": 15,
@@ -292,8 +702,21 @@
       "corps": "chapitre",
       "equivalent_reaa": "Chevalier d'Orient",
       "decors": "Noir et Or, Pyramides sous l'orage, Parchemin et Stylet — Hokhmah→Tiphereth",
-      "sources": [],
-      "etat": "a_fournir"
+      "sources": [
+        {
+          "ouvrage": "recueil-integral",
+          "pages": null
+        },
+        {
+          "ouvrage": "trente-deux-voies",
+          "pages": null
+        },
+        {
+          "ouvrage": "master-plan-t3",
+          "pages": null
+        }
+      ],
+      "etat": "declare"
     },
     {
       "degre": 16,
@@ -304,8 +727,21 @@
       "corps": "chapitre",
       "equivalent_reaa": "Prince de Jérusalem",
       "decors": "Bordeaux et Argent, Trône de Justice et Balance — Hokhmah→Da'at",
-      "sources": [],
-      "etat": "a_fournir"
+      "sources": [
+        {
+          "ouvrage": "recueil-integral",
+          "pages": null
+        },
+        {
+          "ouvrage": "trente-deux-voies",
+          "pages": null
+        },
+        {
+          "ouvrage": "master-plan-t3",
+          "pages": null
+        }
+      ],
+      "etat": "declare"
     },
     {
       "degre": 17,
@@ -316,8 +752,21 @@
       "corps": "chapitre",
       "equivalent_reaa": "Chevalier d'Orient et d'Occident",
       "decors": "Bleu Royal et Or, Shofar versant l'huile — Binah→Geburah",
-      "sources": [],
-      "etat": "a_fournir"
+      "sources": [
+        {
+          "ouvrage": "recueil-integral",
+          "pages": null
+        },
+        {
+          "ouvrage": "trente-deux-voies",
+          "pages": null
+        },
+        {
+          "ouvrage": "master-plan-t3",
+          "pages": null
+        }
+      ],
+      "etat": "declare"
     },
     {
       "degre": 18,
@@ -328,8 +777,21 @@
       "corps": "chapitre",
       "equivalent_reaa": "Souverain Prince Rose-Croix",
       "decors": "Vert et Or, Encensoir et Cœur Rayonnant, Corne d'Huile — Binah→Tiphereth",
-      "sources": [],
-      "etat": "a_fournir"
+      "sources": [
+        {
+          "ouvrage": "recueil-integral",
+          "pages": null
+        },
+        {
+          "ouvrage": "trente-deux-voies",
+          "pages": null
+        },
+        {
+          "ouvrage": "master-plan-t3",
+          "pages": null
+        }
+      ],
+      "etat": "declare"
     },
     {
       "degre": 19,
@@ -340,8 +802,21 @@
       "corps": "chapitre",
       "equivalent_reaa": "Grand Pontife",
       "decors": "Bleu nuit et Argent, Arche d'Alliance et Chérubins — Binah→Da'at",
-      "sources": [],
-      "etat": "a_fournir"
+      "sources": [
+        {
+          "ouvrage": "recueil-integral",
+          "pages": null
+        },
+        {
+          "ouvrage": "trente-deux-voies",
+          "pages": null
+        },
+        {
+          "ouvrage": "master-plan-t3",
+          "pages": null
+        }
+      ],
+      "etat": "declare"
     },
     {
       "degre": 20,
@@ -352,8 +827,21 @@
       "corps": "chapitre",
       "equivalent_reaa": "Vénérable Grand Maître",
       "decors": "Orange Cuivré, Visage Solaire Rayonnant — Hesed→Tiphereth",
-      "sources": [],
-      "etat": "a_fournir"
+      "sources": [
+        {
+          "ouvrage": "recueil-integral",
+          "pages": null
+        },
+        {
+          "ouvrage": "trente-deux-voies",
+          "pages": null
+        },
+        {
+          "ouvrage": "master-plan-t3",
+          "pages": null
+        }
+      ],
+      "etat": "declare"
     },
     {
       "degre": 21,
@@ -364,8 +852,21 @@
       "corps": "chapitre",
       "equivalent_reaa": "Noachite / Chevalier Prussien",
       "decors": "Gris Perle et Argent, Tourbillon de Feu, Shin rouge — Hesed→Netzah",
-      "sources": [],
-      "etat": "a_fournir"
+      "sources": [
+        {
+          "ouvrage": "recueil-integral",
+          "pages": null
+        },
+        {
+          "ouvrage": "trente-deux-voies",
+          "pages": null
+        },
+        {
+          "ouvrage": "master-plan-t3",
+          "pages": null
+        }
+      ],
+      "etat": "declare"
     },
     {
       "degre": 22,
@@ -376,8 +877,21 @@
       "corps": "chapitre",
       "equivalent_reaa": "Chevalier Royal Hache",
       "decors": "Bleu et Or, Triangle d'Étoiles et Sceau de Vérité — Geburah→Tiphereth",
-      "sources": [],
-      "etat": "a_fournir"
+      "sources": [
+        {
+          "ouvrage": "recueil-integral",
+          "pages": null
+        },
+        {
+          "ouvrage": "trente-deux-voies",
+          "pages": null
+        },
+        {
+          "ouvrage": "master-plan-t3",
+          "pages": null
+        }
+      ],
+      "etat": "declare"
     },
     {
       "degre": 23,
@@ -388,8 +902,21 @@
       "corps": "chapitre",
       "equivalent_reaa": "Chef du Tabernacle",
       "decors": "Noir et Argent, Ailes déployées et Plume royale — Geburah→Hod",
-      "sources": [],
-      "etat": "a_fournir"
+      "sources": [
+        {
+          "ouvrage": "recueil-integral",
+          "pages": null
+        },
+        {
+          "ouvrage": "trente-deux-voies",
+          "pages": null
+        },
+        {
+          "ouvrage": "master-plan-t3",
+          "pages": null
+        }
+      ],
+      "etat": "declare"
     },
     {
       "degre": 24,
@@ -400,8 +927,21 @@
       "corps": "chapitre",
       "equivalent_reaa": "Prince du Tabernacle",
       "decors": "Jaune d'Or, Serpent Gardien et Gerbe de Blé, Clé d'Or — Tiphereth→Netzah",
-      "sources": [],
-      "etat": "a_fournir"
+      "sources": [
+        {
+          "ouvrage": "recueil-integral",
+          "pages": null
+        },
+        {
+          "ouvrage": "trente-deux-voies",
+          "pages": null
+        },
+        {
+          "ouvrage": "master-plan-t3",
+          "pages": null
+        }
+      ],
+      "etat": "declare"
     },
     {
       "degre": 25,
@@ -412,8 +952,21 @@
       "corps": "chapitre",
       "equivalent_reaa": "Chevalier du Serpent d'Airain",
       "decors": "Blanc-Crème, Rouleaux de la Loi Torah — Tiphereth→Hod",
-      "sources": [],
-      "etat": "a_fournir"
+      "sources": [
+        {
+          "ouvrage": "recueil-integral",
+          "pages": null
+        },
+        {
+          "ouvrage": "trente-deux-voies",
+          "pages": null
+        },
+        {
+          "ouvrage": "master-plan-t3",
+          "pages": null
+        }
+      ],
+      "etat": "declare"
     },
     {
       "degre": 26,
@@ -424,8 +977,21 @@
       "corps": "chapitre",
       "equivalent_reaa": "Prince of Mercy",
       "decors": "Gris Bleuté, Harpe et Sceau Brisé — Tiphereth→Yesod",
-      "sources": [],
-      "etat": "a_fournir"
+      "sources": [
+        {
+          "ouvrage": "recueil-integral",
+          "pages": null
+        },
+        {
+          "ouvrage": "trente-deux-voies",
+          "pages": null
+        },
+        {
+          "ouvrage": "master-plan-t3",
+          "pages": null
+        }
+      ],
+      "etat": "declare"
     },
     {
       "degre": 27,
@@ -436,8 +1002,21 @@
       "corps": "chapitre",
       "equivalent_reaa": "Grand Commandeur du Temple",
       "decors": "Jaune d'Or, Menorah, Truelle et Vase de Terre — Tiphereth→Malkuth",
-      "sources": [],
-      "etat": "a_fournir"
+      "sources": [
+        {
+          "ouvrage": "recueil-integral",
+          "pages": null
+        },
+        {
+          "ouvrage": "trente-deux-voies",
+          "pages": null
+        },
+        {
+          "ouvrage": "master-plan-t3",
+          "pages": null
+        }
+      ],
+      "etat": "declare"
     },
     {
       "degre": 28,
@@ -448,8 +1027,21 @@
       "corps": "chapitre",
       "equivalent_reaa": "Chevalier du Soleil",
       "decors": "Violet, Rideau du Temple et Fil à Plomb — Netzah→Yesod",
-      "sources": [],
-      "etat": "a_fournir"
+      "sources": [
+        {
+          "ouvrage": "recueil-integral",
+          "pages": null
+        },
+        {
+          "ouvrage": "trente-deux-voies",
+          "pages": null
+        },
+        {
+          "ouvrage": "master-plan-t3",
+          "pages": null
+        }
+      ],
+      "etat": "declare"
     },
     {
       "degre": 29,
@@ -460,8 +1052,21 @@
       "corps": "chapitre",
       "equivalent_reaa": "Grand Écossais de Saint-André",
       "decors": "Blanc, Soleil rayonnant, Mem Final — Netzah→Malkuth",
-      "sources": [],
-      "etat": "a_fournir"
+      "sources": [
+        {
+          "ouvrage": "recueil-integral",
+          "pages": null
+        },
+        {
+          "ouvrage": "trente-deux-voies",
+          "pages": null
+        },
+        {
+          "ouvrage": "master-plan-t3",
+          "pages": null
+        }
+      ],
+      "etat": "declare"
     },
     {
       "degre": 30,
@@ -472,8 +1077,21 @@
       "corps": "chapitre",
       "equivalent_reaa": "Chevalier Kadosh",
       "decors": "Bicolore Bleu-Jaune, Balance et Étoile — Hod→Yesod",
-      "sources": [],
-      "etat": "a_fournir"
+      "sources": [
+        {
+          "ouvrage": "recueil-integral",
+          "pages": null
+        },
+        {
+          "ouvrage": "trente-deux-voies",
+          "pages": null
+        },
+        {
+          "ouvrage": "master-plan-t3",
+          "pages": null
+        }
+      ],
+      "etat": "declare"
     },
     {
       "degre": 31,
@@ -484,8 +1102,21 @@
       "corps": "consistoire",
       "equivalent_reaa": "Grand Inspecteur Inquisiteur",
       "decors": "Bicolore Rouge-Blanc, Buisson de Feu et Dés du Destin — Hod→Malkuth",
-      "sources": [],
-      "etat": "a_fournir"
+      "sources": [
+        {
+          "ouvrage": "recueil-integral",
+          "pages": null
+        },
+        {
+          "ouvrage": "trente-deux-voies",
+          "pages": null
+        },
+        {
+          "ouvrage": "master-plan-t3",
+          "pages": null
+        }
+      ],
+      "etat": "declare"
     },
     {
       "degre": 32,
@@ -496,8 +1127,21 @@
       "corps": "consistoire",
       "equivalent_reaa": "Sublime Prince du Royal Secret",
       "decors": "Blanc et Or avec franges, Couronne royale et Plan du Temple — Yesod→Malkuth",
-      "sources": [],
-      "etat": "a_fournir"
+      "sources": [
+        {
+          "ouvrage": "recueil-integral",
+          "pages": null
+        },
+        {
+          "ouvrage": "trente-deux-voies",
+          "pages": null
+        },
+        {
+          "ouvrage": "master-plan-t3",
+          "pages": null
+        }
+      ],
+      "etat": "declare"
     },
     {
       "degre": 33,
