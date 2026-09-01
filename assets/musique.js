@@ -1,193 +1,149 @@
 /* ═══════════════════════════════════════════════════════════════
    RITE BRITH ISRAËL — musique du Rite
 
-   Remplace le lecteur YouTube qui équipait les pages. Celui-ci
-   dépendait d'une vidéo tierce susceptible de disparaître, chargeait
-   l'API de YouTube et ses traceurs sur chaque page, et imposait une
-   musique qu'on ne maîtrisait pas.
+   Le son est celui d'une vidéo YouTube choisie pour le site. La
+   vidéo n'est jamais affichée : seul son son est diffusé, par un
+   lecteur réduit à un point invisible.
 
-   Ici, rien n'est chargé : le son est synthétisé par le navigateur.
-   Pas de fichier, pas de requête, pas de cookie, pas de question de
-   droits — et une matière sonore accordée au site.
+   ── Pourquoi passer par YouTube ────────────────────────────────
+   Diffuser un morceau qu'on ne possède pas suppose que l'ayant
+   droit soit rémunéré. L'intégration YouTube le fait : l'écoute est
+   comptée pour lui. Extraire la bande son pour l'héberger ici ne le
+   ferait pas — et serait une contrefaçon.
 
-   ── Ce qui est joué ────────────────────────────────────────────
-   Un bourdon grave sur ré et sa quinte, et par-dessus, des notes
-   espacées prises dans le mode Ahava Rabbah (ré, mi♭, fa♯, sol, la,
-   si♭, do) — le mode hébraïque de la seconde augmentée. Le tempo est
-   volontairement indéterminé : deux visites ne s'entendent jamais
-   pareil.
+   ── Ce qui protège les visiteurs ───────────────────────────────
+   1. Rien n'est chargé tant que personne ne clique. Tant que le
+      bouton n'est pas actionné, aucune requête ne part vers Google
+      et aucun traceur n'est déposé. Un visiteur qui ne veut pas de
+      musique n'est jamais vu par YouTube.
+   2. Le lecteur est celui de youtube-nocookie.com, qui ne dépose
+      pas de cookie publicitaire.
 
    ── Réglages ───────────────────────────────────────────────────
-   Tout se modifie dans REGLAGES ci-dessous.
+   Tout se modifie dans REGLAGES ci-dessous. Pour changer de
+   morceau, remplacer VIDEO par l'identifiant de la nouvelle vidéo —
+   les onze caractères qui suivent « youtu.be/ » ou « ?v= ».
 
    ── Usage ──────────────────────────────────────────────────────
-   Inclure <script src="assets/musique.js?v=20260901"></script> avant
-   la fermeture du <body>. Le numéro de version n'est pas décoratif :
-   _headers conserve les fichiers d'assets un an, et c'est le
-   changement d'adresse qui force les navigateurs à reprendre la
-   nouvelle version. Modifier ce fichier sans changer le numéro
-   revient à ne rien publier du tout.
+   Inclure <script src="assets/musique.js?v=20260901b"></script>
+   avant la fermeture du <body>. Le numéro de version n'est pas
+   décoratif : _headers conserve les fichiers d'assets un an, et
+   c'est le changement d'adresse qui force les navigateurs à
+   reprendre la nouvelle version. Modifier ce fichier sans changer
+   le numéro revient à ne rien publier du tout.
 
-   Le lecteur se construit tout seul. Le son ne démarre jamais sans un
-   clic : les navigateurs l'interdisent, et c'est heureux.
+   Le son ne démarre jamais sans un clic : les navigateurs
+   l'interdisent, et c'est heureux.
 ════════════════════════════════════════════════════════════════ */
 
 (function () {
   'use strict';
 
+  // Les onze caractères qui identifient la vidéo.
+  var VIDEO = '_pGXBoOsrJI';
+
   var REGLAGES = {
-    volume:        0.42,   // volume général, de 0 à 1
-    fondu:         1.6,    // secondes de fondu à l'ouverture et à la fermeture
-    ecartMin:      2.2,    // délai minimum entre deux notes, en secondes
-    ecartMax:      5.5,    // délai maximum
-    dureeNote:     5.5,    // longueur d'une note, résonance comprise
-    positionCoin:  'right' // 'right' ou 'left'
+    volume:       35,      // volume final, de 0 à 100
+    fondu:        2500,    // durée du fondu d'ouverture et de fermeture, en ms
+    positionCoin: 'right'  // 'right' ou 'left'
   };
 
-  // Mode Ahava Rabbah sur ré, en hertz.
-  //
-  // Deux octaves médium-aigu, et non l'octave grave d'origine : un
-  // haut-parleur de téléphone ou d'ordinateur portable ne restitue
-  // pratiquement rien sous 200 Hz. Une musique écrite dans les graves
-  // profonds y est jouée sans être entendue.
-  var MODE = [
-    293.66, 311.13, 369.99, 392.00, 440.00, 466.16, 523.25,
-    587.33, 622.25, 739.99, 783.99, 880.00, 932.33, 1046.50
-  ];
+  var lecteur = null;      // l'objet YT.Player
+  var joue = false;
+  var fonduEnCours = null;
+  var apiDemandee = false;
 
-  var ctx = null, maitre = null, bourdon = [], minuterie = null, joue = false;
+  /* ── Chargement de l'API, une seule fois, et seulement sur clic ── */
+  function chargerAPI(quandPrete, siEchec) {
+    if (window.YT && window.YT.Player) { quandPrete(); return; }
 
-  /* ── Le bourdon : trois voix légèrement désaccordées ─────────── */
-  function construireBourdon() {
-    var filtre = ctx.createBiquadFilter();
-    filtre.type = 'lowpass';
-    filtre.frequency.value = 1400;
-    filtre.Q.value = 0.7;
-    filtre.connect(maitre);
+    // Une autre page a pu lancer le chargement : on s'y raccroche.
+    if (!apiDemandee) {
+      apiDemandee = true;
+      var s = document.createElement('script');
+      s.src = 'https://www.youtube.com/iframe_api';
+      s.onerror = siEchec;
+      document.head.appendChild(s);
+    }
 
-    // Une oscillation très lente sur la coupure du filtre : c'est elle
-    // qui donne au bourdon sa respiration, sans quoi il serait figé.
-    var souffle = ctx.createOscillator();
-    var ampleur = ctx.createGain();
-    souffle.frequency.value = 0.045;
-    ampleur.gain.value = 550;
-    souffle.connect(ampleur).connect(filtre.frequency);
-    souffle.start();
+    // L'API prévient par une fonction globale, qu'on n'écrase pas si
+    // elle existe déjà.
+    var precedent = window.onYouTubeIframeAPIReady;
+    window.onYouTubeIframeAPIReady = function () {
+      if (typeof precedent === 'function') precedent();
+      quandPrete();
+    };
 
-    // Ré, la, ré — une octave plus haut que la basse d'orgue qu'on
-    // aurait choisie pour une écoute au casque. C'est le registre que
-    // les petites enceintes savent réellement produire.
-    [146.83, 220.00, 293.66].forEach(function (f, i) {
-      var osc = ctx.createOscillator();
-      osc.type = i === 0 ? 'sine' : 'triangle';
-      osc.frequency.value = f;
-      osc.detune.value = (i - 1) * 4;          // battements lents entre les voix
+    // Réseau coupé, extension qui bloque, API qui ne répond pas :
+    // sans garde-fou le bouton resterait figé sur « Chargement… ».
+    setTimeout(function () {
+      if (!window.YT || !window.YT.Player) siEchec();
+    }, 8000);
+  }
 
-      var g = ctx.createGain();
-      g.gain.value = [0.42, 0.26, 0.16][i];
+  /* ── Le lecteur : un point invisible, jamais display:none ────────
+     Un iframe caché par display:none voit sa lecture refusée par
+     plusieurs navigateurs. On le réduit donc à un pixel transparent
+     que rien ne peut cliquer. */
+  function construirePlayer(quandPret, siEchec) {
+    var hote = document.createElement('div');
+    hote.id = 'rbi-yt';
+    hote.style.cssText =
+      'position:fixed;bottom:0;right:0;width:1px;height:1px;' +
+      'opacity:.01;pointer-events:none;z-index:-1;';
+    document.body.appendChild(hote);
 
-      osc.connect(g).connect(filtre);
-      osc.start();
-      bourdon.push(osc);
+    lecteur = new window.YT.Player('rbi-yt', {
+      videoId: VIDEO,
+      host: 'https://www.youtube-nocookie.com',
+      playerVars: {
+        autoplay: 1,
+        controls: 0,
+        disablekb: 1,
+        fs: 0,
+        modestbranding: 1,
+        rel: 0,
+        playsinline: 1,
+        loop: 1,
+        playlist: VIDEO   // exigé par YouTube pour boucler une seule vidéo
+      },
+      events: {
+        onReady: quandPret,
+        onError: siEchec,
+        onStateChange: function (e) {
+          // Filet de sécurité : certaines vidéos ignorent loop.
+          if (e.data === window.YT.PlayerState.ENDED && joue) lecteur.playVideo();
+        }
+      }
     });
-
-    bourdon.push(souffle);
   }
 
-  /* ── Une note : cloche douce, longue résonance ───────────────── */
-  function jouerNote() {
-    if (!joue) return;
+  /* ── Fondu : YouTube ne sait pas le faire, on l'écrit ───────────── */
+  function fondre(vers, fin) {
+    if (fonduEnCours) clearInterval(fonduEnCours);
+    if (!lecteur || !lecteur.getVolume) return;
 
-    // Onglet masqué : le contexte est suspendu et son horloge est figée.
-    // Programmer des notes maintenant les ferait toutes tomber au même
-    // instant, et éclater d'un coup au retour. On repasse plus tard.
-    if (ctx.state !== 'running') {
-      minuterie = setTimeout(jouerNote, 2000);
-      return;
-    }
+    var depart = lecteur.getVolume();
+    var debut = Date.now();
 
-    var f = MODE[Math.floor(Math.random() * MODE.length)];
-    var t = ctx.currentTime;
-    var duree = REGLAGES.dureeNote * (0.75 + Math.random() * 0.5);
-
-    var osc = ctx.createOscillator();
-    osc.type = 'sine';
-    osc.frequency.value = f;
-
-    // Une quinte à peine audible sous la note, pour l'épaissir.
-    var quinte = ctx.createOscillator();
-    quinte.type = 'sine';
-    quinte.frequency.value = f * 1.5;
-
-    var gQuinte = ctx.createGain();
-    gQuinte.gain.value = 0.26;
-
-    var env = ctx.createGain();
-    env.gain.setValueAtTime(0.0001, t);
-    env.gain.exponentialRampToValueAtTime(0.30, t + 0.5);
-    env.gain.exponentialRampToValueAtTime(0.0001, t + duree);
-
-    // Chaque note se pose ailleurs dans l'espace stéréo.
-    var pano = ctx.createStereoPanner ? ctx.createStereoPanner() : null;
-    if (pano) pano.pan.value = (Math.random() - 0.5) * 0.7;
-
-    osc.connect(env);
-    quinte.connect(gQuinte).connect(env);
-    if (pano) { env.connect(pano).connect(maitre); } else { env.connect(maitre); }
-
-    osc.start(t);   quinte.start(t);
-    osc.stop(t + duree + 0.2);
-    quinte.stop(t + duree + 0.2);
-
-    var attente = REGLAGES.ecartMin + Math.random() * (REGLAGES.ecartMax - REGLAGES.ecartMin);
-    minuterie = setTimeout(jouerNote, attente * 1000);
-  }
-
-  function demarrer() {
-    var Ctx = window.AudioContext || window.webkitAudioContext;
-    if (!Ctx) return false;
-
-    if (!ctx) {
-      ctx = new Ctx();
-      maitre = ctx.createGain();
-      maitre.gain.value = 0.0001;
-      maitre.connect(ctx.destination);
-      construireBourdon();
-    }
-    // ── Déverrouillage iOS ──────────────────────────────────────
-    // Sur iPhone et iPad, le son reste muet tant qu'aucun échantillon
-    // n'a été joué à l'intérieur même du geste de l'utilisateur. Un
-    // souffle inaudible d'un millième de seconde suffit à lever le
-    // verrou ; sans lui, le bouton semble ne rien faire.
-    try {
-      var vide = ctx.createBuffer(1, 1, 22050);
-      var lecteur = ctx.createBufferSource();
-      lecteur.buffer = vide;
-      lecteur.connect(ctx.destination);
-      lecteur.start(0);
-    } catch (e) { /* sans importance si le navigateur refuse */ }
-
-    if (ctx.state !== 'running') ctx.resume();
-
-    joue = true;
-    maitre.gain.cancelScheduledValues(ctx.currentTime);
-    maitre.gain.setValueAtTime(Math.max(maitre.gain.value, 0.0001), ctx.currentTime);
-    maitre.gain.exponentialRampToValueAtTime(REGLAGES.volume, ctx.currentTime + REGLAGES.fondu);
-
-    minuterie = setTimeout(jouerNote, 1200);
-    return true;
+    fonduEnCours = setInterval(function () {
+      var avancement = Math.min((Date.now() - debut) / REGLAGES.fondu, 1);
+      lecteur.setVolume(depart + (vers - depart) * avancement);
+      if (avancement === 1) {
+        clearInterval(fonduEnCours);
+        fonduEnCours = null;
+        if (typeof fin === 'function') fin();
+      }
+    }, 50);
   }
 
   function arreter() {
     joue = false;
-    if (minuterie) { clearTimeout(minuterie); minuterie = null; }
-    if (!ctx) return;
-    maitre.gain.cancelScheduledValues(ctx.currentTime);
-    maitre.gain.setValueAtTime(maitre.gain.value, ctx.currentTime);
-    maitre.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + REGLAGES.fondu * 0.6);
+    if (!lecteur) return;
+    fondre(0, function () { if (lecteur && lecteur.pauseVideo) lecteur.pauseVideo(); });
   }
 
-  /* ── Le lecteur ──────────────────────────────────────────────── */
+  /* ── Le lecteur visible ─────────────────────────────────────────── */
   function construireLecteur() {
     if (document.getElementById('music-player')) return; // déjà en place
 
@@ -216,7 +172,7 @@
     bouton.style.cssText =
       'background:#c9a84c;border:none;color:#0d0d0d;padding:.3rem .8rem;' +
       'font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;' +
-      'font-family:Georgia,serif;cursor:pointer;';
+      'font-family:Georgia,serif;cursor:pointer;white-space:nowrap;';
 
     var fermer = document.createElement('button');
     fermer.type = 'button';
@@ -224,30 +180,66 @@
     fermer.setAttribute('aria-label', 'Masquer le lecteur');
     fermer.style.cssText = 'background:transparent;border:none;color:#888;font-size:1rem;cursor:pointer;';
 
-    bouton.addEventListener('click', function () {
-      if (joue) {
-        arreter();
-        bouton.textContent = '▶ Écouter';
-        bouton.setAttribute('aria-label', 'Démarrer la musique du Rite');
-      } else if (demarrer()) {
-        bouton.textContent = '⏸ Silence';
-        bouton.setAttribute('aria-label', 'Arrêter la musique du Rite');
+    function enEcoute() {
+      bouton.textContent = '⏸ Silence';
+      bouton.setAttribute('aria-label', 'Arrêter la musique du Rite');
+      bouton.disabled = false;
+      titre.textContent = 'Musique du Rite';
+    }
 
-        // Si le navigateur a refusé de démarrer, le bouton afficherait
-        // « Silence » sans qu'aucun son ne sorte. On vérifie, et on le dit.
-        setTimeout(function () {
-          if (joue && ctx && ctx.state !== 'running') {
-            titre.textContent = 'Son bloqué par le navigateur';
-            titre.title = "Sur iPhone, vérifiez que le mode silencieux n'est pas activé.";
-          }
-        }, 800);
-      } else {
-        titre.textContent = 'Son indisponible ici';
-        bouton.textContent = '—';
-        bouton.disabled = true;
-        bouton.style.opacity = '.5';
-        bouton.style.cursor = 'default';
+    function auRepos() {
+      bouton.textContent = '▶ Écouter';
+      bouton.setAttribute('aria-label', 'Démarrer la musique du Rite');
+      bouton.disabled = false;
+    }
+
+    function indisponible(raison) {
+      joue = false;
+      titre.textContent = raison;
+      bouton.textContent = '—';
+      bouton.disabled = true;
+      bouton.style.opacity = '.5';
+      bouton.style.cursor = 'default';
+    }
+
+    bouton.addEventListener('click', function () {
+      if (joue) { arreter(); auRepos(); return; }
+
+      joue = true;
+
+      // Deuxième écoute et suivantes : le lecteur existe déjà.
+      if (lecteur && lecteur.playVideo) {
+        lecteur.setVolume(0);
+        lecteur.playVideo();
+        fondre(REGLAGES.volume);
+        enEcoute();
+        return;
       }
+
+      bouton.textContent = 'Chargement…';
+      bouton.disabled = true;
+
+      chargerAPI(
+        function () {
+          construirePlayer(
+            function () {
+              if (!joue) { lecteur.pauseVideo(); auRepos(); return; }
+              lecteur.setVolume(0);
+              lecteur.playVideo();
+              fondre(REGLAGES.volume);
+              enEcoute();
+            },
+            function (e) {
+              // 101 et 150 : le propriétaire interdit l'intégration.
+              var code = e && e.data;
+              indisponible(code === 101 || code === 150
+                ? 'Intégration refusée par la vidéo'
+                : 'Musique momentanément indisponible');
+            }
+          );
+        },
+        function () { indisponible('Musique momentanément indisponible'); }
+      );
     });
 
     fermer.addEventListener('click', function () {
@@ -264,8 +256,9 @@
 
   // Une page masquée ne doit pas continuer à sonner dans un onglet oublié.
   document.addEventListener('visibilitychange', function () {
-    if (document.hidden && ctx && joue) ctx.suspend();
-    else if (!document.hidden && ctx && joue) ctx.resume();
+    if (!lecteur || !joue || !lecteur.pauseVideo) return;
+    if (document.hidden) lecteur.pauseVideo();
+    else lecteur.playVideo();
   });
 
   if (document.readyState === 'loading') {
