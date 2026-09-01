@@ -1096,21 +1096,20 @@
     var contenu = document.getElementById('contenu-membres');
     var CLE     = 'rbi-tuilage-membres';
 
-    var REPONSES = {
-      q1: ['de saint jean', 'saint jean', 'du saint jean', 'de chez saint jean',
-           'loge de saint jean', 'loge saint jean', 'loge de st jean', 'loge st jean',
-           'de la loge saint jean', 'de la loge st jean', 'de st jean', 'st jean'],
-      q2: ['3 ans', 'trois ans', '5 ans', 'cinq ans', '7 ans', 'sept ans',
-           '3', '5', '7', '3 5 7', '3 5 et 7', 'trois cinq sept', 'trois cinq et sept',
-           '7 ans et plus', 'sept ans et plus', '7 et plus', 'sept et plus',
-           'plus de 7', 'plus de sept', '3ans', '5ans', '7ans']
+    /* On reconnaît la réponse à ce qu'elle contient, non à sa forme exacte.
+       Une liste de formulations closes rejetait « de la loge de St Jean »
+       parce qu'elle ne prévoyait pas ce second « de » — un Frère se serait
+       vu refuser l'entrée sur une tournure. */
+    var ATTENDU = {
+      q1: /(saint|st) ?jean/,
+      q2: /(^| )(3|5|7|trois|cinq|sept)( |$)/
     };
 
-    // Insensible à la casse, aux accents et à la ponctuation.
+    // Insensible à la casse, aux accents, à la ponctuation et aux apostrophes.
     function normaliser(v) {
       return (v || '').toLowerCase()
         .normalize('NFD').replace(/[̀-ͯ]/g, '')
-        .replace(/[.,;:!?'’·∴-]/g, ' ')
+        .replace(/[.,;:!?'’·∴’-]/g, ' ')
         .replace(/\s+/g, ' ').trim();
     }
 
@@ -1133,7 +1132,7 @@
       e.preventDefault();
       var r1 = normaliser(document.getElementById('porte-q1').value);
       var r2 = normaliser(document.getElementById('porte-q2').value);
-      var ok = REPONSES.q1.indexOf(r1) !== -1 && REPONSES.q2.indexOf(r2) !== -1;
+      var ok = ATTENDU.q1.test(r1) && ATTENDU.q2.test(r2);
 
       if (ok) {
         try { sessionStorage.setItem(CLE, 'oui'); } catch (e2) { /* sans mémoire, tant pis */ }

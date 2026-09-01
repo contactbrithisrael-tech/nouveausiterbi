@@ -212,6 +212,10 @@ var RBI_CONFIG = {
       {
         id:       "q1",
         texte:    "D'où venez-vous ?",
+        // Reconnu à ce que la réponse contient : « de Saint-Jean », « de la
+        // loge de St Jean », « d'une Loge Saint Jean »… La liste ci-dessous
+        // reste le repli si « motif » est retiré.
+        motif:    "(saint|st) ?jean",
         // Toutes les réponses acceptées (insensible accents + casse)
         reponses: [
           "de saint jean",
@@ -229,6 +233,7 @@ var RBI_CONFIG = {
       {
         id:       "q2",
         texte:    "Quel âge avez-vous ?",
+        motif:    "(^| )(3|5|7|trois|cinq|sept)( |$)",
         reponses: [
           "3 ans", "trois ans",
           "5 ans", "cinq ans",
