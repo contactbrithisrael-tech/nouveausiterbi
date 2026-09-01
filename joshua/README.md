@@ -72,6 +72,18 @@ d'instruction : il dit ce qui sera écrit, non ce qui s'enseigne. Il ne
 doit pas être compté comme une source de degré, et c'est l'avoir compté
 qui a longtemps fait croire les 19ᵉ à 32ᵉ pourvus.
 
+### Annoncé mais non fourni
+
+Le **Tome IV** existe — le Souverain Grand Commandeur l'a signalé le
+02/09/2026 — mais il n'est pas dans `corpus_rbi/`, et aucun ouvrage du
+corpus ne l'annonce. Il n'est donc pas porté sur la carte : on ne
+cartographie pas un texte qu'on n'a pas lu.
+
+Dès qu'il sera versé, il faudra en relever la plage réelle de degrés
+comme cela a été fait pour le Tome III — dont la carte annonçait 11-32
+là où le fichier couvre 11-18. Si le Tome IV prend la suite au 19ᵉ, la
+ligne « 19 – 32, mince » du tableau ci-dessus change du tout au tout.
+
 Trois choses manquent encore, et aucune ne s'invente :
 
 1. **Les pages.** Aucun rattachement ne porte de plage de pages. Sans
