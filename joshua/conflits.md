@@ -1,4 +1,4 @@
-# Désaccords à arbitrer avant tout indexage
+# Désaccords entre les sources — et comment ils ont été tranchés
 
 Trois sources décrivent les degrés du Rite, et elles ne disent pas la
 même chose : la **Roue des Degrés** du site, l'**INDEX CORPUS RBI** du
@@ -16,9 +16,10 @@ réponse.
 > eux. Le détail est conservé ci-dessous, parce qu'une correction dont on
 > a perdu le motif finit par être défaite.
 >
-> **Points 1 à 4 tranchés**, plus le 4ᵉ ZAKAÏ et l'âge du Me'ubin. Ne
-> restent que des questions de moindre portée : la borne des 30ᵉ à 32ᵉ,
-> le 3ᵉ ADON, le 33ᵉ sans texte, et les trois ouvrages transversaux.
+> **Tous les conflits doctrinaux sont résolus.** Les rituels avaient
+> effectivement toutes les réponses. Ne reste qu'une décision
+> d'administration — la plage d'accès des trois ouvrages transversaux —
+> que nul rituel n'a vocation à trancher.
 
 ---
 
@@ -201,85 +202,114 @@ lettres différentes, **Kaf n'y paraît jamais**, et le 29ᵉ porte un
 
 C'est donc cette table qu'il faut reprendre — non la Roue.
 
-## 5. Points mineurs
+## 5. Les Séphiroth des trois premiers degrés — TRANCHÉ
 
-- **3° ADON** : « Hod – Netzach » sur la Roue, « Hod » seul dans l'index.
-  Non tranché.
-- **4° ZAKAÏ** — TRANCHÉ : **Tiphereth** seul. Le Recueil des rituels le
-  dit en titre — « RITUEL DU 4ème DEGRÉ : ZAKAÏ (Le Purifié) — Séphira :
-  TIPHERETH » — et le tableau du Tome II le confirme. La Roue et la carte
-  portaient « Tiphereth – Yesod » : corrigées, avec la traduction
-  « Le Purifié », qui est celle du rituel.
-- **L'âge du Me'ubin** — TRANCHÉ : **63 ans**. Le catéchisme du 8ᵉ le
-  demande et y répond : « quel est l'Âge des Me'ubinim ? — Ils ont
-  Soixante-Trois (63) Ans… C'est le nombre sacré (Shem SaG) de Binah,
-  l'âge où la Lumière est parfaitement structurée par l'Intelligence pour
-  créer les Mondes. » Le rituel donne sa raison ; les 840 ans du Tome II
-  sont dans un tableau, sans justification. C'est le tableau du Tome II
-  qu'il faut reprendre.
-- **Plan Maître Tome III** : l'index l'annonce en « 11° → 33° » dans sa
-  fiche, et en « 11°-32° » dans son récapitulatif. La carte retient
-  11-32.
+En cherchant le 3ᵉ ADON, deux écarts sont apparus, et **le Tome I les
+tranche tous les deux dans la même ligne** :
 
-## 6. Le 33ᵉ degré n'a aucun texte
+> « OVED : Séphira : MALKUTH — Monde : ASSIAH
+> BONEH : Séphira : **HOD** — Monde : YETZIRAH
+> ADON : Séphira : **NETZAH** — Monde : YETZIRAH »
 
-Trente-deux degrés sur trente-trois sont pourvus. Le **33ᵉ — KETHER
-ATZILUTH** n'est couvert par aucun ouvrage de l'index : ni le Recueil
-intégral, qui s'arrête au 32ᵉ, ni le Plan Maître.
+Le **Tableau Synoptique** du Recueil des rituels dit exactement la même
+chose, et les rituels le disent en toutes lettres : « le Constructeur
+atteint la Splendeur (**Hod**) les mains nues », « Adon, scellant notre
+victoire sur la mort dans **Netzah** », « ADONAI TZVA'OT, Maître de la
+Victoire (NETZAH) ».
 
-Ce n'est peut-être pas une lacune : un grade qui ne se transmet qu'en
-personne n'a pas à figurer dans un corpus indexé. Mais il faut le
-décider, et non le laisser au hasard.
+| Degré | Roue et carte, avant | Les textes |
+|---|---|---|
+| 1ᵉʳ OVED | Malkuth | **Malkuth** ✓ |
+| 2ᵉ BONEH | Yesod | **Hod** |
+| 3ᵉ ADON | Hod – Netzach | **Netzah** |
 
-## 7. Ouvrages sans degré assigné
+D'où venait le « Yesod » du 2ᵉ ? D'une phrase du rituel du 1ᵉʳ : « Oved,
+vous devez vous placer dans la rectitude du **Fondement (Yesod)** ».
+Yesod y est une vertu que l'Oved acquiert, non la Séphira du Boneh. La
+carte avait pris l'une pour l'autre.
 
-Trois ouvrages sont transversaux — ils n'appartiennent à aucun degré :
+Corrigés dans la Roue et dans la carte, avec les traductions des rituels
+— Le Constructeur, Le Maître.
 
-- **Architecture Sacrée** — les 10 Sephiroth et 22 Sentiers
-- **Pirké Avot, édition RBI** — sagesse hébraïque
-- **L'Alliance de Lumière** — livre grand public, seul ouvrage public du
-  corpus
+## 6. La borne des 30ᵉ à 32ᵉ — SANS OBJET
 
-Tant que leur plage d'accès n'est pas fixée, la règle de prudence
-s'applique : ils sont traités au degré le plus élevé qu'ils abordent.
-Pour *Architecture Sacrée*, qui couvre les 22 Sentiers, cela signifie le
-32ᵉ — donc invisible pour presque tous les Frères. C'est probablement
-trop restrictif, mais mieux vaut un texte trop fermé qu'un texte ouvert
-à qui n'y a pas droit.
+La question était : Chapitre ou Aréopage ? Les rituels y répondent en ne
+répondant pas — et c'est une réponse.
+
+**Aucun rituel des degrés supérieurs ne nomme de corps.** Vérifié du 29ᵉ
+au 32ᵉ : tous ouvrent par « j'ouvre les Travaux du Nème Degré », sans
+autre mention. Le corps n'appartient pas au degré.
+
+C'est la Constitution qui le fixe, et elle traite les 11ᵉ à 32ᵉ comme
+**une seule catégorie** : « Chapitres et Aréopages ». Le partage 11-17 /
+18-29 que donne *Les Trente-Deux Voies* est une aide à la lecture, non
+une division constitutionnelle — et c'est pourquoi elle s'arrête au 29ᵉ
+sans gêne.
+
+Il n'y a donc rien à trancher : les 30ᵉ à 32ᵉ relèvent des Chapitres et
+Aréopages, comme les vingt et un autres.
+
+## 7. Le 33ᵉ sans texte d'instruction — VOULU, et le rituel le dit
+
+Ce n'était pas une lacune du corpus. Le Recueil des rituels porte le 33ᵉ
+— sa doctrine, ses décors, son mode de transmission — et il explique
+pourquoi il n'a pas d'instruction écrite :
+
+> « Le 33ème degré ne s'apprend pas dans les livres. Il se transmet par
+> "transfusion" de l'Esprit du Rite (Ruach HaKodesh du Rite) du vivant au
+> vivant. »
+
+C'est la **Semikhah** — l'imposition des mains de Moïse sur Josué,
+Nombres 27:18, que le rituel cite. Le grade se reçoit d'une personne, pas
+d'un texte.
+
+Conséquence pratique : **aucun questionnaire d'instruction n'est possible
+au 33ᵉ**, et ce n'est pas un manque à combler. Joshua refuse déjà d'y
+ouvrir une épreuve, faute de corpus — il le fait maintenant pour la bonne
+raison.
+
+## 8. Les trois ouvrages transversaux — la seule décision qui reste
+
+*Architecture Sacrée*, *Pirké Avot* et *L'Alliance de Lumière*
+n'appartiennent à aucun degré. Ce n'est pas une question doctrinale : les
+rituels n'ont pas à dire qui peut lire quoi. C'est une décision
+d'administration, et elle vous revient.
+
+L'état actuel applique la prudence — chacun est traité au degré le plus
+élevé qu'il aborde, ce qui met *Architecture Sacrée* au 32ᵉ, donc
+invisible pour presque tous. C'est probablement trop fermé pour un
+ouvrage qui expose la structure que la Roue publie déjà sur le site.
+
+Trois lignes suffiraient à trancher :
+
+- **L'Alliance de Lumière** est déjà public — 1ᵉʳ degré, ou même visiteur ;
+- **Pirké Avot** est de la sagesse hébraïque, sans contenu de grade —
+  1ᵉʳ degré paraîtrait juste ;
+- **Architecture Sacrée** expose les dix Séphiroth et les vingt-deux
+  Sentiers, soit ce que la Roue montre publiquement — 1ᵉʳ ou 11ᵉ degré,
+  selon que vous jugez la matière des Sentiers accessible avant de les
+  recevoir.
+
+## Ce qu'il reste à faire
+
+**Rien du côté du site ni de Joshua : ils sont d'accord avec les
+rituels.** Ce qui suit porte sur les documents eux-mêmes, qui portent
+encore les formes anciennes.
+
+| Document | À reprendre | Le texte qui fait foi |
+|---|---|---|
+| Tome II — sommaire et tableaux | MEVIN | ME'UBIN, dit par le rituel du 8ᵉ |
+| Manuel d'Architecture Sacrée | MEVIN | idem |
+| Tome II — tableau des âges | 840 ans | 63 ans, dits par le catéchisme du 8ᵉ |
+| Tome III | CHAYIM au 18ᵉ | HARUACH, dit par le Recueil |
+| Recueil — table des lettres | Yod au 11ᵉ, Tav deux fois, KEDEM deux fois, Kaf jamais | Aleph au 11ᵉ, Tav au 32ᵉ |
+| Bible du Rite, Vol. I et II | « le Consistoire » au Volume III | le Rite n'en a pas |
+
+Et **une seule décision** vous revient encore, qui n'est pas doctrinale :
+la plage d'accès des trois ouvrages transversaux, au point 8 ci-dessus.
 
 ---
 
-## Ce que j'attends de vous
-
-Les points 1 à 4 sont tranchés et appliqués, ainsi que le 4ᵉ ZAKAÏ et
-l'âge du Me'ubin. **Plus aucun arbitrage de fond n'est en attente.**
-
-Restent quatre points de moindre portée :
-
-- les 30ᵉ à 32ᵉ : Chapitre ou Aréopage ? Aucun texte ne le dit ;
-- le 3ᵉ ADON : Hod seul, ou Hod – Netzach ;
-- le 33ᵉ, qu'aucun texte ne couvre — est-ce voulu ?
-- les trois ouvrages transversaux, dont la plage d'accès n'est pas fixée.
-
-**Ce qu'il faudrait reprendre dans les documents eux-mêmes**, maintenant
-que les décisions sont prises :
-
-- la graphie **MEVIN** dans le sommaire et les tableaux du Tome II, et
-  dans le Manuel d'Architecture Sacrée — le rituel dit ME'UBIN ;
-- le nom **CHAYIM** au 18ᵉ du Tome III — le rituel dit HARUACH ;
-- l'**âge de 840 ans** dans le tableau du Tome II — le catéchisme dit 63 ;
-- la **table des lettres** du Recueil des rituels — la règle est
-  Aleph au 11ᵉ, Tav au 32ᵉ ;
-- la phrase de la **Bible du Rite** qui annonce un Consistoire au
-  Volume III — le Rite n'en a pas.
-
-Aucun de ces cinq points ne touche le site ni Joshua : tous portent sur
-les documents, qui devront être remis d'accord avec ce qui a été tranché.
-
-Et, s'il faut aller au bout : la phrase de la *Bible du Rite* qui annonce
-un « Consistoire » au Volume III devrait être reprise, sans quoi le
-Volume III le fera exister par inadvertance.
-
-La Roue du site et les instructions de Joshua devront être alignées sur
-chaque décision — sans quoi le site et le bot continueront de se
-contredire devant les mêmes Frères.
+*Ce mémoire a été tenu du 1ᵉʳ au 2 septembre 2026. Chaque point y porte
+la citation qui l'a tranché, parce qu'une correction dont on a perdu le
+motif finit par être défaite.*

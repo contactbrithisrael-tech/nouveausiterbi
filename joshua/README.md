@@ -101,10 +101,11 @@ Trois choses manquent encore, et aucune ne s'invente :
    et le Tome V reste à écrire. Au-delà du 25ᵉ, aucun texte propre à un
    degré : un questionnaire tiré de là interroge sur de la kabbale
    générale, non sur l'instruction d'un grade.
-3. **Les arbitrages doctrinaux qui restent.** Voir `conflits.md`. Les
-   Séphiroth des 7ᵉ à 10ᵉ et l'existence du Consistoire sont tranchées ;
-   le nom du 18ᵉ — HARUACH ou CHAYIM — ne l'est pas. Indexer avant
-   d'avoir tranché reviendrait à graver une erreur.
+3. **Rien, côté doctrine.** `conflits.md` est clos : les huit points ont
+   été tranchés par les rituels, la Constitution et le Souverain Grand
+   Commandeur, et la Roue comme la carte ont été mises d'accord avec eux.
+   Ne reste qu'une décision d'administration — la plage d'accès des trois
+   ouvrages transversaux.
 
 ---
 
