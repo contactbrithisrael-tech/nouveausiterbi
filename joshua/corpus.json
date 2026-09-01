@@ -1,0 +1,515 @@
+{
+  "$commentaire": "Carte du corpus du Rite Brith Israël, destinée à Joshua. Les 33 degrés sont extraits de la Roue des Degrés du site, qui fait autorité. Les rattachements aux ouvrages sont à compléter : ils ne se devinent pas, et une source inventée serait pire que pas de source.",
+  "version": "1.0.0",
+  "etabli_le": "2026-09-01",
+  "corps": [
+    {
+      "code": "symbolique",
+      "libelle": "Loge Symbolique",
+      "ordre": 1,
+      "degres": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "code": "perfection",
+      "libelle": "Loge de Perfection",
+      "ordre": 2,
+      "degres": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "code": "chapitre",
+      "libelle": "Chapitre",
+      "ordre": 3,
+      "degres": [
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30
+      ]
+    },
+    {
+      "code": "consistoire",
+      "libelle": "Consistoire",
+      "ordre": 4,
+      "degres": [
+        31,
+        32
+      ]
+    },
+    {
+      "code": "supreme-conseil",
+      "libelle": "Suprême Conseil",
+      "ordre": 5,
+      "degres": [
+        33
+      ]
+    }
+  ],
+  "ouvrages": [
+    {
+      "id": "alliance-lumiere-t1",
+      "titre": "Brith Israël — L'Alliance de Lumière, Tome I",
+      "nature": "rituel",
+      "auteur": "Mickaël Darmon",
+      "degres_couverts": [
+        1,
+        2,
+        3
+      ],
+      "statut": "a_indexer",
+      "diffusion": "membres uniquement"
+    }
+  ],
+  "regles_acces": {
+    "principe": "Un membre du degré N accède aux ouvrages des degrés 1 à N inclus, et à aucun autre.",
+    "degre_fixe_par": "Souverain Grand Commandeur",
+    "silence_sur_le_superieur": true,
+    "note_silence": "Un texte d'un degré supérieur ne doit ni apparaître dans les réponses, ni être mentionné comme existant. Répondre « ce document existe mais votre degré ne vous y donne pas accès » est déjà une divulgation : cela révèle qu'il y a quelque chose à savoir, et à quel degré le chercher. Joshua répond comme si le texte n'existait pas."
+  },
+  "regles_reponse": {
+    "citation_obligatoire": "Chaque affirmation cite son ouvrage et sa page.",
+    "hors_corpus": "Ce qui ne figure pas dans les textes accessibles : Joshua dit ne pas le savoir.",
+    "pas_de_doctrine": "Joshua ne tranche aucune question doctrinale et ne commente pas.",
+    "pas_de_substitution": "Joshua ne remplace ni l'instruction en Loge, ni le Vénérable Maître."
+  },
+  "degres": [
+    {
+      "degre": 1,
+      "nom": "OVED",
+      "hebreu": "עוֹבֵד",
+      "traduction": "Serviteur",
+      "sephira": "Malkuth",
+      "corps": "symbolique",
+      "equivalent_reaa": "Apprenti",
+      "decors": "Ruban blanc, tablier d'apprenti, équerre et niveau",
+      "sources": [
+        {
+          "ouvrage": "alliance-lumiere-t1",
+          "pages": null
+        }
+      ],
+      "etat": "declare"
+    },
+    {
+      "degre": 2,
+      "nom": "BONEH",
+      "hebreu": "בּוֹנֶה",
+      "traduction": "Bâtisseur",
+      "sephira": "Yesod",
+      "corps": "symbolique",
+      "equivalent_reaa": "Compagnon",
+      "decors": "Ruban bleu ciel, fil à plomb, étoile flamboyante",
+      "sources": [
+        {
+          "ouvrage": "alliance-lumiere-t1",
+          "pages": null
+        }
+      ],
+      "etat": "declare"
+    },
+    {
+      "degre": 3,
+      "nom": "ADON",
+      "hebreu": "אָדוֹן",
+      "traduction": "Maître",
+      "sephira": "Hod – Netzach",
+      "corps": "symbolique",
+      "equivalent_reaa": "Maître",
+      "decors": "Ruban noir, compas ouvert, branche d'acacia",
+      "sources": [
+        {
+          "ouvrage": "alliance-lumiere-t1",
+          "pages": null
+        }
+      ],
+      "etat": "declare"
+    },
+    {
+      "degre": 4,
+      "nom": "ZAKAÏ",
+      "hebreu": "זַכַּאי",
+      "traduction": "Innocent / Méritant",
+      "sephira": "Tiphereth – Yesod",
+      "corps": "perfection",
+      "equivalent_reaa": "Maître Secret",
+      "decors": "Bleu ciel et Or, triangle rayonnant, lettre Yod",
+      "sources": [],
+      "etat": "a_fournir"
+    },
+    {
+      "degre": 5,
+      "nom": "GIBBOR",
+      "hebreu": "גִּיבּוֹר",
+      "traduction": "Vaillant / Héroïque",
+      "sephira": "Geburah",
+      "corps": "perfection",
+      "equivalent_reaa": "Maître Parfait",
+      "decors": "Cramoisi et Or, épée flamboyante, lettre He",
+      "sources": [],
+      "etat": "a_fournir"
+    },
+    {
+      "degre": 6,
+      "nom": "HASSID",
+      "hebreu": "חָסִיד",
+      "traduction": "Pieux / Miséricordieux",
+      "sephira": "Hesed",
+      "corps": "perfection",
+      "equivalent_reaa": "Secrétaire Intime",
+      "decors": "Rouge et Argent, calice et rameaux d'olivier, lettre Vav",
+      "sources": [],
+      "etat": "a_fournir"
+    },
+    {
+      "degre": 7,
+      "nom": "MASKIL",
+      "hebreu": "מַשְׂכִּיל",
+      "traduction": "Sage / Érudit",
+      "sephira": "Binah",
+      "corps": "perfection",
+      "equivalent_reaa": "Prévôt et Juge",
+      "decors": "Noir et Or, chariot et glaive, lettre Zayin",
+      "sources": [],
+      "etat": "a_fournir"
+    },
+    {
+      "degre": 8,
+      "nom": "ME'UBIN",
+      "hebreu": "מְעֻבָּן",
+      "traduction": "Expert / Accompli",
+      "sephira": "Hokhmah",
+      "corps": "perfection",
+      "equivalent_reaa": "Intendant des Bâtiments",
+      "decors": "Noir et Or, balance et glaive de justice, lettre Het",
+      "sources": [],
+      "etat": "a_fournir"
+    },
+    {
+      "degre": 9,
+      "nom": "HAMA'ATIK",
+      "hebreu": "הַמַּעְתִּיק",
+      "traduction": "Celui qui Transcende",
+      "sephira": "Kether",
+      "corps": "perfection",
+      "equivalent_reaa": "Maître Élu des Neuf",
+      "decors": "Bleu nuit et Argent, Arche d'Alliance dorée, lettre Tet",
+      "sources": [],
+      "etat": "a_fournir"
+    },
+    {
+      "degre": 10,
+      "nom": "KADOSH",
+      "hebreu": "קָדוֹשׁ",
+      "traduction": "Saint / Consacré",
+      "sephira": "Kether – Malkuth",
+      "corps": "perfection",
+      "equivalent_reaa": "Illustre Élu des Quinze",
+      "decors": "Gris-Bleu et Or, tente du Tabernacle, lettre Yod",
+      "sources": [],
+      "etat": "a_fournir"
+    },
+    {
+      "degre": 11,
+      "nom": "NISTAR",
+      "hebreu": "נִסְתָּר",
+      "traduction": "Caché / Mystérieux",
+      "sephira": "Sentier 11 — Aleph (א)",
+      "corps": "chapitre",
+      "equivalent_reaa": "Sublime Chevalier Élu",
+      "decors": "Havane et Cramoisi, tête de bélier sacré, lettre Aleph",
+      "sources": [],
+      "etat": "a_fournir"
+    },
+    {
+      "degre": 12,
+      "nom": "NATIV",
+      "hebreu": "נָתִיב",
+      "traduction": "Le Sentier",
+      "sephira": "Sentier 12 — Bet (ב)",
+      "corps": "chapitre",
+      "equivalent_reaa": "Grand Maître Architecte",
+      "decors": "Noir, Étoile de David, Boussole et Sel — Kether→Binah",
+      "sources": [],
+      "etat": "a_fournir"
+    },
+    {
+      "degre": 13,
+      "nom": "GISHRA",
+      "hebreu": "גִּשְׁרָא",
+      "traduction": "Le Pont",
+      "sephira": "Sentier 13 — Gimel (ג)",
+      "corps": "chapitre",
+      "equivalent_reaa": "Chevalier de Royal Arch",
+      "decors": "Rose et Vert, Arbre de Vie et Pont sur les eaux — Kether→Tiphereth",
+      "sources": [],
+      "etat": "a_fournir"
+    },
+    {
+      "degre": 14,
+      "nom": "ROSH",
+      "hebreu": "רֹאשׁ",
+      "traduction": "La Tête / Le Chef",
+      "sephira": "Sentier 14 — Dalet (ד)",
+      "corps": "chapitre",
+      "equivalent_reaa": "Grand Élu Parfait et Sublime Maçon",
+      "decors": "Blanc et Pourpre, Buisson Ardent et Palmier de Justice — Hokhmah→Hesed",
+      "sources": [],
+      "etat": "a_fournir"
+    },
+    {
+      "degre": 15,
+      "nom": "SOFER",
+      "hebreu": "סוֹפֵר",
+      "traduction": "Le Scribe",
+      "sephira": "Sentier 15 — He (ה)",
+      "corps": "chapitre",
+      "equivalent_reaa": "Chevalier d'Orient",
+      "decors": "Noir et Or, Pyramides sous l'orage, Parchemin et Stylet — Hokhmah→Tiphereth",
+      "sources": [],
+      "etat": "a_fournir"
+    },
+    {
+      "degre": 16,
+      "nom": "PATA'H",
+      "hebreu": "פָּתַח",
+      "traduction": "L'Ouvreur",
+      "sephira": "Sentier 16 — Vav (ו)",
+      "corps": "chapitre",
+      "equivalent_reaa": "Prince de Jérusalem",
+      "decors": "Bordeaux et Argent, Trône de Justice et Balance — Hokhmah→Da'at",
+      "sources": [],
+      "etat": "a_fournir"
+    },
+    {
+      "degre": 17,
+      "nom": "TZEMAH",
+      "hebreu": "צֶמַח",
+      "traduction": "La Croissance",
+      "sephira": "Sentier 17 — Zayin (ז)",
+      "corps": "chapitre",
+      "equivalent_reaa": "Chevalier d'Orient et d'Occident",
+      "decors": "Bleu Royal et Or, Shofar versant l'huile — Binah→Geburah",
+      "sources": [],
+      "etat": "a_fournir"
+    },
+    {
+      "degre": 18,
+      "nom": "HARUACH",
+      "hebreu": "הָרוּחַ",
+      "traduction": "L'Esprit / Souffle Vital",
+      "sephira": "Sentier 18 — Heth (ח)",
+      "corps": "chapitre",
+      "equivalent_reaa": "Souverain Prince Rose-Croix",
+      "decors": "Vert et Or, Encensoir et Cœur Rayonnant, Corne d'Huile — Binah→Tiphereth",
+      "sources": [],
+      "etat": "a_fournir"
+    },
+    {
+      "degre": 19,
+      "nom": "RUAH",
+      "hebreu": "רוּחַ",
+      "traduction": "Souffle / Esprit Saint",
+      "sephira": "Sentier 19 — Teth (ט)",
+      "corps": "chapitre",
+      "equivalent_reaa": "Grand Pontife",
+      "decors": "Bleu nuit et Argent, Arche d'Alliance et Chérubins — Binah→Da'at",
+      "sources": [],
+      "etat": "a_fournir"
+    },
+    {
+      "degre": 20,
+      "nom": "YESHURUN",
+      "hebreu": "יְשׁוּרוּן",
+      "traduction": "Le Droit",
+      "sephira": "Sentier 20 — Yod (י)",
+      "corps": "chapitre",
+      "equivalent_reaa": "Vénérable Grand Maître",
+      "decors": "Orange Cuivré, Visage Solaire Rayonnant — Hesed→Tiphereth",
+      "sources": [],
+      "etat": "a_fournir"
+    },
+    {
+      "degre": 21,
+      "nom": "OR",
+      "hebreu": "אוֹר",
+      "traduction": "La Lumière",
+      "sephira": "Sentier 21 — Kaf (כ)",
+      "corps": "chapitre",
+      "equivalent_reaa": "Noachite / Chevalier Prussien",
+      "decors": "Gris Perle et Argent, Tourbillon de Feu, Shin rouge — Hesed→Netzah",
+      "sources": [],
+      "etat": "a_fournir"
+    },
+    {
+      "degre": 22,
+      "nom": "NOKHAH",
+      "hebreu": "נוֹכַח",
+      "traduction": "La Présence / L'Établi",
+      "sephira": "Sentier 22 — Lamed (ל)",
+      "corps": "chapitre",
+      "equivalent_reaa": "Chevalier Royal Hache",
+      "decors": "Bleu et Or, Triangle d'Étoiles et Sceau de Vérité — Geburah→Tiphereth",
+      "sources": [],
+      "etat": "a_fournir"
+    },
+    {
+      "degre": 23,
+      "nom": "MELEKH",
+      "hebreu": "מֶלֶךְ",
+      "traduction": "Le Roi",
+      "sephira": "Sentier 23 — Mem (מ)",
+      "corps": "chapitre",
+      "equivalent_reaa": "Chef du Tabernacle",
+      "decors": "Noir et Argent, Ailes déployées et Plume royale — Geburah→Hod",
+      "sources": [],
+      "etat": "a_fournir"
+    },
+    {
+      "degre": 24,
+      "nom": "KEDEM",
+      "hebreu": "קֶדֶם",
+      "traduction": "L'Orient / L'Ancien",
+      "sephira": "Sentier 24 — Noun (נ)",
+      "corps": "chapitre",
+      "equivalent_reaa": "Prince du Tabernacle",
+      "decors": "Jaune d'Or, Serpent Gardien et Gerbe de Blé, Clé d'Or — Tiphereth→Netzah",
+      "sources": [],
+      "etat": "a_fournir"
+    },
+    {
+      "degre": 25,
+      "nom": "HA'ELOHIM",
+      "hebreu": "הָאֱלֹהִים",
+      "traduction": "Le Divin",
+      "sephira": "Sentier 25 — Samekh (ס)",
+      "corps": "chapitre",
+      "equivalent_reaa": "Chevalier du Serpent d'Airain",
+      "decors": "Blanc-Crème, Rouleaux de la Loi Torah — Tiphereth→Hod",
+      "sources": [],
+      "etat": "a_fournir"
+    },
+    {
+      "degre": 26,
+      "nom": "SHAMAYIM",
+      "hebreu": "שָׁמַיִם",
+      "traduction": "Le Ciel",
+      "sephira": "Sentier 26 — Ayin (ע)",
+      "corps": "chapitre",
+      "equivalent_reaa": "Prince of Mercy",
+      "decors": "Gris Bleuté, Harpe et Sceau Brisé — Tiphereth→Yesod",
+      "sources": [],
+      "etat": "a_fournir"
+    },
+    {
+      "degre": 27,
+      "nom": "ADAMA",
+      "hebreu": "אֲדָמָה",
+      "traduction": "La Terre",
+      "sephira": "Sentier 27 — Pe (פ)",
+      "corps": "chapitre",
+      "equivalent_reaa": "Grand Commandeur du Temple",
+      "decors": "Jaune d'Or, Menorah, Truelle et Vase de Terre — Tiphereth→Malkuth",
+      "sources": [],
+      "etat": "a_fournir"
+    },
+    {
+      "degre": 28,
+      "nom": "KAV",
+      "hebreu": "קַו",
+      "traduction": "Le Rayon",
+      "sephira": "Sentier 28 — Tsade (צ)",
+      "corps": "chapitre",
+      "equivalent_reaa": "Chevalier du Soleil",
+      "decors": "Violet, Rideau du Temple et Fil à Plomb — Netzah→Yesod",
+      "sources": [],
+      "etat": "a_fournir"
+    },
+    {
+      "degre": 29,
+      "nom": "SHEMESH",
+      "hebreu": "שֶׁמֶשׁ",
+      "traduction": "Le Soleil",
+      "sephira": "Sentier 29 — Qof (ק)",
+      "corps": "chapitre",
+      "equivalent_reaa": "Grand Écossais de Saint-André",
+      "decors": "Blanc, Soleil rayonnant, Mem Final — Netzah→Malkuth",
+      "sources": [],
+      "etat": "a_fournir"
+    },
+    {
+      "degre": 30,
+      "nom": "KOCHAV",
+      "hebreu": "כּוֹכָב",
+      "traduction": "L'Étoile",
+      "sephira": "Sentier 30 — Resh (ר)",
+      "corps": "chapitre",
+      "equivalent_reaa": "Chevalier Kadosh",
+      "decors": "Bicolore Bleu-Jaune, Balance et Étoile — Hod→Yesod",
+      "sources": [],
+      "etat": "a_fournir"
+    },
+    {
+      "degre": 31,
+      "nom": "MAZAL",
+      "hebreu": "מַזָּל",
+      "traduction": "La Chance / Le Destin",
+      "sephira": "Sentier 31 — Shin (ש)",
+      "corps": "consistoire",
+      "equivalent_reaa": "Grand Inspecteur Inquisiteur",
+      "decors": "Bicolore Rouge-Blanc, Buisson de Feu et Dés du Destin — Hod→Malkuth",
+      "sources": [],
+      "etat": "a_fournir"
+    },
+    {
+      "degre": 32,
+      "nom": "OLAM",
+      "hebreu": "עוֹלָם",
+      "traduction": "Le Monde",
+      "sephira": "Sentier 32 — Tav (ת)",
+      "corps": "consistoire",
+      "equivalent_reaa": "Sublime Prince du Royal Secret",
+      "decors": "Blanc et Or avec franges, Couronne royale et Plan du Temple — Yesod→Malkuth",
+      "sources": [],
+      "etat": "a_fournir"
+    },
+    {
+      "degre": 33,
+      "nom": "KETHER ATZILUTH",
+      "hebreu": "כֶּתֶר אֲצִילוּת",
+      "traduction": "Couronne de l'Émanation",
+      "sephira": "Kether / Ein Soph Aur",
+      "corps": "supreme-conseil",
+      "equivalent_reaa": "Souverain Grand Inspecteur Général",
+      "decors": "Bleu royal et Or, Étoile de David 33°, Tables de la Loi, Menorah, mains de Cohen",
+      "sources": [],
+      "etat": "a_fournir"
+    }
+  ]
+}
