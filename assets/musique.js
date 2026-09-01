@@ -58,9 +58,13 @@
     positionCoin: 'right'  // 'right' ou 'left'
   };
 
-  // Mémoire de la visite : le choix du visiteur, et où il en est.
-  var CLE_CHOIX = 'rbi-musique';
-  var CLE_TEMPS = 'rbi-musique-t';
+  // Mémoire du visiteur.
+  //
+  // Le refus du son est retenu durablement : quelqu'un qui a coupé la
+  // musique ne doit pas la retrouver au visage à sa prochaine visite.
+  // L'endroit du morceau, lui, n'a de sens que le temps d'une visite.
+  var CLE_CHOIX = 'rbi-musique';    // durable
+  var CLE_TEMPS = 'rbi-musique-t';  // le temps de la visite
 
   var lecteur = null;
   var joue = false;
@@ -70,13 +74,19 @@
   var majInterface = null;   // fixée par construireLecteur()
   var boiteLecteur = null;   // le cadre visible, idem
 
-  /* ── Mémoire, tolérante aux navigations privées verrouillées ──── */
+  /* ── Mémoire, tolérante aux navigations privées verrouillées ────
+     Certains navigateurs refusent tout accès au stockage : chaque
+     lecture et chaque écriture doit pouvoir échouer sans conséquence.
+     Le site fonctionne alors normalement, simplement sans mémoire. */
+  function coffre(cle) {
+    return cle === CLE_CHOIX ? window.localStorage : window.sessionStorage;
+  }
   function lire(cle, defaut) {
-    try { var v = sessionStorage.getItem(cle); return v === null ? defaut : v; }
+    try { var v = coffre(cle).getItem(cle); return v === null ? defaut : v; }
     catch (e) { return defaut; }
   }
   function ecrire(cle, valeur) {
-    try { sessionStorage.setItem(cle, valeur); } catch (e) { /* sans importance */ }
+    try { coffre(cle).setItem(cle, valeur); } catch (e) { /* sans importance */ }
   }
 
   /* ── Chargement de l'API, une seule fois ───────────────────────── */
