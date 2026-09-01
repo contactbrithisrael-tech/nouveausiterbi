@@ -7,6 +7,20 @@
    Ne toucher ni index.html ni app.js sauf cas exceptionnel.
 ════════════════════════════════════════════════════════════════ */
 
+/* ──────────────────────────────────────────────
+   AVATAR ANONYME
+   Pour un Officier qui ne souhaite pas voir sa photo publiée.
+   Ajouter « img_data: RBI_AVATAR_ANONYME » à sa fiche ci-dessous.
+   Le SVG est écrit en clair : couleurs et tracé se modifient ici.
+────────────────────────────────────────────── */
+var RBI_AVATAR_ANONYME =
+  "data:image/svg+xml;utf8," +
+  "%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E" +
+  "%3Crect width='100' height='100' fill='%231a1a1a'/%3E" +
+  "%3Ccircle cx='50' cy='37' r='15.5' fill='none' stroke='%23c9a84c' stroke-width='2.4' opacity='.55'/%3E" +
+  "%3Cpath d='M21 87c0-16 13-29 29-29s29 13 29 29' fill='none' stroke='%23c9a84c' stroke-width='2.4' stroke-linecap='round' opacity='.55'/%3E" +
+  "%3C/svg%3E";
+
 var RBI_CONFIG = {
 
   /* ──────────────────────────────────────────────
@@ -129,6 +143,8 @@ var RBI_CONFIG = {
         titre:  "Assistant Grand Maître",
         role:   " Grand Hospitalier",
         img_id: "photo-jourdan",
+        // À sa demande, pas de photographie : silhouette anonyme.
+        img_data: RBI_AVATAR_ANONYME,
         rang:   "agm"
       }
     ]

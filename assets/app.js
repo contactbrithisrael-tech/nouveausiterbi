@@ -138,7 +138,9 @@
 
     cfg.membres.forEach(function (m) {
       var photoDiv = el('div', { class: 'chef-card__photo-wrap' }, [
-        el('img', { src: '', id: m.img_id, alt: m.nom, class: 'chef-card__photo' }),
+        // img_data permet de fournir une image directement depuis config.js
+        // (silhouette anonyme, par exemple) sans passer par images.js.
+        el('img', { src: m.img_data || '', id: m.img_id, alt: m.nom, class: 'chef-card__photo' }),
         el('div', { class: 'chef-card__photo-placeholder', text: m.nom.charAt(0) })
       ]);
 
