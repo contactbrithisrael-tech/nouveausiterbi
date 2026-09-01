@@ -169,8 +169,8 @@ var RBI_CONFIG = {
       {
         img_id:   "book-petrin",
         titre:    "Du Pétrin au Compas",
-        sous:     "Mickaël DARMON — Amazon KDP",
-        desc:     "Du pétrin du boulanger au compas de l'architecte : le passage du travail de la matière à celui de l'esprit, au fil de la démarche maçonnique.",
+        sous:     "Roman — « Quand on cherche un secret, on trouve une vérité » · 9 juillet 2026",
+        desc:     "Un roman. Laure Silvestri, journaliste d'investigation à Marseille, enquête sur les mardis soir de son compagnon boulanger. Ce n'est pas ce qu'elle croyait : c'est une Loge. Et ce qu'elle commence sans l'avoir prévu, c'est une initiation.",
         placeholder: "P",
         liens: [
           { label: "Amazon", url: "https://amzn.eu/d/05ZcIJ0g", style: "primary" }
