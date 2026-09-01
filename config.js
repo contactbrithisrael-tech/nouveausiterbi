@@ -51,7 +51,7 @@ var RBI_CONFIG = {
       {
         icone: "✡",
         titre: "Tradition Hébraïque, ouverte à tous",
-        texte: "Le Rite lit le symbolisme maçonnique à sa source hébraïque et kabbalistique. Il n'est pas confessionnel et n'est réservé à aucune communauté : il accueille toutes celles et ceux qui cherchent, quelles que soient leur origine et leur religion."
+        texte: "Le Rite lit le symbolisme maçonnique à sa source hébraïque et kabbalistique — un matériau millénaire dont rien n'a été inventé. Il n'est pas confessionnel et n'est réservé à aucune communauté : il accueille toutes celles et ceux qui cherchent, quelles que soient leur origine et leur religion."
       },
       {
         icone: "△",
