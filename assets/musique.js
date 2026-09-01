@@ -226,6 +226,54 @@
     fondre(0, function () { if (lecteur && lecteur.pauseVideo) lecteur.pauseVideo(); });
   }
 
+  /* ── La place du lecteur ────────────────────────────────────────
+     Le lecteur est en position fixe : il flotte AU-DESSUS de la page et
+     recouvrait les dernières lignes de texte. On lui réserve donc sa
+     place au bas du document, plutôt que de la lui laisser prendre.
+
+     La réserve s'ajoute au remplissage que la page se donne déjà, elle
+     ne le remplace pas : écraser le padding d'une feuille de style pour
+     y loger le lecteur casserait la mise en page de qui en avait un. */
+  var remplissageDorigine = null;
+  var surveillant = null;
+
+  function reserverLaPlace() {
+    if (!boiteLecteur || !boiteLecteur.isConnected) { libererLaPlace(); return; }
+
+    if (remplissageDorigine === null) {
+      remplissageDorigine =
+        parseFloat(getComputedStyle(document.body).paddingBottom) || 0;
+    }
+    // Du haut du lecteur au bas de la fenêtre : c'est exactement la
+    // hauteur qu'il occupe, marge du coin comprise. Mesurée plutôt que
+    // devinée, elle suit un lecteur qui se replie sur deux lignes.
+    var cadre = boiteLecteur.getBoundingClientRect();
+    if (!cadre.height) return;
+    var occupe = window.innerHeight - cadre.top;
+    document.body.style.paddingBottom =
+      Math.ceil(remplissageDorigine + occupe + 12) + 'px';
+  }
+
+  function libererLaPlace() {
+    if (remplissageDorigine === null) return;
+    document.body.style.paddingBottom = remplissageDorigine ?
+      remplissageDorigine + 'px' : '';
+    remplissageDorigine = null;
+  }
+
+  function surveillerLaPlace() {
+    reserverLaPlace();
+    // Le libellé change — « Musique du Rite », « Reprendre », « Couper » —
+    // et le cadre se replie autrement sur un téléphone. On remesure
+    // plutôt que de figer une hauteur au premier affichage.
+    if (window.ResizeObserver && boiteLecteur && !surveillant) {
+      surveillant = new ResizeObserver(reserverLaPlace);
+      surveillant.observe(boiteLecteur);
+    }
+    window.addEventListener('resize', reserverLaPlace);
+    window.addEventListener('orientationchange', reserverLaPlace);
+  }
+
   /* ── Le lecteur visible ─────────────────────────────────────────── */
   function construireLecteur() {
     if (document.getElementById('music-player')) return;
@@ -341,6 +389,11 @@
     fermer.addEventListener('click', function () {
       arreter();
       boite.remove();
+      // Le lecteur masqué rend sa place : le bas de la page ne doit pas
+      // garder un vide dont plus rien ne justifie la présence.
+      if (surveillant) { surveillant.disconnect(); surveillant = null; }
+      boiteLecteur = null;
+      libererLaPlace();
     });
 
     boite.appendChild(note);
@@ -351,6 +404,7 @@
     boiteLecteur = boite;
 
     majInterface();
+    surveillerLaPlace();
 
     // Démarrage d'office, sauf si le visiteur a demandé le silence.
     if (lire(CLE_CHOIX, 'on') !== 'off') lancer(false);
