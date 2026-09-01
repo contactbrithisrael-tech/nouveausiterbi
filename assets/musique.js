@@ -31,18 +31,23 @@
   'use strict';
 
   var REGLAGES = {
-    volume:        0.16,   // volume général, de 0 à 1 — volontairement discret
-    fondu:         3.5,    // secondes de fondu à l'ouverture et à la fermeture
-    ecartMin:      3.0,    // délai minimum entre deux notes, en secondes
-    ecartMax:      8.5,    // délai maximum
-    dureeNote:     6.0,    // longueur d'une note, résonance comprise
+    volume:        0.42,   // volume général, de 0 à 1
+    fondu:         1.6,    // secondes de fondu à l'ouverture et à la fermeture
+    ecartMin:      2.2,    // délai minimum entre deux notes, en secondes
+    ecartMax:      5.5,    // délai maximum
+    dureeNote:     5.5,    // longueur d'une note, résonance comprise
     positionCoin:  'right' // 'right' ou 'left'
   };
 
-  // Mode Ahava Rabbah sur ré, sur deux octaves. En hertz.
+  // Mode Ahava Rabbah sur ré, en hertz.
+  //
+  // Deux octaves médium-aigu, et non l'octave grave d'origine : un
+  // haut-parleur de téléphone ou d'ordinateur portable ne restitue
+  // pratiquement rien sous 200 Hz. Une musique écrite dans les graves
+  // profonds y est jouée sans être entendue.
   var MODE = [
-    146.83, 155.56, 185.00, 196.00, 220.00, 233.08, 261.63,
-    293.66, 311.13, 369.99, 392.00, 440.00, 466.16, 523.25
+    293.66, 311.13, 369.99, 392.00, 440.00, 466.16, 523.25,
+    587.33, 622.25, 739.99, 783.99, 880.00, 932.33, 1046.50
   ];
 
   var ctx = null, maitre = null, bourdon = [], minuterie = null, joue = false;
@@ -51,7 +56,7 @@
   function construireBourdon() {
     var filtre = ctx.createBiquadFilter();
     filtre.type = 'lowpass';
-    filtre.frequency.value = 480;
+    filtre.frequency.value = 1400;
     filtre.Q.value = 0.7;
     filtre.connect(maitre);
 
@@ -60,18 +65,21 @@
     var souffle = ctx.createOscillator();
     var ampleur = ctx.createGain();
     souffle.frequency.value = 0.045;
-    ampleur.gain.value = 190;
+    ampleur.gain.value = 550;
     souffle.connect(ampleur).connect(filtre.frequency);
     souffle.start();
 
-    [73.42, 110.00, 146.83].forEach(function (f, i) {
+    // Ré, la, ré — une octave plus haut que la basse d'orgue qu'on
+    // aurait choisie pour une écoute au casque. C'est le registre que
+    // les petites enceintes savent réellement produire.
+    [146.83, 220.00, 293.66].forEach(function (f, i) {
       var osc = ctx.createOscillator();
       osc.type = i === 0 ? 'sine' : 'triangle';
       osc.frequency.value = f;
       osc.detune.value = (i - 1) * 4;          // battements lents entre les voix
 
       var g = ctx.createGain();
-      g.gain.value = [0.5, 0.28, 0.14][i];
+      g.gain.value = [0.42, 0.26, 0.16][i];
 
       osc.connect(g).connect(filtre);
       osc.start();
@@ -107,11 +115,11 @@
     quinte.frequency.value = f * 1.5;
 
     var gQuinte = ctx.createGain();
-    gQuinte.gain.value = 0.18;
+    gQuinte.gain.value = 0.26;
 
     var env = ctx.createGain();
     env.gain.setValueAtTime(0.0001, t);
-    env.gain.exponentialRampToValueAtTime(0.32, t + 0.6);
+    env.gain.exponentialRampToValueAtTime(0.30, t + 0.5);
     env.gain.exponentialRampToValueAtTime(0.0001, t + duree);
 
     // Chaque note se pose ailleurs dans l'espace stéréo.
