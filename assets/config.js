@@ -51,12 +51,12 @@ var RBI_CONFIG = {
   ────────────────────────────────────────────── */
   rite: {
     titre: "Le Rite Brith Israël",
-    intro: "Fondé en 2025 par Mickaël Darmon, 33e du Rite Écossais Ancien et Accepté, le Rite Brith Israël est un rite maçonnique d'inspiration kabbalistique en 33 degrés, qui puise ses sources dans la Tradition hébraïque, la Kabbale et la Franc-Maçonnerie universelle. Son nom honore la mémoire d'Israël Darmon, grand-père du fondateur et inspirateur du Rite.",
+    intro: "Fondé en 2025 par Mickaël Darmon, 33e du Rite Écossais Ancien et Accepté, le Rite Brith Israël est un rite maçonnique d'inspiration kabbalistique en 33 degrés, qui puise ses sources dans la Tradition hébraïque, la Kabbale et la Franc-Maçonnerie universelle. Son nom honore la mémoire d'Israël Darmon, grand-père du fondateur et inspirateur du Rite. Son inspiration est hébraïque et kabbalistique ; elle n'est pas confessionnelle. Le Rite reprend la tradition primitive du Temple de Salomon, socle commun de toute la Franc-Maçonnerie, et ne demande à personne d'être juif ni de le devenir.",
     cartes: [
       {
         icone: "✡",
-        titre: "Tradition Hébraïque",
-        texte: "Enraciné dans la sagesse millénaire de la Torah et de la Kabbale, le Rite transmet l'Alliance originelle entre l'Homme et le Divin."
+        titre: "Tradition Hébraïque, ouverte à tous",
+        texte: "Le Rite lit le symbolisme maçonnique à sa source hébraïque et kabbalistique. Il n'est pas confessionnel et n'est réservé à aucune communauté : il accueille toutes celles et ceux qui cherchent, quelles que soient leur origine et leur religion."
       },
       {
         icone: "△",
