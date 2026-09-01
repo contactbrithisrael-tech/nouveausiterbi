@@ -118,7 +118,10 @@
 <!-- LIGHTBOX -->
 <div class="lightbox" id="lightbox" onclick="fermer()">
   <span class="lightbox__close" onclick="fermer()">✕</span>
-  <img id="lb-img" src="" alt="">
+  <!-- Pas de src="" : un src vide fait redemander la PAGE au navigateur,
+       et l'image compte comme cassée tant qu'aucune vue n'a été ouverte.
+       Sans attribut, l'élément n'émet aucune requête. -->
+  <img id="lb-img" alt="">
   <div class="lightbox__legende" id="lb-legende"></div>
 </div>
 
@@ -137,7 +140,11 @@
 
   function ouvrir(card) {
     var img = card.querySelector('img');
-    document.getElementById('lb-img').src = img.src;
+    var vue = document.getElementById('lb-img');
+    vue.src = img.src;
+    // L'alternative suit l'image ouverte : sans elle, un lecteur d'écran
+    // annonce une image sans dire laquelle.
+    vue.alt = img.alt || img.dataset.legende || '';
     document.getElementById('lb-legende').textContent = img.dataset.legende || '';
     document.getElementById('lightbox').classList.add('open');
   }
