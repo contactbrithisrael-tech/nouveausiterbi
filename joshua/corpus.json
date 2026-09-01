@@ -1,6 +1,6 @@
 {
   "$commentaire": "Carte du corpus du Rite Brith Israël, destinée à Joshua. Les 33 degrés viennent de la Roue des Degrés du site ; les ouvrages et leurs plages de degrés viennent de l'INDEX CORPUS RBI du 28 avril 2026. Aucune plage n'est supposée. Les degrés 7 à 10 et la classification des ateliers ont été arbitrés le 01/09/2026 d'après les rituels eux-mêmes (Tome II) : voir conflits.md, qui conserve la trace de ce qui divergeait et de ce qui reste à trancher.",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "etabli_le": "2026-09-01",
   "dossier_drive": "https://drive.google.com/drive/folders/1HKyI7v6s7uFR7Tng80easrtZvv6B7vpl",
   "index_drive": "https://docs.google.com/document/d/1XHpmPaUdVky7h56pSCPzkz3dBPNolAgPFwjsbgsSofc/edit",
@@ -490,8 +490,8 @@
       "degre": 4,
       "nom": "ZAKAÏ",
       "hebreu": "זַכַּאי",
-      "traduction": "Innocent / Méritant",
-      "sephira": "Tiphereth – Yesod",
+      "traduction": "Le Purifié",
+      "sephira": "Tiphereth",
       "corps": "perfection",
       "equivalent_reaa": "Maître Secret",
       "decors": "Bleu ciel et Or, triangle rayonnant, lettre Yod",
@@ -509,7 +509,8 @@
           "pages": null
         }
       ],
-      "etat": "declare"
+      "etat": "declare",
+      "atteste_par": "Recueil des rituels : « RITUEL DU 4ème DEGRÉ : ZAKAÏ (Le Purifié) — Séphira : TIPHERETH (La Beauté / L'Harmonie) », confirmé par le tableau du Tome II. Arbitré le 02/09/2026."
     },
     {
       "degre": 5,
