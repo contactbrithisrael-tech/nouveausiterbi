@@ -290,6 +290,19 @@
     .porte__pied a { color: var(--gris); text-decoration: none; }
     .porte__pied a:hover { color: var(--or); }
 
+    /* Avis sur la délivrance des rituels */
+    .avis-rituels {
+      background: rgba(201,168,76,.07);
+      border: 1px solid rgba(201,168,76,.3);
+      border-left: 2px solid var(--or);
+      padding: 1.1rem 1.4rem;
+      margin-bottom: 2rem;
+      font-size: .9rem;
+      line-height: 1.75;
+    }
+    .avis-rituels strong { color: var(--or); font-weight: normal; }
+    .avis-rituels a { color: var(--or); }
+
     /* Liste des souhaits du formulaire annuaire */
     .souhaits { display: grid; gap: .7rem; }
     .souhaits label {
@@ -1018,6 +1031,14 @@
   <p class="section__intro">
     Ouvrages du Rite Brith Israël — pour approfondir votre démarche initiatique.
   </p>
+
+  <div class="avis-rituels">
+    <strong>Les rituels ne se commandent pas en ligne.</strong>
+    Ils ne sont délivrés qu'aux membres du Rite, sur demande adressée par courriel à
+    <a href="mailto:contact.brith.israel@gmail.com">contact.brith.israel@gmail.com</a>,
+    et au degré de chacun. Les ouvrages ci-dessous, en revanche, sont publics et
+    s'achètent en librairie comme tout autre livre.
+  </div>
 
   <!-- TOME I -->
   <div class="livre-carte">

@@ -141,7 +141,20 @@
       maitre.connect(ctx.destination);
       construireBourdon();
     }
-    if (ctx.state === 'suspended') ctx.resume();
+    // ── Déverrouillage iOS ──────────────────────────────────────
+    // Sur iPhone et iPad, le son reste muet tant qu'aucun échantillon
+    // n'a été joué à l'intérieur même du geste de l'utilisateur. Un
+    // souffle inaudible d'un millième de seconde suffit à lever le
+    // verrou ; sans lui, le bouton semble ne rien faire.
+    try {
+      var vide = ctx.createBuffer(1, 1, 22050);
+      var lecteur = ctx.createBufferSource();
+      lecteur.buffer = vide;
+      lecteur.connect(ctx.destination);
+      lecteur.start(0);
+    } catch (e) { /* sans importance si le navigateur refuse */ }
+
+    if (ctx.state !== 'running') ctx.resume();
 
     joue = true;
     maitre.gain.cancelScheduledValues(ctx.currentTime);
@@ -206,9 +219,21 @@
       } else if (demarrer()) {
         bouton.textContent = '⏸ Silence';
         bouton.setAttribute('aria-label', 'Arrêter la musique du Rite');
+
+        // Si le navigateur a refusé de démarrer, le bouton afficherait
+        // « Silence » sans qu'aucun son ne sorte. On vérifie, et on le dit.
+        setTimeout(function () {
+          if (joue && ctx && ctx.state !== 'running') {
+            titre.textContent = 'Son bloqué par le navigateur';
+            titre.title = "Sur iPhone, vérifiez que le mode silencieux n'est pas activé.";
+          }
+        }, 800);
       } else {
-        bouton.textContent = 'Indisponible';
+        titre.textContent = 'Son indisponible ici';
+        bouton.textContent = '—';
         bouton.disabled = true;
+        bouton.style.opacity = '.5';
+        bouton.style.cursor = 'default';
       }
     });
 
