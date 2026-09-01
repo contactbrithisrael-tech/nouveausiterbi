@@ -120,7 +120,11 @@ ul { list-style: none; }
 .section__intro       { text-align: center; font-size: 1.05rem; color: var(--blanc); max-width: 720px; margin: 0 auto 2.5rem; line-height: 1.8; }
 
 /* ─── CARDS RITE ──────────────────────────────── */
-.cards-grid  { display: grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr)); gap: 1.5rem; }
+/* 230px plutôt que 260 : avec quatre cartes, la quatrième tombait seule sur
+   une deuxième ligne. À cette largeur les quatre tiennent sur une rangée dans
+   le conteneur de 1100px, et auto-fit continue de réduire le nombre de
+   colonnes sur les écrans plus étroits. */
+.cards-grid  { display: grid; grid-template-columns: repeat(auto-fit,minmax(230px,1fr)); gap: 1.5rem; }
 .card        { background: rgba(201,168,76,0.04); border: 1px solid rgba(201,168,76,0.15); border-radius: 8px; padding: 2rem 1.5rem; text-align: center; transition: border-color var(--transition), transform var(--transition); }
 .card:hover  { border-color: rgba(201,168,76,0.4); transform: translateY(-4px); }
 .card__icon  { font-size: 2rem; color: var(--or); margin-bottom: 1rem; display: block; }

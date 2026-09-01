@@ -4,15 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Rite Brith Israël – Rite Maçonnique Kabbalistique de 33 Degrés</title>
-  <meta name="description" content="Rite Maçonnique Kabbalistique de 33 degrés. Alliance de Lumière entre les Peuples, fidélité à la Tradition Hébraïque, universalité de la Franc-Maçonnerie.">
+  <meta name="description" content="Rite maçonnique d'inspiration hébraïque et kabbalistique à 33 degrés, ouvert à tous sans condition d'origine ni de religion. Filiation, traités et vocabulaire expliqués sans emphase.">
   <meta property="og:title"       content="Rite Brith Israël">
-  <meta property="og:description" content="Rite Maçonnique Kabbalistique de 33 degrés.">
+  <meta property="og:description" content="Rite maçonnique d'inspiration hébraïque et kabbalistique à 33 degrés, ouvert à tous.">
   <meta property="og:url"         content="https://www.brith-israel.org">
   <!-- SEO complémentaire -->
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://www.brith-israel.org/">
 <meta name="keywords" content="Rite Brith Israël, franc-maçonnerie, kabbale, rite maçonnique, 33 degrés, Mickael Darmon">
-<meta name="author" content="Rite Brith Israël — Mickael Darmon SGC 33°">
+<meta name="author" content="Rite Brith Israël — Mickaël Darmon">
 
 <!-- Open Graph complet (remplace / complète les lignes 8-10) -->
 <meta property="og:type"        content="website">
@@ -23,7 +23,7 @@
 <!-- Twitter/X Cards -->
 <meta name="twitter:card"        content="summary_large_image">
 <meta name="twitter:title"       content="Rite Brith Israël – Rite Maçonnique Kabbalistique 33 Degrés">
-<meta name="twitter:description" content="Site officiel du Rite Brith Israël, rite maçonnique kabbalistique à 33 degrés.">
+<meta name="twitter:description" content="Site officiel du Rite Brith Israël, rite maçonnique d'inspiration hébraïque et kabbalistique à 33 degrés, ouvert à tous.">
 <meta name="twitter:image"       content="https://www.brith-israel.org/assets/og-image.jpg">
 
 <!-- Schema JSON-LD Organisation -->
@@ -36,12 +36,11 @@
       "@id": "https://www.brith-israel.org/#organization",
       "name": "Rite Brith Israël",
       "url": "https://www.brith-israel.org",
-      "description": "Rite maçonnique kabbalistique à 33 degrés fondé le 20 décembre 2025.",
+      "description": "Rite maçonnique d'inspiration hébraïque et kabbalistique à 33 degrés, fondé le 20 décembre 2025. Ouvert à tous sans condition d'origine ni de religion.",
       "foundingDate": "2025-12-20",
       "founder": {
         "@type": "Person",
-        "name": "Mickael Darmon",
-        "jobTitle": "Souverain Grand Commandeur 33°"
+        "name": "Mickael Darmon"
       },
       "contactPoint": {
         "@type": "ContactPoint",
@@ -50,10 +49,10 @@
       },
       "address": {
         "@type": "PostalAddress",
-        "addressLocality": "Eguilles",
-        "addressRegion": "Bouches-du-Rhône",
+        "addressRegion": "Provence-Alpes-Côte d'Azur",
         "addressCountry": "FR"
       },
+      "areaServed": "Worldwide",
       "sameAs": [
         "https://www.facebook.com/profile.php?id=61586037824874"
       ]
@@ -155,53 +154,11 @@
 <script src="assets/images.js"></script>
 
 
-<!-- ── LECTEUR MUSICAL ── -->
-<div id="music-player" style="
-  position:fixed; bottom:1.2rem; right:1.2rem; z-index:999;
-  background:rgba(13,13,13,.92); border:1px solid rgba(201,168,76,.4);
-  padding:.7rem 1rem; display:flex; align-items:center; gap:.8rem;
-  font-family:Georgia,serif; backdrop-filter:blur(6px);
-  box-shadow:0 4px 20px rgba(0,0,0,.5);
-">
-  <iframe id="yt-player"
-    src="https://www.youtube.com/embed/gBY6-s9bmGM?list=RDgBY6-s9bmGM&enablejsapi=1&autoplay=0&controls=0"
-    width="0" height="0" frameborder="0" allow="autoplay" style="display:none;">
-  </iframe>
-  <span style="font-size:1.1rem;">🎵</span>
-  <span style="color:#c9a84c;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;">Musique du Rite</span>
-  <button id="music-toggle" onclick="toggleMusic()" style="
-    background:var(--or,#c9a84c);border:none;color:#0d0d0d;
-    padding:.3rem .8rem;font-size:.75rem;letter-spacing:.1em;
-    text-transform:uppercase;font-family:Georgia,serif;cursor:pointer;
-  ">▶ Play</button>
-  <button onclick="document.getElementById('music-player').style.display='none'" style="
-    background:transparent;border:none;color:#888;font-size:1rem;cursor:pointer;
-  ">✕</button>
-</div>
-<script>
-  var playing = false;
-  var player;
-  function onYouTubeIframeAPIReady() {
-    player = new YT.Player('yt-player', {
-      videoId: 'gBY6-s9bmGM',
-      playerVars: { listType:'playlist', list:'RDgBY6-s9bmGM', autoplay:0, controls:0 }
-    });
-  }
-  function toggleMusic() {
-    if (!player) return;
-    if (playing) {
-      player.pauseVideo();
-      document.getElementById('music-toggle').textContent = '▶ Play';
-    } else {
-      player.playVideo();
-      document.getElementById('music-toggle').textContent = '⏸ Pause';
-    }
-    playing = !playing;
-  }
-  var tag = document.createElement('script');
-  tag.src = "https://www.youtube.com/iframe_api";
-  document.head.appendChild(tag);
-</script>
+<!-- ── MUSIQUE DU RITE ──
+     Le lecteur et le son sont dans assets/musique.js : synthèse par le
+     navigateur, sans YouTube, sans fichier et sans traceur. -->
+<script src="assets/musique.js"></script>
+
 
 </body>
 </html>

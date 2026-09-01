@@ -7,6 +7,20 @@
    Ne toucher ni index.html ni app.js sauf cas exceptionnel.
 ════════════════════════════════════════════════════════════════ */
 
+/* ──────────────────────────────────────────────
+   AVATAR ANONYME
+   Pour un Officier qui ne souhaite pas voir sa photo publiée.
+   Ajouter « img_data: RBI_AVATAR_ANONYME » à sa fiche ci-dessous.
+   Le SVG est écrit en clair : couleurs et tracé se modifient ici.
+────────────────────────────────────────────── */
+var RBI_AVATAR_ANONYME =
+  "data:image/svg+xml;utf8," +
+  "%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E" +
+  "%3Crect width='100' height='100' fill='%231a1a1a'/%3E" +
+  "%3Ccircle cx='50' cy='37' r='15.5' fill='none' stroke='%23c9a84c' stroke-width='2.4' opacity='.55'/%3E" +
+  "%3Cpath d='M21 87c0-16 13-29 29-29s29 13 29 29' fill='none' stroke='%23c9a84c' stroke-width='2.4' stroke-linecap='round' opacity='.55'/%3E" +
+  "%3C/svg%3E";
+
 var RBI_CONFIG = {
 
   /* ──────────────────────────────────────────────
@@ -20,6 +34,7 @@ var RBI_CONFIG = {
   { label: "Chefs de l'Ordre", href: "#chefs"  },
   { label: "Publications",     href: "#livres" },
   { label: "Traités",          href: "traites.html" },
+  { label: "Légitimité",       href: "legitimite.html" },
   { label: "Devenir FM",       href: "devenir-fm.html", style: "cta" },
   { label: "Tuilage",          href: "#tuilage", style: "discret" },
   { label: "Espace Membres",   href: "espace-membres.html" },
@@ -39,8 +54,8 @@ var RBI_CONFIG = {
     bandeau:   "A∴L∴G∴G∴A∴D∴L'∴U∴ — ב∴ס∴ד∴",
     titre_fr:  "Rite Brith Israël®",
     titre_he:  "ברית ישראל",
-    subtitle:  "Rite Maçonnique Historique d'inspiration Kabbalistique en 33 degrés.",
-    subtitle2: "Alliance de Lumière entre les Peuples, fidélité à la Tradition Hébraïque, universalité de la Franc-Maçonnerie.",
+    subtitle:  "Rite maçonnique d'inspiration kabbalistique, en 33 degrés.",
+    subtitle2: "Une Alliance de Lumière entre les peuples : fidélité à la Tradition hébraïque, ouverture à la Franc-Maçonnerie universelle.",
     btn_decouvrir: "Découvrir le Rite",
     btn_rejoindre: "Devenir Franc-Maçon"
   },
@@ -50,22 +65,27 @@ var RBI_CONFIG = {
   ────────────────────────────────────────────── */
   rite: {
     titre: "Le Rite Brith Israël",
-    intro: "Fondé par le T∴I∴F∴ Mickaël DARMON 33e, le Rite Brith Israël est un Rite Maçonnique Kabbalistique en 33 degrés puisant ses sources dans la Tradition Hébraïque, la Kabbale et la Franc-Maçonnerie universelle. Son nom honore la mémoire d'Israël DARMON, pilier spirituel et inspirateur du Rite.",
+    intro: "Fondé en 2025 par Mickaël Darmon, 33e du Rite Écossais Ancien et Accepté, le Rite Brith Israël est un rite maçonnique d'inspiration kabbalistique en 33 degrés, qui puise ses sources dans la Tradition hébraïque, la Kabbale et la Franc-Maçonnerie universelle. Son nom honore la mémoire d'Israël Darmon, grand-père du fondateur et inspirateur du Rite. Son inspiration est hébraïque et kabbalistique ; elle n'est pas confessionnelle. Le Rite reprend la tradition primitive du Temple de Salomon, socle commun de toute la Franc-Maçonnerie, et ne demande à personne d'être juif ni de le devenir.",
     cartes: [
       {
         icone: "✡",
-        titre: "Tradition Hébraïque",
-        texte: "Enraciné dans la sagesse millénaire de la Torah et de la Kabbale, le Rite transmet l'Alliance originelle entre l'Homme et le Divin."
+        titre: "Tradition Hébraïque, ouverte à tous",
+        texte: "Le Rite lit le symbolisme maçonnique à sa source hébraïque et kabbalistique — un matériau millénaire dont rien n'a été inventé. Il n'est pas confessionnel et n'est réservé à aucune communauté : il accueille toutes celles et ceux qui cherchent, quelles que soient leur origine et leur religion."
       },
       {
         icone: "△",
         titre: "33 Degrés",
-        texte: "Un parcours initiatique structuré en 33 degrés, des Loges de Perfection au Suprême Conseil, guidant le Frère vers la Lumière."
+        texte: "Un parcours initiatique structuré en 33 degrés, des Loges symboliques aux Ateliers de perfection, que chaque Frère et chaque Sœur parcourt à son rythme."
       },
       {
         icone: "☆",
         titre: "Alliance Universelle",
-        texte: "Ouvert à tous les Frères réguliers, le Rite tisse des liens d'amitié et de fraternité avec les Obédiences du monde entier."
+        texte: "Le Rite entretient des traités d'amitié et de reconnaissance mutuelle avec des juridictions souveraines sur quatre continents."
+      },
+      {
+        icone: "◈",
+        titre: "Joshua, l'IA du Rite",
+        texte: "Une intelligence artificielle nourrie des seuls ouvrages du Rite, qui cite ouvrage et page pour chaque réponse et ne répond jamais de mémoire. Réservée aux membres de l'Ordre, elle n'ouvre à chacun que les textes de son degré."
       }
     ]
   },
@@ -78,10 +98,10 @@ var RBI_CONFIG = {
     membres: [
       /* ── Souverain Grand Commandeur ── */
       {
-        nom:    "T∴I∴F∴ Mickaël DARMON",
-        grade:  "33°-96°",
+        nom:    "Mickaël DARMON",
+        grade:  "33°",
         titre:  "Souverain Grand Commandeur",
-        role:   "Fondateur et Grand Maître",
+        role:   "Fondateur du Rite",
         img_id: "photo-darmon",   // ID injecté par images.js
         rang:   "sgc"
       },
@@ -133,6 +153,8 @@ var RBI_CONFIG = {
         titre:  "Assistant Grand Maître",
         role:   " Grand Hospitalier",
         img_id: "photo-jourdan",
+        // À sa demande, pas de photographie : silhouette anonyme.
+        img_data: RBI_AVATAR_ANONYME,
         rang:   "agm"
       }
     ]
@@ -146,12 +168,13 @@ var RBI_CONFIG = {
     liste: [
       {
         img_id:   "book-alliance",
-        titre:    "L'Alliance de Lumière",
-        sous:     "Tome I — Rituel du Rite Brith Israël",
-        desc:     "Le premier tome des rituels du Rite Brith Israël, publié aux éditions CoolLibri. Fondement doctrinal et initiatique du Rite.",
+        titre:    "Brith Israël — L'Alliance de Lumière",
+        sous:     "Tome I · Éditions COMPAS ŒIL — à paraître le 29 octobre 2026 · EAN 9782487319622",
+        desc:     "Le fondement doctrinal et initiatique du Rite : un chemin enraciné dans la Genèse et la Kabbale, fondé sur des sources vérifiables. Au cœur du troisième degré, il place Joseph plutôt qu'Hiram — une trame attestée par le texte. Édition en librairie à paraître ; disponible dès à présent en édition CoolLibri.",
         placeholder: "L",
         liens: [
-          { label: "CoolLibri", url: "https://www.coollibri.com/bibliotheque-en-ligne/mickael-darmon/brith-israel-lalliance-de-lumiere_1428718", style: "primary" }
+          { label: "CoolLibri", url: "https://www.coollibri.com/bibliotheque-en-ligne/mickael-darmon/brith-israel-lalliance-de-lumiere_1428718", style: "primary" },
+          { label: "Précommander", url: "https://librairie-savoir-etre.com/produit/brith-israel/", style: "outline" }
         ]
       },
       {
@@ -162,6 +185,16 @@ var RBI_CONFIG = {
         placeholder: "G",
         liens: [
           { label: "Amazon", url: "https://amzn.eu/d/03LwhX1a", style: "primary" }
+        ]
+      },
+      {
+        img_id:   "book-petrin",
+        titre:    "Du Pétrin au Compas",
+        sous:     "Roman — « Quand on cherche un secret, on trouve une vérité » · 9 juillet 2026",
+        desc:     "Un roman. Laure Silvestri, journaliste d'investigation à Marseille, enquête sur les mardis soir de son compagnon boulanger. Ce n'est pas ce qu'elle croyait : c'est une Loge. Et ce qu'elle commence sans l'avoir prévu, c'est une initiation.",
+        placeholder: "P",
+        liens: [
+          { label: "Amazon", url: "https://amzn.eu/d/05ZcIJ0g", style: "primary" }
         ]
       }
     ]
@@ -179,6 +212,10 @@ var RBI_CONFIG = {
       {
         id:       "q1",
         texte:    "D'où venez-vous ?",
+        // Reconnu à ce que la réponse contient : « de Saint-Jean », « de la
+        // loge de St Jean », « d'une Loge Saint Jean »… La liste ci-dessous
+        // reste le repli si « motif » est retiré.
+        motif:    "(saint|st) ?jean",
         // Toutes les réponses acceptées (insensible accents + casse)
         reponses: [
           "de saint jean",
@@ -196,6 +233,7 @@ var RBI_CONFIG = {
       {
         id:       "q2",
         texte:    "Quel âge avez-vous ?",
+        motif:    "(^| )(3|5|7|trois|cinq|sept)( |$)",
         reponses: [
           "3 ans", "trois ans",
           "5 ans", "cinq ans",
@@ -249,7 +287,7 @@ var RBI_CONFIG = {
   ────────────────────────────────────────────── */
   footer: {
     hebrew:  "ברית ישראל",
-    ligne1:  "Suprême Conseil Mondial du Rite Brith Israël",
+    ligne1:  "Suprême Conseil du Rite Brith Israël",
     ligne2:  "© 2025 Rite Brith Israël — Tous droits réservés"
   }
 

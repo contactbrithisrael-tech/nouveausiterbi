@@ -138,7 +138,9 @@
 
     cfg.membres.forEach(function (m) {
       var photoDiv = el('div', { class: 'chef-card__photo-wrap' }, [
-        el('img', { src: '', id: m.img_id, alt: m.nom, class: 'chef-card__photo' }),
+        // img_data permet de fournir une image directement depuis config.js
+        // (silhouette anonyme, par exemple) sans passer par images.js.
+        el('img', { src: m.img_data || '', id: m.img_id, alt: m.nom, class: 'chef-card__photo' }),
         el('div', { class: 'chef-card__photo-placeholder', text: m.nom.charAt(0) })
       ]);
 
@@ -286,7 +288,12 @@
       if (!inp) return;
       var val = normalise(inp.value);
 
-      var ok = q.reponses.some(function (r) { return normalise(r) === val; });
+      // Un « motif » dans config.js reconnaît la réponse à ce qu'elle contient
+      // plutôt qu'à sa forme exacte : la liste close refusait « de la loge de
+      // St Jean » faute d'avoir prévu ce second « de ». La liste reste le repli.
+      var ok = q.motif
+        ? new RegExp(q.motif).test(val)
+        : q.reponses.some(function (r) { return normalise(r) === val; });
 
       if (ok) {
         setFb(n, 'Bien répondu, Frère.', 'ok');

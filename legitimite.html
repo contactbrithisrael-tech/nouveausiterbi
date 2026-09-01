@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Légitimité, filiation et vocabulaire — Rite Brith Israël</title>
+  <meta name="description" content="D'où vient le Rite Brith Israël, sur quelles filiations il s'appuie, ce que signifient réellement ses titres — et ce qu'il ne prétend pas être.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://www.brith-israel.org/legitimite.html">
+  <meta property="og:type"        content="article">
+  <meta property="og:site_name"   content="Rite Brith Israël">
+  <meta property="og:locale"      content="fr_FR">
+  <meta property="og:title"       content="Légitimité, filiation et vocabulaire — Rite Brith Israël">
+  <meta property="og:description" content="D'où vient le Rite, sur quelles filiations il s'appuie, ce que signifient réellement ses titres — et ce qu'il ne prétend pas être.">
+  <meta property="og:url"         content="https://www.brith-israel.org/legitimite.html">
+  <meta property="og:image"       content="https://www.brith-israel.org/assets/og-image.jpg">
+  <style>
+    :root { --or:#c9a84c; --or2:#e8c96a; --fond:#0d0d0d; --fond2:#141414; --fond3:#1a1a1a; --texte:#e8e0d0; --gris:#8d8d8d; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { background:var(--fond); color:var(--texte); font-family:'Georgia',serif; min-height:100vh; line-height:1.75; }
+    img { max-width:100%; }
+
+    .retour { position:fixed; top:1rem; left:1rem; z-index:999; color:var(--or); font-size:.8rem;
+              letter-spacing:.1em; text-transform:uppercase; border:1px solid rgba(201,168,76,.4);
+              padding:.4rem .9rem; background:rgba(13,13,13,.9); text-decoration:none; }
+    .retour:hover { background:var(--or); color:var(--fond); }
+
+    .hero { text-align:center; padding:5rem 1.5rem 3rem;
+            background:radial-gradient(ellipse at center,rgba(201,168,76,.06) 0%,transparent 70%);
+            border-bottom:1px solid rgba(201,168,76,.2); }
+    .hero__logo { width:88px; height:88px; object-fit:contain; margin:0 auto 1.2rem; display:block; opacity:.92; }
+    .hero__titre { font-size:2.1rem; font-variant:small-caps; letter-spacing:.14em; color:var(--or); margin-bottom:.5rem; }
+    .hero__sous { font-size:.95rem; color:var(--gris); font-style:italic; }
+    .hero__intro { max-width:720px; margin:1.6rem auto 0; font-size:1rem; }
+
+    .sep { width:60px; height:1px; background:var(--or); margin:1.4rem auto; opacity:.5; }
+
+    main { max-width:880px; margin:0 auto; padding:0 1.5rem 4rem; }
+    section { padding:3.2rem 0 1rem; border-bottom:1px solid rgba(201,168,76,.13); }
+    section:last-of-type { border-bottom:none; }
+    h2 { font-variant:small-caps; letter-spacing:.13em; color:var(--or); font-size:1.5rem;
+         text-align:center; margin-bottom:.3rem; }
+    h3 { font-variant:small-caps; letter-spacing:.08em; color:var(--or2); font-size:1.05rem; margin:1.8rem 0 .5rem; }
+    p { margin-bottom:1rem; font-size:.95rem; }
+    strong { color:var(--or2); font-weight:normal; }
+    a { color:var(--or); }
+
+    .chapo { font-style:italic; color:var(--gris); text-align:center; max-width:640px;
+             margin:0 auto 1.8rem; font-size:.9rem; }
+
+    /* Deux colonnes « ce que le Rite est / n'est pas » */
+    .duo { display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; margin-top:1.5rem; }
+    @media(max-width:680px){ .duo{grid-template-columns:1fr;} }
+    .duo__col { background:var(--fond3); border:1px solid rgba(201,168,76,.22); padding:1.4rem 1.5rem; }
+    .duo__col--non { border-color:rgba(160,160,160,.22); }
+    .duo__titre { font-variant:small-caps; letter-spacing:.1em; font-size:.95rem; margin-bottom:.9rem; color:var(--or); }
+    .duo__col--non .duo__titre { color:var(--gris); }
+    .duo ul { list-style:none; }
+    .duo li { font-size:.88rem; padding-left:1.4rem; position:relative; margin-bottom:.7rem; line-height:1.65; }
+    .duo li::before { content:'✦'; position:absolute; left:0; color:var(--or); font-size:.75rem; top:.2rem; }
+    .duo__col--non li::before { content:'✕'; color:var(--gris); }
+
+    /* Frise du parcours */
+    .frise { position:relative; margin-top:2rem; }
+    .frise::before { content:''; position:absolute; left:19px; top:.6rem; bottom:.6rem; width:1px;
+                     background:linear-gradient(to bottom,var(--or),rgba(201,168,76,.1)); }
+    .jalon { display:flex; gap:1.3rem; padding-bottom:1.8rem; position:relative; }
+    .jalon__pastille { min-width:40px; height:40px; border:1px solid var(--or); border-radius:50%;
+                       display:flex; align-items:center; justify-content:center; font-size:.75rem;
+                       color:var(--or); background:var(--fond); flex-shrink:0; z-index:1; }
+    .jalon__titre { font-variant:small-caps; letter-spacing:.08em; color:var(--or); font-size:1rem; margin-bottom:.3rem; }
+    .jalon__texte { font-size:.9rem; color:var(--texte); }
+
+    /* Fiches d'affiliation */
+    .fiche { background:var(--fond2); border:1px solid rgba(201,168,76,.22);
+             border-left:2px solid var(--or); padding:1.5rem 1.6rem; margin-top:1.4rem; }
+    .fiche__entete { display:flex; align-items:baseline; gap:.8rem; flex-wrap:wrap; margin-bottom:.2rem; }
+    .fiche__sigle { color:var(--or); font-variant:small-caps; letter-spacing:.12em; font-size:1.05rem; }
+    .fiche__lieu { font-size:.75rem; color:var(--gris); font-style:italic; }
+    .fiche__nom { font-size:.85rem; color:var(--gris); margin-bottom:.9rem; }
+    .fiche dl { display:grid; grid-template-columns:auto 1fr; gap:.45rem 1rem; font-size:.87rem; }
+    @media(max-width:600px){ .fiche dl{grid-template-columns:1fr; gap:.15rem;} .fiche dd{margin-bottom:.7rem;} }
+    .fiche dt { color:var(--or2); white-space:nowrap; }
+    .fiche dd { color:var(--texte); }
+
+    /* Lexique */
+    .lexique__item { border-bottom:1px solid rgba(201,168,76,.13); padding:1.2rem 0; }
+    .lexique__item:last-child { border-bottom:none; }
+    .lexique__terme { color:var(--or); font-size:.98rem; margin-bottom:.45rem; font-variant:small-caps; letter-spacing:.06em; }
+    .lexique__def { font-size:.9rem; }
+    .lexique__def em { color:var(--gris); }
+
+    .note { background:rgba(201,168,76,.06); border:1px solid rgba(201,168,76,.25);
+            padding:1.2rem 1.5rem; margin:1.5rem 0; font-size:.9rem; }
+    .note--sobre { background:rgba(140,140,140,.05); border-color:rgba(140,140,140,.22); }
+
+    .acompleter { background:rgba(201,168,76,.16); border-bottom:1px dashed var(--or);
+                  color:var(--or2); padding:0 .3rem; font-style:italic; }
+
+    .pied { text-align:center; padding:3rem 1.5rem 4rem;
+            background:radial-gradient(ellipse at center,rgba(201,168,76,.05) 0%,transparent 70%);
+            border-top:1px solid rgba(201,168,76,.15); }
+    .pied p { color:var(--gris); font-style:italic; font-size:.9rem; }
+    .pied a { text-decoration:none; }
+    .pied a:hover { text-decoration:underline; }
+  </style>
+</head>
+<body>
+
+<a href="index.html" class="retour">← Accueil</a>
+
+<div class="hero">
+  <img id="hero-seal" class="hero__logo" src="" alt="Sceau du Rite Brith Israël">
+  <h1 class="hero__titre">Légitimité, filiation et vocabulaire</h1>
+  <p class="hero__sous">Ce sur quoi le Rite s'appuie — et ce qu'il ne prétend pas être</p>
+  <div class="sep"></div>
+  <p class="hero__intro">
+    Un rite jeune doit s'expliquer. Cette page répond sans détour aux trois questions
+    qu'un visiteur, profane ou maçon, est en droit de poser : d'où vient ce Rite,
+    à quoi son fondateur et le Rite sont-ils rattachés, qui les reconnaît dans le
+    monde, et pourquoi ce vocabulaire sonne-t-il si solennel ?
+  </p>
+</div>
+
+<main>
+
+  <!-- ────────────────────────────────────────────────────────────
+       1. CE QUE LE RITE EST — ET N'EST PAS
+  ───────────────────────────────────────────────────────────── -->
+  <section id="cadrage">
+    <h2>Ce que le Rite est, ce qu'il n'est pas</h2>
+    <div class="sep"></div>
+    <p class="chapo">
+      La première marque de sérieux, en matière maçonnique, est de dire clairement
+      ce que l'on ne revendique pas.
+    </p>
+
+    <div class="duo">
+      <div class="duo__col">
+        <div class="duo__titre">Ce que le Rite est</div>
+        <ul>
+          <li>Une <strong>synthèse, non une invention</strong> : le matériau est millénaire, seul son agencement est daté.</li>
+          <li>Un corps constitué le <strong>20 décembre 2025</strong> — le Rite assume la date à laquelle il s'est organisé.</li>
+          <li>Un système en <strong>33 degrés</strong> articulé sur les Sephiroth et les 22 Sentiers de l'Arbre de Vie.</li>
+          <li>Une juridiction <strong>souveraine et indépendante</strong>, liée par traités à d'autres juridictions souveraines.</li>
+          <li>Un rite <strong>mixte</strong>, ouvert aux Frères et aux Sœurs.</li>
+          <li>Un rite <strong>déiste</strong> : il demande la croyance en un principe créateur, sans imposer de confession.</li>
+        </ul>
+      </div>
+      <div class="duo__col duo__col--non">
+        <div class="duo__titre">Ce que le Rite n'est pas</div>
+        <ul>
+          <li>Il ne prétend <strong>pas</strong> à une filiation antique ininterrompue, ni à la découverte d'une tradition perdue ou d'un manuscrit retrouvé.</li>
+          <li>Il n'apporte <strong>aucune révélation</strong> et n'ajoute rien aux sources : tout ce qu'il enseigne est consultable ailleurs, par n'importe qui.</li>
+          <li>Il n'est <strong>pas une obédience</strong> : il ne fédère pas des obédiences existantes et ne se substitue pas à celle de ses membres.</li>
+          <li>Il ne revendique <strong>pas</strong> la régularité de reconnaissance au sens des douze points, dont il ne remplit pas tous les critères — il se reconnaît dans la régularité initiatique de la Règle en 7 points.</li>
+          <li>Il ne se dit <strong>supérieur</strong> à aucune obédience, aucun rite, aucune juridiction.</li>
+          <li>Il ne vend <strong>aucun</strong> grade, aucun titre, aucune patente.</li>
+          <li>Il n'est <strong>pas réservé aux Juifs</strong>, ni à aucune communauté : l'origine et la religion ne sont ni demandées ni prises en compte.</li>
+          <li>Il n'est <strong>pas</strong> une organisation confessionnelle, ni un mouvement communautaire ou politique.</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>Rien n'a été inventé</h3>
+    <p>
+      C'est la réponse la plus directe à la question « d'où sort ce rite ? », et elle se
+      vérifie plutôt qu'elle ne se plaide. <strong>Le Rite Brith Israël n'apporte aucun
+      élément nouveau.</strong> La Torah, la Kabbale, l'Arbre de Vie et ses dix Sephiroth,
+      les vingt-deux Sentiers et les vingt-deux lettres hébraïques, le Temple de Salomon
+      et le chantier d'Hiram, la symbolique maçonnique des trois grades : rien de tout
+      cela n'appartient au Rite, et rien de tout cela n'a été produit par lui. Ce sont des
+      sources publiques et millénaires, étudiées, commentées et éditées depuis, que
+      n'importe qui peut aller consulter sans passer par une Loge.
+    </p>
+    <p>
+      Le travail du fondateur a consisté à <strong>synthétiser et à mettre en ordre</strong> :
+      faire correspondre les degrés à la structure de l'Arbre de Vie, rendre à chaque
+      symbole maçonnique le sens qu'il a dans sa langue d'origine, et rédiger les rituels
+      qui permettent de le transmettre en Loge. C'est un travail d'articulation et
+      d'exposition, pas de création.
+    </p>
+    <div class="note note--sobre">
+      <strong>La preuve est dans les rituels eux-mêmes.</strong>
+      Chaque degré du Rite renvoie à des sources identifiables — un verset, une lettre, une
+      Sephira, un passage du Zohar, un élément du symbolisme maçonnique commun. Rien n'y
+      repose sur une autorité privée, une révélation personnelle ou un document que le
+      fondateur serait seul à détenir.
+    </div>
+
+    <h3>Joseph plutôt qu'Hiram : ce que cela veut dire</h3>
+    <p>
+      Le choix le plus caractéristique du Rite en donne la mesure exacte. Au cœur du
+      troisième degré, là où la Franc-Maçonnerie place traditionnellement <strong>Hiram</strong>,
+      le Rite Brith Israël place <strong>Joseph</strong>.
+    </p>
+    <p>
+      La différence n'est pas décorative. Hiram est une figure légendaire : la Bible mentionne
+      un artisan de ce nom, mais le récit de son meurtre et de son relèvement n'est attesté
+      nulle part — il est né dans les rituels maçonniques du XVIII<sup>e</sup> siècle. Joseph,
+      lui, est écrit : son histoire occupe les chapitres <strong>37 à 50 de la Genèse</strong>,
+      que n'importe qui peut ouvrir et lire, avec des millénaires de commentaire rabbinique
+      et kabbalistique derrière.
+    </p>
+    <p>
+      Et sa trame va plus loin. Là où la légende d'Hiram s'arrête sur un tombeau, Joseph
+      traverse la fosse, la trahison des siens, l'esclavage, la prison — puis se relève,
+      pardonne et sauve ceux-là mêmes qui l'ont vendu. Il n'incarne pas la mort du Maître
+      mais la <strong>résilience</strong> : la capacité de transformer l'épreuve en élévation.
+    </p>
+    <div class="note">
+      <strong>C'est là que se joue tout l'argument de cette page.</strong>
+      Substituer une figure attestée à une figure légendaire, ce n'est pas inventer un mythe
+      de plus : c'est remplacer un récit invérifiable par un texte que le lecteur peut
+      contrôler lui-même. C'est aussi pourquoi les rituels du Rite sont publiés plutôt que
+      réservés aux initiés — <em>L'Alliance de Lumière</em>, aux éditions Compas Œil, paraît
+      le 29 octobre 2026, et se trouve déjà en édition CoolLibri. Un rite qui n'a rien
+      inventé n'a rien à cacher.
+    </div>
+
+    <div class="note">
+      <strong>Un rite d'inspiration hébraïque n'est pas un rite juif.</strong>
+      La distinction est simple et mérite d'être posée d'emblée. Le Rite Brith Israël
+      reprend la <strong>tradition primitive du Temple de Salomon</strong> — le chantier
+      d'Hiram, les deux colonnes, le pavé mosaïque —, matériau fondateur que travaillent
+      tous les rites maçonniques depuis trois siècles. Sa particularité n'est pas d'y
+      ajouter quelque chose de juif : c'est de le lire dans sa langue et à la lumière de
+      la Kabbale, plutôt qu'au travers des traductions successives qui l'ont éloigné de
+      sa source.
+      <br><br>
+      Il en résulte un rite <strong>hébraïque d'inspiration et universel de vocation</strong>.
+      La Loge n'y demande ni certificat de baptême ni certificat de rien : elle demande
+      la croyance en un principe créateur, et le sérieux de la démarche. Un chrétien, un
+      musulman, un déiste sans confession y ont leur place aussi pleinement qu'un juif.
+    </div>
+
+    <h3>Une obédience, un rite, un ordre : trois choses différentes</h3>
+    <p>
+      Une bonne part des malentendus sur la légitimité vient d'une confusion de
+      vocabulaire, qu'il vaut la peine de dissiper avant d'aller plus loin.
+    </p>
+    <div class="duo">
+      <div class="duo__col">
+        <div class="duo__titre">Une obédience</div>
+        <ul>
+          <li>Une <strong>structure fédérative</strong> qui regroupe des Loges et les administre.</li>
+          <li>Elle délivre les patentes, tient les effectifs, arbitre les litiges.</li>
+          <li>Exemples : Grand Orient de France, Grande Loge de France, Droit Humain.</li>
+        </ul>
+      </div>
+      <div class="duo__col">
+        <div class="duo__titre">Un rite, un ordre</div>
+        <ul>
+          <li>Un <strong>système de grades et de rituels</strong> : une manière de travailler, pas une administration.</li>
+          <li>Plusieurs obédiences peuvent pratiquer le même rite ; une même obédience peut en pratiquer plusieurs.</li>
+          <li>Exemples : Rite Écossais Ancien et Accepté, Rite Français, Memphis-Misraïm.</li>
+        </ul>
+      </div>
+    </div>
+    <p style="margin-top:1.2rem;">
+      Le Rite Brith Israël est un <strong>rite</strong>, administré par un Suprême Conseil.
+      Il ne demande à personne de quitter son obédience et ne prétend en fédérer aucune.
+      Cela dit — et il vaut mieux le dire soi-même — le Rite initie au 1<sup>er</sup> degré
+      et accorde des patentes à ses Ateliers : sur ces deux points, il exerce une
+      activité que l'on attend d'ordinaire d'une obédience. La distinction éclaire
+      le débat, elle ne le clôt pas.
+    </p>
+
+    <h3>« Régularité » désigne deux choses très différentes</h3>
+    <p>
+      C'est le nœud de tout le débat, et il est presque toujours escamoté. Le mot
+      « régularité » recouvre deux exigences distinctes, qui ne mesurent pas la même
+      chose et ne servent pas le même but. Confondre les deux, c'est reprocher à une
+      juridiction de rater un examen qu'elle ne passe pas.
+    </p>
+
+    <div class="duo">
+      <div class="duo__col duo__col--non">
+        <div class="duo__titre">La régularité de reconnaissance</div>
+        <ul>
+          <li>Elle répond à la question : <strong>quelles obédiences acceptons-nous de reconnaître ?</strong></li>
+          <li>Codifiée par les Landmarks, les huit <em>Basic Principles for Grand Lodge Recognition</em> de la Grande Loge Unie d'Angleterre (1929) et la <strong>Règle en douze points</strong> de la GLNF.</li>
+          <li>Elle exige notamment une régularité d'origine, la croyance en un Être suprême, le Volume de la Loi sacrée, l'interdiction des débats politiques et religieux — et la <strong>non-mixité</strong>.</li>
+          <li>C'est un instrument diplomatique entre puissances maçonniques. Il ne dit rien de la qualité du travail d'une Loge.</li>
+        </ul>
+      </div>
+      <div class="duo__col">
+        <div class="duo__titre">La régularité initiatique</div>
+        <ul>
+          <li>Elle répond à une autre question : <strong>la transmission est-elle authentique ?</strong></li>
+          <li>Formulée par la <strong>Règle en 7 points</strong>, adoptée en janvier 2015 par l'Alliance des Loges Symboliques.</li>
+          <li>Elle fait reposer la légitimité sur <strong>l'initiation reçue et transmise</strong>, sur un rite pratiqué dans sa forme et son esprit, sur les usages traditionnels et sur l'ouverture des travaux à la Gloire du G∴A∴D∴L'∴U∴.</li>
+          <li>Elle préserve la souveraineté de chaque Loge et de chaque juridiction, la reconnaissance perdant son sens dans un espace ouvert.</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>La Règle en 7 points, dans le détail</h3>
+    <p>
+      Elle condense en sept engagements le type de Franc-Maçonnerie que pratiquent les
+      Ateliers qui y adhèrent. Résumé fidèle ci-dessous ; le texte intégral fait foi et
+      se trouve sur le
+      <a href="https://alliance-loges-symboliques.org/la-regle-en-7-points/" target="_blank" rel="noopener">site de l'Alliance des Loges Symboliques</a>.
+    </p>
+    <div class="lexique__item">
+      <div class="lexique__terme">1 · Régularité d'origine</div>
+      <div class="lexique__def">Les Loges symboliques et Ateliers de perfection, cellules maçonniques souveraines, tiennent leur régularité initiatique de la transmission par filiation, d'un rite et des usages maçonniques traditionnels, avec ouverture des travaux à la Gloire du G∴A∴D∴L'∴U∴.</div>
+    </div>
+    <div class="lexique__item">
+      <div class="lexique__terme">2 · Support de la Tradition</div>
+      <div class="lexique__def">Le rite, librement choisi par les membres et pratiqué dans sa tradition de forme et d'esprit, fait de la Loge symbolique ou de l'Atelier de perfection le seul élément de transmission des grades ou degrés auxquels il reçoit ses candidats.</div>
+    </div>
+    <div class="lexique__item">
+      <div class="lexique__terme">3 · Qualités du candidat</div>
+      <div class="lexique__def">Tout profane doit avoir ressenti l'appel et le désir d'une quête individuelle — qu'il soit animé par la recherche du message d'une puissance créatrice de l'univers ou par le sentiment que l'Homme est porteur de son propre destin — dès lors que ce cheminement se fait dans la paix, la tolérance et la fraternité.</div>
+    </div>
+    <div class="lexique__item">
+      <div class="lexique__terme">4 · Reconnaissance mutuelle et accueil des visiteurs</div>
+      <div class="lexique__def">Une Loge, fédération de Loges, obédience ou juridiction déclare accepter comme visiteur, dans le respect de sa propre règle et de ses usages, tout membre d'une structure signataire de ces sept points d'Alliance — ou, à défaut, tout membre d'une structure non signataire et tout maçon de Saint-Jean qui en accepte personnellement l'esprit.</div>
+    </div>
+    <div class="lexique__item">
+      <div class="lexique__terme">5 · Adhésion possible à une fédération, obédience ou juridiction</div>
+      <div class="lexique__def">La structure qui rassemble les Loges symboliques ou Ateliers de perfection veille à la conformité des travaux avec les aspirations d'une tradition vivante et authentique.</div>
+    </div>
+    <div class="lexique__item">
+      <div class="lexique__terme">6 · Respect de la souveraineté</div>
+      <div class="lexique__def">Chaque maçon demeure libre des visites qu'il fait, dans le respect des usages propres à la structure qui l'accueille ; et chaque membre reste libre de l'accueil qu'il souhaite ou non réserver à un visiteur, au nom de l'harmonie interne qu'il lui revient de préserver.</div>
+    </div>
+    <div class="lexique__item">
+      <div class="lexique__terme">7 · Respect de l'homme libre dans la vocation de la Franc-Maçonnerie</div>
+      <div class="lexique__def">La structure s'engage à faire primer le respect de chaque personnalité et la liberté de chacun de poursuivre son propre chemin spirituel — seule manière de donner à la Tradition et à la vocation maçonnique leur valeur authentique.</div>
+    </div>
+
+    <h3>Où se situe le Rite Brith Israël</h3>
+    <div class="note">
+      <strong>Le Rite se reconnaît dans la Règle en 7 points.</strong>
+      Il en remplit chacun des critères vérifiables : il travaille un rite reçu et
+      pratiqué dans sa forme et son esprit, ouvre ses travaux à la Gloire du
+      G∴A∴D∴L'∴U∴, fait de la Loge le seul lieu de transmission des grades, adhère à
+      une fédération de grades supérieurs, et respecte la souveraineté des juridictions
+      avec lesquelles il traite.
+      <br><br>
+      Sur un point, il est même <em>plus exigeant</em> que la Règle en 7 points : celle-ci
+      admet le candidat qui pense que l'Homme est porteur de son propre destin, là où le
+      Rite Brith Israël demande la croyance en un principe créateur. Ce n'est pas un
+      alignement de circonstance.
+    </div>
+
+    <h3>La légitimité vient de l'initiation</h3>
+    <p>
+      C'est le point de doctrine du Rite, et il mérite d'être énoncé sans détour :
+      <strong>ce qui fait un maçon, c'est l'initiation reçue en Loge juste et parfaite.</strong>
+      Pas un certificat, pas un numéro d'ordre, pas la position administrative de
+      l'atelier qui l'a reçu. L'initiation n'est ni révocable ni négociable ; elle ne
+      s'administre pas. Un homme régulièrement initié est maçon, et le demeure partout
+      où il se présente.
+    </p>
+    <p>
+      Les <strong>Constitutions d'Anderson</strong> de 1723, que l'on invoque si souvent
+      pour trancher ces querelles, disent précisément cela. Leurs <em>Devoirs</em> portent
+      sur l'homme : sa foi en un principe créateur, sa conduite envers le magistrat civil,
+      sa tenue en Loge, ses rapports avec ses Frères. Pas une ligne sur le pedigree
+      administratif de l'atelier. Anderson ignore le mot <strong>obédience</strong> — terme
+      continental et postérieur — et n'énonce <strong>aucun critère de filiation</strong>.
+    </p>
+    <p>
+      Il faut être exact : Anderson consacre bien vingt-neuf <em>Règlements généraux</em> à
+      l'organisation de la Grande Loge naissante. Mais ce sont des règles d'administration
+      d'un corps particulier, non une définition de ce qui fait un maçon. La
+      <strong>régularité d'origine</strong> — n'être régulier que si l'on a été constitué
+      par une puissance déjà reconnue — est une construction bien plus tardive : elle
+      apparaît avec les <em>Basic Principles</em> de 1929, deux siècles après Anderson,
+      et répond à un besoin diplomatique de son époque.
+    </p>
+    <div class="note">
+      <strong>Ce que le Rite en retient.</strong>
+      Sa légitimité ne se réclame pas d'une chaîne de descendance administrative, mais de
+      l'initiation : celle qu'ont reçue ceux qui la transmettent, et celle qu'il transmet
+      à son tour, dans la forme et l'esprit d'un rite. Le reste — patentes, traités,
+      adhésions — organise et facilite. Cela ne fait pas les maçons, cela fait fonctionner
+      les Loges. C'est utile, et ce n'est pas la même chose.
+    </div>
+    <div class="note note--sobre">
+      <strong>Et il ne revendique pas la régularité de reconnaissance.</strong>
+      Le Rite en satisfait plusieurs exigences — croyance en un principe créateur,
+      Volume de la Loi sacrée, interdiction des débats politiques et religieux en Loge —
+      mais pas la non-mixité, puisqu'il est ouvert aux Sœurs comme aux Frères. C'est un
+      choix fondateur, fait en connaissance de ses conséquences, et partagé par le Grand
+      Orient de France, la Grande Loge Mixte de France, la Grande Loge Féminine de France
+      et le Droit Humain — soit la majorité des francs-maçons français.
+    </div>
+  </section>
+
+  <!-- ────────────────────────────────────────────────────────────
+       2. LE PARCOURS DU FONDATEUR
+  ───────────────────────────────────────────────────────────── -->
+  <section id="parcours">
+    <h2>Le parcours du fondateur au REAA</h2>
+    <div class="sep"></div>
+    <p class="chapo">
+      Un rite ne se fonde pas depuis nulle part. Voici le chemin maçonnique
+      qui précède la fondation du Rite Brith Israël.
+    </p>
+
+    <div class="note note--sobre">
+      <strong>Pourquoi la progression saute des degrés.</strong>
+      Un parcours écossais ne se gravit pas degré par degré. Dans toutes les
+      juridictions du Rite Écossais Ancien et Accepté, seuls certains degrés sont
+      <strong>conférés en plein</strong>, avec leur rituel complet et leur diplôme :
+      le 4<sup>e</sup>, le 14<sup>e</sup>, le 18<sup>e</sup>, le 30<sup>e</sup>,
+      le 33<sup>e</sup>. Les autres sont transmis <strong>par communication</strong> —
+      leur enseignement est donné et leur symbolisme expliqué, sans tenue rituelle propre.
+      <br><br>
+      La progression ci-dessous — 1, 2, 3, 4, 12, 14, 18, 30, 33 — n'a donc rien d'une
+      échelle tronquée : c'est la forme normale d'un cursus écossais. Un parcours qui
+      afficherait les trente-trois degrés un par un serait, lui, beaucoup plus surprenant.
+    </div>
+
+    <div class="frise">
+      <div class="jalon">
+        <div class="jalon__pastille">1°</div>
+        <div>
+          <div class="jalon__titre">Initiation à la Grande Loge de France</div>
+          <div class="jalon__texte">
+            Initié à la <strong>Grande Loge de France</strong> en 2006, passé Compagnon
+            en 2009, élevé à la Maîtrise en 2011, dans une Loge de l'Orient de Provence.
+            Près de vingt années de Franc-Maçonnerie précèdent la fondation du Rite.
+            Les trois premiers degrés — Apprenti, Compagnon, Maître — constituent le
+            socle sans lequel aucun grade ultérieur n'a de sens.
+          </div>
+        </div>
+      </div>
+      <div class="jalon">
+        <div class="jalon__pastille">⚒</div>
+        <div>
+          <div class="jalon__titre">Grande Loge Traditionnelle de France</div>
+          <div class="jalon__texte">
+            Reçu à la <strong>Grande Loge Traditionnelle de France</strong> en 2015,
+            obédience consacrée en 2013 selon les anciens Landmarks, us et coutumes de
+            l'Ordre, qui atteste par certificat de la régularité de son initiation et
+            de ses trois grades. Un parcours mené dans deux obédiences installées, et
+            non en marge d'elles.
+          </div>
+        </div>
+      </div>
+      <div class="jalon">
+        <div class="jalon__pastille">4°<br>12°</div>
+        <div>
+          <div class="jalon__titre">Entrée dans les grades de perfection</div>
+          <div class="jalon__texte">
+            Élevé au <strong>4<sup>e</sup> degré, Maître Secret</strong>, en 2013, puis au
+            <strong>12<sup>e</sup> degré, Grand Maître Architecte</strong>, en 2015, au sein
+            d'une Loge de perfection du <strong>Suprême Conseil Uni</strong> du Rite
+            Écossais Ancien et Accepté.
+          </div>
+        </div>
+      </div>
+      <div class="jalon">
+        <div class="jalon__pastille">14°</div>
+        <div>
+          <div class="jalon__titre">Grand Élu Parfait et Sublime Maçon</div>
+          <div class="jalon__texte">
+            14<sup>e</sup> degré reçu en 2020 en Loge de perfection, sous les auspices des
+            Souverains Grands Inspecteurs Généraux du 33<sup>e</sup> degré. C'est le degré
+            qui clôt les Loges de perfection et ouvre l'accès au Chapitre.
+          </div>
+        </div>
+      </div>
+      <div class="jalon">
+        <div class="jalon__pastille">18°</div>
+        <div>
+          <div class="jalon__titre">Chevalier Rose+Croix</div>
+          <div class="jalon__texte">
+            18<sup>e</sup> degré reçu en 2021 en Souverain Chapitre. C'est le sommet des
+            grades capitulaires et le plus répandu des hauts grades écossais : beaucoup
+            de Frères s'y arrêtent, et c'est un aboutissement en soi.
+          </div>
+        </div>
+      </div>
+      <div class="jalon">
+        <div class="jalon__pastille">30°</div>
+        <div>
+          <div class="jalon__titre">Grand Inspecteur, Grand Élu Chevalier Kadosch</div>
+          <div class="jalon__texte">
+            30<sup>e</sup> degré reçu en 2022 en Sublime Aréopage. C'est le dernier des
+            grades dits « philosophiques », et le seuil des degrés d'administration
+            du Rite.
+          </div>
+        </div>
+      </div>
+      <div class="jalon">
+        <div class="jalon__pastille">33°</div>
+        <div>
+          <div class="jalon__titre">Élévation au 33e et dernier degré du REAA</div>
+          <div class="jalon__texte">
+            Élevé au grade de <strong>Souverain Grand Inspecteur Général</strong>, 33<sup>e</sup>
+            et dernier degré du REAA, par décret du <strong>21 juin 2025</strong>
+            (6025 A∴V∴L∴), au sein du <strong>Suprême Conseil Albert Pike du 33<sup>e</sup> et
+            dernier degré d'Occitanie</strong>, qui inscrit sa filiation dans celle de
+            Charleston, 1801.
+            <br><br>
+            Le diplôme porte quatre signatures, dont trois de juridictions distinctes :
+            <strong>Christian Belloc</strong>, Grand Commandeur du Suprême Conseil d'Occitanie
+            et Grand Maître de la Grande Loge Nationale des Rites Maçonniques ;
+            <strong>Max Herviou-Jumentier</strong>, Lieutenant Grand Commandeur ;
+            <strong>Sylvain Bataille</strong>, Grand Commandeur du Suprême Conseil d'Europe
+            des Souverains Grands Inspecteurs Généraux du 33<sup>e</sup> degré ; et
+            <strong>Olivier de Lespinats</strong>, Grand Commandeur du Suprême Conseil Mixte
+            pour la France.
+            <br><br>
+            Deux faits en découlent, et ce sont eux qui comptent. Le grade n'est pas
+            auto-attribué : il a été conféré par un corps constitué, extérieur au Rite
+            et antérieur à lui, avec le contreseing de deux autres juridictions du
+            33<sup>e</sup> degré. Et il est <strong>antérieur de six mois à la fondation
+            du Rite</strong>, le 20 décembre suivant : le Rite naît d'un grade reçu, non
+            l'inverse.
+          </div>
+        </div>
+      </div>
+      <div class="jalon">
+        <div class="jalon__pastille">96°</div>
+        <div>
+          <div class="jalon__titre">Rite de Memphis-Misraïm</div>
+          <div class="jalon__texte">
+            Reconnu, consacré et investi au <strong>96<sup>e</sup> degré — Grand Hiérophante</strong>
+            par le <strong>Souverain Sanctuaire International de Memphis-Mitzraïm</strong>,
+            sous l'autorité du Souverain Grand Prêtre <strong>Francisco Cássio Lima</strong>,
+            100<sup>e</sup> degré, le <strong>7 mars 2026</strong>.
+            <br><br>
+            Ce chiffre ne « dépasse » pas le 33<sup>e</sup> : il appartient à une autre
+            échelle, celle d'un autre rite, qui compte simplement ses degrés autrement.
+            Les deux se cumulent sans se hiérarchiser.
+          </div>
+        </div>
+      </div>
+      <div class="jalon">
+        <div class="jalon__pastille">✡</div>
+        <div>
+          <div class="jalon__titre">Fondation du Rite Brith Israël — 20 décembre 2025</div>
+          <div class="jalon__texte">
+            Fondation d'un rite en 33 degrés articulé sur la Kabbale, nommé en mémoire
+            d'Israël Darmon, grand-père du fondateur, juif séfarade d'Oran engagé dans
+            les Corps Francs d'Afrique et présent au débarquement de Provence.
+            La Loge Mère <strong>BERESHIT n°00</strong> est inaugurée le 23 février 2026.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="note note--sobre">
+      <strong>Une précision qui n'est pas un détail.</strong>
+      Mickaël Darmon <strong>a été</strong> membre du B'nai B'rith ; il ne l'est plus.
+      Cette appartenance passée relevait de son parcours juif, non de son parcours
+      maçonnique : le B'nai B'rith est une association juive de bienfaisance et de
+      défense des droits, fondée à New York en 1843. Ce n'est ni une obédience, ni un
+      rite, ni une organisation maçonnique, et aucune initiation maçonnique n'en
+      découle. La précision figure ici parce que la confusion circule — et parce
+      qu'il vaut mieux la corriger soi-même : le Rite ne tire de cette appartenance
+      passée aucune légitimité maçonnique, et n'en revendique aucune.
+    </div>
+  </section>
+
+  <!-- ────────────────────────────────────────────────────────────
+       3. LES RATTACHEMENTS
+  ───────────────────────────────────────────────────────────── -->
+  <section id="affiliations">
+    <h2>Les rattachements institutionnels</h2>
+    <div class="sep"></div>
+    <p class="chapo">
+      Trois rattachements distincts, qu'il ne faut pas confondre : un Suprême Conseil
+      qui atteste d'un grade, une institution internationale, une fédération qui
+      apporte un cadre administratif concret.
+    </p>
+
+    <div class="fiche">
+      <div class="fiche__entete">
+        <span class="fiche__sigle">Suprême Conseil du 33e degré en Occitanie</span>
+        <span class="fiche__lieu">🇫🇷 Orient de Toulouse</span>
+      </div>
+      <p class="fiche__nom">Suprême Conseil du 33° Degré en Occitanie — S∴G∴C∴ Christian Belloc, 33°</p>
+      <dl>
+        <dt>Nature du lien</dt>
+        <dd>Appartenance personnelle du fondateur, en qualité de membre du Suprême Conseil.</dd>
+        <dt>Ce que cela atteste</dt>
+        <dd>C'est le corps qui a conféré au fondateur son 33<sup>e</sup> degré, et dont il est membre. Le grade n'est donc pas auto-attribué : il est porté par une juridiction constituée, extérieure au Rite Brith Israël et antérieure à lui, elle-même rattachée à la Grande Loge Nationale des Rites Maçonniques.</dd>
+        <dt>Lien entre juridictions</dt>
+        <dd>Traité d'Amitié et de Reconnaissance Mutuelle (2026) : échange de garants d'amitié, participation croisée aux Ateliers, échange des mots de semestre, droits identiques pour les membres des deux puissances.</dd>
+      </dl>
+    </div>
+
+    <div class="fiche">
+      <div class="fiche__entete">
+        <span class="fiche__sigle">I∴M∴U∴ — l'Institution Maçonnique Universelle</span>
+        <span class="fiche__lieu">🇫🇷 France — International</span>
+      </div>
+      <p class="fiche__nom">Président mondial : Christian Belloc · Grand Chancelier : Jean-Noël Raynaud</p>
+      <p style="font-size:.9rem;">
+        L'IMU n'est ni une obédience ni un rite : c'est une <strong>institution
+        de rassemblement</strong>, qui réunit des juridictions souveraines pratiquant
+        des rites différents autour d'un socle commun. Elle ne demande à personne de
+        renoncer à sa règle ni à ses rituels ; elle organise ce que des traités
+        bilatéraux, pris un par un, ne peuvent pas produire : un espace où les
+        signataires se connaissent tous entre eux.
+      </p>
+      <dl>
+        <dt>Nature du lien</dt>
+        <dd>Double : appartenance personnelle du fondateur à l'Institution, et traité liant l'IMU au Rite Brith Israël en tant que juridiction.</dd>
+        <dt>Ce que cela change</dt>
+        <dd>Un Frère ou une Sœur du Rite n'est pas seulement porteur d'un traité bilatéral quand il se présente à la porte d'un Atelier étranger : il relève d'une institution que son hôte connaît déjà.</dd>
+        <dt>Contenu du traité</dt>
+        <dd>Participation aux Ateliers dans le strict respect des grades et des rites · échange annuel des mots de semestre · droits et garanties identiques pour les membres de chaque puissance.</dd>
+        <dt>À noter</dt>
+        <dd>Christian Belloc préside l'IMU et dirige le Suprême Conseil d'Occitanie qui a conféré le 33<sup>e</sup> degré au fondateur. Les deux rattachements procèdent donc en partie de la même filiation — le dire est plus utile que de les présenter comme deux cautions indépendantes.</dd>
+      </dl>
+    </div>
+
+    <div class="fiche">
+      <div class="fiche__entete">
+        <span class="fiche__sigle">F∴M∴I∴G∴S∴ — Fédération Maçonnique Internationale des Grades Supérieurs</span>
+        <span class="fiche__lieu">🇫🇷 France — association déclarée n° W832022585</span>
+      </div>
+      <p class="fiche__nom">Président : Joseph Sercia, 33° REAA (Cerneau) · Vice-président : Ollivier Chebrou de Lespinats, 33° REAA</p>
+      <p style="font-size:.9rem;">
+        C'est le rattachement le moins spectaculaire et le plus vérifiable des trois.
+        La FMIGS est une <strong>association déclarée</strong> — son numéro figure au
+        Journal officiel, n'importe qui peut le contrôler — et elle fédère des
+        juridictions de hauts grades autour d'obligations matérielles concrètes.
+        Là où un traité engage des principes, une adhésion à la FMIGS engage des
+        actes : une assurance, un passeport, un timbre, une cotisation.
+      </p>
+      <dl>
+        <dt>Nature du lien</dt>
+        <dd>Le Rite Brith Israël est <strong>membre adhérent</strong> de la Fédération depuis le 2 février 2026, par convention d'adhésion et de partenariat fraternel.</dd>
+        <dt>Assurance</dt>
+        <dd>Responsabilité civile prise en charge pour les membres — une Loge qui reçoit du public sans couverture engage la responsabilité personnelle de ses officiers. Ce point n'a rien de symbolique.</dd>
+        <dt>Passeport maçonnique</dt>
+        <dd>Édité par la Fédération, avec timbre annuel : il permet à un membre du Rite de se présenter en visite avec un titre reconnu au-delà du seul Rite.</dd>
+        <dt>Cotisation</dt>
+        <dd>20 € par membre adhérent et par an.</dd>
+        <dt>Ce que cela ne fait pas</dt>
+        <dd>La FMIGS ne confère aucun grade et ne valide aucune filiation. Elle donne un cadre, pas une légitimité initiatique — celle-ci vient d'ailleurs.</dd>
+      </dl>
+    </div>
+
+    <div class="note">
+      <strong>Pourquoi ces trois-là et pas d'autres ?</strong>
+      Parce qu'ils ne disent pas la même chose. Le Suprême Conseil d'Occitanie
+      atteste d'un <em>grade</em>. L'IMU atteste d'une <em>appartenance</em> à un
+      réseau international. La FMIGS apporte une <em>couverture administrative
+      et assurantielle</em> réelle. Les vingt-six traités signés avec des
+      juridictions étrangères, eux, attestent d'autre chose encore : la
+      reconnaissance par des pairs. Chacun de ces documents est consultable dans
+      la page <a href="traites.html">Traités &amp; Obédiences alliées</a>.
+    </div>
+  </section>
+
+  <!-- ────────────────────────────────────────────────────────────
+       3 bis. LES RECONNAISSANCES OBÉDIENCIELLES
+  ───────────────────────────────────────────────────────────── -->
+  <section id="reconnaissances">
+    <h2>Les reconnaissances obédiencielles dans le monde</h2>
+    <div class="sep"></div>
+    <p class="chapo">
+      Dans une Maçonnerie d'espace ouvert, la légitimité ne descend pas d'une
+      autorité centrale : elle se construit horizontalement, juridiction par
+      juridiction, par des traités que chacune signe en son nom.
+    </p>
+
+    <p>
+      C'est le sens du <strong>traité d'amitié et de reconnaissance mutuelle</strong>.
+      Deux puissances souveraines s'y reconnaissent réciproquement comme corps
+      réguliers dans leur propre juridiction, s'ouvrent leurs Ateliers, échangent
+      leurs mots de semestre et accordent à leurs membres des droits identiques.
+      Chaque traité est un acte bilatéral, signé et daté : il n'a de valeur que
+      pour les deux signataires, et c'est précisément ce qui le rend vérifiable —
+      il suffit d'interroger l'autre partie.
+    </p>
+
+    <h3>Ce que le Rite a signé, et avec qui</h3>
+    <p>
+      Trente-deux actes au total. Ils ne sont pas de même nature, et les
+      confondre en un seul chiffre serait exactement le genre d'enflure que cette
+      page cherche à éviter. Ils se répartissent en trois familles.
+    </p>
+
+    <div class="fiche">
+      <div class="fiche__entete">
+        <span class="fiche__sigle">Obédiences et Grandes Loges</span>
+        <span class="fiche__lieu">16 juridictions · 10 pays · 4 continents</span>
+      </div>
+      <p class="fiche__nom">Les reconnaissances obédiencielles au sens strict : des corps qui fédèrent des Loges et confèrent les grades symboliques.</p>
+      <dl>
+        <dt>🇫🇷 France</dt>
+        <dd>Grande Loge Nationale des Rites Maçonniques · Fédération de Loges Traditionnelles et Symboliques · Mère-Loge du Rite Primitif &amp; Tradition Kilwinning</dd>
+        <dt>🇷🇴 Roumanie</dt>
+        <dd>Ordinul Masonic Umaniterra International</dd>
+        <dt>🇺🇸 États-Unis</dt>
+        <dd>Most Worshipful Grand Lodge A.F.&amp;A.M. of Washington D.C. · Grand Orient of the United States of America (Ancient Primitive Order of Hérédom, 1807) · M.W. Imhotep Grand Lodge, State of Maryland · United General Grand Masonic Congress AF&amp;AM USA (Chicago)</dd>
+        <dt>🇧🇷 Brésil</dt>
+        <dd>Grande Loja Maçônica Brasileira Fraternidade · Grande Loja Paulista</dd>
+        <dt>🇭🇹 Haïti</dt>
+        <dd>Grande Loge Souveraine d'Haïti</dd>
+        <dt>🇱🇧 Liban</dt>
+        <dd>Hiram &amp; Solomon Grand Lodge, Orient of Lebanon</dd>
+        <dt>🇵🇭 Philippines</dt>
+        <dd>Independent Grand Lodge of the Orient</dd>
+        <dt>🇲🇽 Mexique</dt>
+        <dd>Grande Loge Adytum du Grand Orient du Mexique</dd>
+        <dt>🇧🇿 Belize</dt>
+        <dd>The Most Worshipful First Grand Lodge of Belize AF&amp;AM</dd>
+        <dt>🇵🇪 Pérou</dt>
+        <dd>Gran Logia Masónica Andrés Avelino Cáceres del Perú</dd>
+      </dl>
+    </div>
+
+    <div class="fiche">
+      <div class="fiche__entete">
+        <span class="fiche__sigle">Suprêmes Conseils et juridictions de hauts grades</span>
+        <span class="fiche__lieu">11 juridictions</span>
+      </div>
+      <p class="fiche__nom">Des corps qui administrent les degrés au-delà de la Maîtrise — c'est le registre propre du Rite Brith Israël, et donc celui où ces traités pèsent le plus.</p>
+      <dl>
+        <dt>REAA</dt>
+        <dd>Suprême Conseil du 33<sup>e</sup> Degré en Occitanie · Institution Maçonnique Universelle · Fédération Maçonnique Internationale des Grades Supérieurs</dd>
+        <dt>Memphis-Misraïm</dt>
+        <dd>Souverain Sanctuaire International (Brésil) · Suprême Conseil des Grades Philosophiques 4-33 Afrique · Souverain Sanctuaire International et Ordres Initiatiques (Haïti) · Souberano Sanctuario Mexicano · Soberano Santuario Internacional (États-Unis) · Soberano Santuario Nacional de México</dd>
+        <dt>Autres</dt>
+        <dd>Alto Consejo Internacional del Rito Swedenborg · traité trilatéral Grande Loge Nationale des Rites Maçonniques France-Roumanie / Souverain Sanctuaire d'Haïti</dd>
+      </dl>
+    </div>
+
+    <div class="fiche">
+      <div class="fiche__entete">
+        <span class="fiche__sigle">Ordres initiatiques apparentés</span>
+        <span class="fiche__lieu">5 traités d'amitié</span>
+      </div>
+      <p class="fiche__nom">Des liens fraternels avec des Ordres qui ne sont pas maçonniques : ils comptent pour ce qu'ils sont, et le Rite ne les fait pas passer pour des reconnaissances obédiencielles.</p>
+      <dl>
+        <dt>Martinisme</dt>
+        <dd>Orden Martinista y Martinezista Iniciática de El Salvador · Ordre des Élus Cohen, Zélateurs de Martinez de Pasqually n°12</dd>
+        <dt>Rose-Croix</dt>
+        <dd>Fraternitas Rosicruciana Antiqua (Tradition gnostique Krumm-Heller)</dd>
+        <dt>Autres</dt>
+        <dd>The Order of the Servants &amp; Daughters of Ruth (Philippines) · Église Matriarche Gnostique Apostolique Templière Universelle</dd>
+      </dl>
+    </div>
+
+    <div class="note note--sobre">
+      <strong>Ce qu'un traité prouve, et ce qu'il ne prouve pas.</strong>
+      Un traité d'amitié atteste qu'une juridiction souveraine a examiné le Rite
+      Brith Israël et a jugé pouvoir traiter avec lui d'égal à égal. Trente-deux
+      fois, sur quatre continents. C'est une reconnaissance réelle, et personne
+      ne peut la retirer sauf les signataires eux-mêmes.
+      <br><br>
+      Ce n'est pas pour autant une reconnaissance par les obédiences de la famille
+      dite régulière : aucune Grande Loge en amitié avec la Grande Loge Unie
+      d'Angleterre ne figure dans cette liste, et il serait malhonnête de le laisser
+      croire. Les signataires appartiennent, comme le Rite, à la Maçonnerie
+      indépendante et souveraine. Un nombre n'a jamais valu un argument : ce qui
+      vaut, c'est que chaque acte est nommé, daté, signé, et que
+      <a href="traites.html">la page Traités</a> permet de les vérifier un par un.
+    </div>
+  </section>
+
+  <!-- ────────────────────────────────────────────────────────────
+       4. LE VOCABULAIRE
+  ───────────────────────────────────────────────────────────── -->
+  <section id="lexique">
+    <h2>Le vocabulaire, et pourquoi il sonne pompeux</h2>
+    <div class="sep"></div>
+    <p class="chapo">
+      « Souverain Grand Commandeur », « Très Illustre Frère », « Suprême Conseil » :
+      lu de l'extérieur, ce vocabulaire paraît démesuré. Il mérite d'être traduit
+      plutôt que défendu.
+    </p>
+
+    <p>
+      La Franc-Maçonnerie du XVIII<sup>e</sup> siècle a emprunté son vocabulaire à la
+      chevalerie et à la diplomatie de son temps. Elle a gardé ces mots pendant trois
+      siècles, comme une langue liturgique qu'on ne modernise pas. Le résultat est
+      qu'un titre maçonnique décrit aujourd'hui une <strong>fonction administrative</strong>
+      dans des termes qui, hors du contexte, évoquent une dignité princière.
+      Ce décalage est réel, et il vaut mieux le nommer que faire semblant de ne pas le voir.
+    </p>
+
+    <div class="lexique__item">
+      <div class="lexique__terme">Souverain Grand Commandeur</div>
+      <div class="lexique__def">
+        <em>Ce que ça évoque :</em> un souverain. <br>
+        <em>Ce que c'est :</em> le titre statutaire, dans tous les Suprêmes Conseils du
+        monde depuis 1801, de celui qui préside le corps du 33e degré. L'équivalent
+        exact d'un président d'association, dans le vocabulaire d'origine. Le mot
+        « souverain » y qualifie l'indépendance de la juridiction, pas la personne.
+      </div>
+    </div>
+
+    <div class="lexique__item">
+      <div class="lexique__terme">T∴I∴F∴ — « Très Illustre Frère »</div>
+      <div class="lexique__def">
+        <em>Ce que ça évoque :</em> une auto-célébration. <br>
+        <em>Ce que c'est :</em> une formule d'adresse rituelle, comme « Maître » pour
+        un avocat ou « Excellence » pour un ambassadeur. Elle s'emploie
+        <strong>entre maçons, en tenue</strong> — jamais pour se présenter au monde
+        profane. C'est pourquoi elle a été retirée des pages publiques de ce site.
+      </div>
+    </div>
+
+    <div class="lexique__item">
+      <div class="lexique__terme">Suprême Conseil</div>
+      <div class="lexique__def">
+        <em>Ce que ça évoque :</em> une autorité au-dessus des autres. <br>
+        <em>Ce que c'est :</em> le nom technique de l'organe qui administre les degrés
+        de 4 à 33 d'un rite. « Suprême » signifie ici « dernier de la hiérarchie
+        des ateliers », comme on dit « cour suprême » — le dernier échelon, pas le
+        plus puissant du monde.
+      </div>
+    </div>
+
+    <div class="lexique__item">
+      <div class="lexique__terme">33e degré · 96e degré · 100e degré</div>
+      <div class="lexique__def">
+        <em>Ce que ça évoque :</em> une surenchère de chiffres. <br>
+        <em>Ce que c'est :</em> des échelles différentes, non comparables entre elles.
+        Le REAA compte 33 degrés, le Rite de Misraïm 90, et Memphis-Misraïm 95, 97
+        ou 99 selon les obédiences. Un 96e de Memphis n'est pas « trois fois
+        plus » qu'un 33e du REAA : il est ailleurs. Aligner plusieurs chiffres
+        derrière un nom est une pratique répandue, mais elle brouille plus qu'elle
+        n'informe — raison pour laquelle ce site n'affiche que le grade pertinent
+        au contexte.
+      </div>
+    </div>
+
+    <div class="lexique__item">
+      <div class="lexique__terme">A∴L∴G∴G∴A∴D∴L'∴U∴ et les points en triangle</div>
+      <div class="lexique__def">
+        <em>Ce que ça évoque :</em> un code ésotérique. <br>
+        <em>Ce que c'est :</em> « À la Gloire du Grand Architecte de l'Univers »,
+        formule d'ouverture des documents maçonniques. Les trois points en triangle
+        sont une abréviation maçonnique attestée depuis 1774 — l'équivalent de notre
+        point abréviatif ordinaire.
+      </div>
+    </div>
+
+    <div class="lexique__item">
+      <div class="lexique__terme">« Mondial », « Universel », « International »</div>
+      <div class="lexique__def">
+        <em>Ce que ça évoque :</em> une exagération de taille. <br>
+        <em>Ce que c'est :</em> dans l'usage maçonnique, ces mots décrivent une
+        <strong>vocation</strong> — accueillir sans distinction d'origine ou de
+        nation — et non un effectif. Comme ils sont régulièrement lus dans l'autre
+        sens, ce site les emploie désormais avec parcimonie.
+      </div>
+    </div>
+
+    <div class="note">
+      <strong>La règle que s'applique ce site.</strong>
+      Les titres rituels restent dans les Loges et sur les documents internes, où ils
+      ont leur sens et leur beauté. Les pages publiques, elles, parlent la langue de
+      celui qui les lit : des noms, des dates, des faits vérifiables. Un rite qui a
+      quelque chose à montrer n'a pas besoin de titres pour l'annoncer.
+    </div>
+  </section>
+
+  <!-- ────────────────────────────────────────────────────────────
+       5. VÉRIFIER
+  ───────────────────────────────────────────────────────────── -->
+  <section id="verifier">
+    <h2>Vérifier par vous-même</h2>
+    <div class="sep"></div>
+    <p>
+      Rien de ce qui précède ne demande d'être cru sur parole. Les pièces sont en ligne :
+    </p>
+    <div class="duo">
+      <div class="duo__col">
+        <div class="duo__titre">Les documents</div>
+        <ul>
+          <li><a href="traites.html">Les traités signés</a>, avec pour chacun le nom du signataire, la juridiction, le pays et la date.</li>
+          <li>Les Constitutions du Rite, consultables dans <a href="espace-membres.html">l'Espace Membres</a>.</li>
+          <li>Les rituels publiés : <em>L'Alliance de Lumière — Tome I</em>, disponible en librairie en ligne.</li>
+        </ul>
+      </div>
+      <div class="duo__col">
+        <div class="duo__titre">La démarche</div>
+        <ul>
+          <li>Écrire au Rite pour poser une question précise : une réponse précise sera faite.</li>
+          <li>Demander un tuilage à un Frère ou une Sœur du Rite si vous êtes vous-même initié.</li>
+          <li>Interroger directement les juridictions signataires : leurs coordonnées figurent sur leurs propres sites.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<div class="pied">
+  <div class="sep"></div>
+  <p>Une question sur ce qui précède ? Elle sera lue et recevra une réponse.</p>
+  <p><a href="mailto:contact.brith.israel@gmail.com">contact.brith.israel@gmail.com</a></p>
+  <p style="font-size:.78rem;margin-top:1.2rem;">Suprême Conseil du Rite Brith Israël — Provence, France</p>
+</div>
+
+<!-- images.js injecte le sceau par l'id "hero-seal" (setImg). Rien d'autre à faire ici. -->
+<script src="assets/images.js"></script>
+
+
+<!-- ── MUSIQUE DU RITE ──
+     Le lecteur et le son sont dans assets/musique.js : synthèse par le
+     navigateur, sans YouTube, sans fichier et sans traceur. -->
+<script src="assets/musique.js"></script>
+
+</body>
+</html>
