@@ -50,6 +50,12 @@ articles 7 et 8 :
 Il n'y a **pas de Consistoire** : le mot appartient au Rite Écossais, et
 la Constitution du Brith Israël ne le connaît pas.
 
+La coupure décisive, pour l'accès comme pour la doctrine, tombe au
+**11ᵉ** : jusqu'au 10ᵉ on gravit les Séphiroth, à partir du 11ᵉ on est
+dans les chemins. Un ouvrage qui traite des deux — *Architecture Sacrée*
+— se partage donc à cet endroit, page par page, plutôt que d'être posé
+d'un bloc à un degré.
+
 ## Ce qui manque
 
 **Quinze ouvrages sont déclarés, et trente-deux degrés sur trente-trois
@@ -104,8 +110,8 @@ Trois choses manquent encore, et aucune ne s'invente :
 3. **Rien, côté doctrine.** `conflits.md` est clos : les huit points ont
    été tranchés par les rituels, la Constitution et le Souverain Grand
    Commandeur, et la Roue comme la carte ont été mises d'accord avec eux.
-   Ne reste qu'une décision d'administration — la plage d'accès des trois
-   ouvrages transversaux.
+   Plus aucun ouvrage n'est transversal — les trois qui l'étaient ont
+   reçu leur plage.
 
 ---
 
