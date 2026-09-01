@@ -147,12 +147,13 @@ var RBI_CONFIG = {
     liste: [
       {
         img_id:   "book-alliance",
-        titre:    "L'Alliance de Lumière",
-        sous:     "Tome I — Rituel du Rite Brith Israël",
-        desc:     "Le premier tome des rituels du Rite Brith Israël, publié aux éditions CoolLibri. Fondement doctrinal et initiatique du Rite.",
+        titre:    "Brith Israël — L'Alliance de Lumière",
+        sous:     "Tome I · Éditions COMPAS ŒIL, 14 mai 2026 — EAN 9782487319622",
+        desc:     "Le premier tome des rituels du Rite Brith Israël : son fondement doctrinal et initiatique. Édité sous ISBN et diffusé en librairie ; également disponible en édition CoolLibri.",
         placeholder: "L",
         liens: [
-          { label: "CoolLibri", url: "https://www.coollibri.com/bibliotheque-en-ligne/mickael-darmon/brith-israel-lalliance-de-lumiere_1428718", style: "primary" }
+          { label: "En librairie", url: "https://librairie-savoir-etre.com/produit/brith-israel/", style: "primary" },
+          { label: "CoolLibri", url: "https://www.coollibri.com/bibliotheque-en-ligne/mickael-darmon/brith-israel-lalliance-de-lumiere_1428718", style: "outline" }
         ]
       },
       {
