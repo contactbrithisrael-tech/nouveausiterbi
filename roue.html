@@ -99,6 +99,34 @@ h1{font-family:"Cinzel",serif;font-size:clamp(1rem,2.5vw,1.6rem);font-weight:700
   justify-content:center;padding:.8rem 2rem 2rem;border-top:1px solid var(--bdr);}
 .li{display:flex;align-items:center;gap:.45rem;font-size:.72rem;color:var(--t2);font-style:italic;}
 .ls{width:18px;height:9px;border-radius:2px;}
+
+/* Pourquoi trente-trois — l'arithmetique du Rite.
+   Placee sous la legende : on regarde la Roue, puis on comprend
+   pourquoi elle compte ainsi. */
+.pourquoi{position:relative;z-index:5;max-width:62rem;margin:0 auto;
+  padding:2.4rem 2rem 3rem;border-top:1px solid var(--bdr);}
+.pourquoi h2{font-family:'Cormorant Garamond',Georgia,serif;font-size:1.5rem;
+  font-weight:500;color:var(--gold);text-align:center;letter-spacing:.06em;}
+.pourquoi__heb{display:block;text-align:center;color:var(--t2);font-size:1rem;
+  margin:.35rem 0 1.8rem;letter-spacing:.04em;}
+.compte{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.8rem;}
+@media(max-width:760px){.compte{grid-template-columns:1fr;}}
+.compte__c{background:var(--panel);border:1px solid var(--bdr);padding:1.3rem 1.4rem;}
+.compte__n{font-family:'Cormorant Garamond',Georgia,serif;font-size:2.2rem;
+  color:var(--gold);line-height:1;}
+.compte__t{font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--gold-l);margin:.4rem 0 .6rem;}
+.compte__d{font-size:.84rem;line-height:1.7;color:var(--t2);}
+.somme{text-align:center;font-family:'Cormorant Garamond',Georgia,serif;
+  font-size:1.25rem;color:var(--t1);margin-bottom:1.8rem;letter-spacing:.03em;}
+.somme b{color:var(--gold);font-weight:500;}
+.pourquoi p{font-size:.9rem;line-height:1.85;color:var(--t2);margin-bottom:1rem;}
+.pourquoi p strong{color:var(--gold-l);font-weight:500;}
+.pourquoi blockquote{margin:1.6rem 0;padding:1rem 1.4rem;border-left:2px solid var(--gold);
+  background:rgba(212,175,55,.04);font-style:italic;color:var(--t1);
+  font-size:.92rem;line-height:1.8;}
+.pourquoi blockquote cite{display:block;margin-top:.6rem;font-style:normal;
+  font-size:.74rem;color:var(--t2);letter-spacing:.06em;}
 </style>
 </head>
 <body>
@@ -150,9 +178,87 @@ h1{font-family:"Cinzel",serif;font-size:clamp(1rem,2.5vw,1.6rem);font-weight:700
 <div class="legend">
   <div class="li"><div class="ls" style="background:linear-gradient(90deg,#FF2200,#FF9900)"></div>Loges Symboliques (1°–3°)</div>
   <div class="li"><div class="ls" style="background:linear-gradient(90deg,#FFCC00,#88FF00)"></div>Loges de Perfection (4°–10°)</div>
-  <div class="li"><div class="ls" style="background:linear-gradient(90deg,#00CCFF,#AA00FF)"></div>Chapitres · 22 Sentiers (11°–32°)</div>
+  <div class="li"><div class="ls" style="background:linear-gradient(90deg,#00CCFF,#AA00FF)"></div>Chapitres et Aréopages · 22 Sentiers (11°–32°)</div>
   <div class="li"><div class="ls" style="background:#D4AF37"></div>Suprême Conseil (33°)</div>
 </div>
+<!-- ── Pourquoi trente-trois ────────────────────────────────────────
+     La question que pose tout visiteur devant la Roue, et à laquelle
+     elle ne répondait pas. Le compte n'est pas décoratif : il vient du
+     Sefer Yetsirah, et le Recueil des rituels l'énonce mot pour mot. -->
+<section class="pourquoi">
+  <h2>Pourquoi trente-trois ?</h2>
+  <span class="pourquoi__heb">לב נתיבות חכמה — les trente-deux voies de la Sagesse</span>
+
+  <div class="compte">
+    <div class="compte__c">
+      <div class="compte__n">10</div>
+      <div class="compte__t">Séphiroth</div>
+      <div class="compte__d">Les dix émanations de l'Arbre de Vie, de Malkuth à Kether.
+        Elles donnent les <strong>dix premiers degrés</strong> : on gravit l'Arbre,
+        une Séphira après l'autre.</div>
+    </div>
+    <div class="compte__c">
+      <div class="compte__n">22</div>
+      <div class="compte__t">Sentiers</div>
+      <div class="compte__d">Les vingt-deux lettres hébraïques, d'Aleph à Tav, qui
+        relient les Séphiroth entre elles. Elles donnent les
+        <strong>degrés 11 à 32</strong> : non plus les stations, mais les passages
+        de l'une à l'autre.</div>
+    </div>
+    <div class="compte__c">
+      <div class="compte__n">1</div>
+      <div class="compte__t">Couronne</div>
+      <div class="compte__d">Le <strong>33<sup>e</sup></strong> — Kether Atziluth, la
+        Couronne de l'Émanation. Ce n'est pas une trente-troisième voie : c'est
+        l'achèvement des trente-deux, et il ne peut être qu'un.</div>
+    </div>
+  </div>
+
+  <div class="somme"><b>10</b> Séphiroth &nbsp;+&nbsp; <b>22</b> Sentiers
+    &nbsp;=&nbsp; <b>32</b> voies &nbsp;·&nbsp; et la <b>33<sup>e</sup></b> les couronne</div>
+
+  <p>
+    Le compte n'est pas une convention maçonnique reprise d'ailleurs : il vient du
+    <strong>Sefer Yetsirah</strong>, le Livre de la Formation, qui s'ouvre sur les
+    « trente-deux voies merveilleuses de la Sagesse » — dix nombres et vingt-deux
+    lettres. Trente-deux est aussi la valeur numérique de <strong>לב</strong>,
+    <em>lev</em>, le cœur. Le Rite Brith Israël aligne ses degrés sur cette
+    structure, et sur elle seule.
+  </p>
+
+  <blockquote>
+    Le Rite BI utilise l'alignement total des 10 Séphiroth + 22 Chemins, ce qui
+    structure le système jusqu'au 32<sup>e</sup> degré, le 33<sup>e</sup> représentant
+    l'achèvement.
+    <cite>Recueil des rituels du Rite Brith Israël</cite>
+  </blockquote>
+
+  <p>
+    Reste la question du dernier. Si les trente-deux voies sont comptées, pourquoi
+    un trente-troisième degré — et pourquoi <strong>un seul homme</strong> pour le
+    porter ? Parce que Kether n'est pas une étape de plus : c'est le point unique
+    d'où tout émane. Dans la Kabbale, la Lumière de l'Infini passe par un seul
+    point de contraction pour créer les mondes ; s'il était double, l'univers
+    serait divisé.
+  </p>
+
+  <blockquote>
+    Il n'y a qu'une seule Couronne, car il n'y a qu'une seule Source.<br>
+    Un corps avec deux têtes est un monstre ; un corps sans tête est un cadavre.
+    <cite>Recueil des rituels — Le 33<sup>e</sup> degré : Keter Ha'Atzilut</cite>
+  </blockquote>
+
+  <p>
+    D'où le <strong>Gardien du Rite</strong> : un seul titulaire du 33<sup>e</sup>,
+    comme il n'y avait qu'un seul Grand Prêtre au Temple pour entrer dans le Saint
+    des Saints. La charge n'est pas un honneur mais un fardeau — en hébreu,
+    <em>Kether</em>, la Couronne, partage sa racine avec <em>Katar</em>,
+    « encercler ». Le Gardien ne possède pas le Rite : il en est encerclé. Il est
+    le canal par lequel l'influx descend vers les Loges, et le garant des Patentes ;
+    sans son sceau, aucune Loge ne peut se dire du Rite.
+  </p>
+</section>
+
 <script>
 const PHOTOS = {
   "1": "data:image/jpeg;base64,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",
