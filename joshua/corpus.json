@@ -1,23 +1,28 @@
 {
-  "$commentaire": "Carte du corpus du Rite Brith Israël, destinée à Joshua. Les 33 degrés viennent de la Roue des Degrés du site ; les ouvrages et leurs plages de degrés viennent de l'INDEX CORPUS RBI du 28 avril 2026. Aucune plage n'est supposée. Les degrés 7 à 10 ont été arbitrés le 01/09/2026 d'après les rituels eux-mêmes (Tome II) : voir conflits.md, qui conserve la trace de ce qui divergeait et de ce qui reste à trancher.",
-  "version": "2.1.0",
+  "$commentaire": "Carte du corpus du Rite Brith Israël, destinée à Joshua. Les 33 degrés viennent de la Roue des Degrés du site ; les ouvrages et leurs plages de degrés viennent de l'INDEX CORPUS RBI du 28 avril 2026. Aucune plage n'est supposée. Les degrés 7 à 10 et la classification des ateliers ont été arbitrés le 01/09/2026 d'après les rituels eux-mêmes (Tome II) : voir conflits.md, qui conserve la trace de ce qui divergeait et de ce qui reste à trancher.",
+  "version": "2.2.0",
   "etabli_le": "2026-09-01",
   "dossier_drive": "https://drive.google.com/drive/folders/1HKyI7v6s7uFR7Tng80easrtZvv6B7vpl",
   "index_drive": "https://docs.google.com/document/d/1XHpmPaUdVky7h56pSCPzkz3dBPNolAgPFwjsbgsSofc/edit",
   "corps": [
     {
       "code": "symbolique",
-      "libelle": "Loge Symbolique",
+      "libelle": "Loges Symboliques",
+      "monde": "Olam Assiah",
+      "traduction_monde": "Monde de l'Action",
       "ordre": 1,
       "degres": [
         1,
         2,
         3
-      ]
+      ],
+      "atteste_par": "Constitution du Rite Brith Israël, article 6 — Classification des Ateliers : trois catégories, correspondant aux Trois Mondes opératifs. Arbitré le 01/09/2026."
     },
     {
       "code": "perfection",
-      "libelle": "Loge de Perfection",
+      "libelle": "Loges de Perfection",
+      "monde": "Olam Yetzirah",
+      "traduction_monde": "Monde de la Formation",
       "ordre": 2,
       "degres": [
         4,
@@ -27,11 +32,14 @@
         8,
         9,
         10
-      ]
+      ],
+      "atteste_par": "Constitution du Rite Brith Israël, article 6 — Classification des Ateliers : trois catégories, correspondant aux Trois Mondes opératifs. Arbitré le 01/09/2026."
     },
     {
-      "code": "chapitre",
-      "libelle": "Chapitre",
+      "code": "chapitre-areopage",
+      "libelle": "Chapitres et Aréopages",
+      "monde": "Olam Beriah",
+      "traduction_monde": "Monde de la Création",
       "ordre": 3,
       "degres": [
         11,
@@ -53,25 +61,21 @@
         27,
         28,
         29,
-        30
-      ]
-    },
-    {
-      "code": "consistoire",
-      "libelle": "Consistoire",
-      "ordre": 4,
-      "degres": [
+        30,
         31,
         32
-      ]
+      ],
+      "atteste_par": "Constitution du Rite Brith Israël, article 6 — Classification des Ateliers : trois catégories, correspondant aux Trois Mondes opératifs. Arbitré le 01/09/2026.",
+      "remarque": "Une seule catégorie pour les 11ᵉ à 32ᵉ. « Les Trente-Deux Voies » y place le premier degré du Chapitre au 11ᵉ, le premier de l'Aréopage au 18ᵉ et le dernier au 29ᵉ ; la borne des 30ᵉ à 32ᵉ n'est établie par aucun texte."
     },
     {
       "code": "supreme-conseil",
       "libelle": "Suprême Conseil",
-      "ordre": 5,
+      "ordre": 4,
       "degres": [
         33
-      ]
+      ],
+      "atteste_par": "Constitution, articles 7 et 8 : un Souverain Grand Commandeur unique, titulaire du 33ᵉ, assisté d'un Suprême Conseil composé de membres du 32ᵉ."
     }
   ],
   "ouvrages": [
@@ -603,7 +607,7 @@
       "hebreu": "נִסְתָּר",
       "traduction": "Caché / Mystérieux",
       "sephira": "Sentier 11 — Aleph (א)",
-      "corps": "chapitre",
+      "corps": "chapitre-areopage",
       "equivalent_reaa": "Sublime Chevalier Élu",
       "decors": "Havane et Cramoisi, tête de bélier sacré, lettre Aleph",
       "sources": [
@@ -628,7 +632,7 @@
       "hebreu": "נָתִיב",
       "traduction": "Le Sentier",
       "sephira": "Sentier 12 — Bet (ב)",
-      "corps": "chapitre",
+      "corps": "chapitre-areopage",
       "equivalent_reaa": "Grand Maître Architecte",
       "decors": "Noir, Étoile de David, Boussole et Sel — Kether→Binah",
       "sources": [
@@ -653,7 +657,7 @@
       "hebreu": "גִּשְׁרָא",
       "traduction": "Le Pont",
       "sephira": "Sentier 13 — Gimel (ג)",
-      "corps": "chapitre",
+      "corps": "chapitre-areopage",
       "equivalent_reaa": "Chevalier de Royal Arch",
       "decors": "Rose et Vert, Arbre de Vie et Pont sur les eaux — Kether→Tiphereth",
       "sources": [
@@ -678,7 +682,7 @@
       "hebreu": "רֹאשׁ",
       "traduction": "La Tête / Le Chef",
       "sephira": "Sentier 14 — Dalet (ד)",
-      "corps": "chapitre",
+      "corps": "chapitre-areopage",
       "equivalent_reaa": "Grand Élu Parfait et Sublime Maçon",
       "decors": "Blanc et Pourpre, Buisson Ardent et Palmier de Justice — Hokhmah→Hesed",
       "sources": [
@@ -703,7 +707,7 @@
       "hebreu": "סוֹפֵר",
       "traduction": "Le Scribe",
       "sephira": "Sentier 15 — He (ה)",
-      "corps": "chapitre",
+      "corps": "chapitre-areopage",
       "equivalent_reaa": "Chevalier d'Orient",
       "decors": "Noir et Or, Pyramides sous l'orage, Parchemin et Stylet — Hokhmah→Tiphereth",
       "sources": [
@@ -728,7 +732,7 @@
       "hebreu": "פָּתַח",
       "traduction": "L'Ouvreur",
       "sephira": "Sentier 16 — Vav (ו)",
-      "corps": "chapitre",
+      "corps": "chapitre-areopage",
       "equivalent_reaa": "Prince de Jérusalem",
       "decors": "Bordeaux et Argent, Trône de Justice et Balance — Hokhmah→Da'at",
       "sources": [
@@ -753,7 +757,7 @@
       "hebreu": "צֶמַח",
       "traduction": "La Croissance",
       "sephira": "Sentier 17 — Zayin (ז)",
-      "corps": "chapitre",
+      "corps": "chapitre-areopage",
       "equivalent_reaa": "Chevalier d'Orient et d'Occident",
       "decors": "Bleu Royal et Or, Shofar versant l'huile — Binah→Geburah",
       "sources": [
@@ -778,7 +782,7 @@
       "hebreu": "הָרוּחַ",
       "traduction": "L'Esprit / Souffle Vital",
       "sephira": "Sentier 18 — Heth (ח)",
-      "corps": "chapitre",
+      "corps": "chapitre-areopage",
       "equivalent_reaa": "Souverain Prince Rose-Croix",
       "decors": "Vert et Or, Encensoir et Cœur Rayonnant, Corne d'Huile — Binah→Tiphereth",
       "sources": [
@@ -803,7 +807,7 @@
       "hebreu": "רוּחַ",
       "traduction": "Souffle / Esprit Saint",
       "sephira": "Sentier 19 — Teth (ט)",
-      "corps": "chapitre",
+      "corps": "chapitre-areopage",
       "equivalent_reaa": "Grand Pontife",
       "decors": "Bleu nuit et Argent, Arche d'Alliance et Chérubins — Binah→Da'at",
       "sources": [
@@ -828,7 +832,7 @@
       "hebreu": "יְשׁוּרוּן",
       "traduction": "Le Droit",
       "sephira": "Sentier 20 — Yod (י)",
-      "corps": "chapitre",
+      "corps": "chapitre-areopage",
       "equivalent_reaa": "Vénérable Grand Maître",
       "decors": "Orange Cuivré, Visage Solaire Rayonnant — Hesed→Tiphereth",
       "sources": [
@@ -853,7 +857,7 @@
       "hebreu": "אוֹר",
       "traduction": "La Lumière",
       "sephira": "Sentier 21 — Kaf (כ)",
-      "corps": "chapitre",
+      "corps": "chapitre-areopage",
       "equivalent_reaa": "Noachite / Chevalier Prussien",
       "decors": "Gris Perle et Argent, Tourbillon de Feu, Shin rouge — Hesed→Netzah",
       "sources": [
@@ -878,7 +882,7 @@
       "hebreu": "נוֹכַח",
       "traduction": "La Présence / L'Établi",
       "sephira": "Sentier 22 — Lamed (ל)",
-      "corps": "chapitre",
+      "corps": "chapitre-areopage",
       "equivalent_reaa": "Chevalier Royal Hache",
       "decors": "Bleu et Or, Triangle d'Étoiles et Sceau de Vérité — Geburah→Tiphereth",
       "sources": [
@@ -903,7 +907,7 @@
       "hebreu": "מֶלֶךְ",
       "traduction": "Le Roi",
       "sephira": "Sentier 23 — Mem (מ)",
-      "corps": "chapitre",
+      "corps": "chapitre-areopage",
       "equivalent_reaa": "Chef du Tabernacle",
       "decors": "Noir et Argent, Ailes déployées et Plume royale — Geburah→Hod",
       "sources": [
@@ -928,7 +932,7 @@
       "hebreu": "קֶדֶם",
       "traduction": "L'Orient / L'Ancien",
       "sephira": "Sentier 24 — Noun (נ)",
-      "corps": "chapitre",
+      "corps": "chapitre-areopage",
       "equivalent_reaa": "Prince du Tabernacle",
       "decors": "Jaune d'Or, Serpent Gardien et Gerbe de Blé, Clé d'Or — Tiphereth→Netzah",
       "sources": [
@@ -953,7 +957,7 @@
       "hebreu": "הָאֱלֹהִים",
       "traduction": "Le Divin",
       "sephira": "Sentier 25 — Samekh (ס)",
-      "corps": "chapitre",
+      "corps": "chapitre-areopage",
       "equivalent_reaa": "Chevalier du Serpent d'Airain",
       "decors": "Blanc-Crème, Rouleaux de la Loi Torah — Tiphereth→Hod",
       "sources": [
@@ -978,7 +982,7 @@
       "hebreu": "שָׁמַיִם",
       "traduction": "Le Ciel",
       "sephira": "Sentier 26 — Ayin (ע)",
-      "corps": "chapitre",
+      "corps": "chapitre-areopage",
       "equivalent_reaa": "Prince of Mercy",
       "decors": "Gris Bleuté, Harpe et Sceau Brisé — Tiphereth→Yesod",
       "sources": [
@@ -1003,7 +1007,7 @@
       "hebreu": "אֲדָמָה",
       "traduction": "La Terre",
       "sephira": "Sentier 27 — Pe (פ)",
-      "corps": "chapitre",
+      "corps": "chapitre-areopage",
       "equivalent_reaa": "Grand Commandeur du Temple",
       "decors": "Jaune d'Or, Menorah, Truelle et Vase de Terre — Tiphereth→Malkuth",
       "sources": [
@@ -1028,7 +1032,7 @@
       "hebreu": "קַו",
       "traduction": "Le Rayon",
       "sephira": "Sentier 28 — Tsade (צ)",
-      "corps": "chapitre",
+      "corps": "chapitre-areopage",
       "equivalent_reaa": "Chevalier du Soleil",
       "decors": "Violet, Rideau du Temple et Fil à Plomb — Netzah→Yesod",
       "sources": [
@@ -1053,7 +1057,7 @@
       "hebreu": "שֶׁמֶשׁ",
       "traduction": "Le Soleil",
       "sephira": "Sentier 29 — Qof (ק)",
-      "corps": "chapitre",
+      "corps": "chapitre-areopage",
       "equivalent_reaa": "Grand Écossais de Saint-André",
       "decors": "Blanc, Soleil rayonnant, Mem Final — Netzah→Malkuth",
       "sources": [
@@ -1078,7 +1082,7 @@
       "hebreu": "כּוֹכָב",
       "traduction": "L'Étoile",
       "sephira": "Sentier 30 — Resh (ר)",
-      "corps": "chapitre",
+      "corps": "chapitre-areopage",
       "equivalent_reaa": "Chevalier Kadosh",
       "decors": "Bicolore Bleu-Jaune, Balance et Étoile — Hod→Yesod",
       "sources": [
@@ -1103,7 +1107,7 @@
       "hebreu": "מַזָּל",
       "traduction": "La Chance / Le Destin",
       "sephira": "Sentier 31 — Shin (ש)",
-      "corps": "consistoire",
+      "corps": "chapitre-areopage",
       "equivalent_reaa": "Grand Inspecteur Inquisiteur",
       "decors": "Bicolore Rouge-Blanc, Buisson de Feu et Dés du Destin — Hod→Malkuth",
       "sources": [
@@ -1128,7 +1132,7 @@
       "hebreu": "עוֹלָם",
       "traduction": "Le Monde",
       "sephira": "Sentier 32 — Tav (ת)",
-      "corps": "consistoire",
+      "corps": "chapitre-areopage",
       "equivalent_reaa": "Sublime Prince du Royal Secret",
       "decors": "Blanc et Or avec franges, Couronne royale et Plan du Temple — Yesod→Malkuth",
       "sources": [

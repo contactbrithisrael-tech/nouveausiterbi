@@ -9,13 +9,15 @@ que Joshua répondra quand un Frère demandera à quelle Séphira correspond
 son grade — et une réponse fausse sur ce point est pire qu'une absence de
 réponse.
 
-> **Point 1 tranché le 01/09/2026** par le Souverain Grand Commandeur :
-> *« Regarde les rituels pour 7-10, et c'est ME'UBIN. »* Les rituels ont
-> été lus, la Roue et la carte ont été corrigées. Le détail est conservé
-> ci-dessous, parce qu'une correction dont on a perdu le motif finit par
-> être défaite.
+> **Points 1 et 2 tranchés le 01/09/2026** par le Souverain Grand
+> Commandeur. Les textes ont été lus — les rituels pour les Séphiroth,
+> la Constitution pour les ateliers —, la Roue et la carte ont été
+> corrigées. Le détail est conservé ci-dessous, parce qu'une correction
+> dont on a perdu le motif finit par être défaite.
 >
-> Les points 2 à 5 attendent toujours.
+> Les points 3 à 5 attendent toujours, avec quatre questions ouvertes en
+> chemin : la graphie MEVIN qui subsiste dans deux documents, l'âge du
+> Me'ubin, le 4ᵉ ZAKAÏ, et la borne des 30ᵉ à 32ᵉ.
 
 ---
 
@@ -84,20 +86,71 @@ dans la question posée : il n'a pas été touché.
   Érudit », etc.).
 - `joshua/corpus.json` : idem, avec la mention de l'attestation.
 
-## 2. Le Consistoire existe-t-il ?
+## 2. Le Consistoire existe-t-il ? — TRANCHÉ : NON
 
-| | Degrés 11-30 | Degrés 31-32 |
-|---|---|---|
-| Roue des Degrés | Chapitre | **Consistoire** |
-| Instructions Joshua | 11° à 32° : les 22 Sentiers, sans autre corps ||
+**La Constitution le dit, et elle est normative.** Article 6,
+*Classification des Ateliers* :
 
-Les deux sources s'accordent sur le fond — la Roue numérote bien Sentier
-11 (Aleph) à Sentier 32 (Tav), soit les vingt-deux lettres — mais la Roue
-détache 31 et 32 sous un **Consistoire** dont les instructions ne parlent
-jamais. Elles vont plus loin : *« Il n'y a AUCUN Corps Écossais, AUCUN
-Corps Philosophique, AUCUN Corps Administratif. »*
+> Les ateliers se répartissent en **trois catégories** correspondant aux
+> Trois Mondes opératifs :
+>
+> **Loges Symboliques** (Olam Assiah — Monde de l'Action) — grades
+> d'Oved, Boneh et Adon ;
+> **Loges de Perfection** (Olam Yetzirah — Monde de la Formation) —
+> grades du 4ᵉ au 10ᵉ ;
+> **Chapitres et Aréopages** (Olam Beriah — Monde de la Création) —
+> grades du **11ᵉ au 32ᵉ**.
 
-Un corps de plus ou de moins change le découpage des accès.
+Trois catégories, pas quatre. Les articles 7 et 8 ajoutent le **Suprême
+Conseil** : un Souverain Grand Commandeur unique, titulaire du 33ᵉ,
+assisté de membres du 32ᵉ.
+
+### Ce que disaient les autres sources
+
+Le **Recueil des rituels** — les trente-trois rituels, 260 000
+caractères — n'écrit **jamais** « Consistoire », jamais « Aréopage »,
+jamais « Loge de Perfection ». Ses trois occurrences de « Chapitre »
+désignent un chapitre du Deutéronome, les « usages du chapitre » au sens
+général, et une phrase sur la filiation qui énumère les corps maçonniques
+en général — « aucune Loge, aucun Chapitre, aucun Conseil ne peut
+prétendre pratiquer le Rite Brith Israël… ». Aucune ne fonde un corps du
+Rite.
+
+Le mot « Consistoire » n'apparaît **qu'une fois** dans tout le corpus, à
+l'identique dans les volumes I et II de la *Bible du Rite* :
+
+> « FIN DES LOGES DE PERFECTION. Le Vol III continuera avec les grades
+> 11° à 32° — les Chapitres Rose-Croix, le Consistoire et le Suprême
+> Conseil. »
+
+C'est une **annonce de volume à venir**, écrite dans le vocabulaire du
+REAA — « Chapitres Rose-Croix » est le nom écossais, pas celui du Rite —
+et elle contredit la Constitution. Elle ne fonde rien.
+
+### Les bornes internes, telles qu'un texte les donne
+
+*Les Trente-Deux Voies*, de Mickaël DARMON, situe dans ses « Résonances
+RBI » :
+
+- **11ᵉ** — « Premier degré du Chapitre » ;
+- **18ᵉ** — « Premier degré de l'Aréopage » ;
+- **29ᵉ** — « Le dernier degré de l'Aréopage ».
+
+Soit Chapitre 11-17 et Aréopage 18-29. **La borne des 30ᵉ à 32ᵉ n'est
+établie par aucun texte** : la Constitution les range avec les autres
+dans « Chapitres et Aréopages », et rien ne dit de quel côté ils
+tombent. C'est la seule question qui reste ouverte sur ce point.
+
+### Ce qui a été corrigé
+
+- `roue.html` : les 31ᵉ et 32ᵉ quittent le « Consistoire » et rejoignent
+  la bande des 11ᵉ-32ᵉ, désormais nommée **Chapitres et Aréopages**. La
+  légende porte les Mondes — Olam Assiah, Yetzirah, Beriah — que la
+  Constitution rattache à chaque catégorie et qui n'y figuraient pas.
+- `joshua/corpus.json` : le corps `consistoire` disparaît, `chapitre`
+  devient `chapitre-areopage` et couvre 11-32, chaque catégorie porte
+  son Monde et l'article qui l'atteste.
+- Joshua connaît la classification et la restitue avec ses Mondes.
 
 ## 3. Points mineurs
 
@@ -138,13 +191,18 @@ trop restrictif, mais mieux vaut un texte trop fermé qu'un texte ouvert
 
 ## Ce que j'attends de vous
 
-Le point 1 est tranché et appliqué. Restent les points 2 à 5, plus les
-trois questions ouvertes par la lecture des rituels :
+Les points 1 et 2 sont tranchés et appliqués. Restent les points 3 à 5,
+plus les quatre questions ouvertes par la lecture des textes :
 
 - le nom MEVIN à reprendre dans le Tome II (sommaire et tableaux) et
   dans le Manuel d'Architecture Sacrée ;
 - l'âge du Me'ubin : 63 ans ou 840 ans ;
-- le 4ᵉ ZAKAÏ : Tiphereth seul, ou Tiphereth – Yesod.
+- le 4ᵉ ZAKAÏ : Tiphereth seul, ou Tiphereth – Yesod ;
+- les 30ᵉ à 32ᵉ : Chapitre ou Aréopage ? Aucun texte ne le dit.
+
+Et, s'il faut aller au bout : la phrase de la *Bible du Rite* qui annonce
+un « Consistoire » au Volume III devrait être reprise, sans quoi le
+Volume III le fera exister par inadvertance.
 
 La Roue du site et les instructions de Joshua devront être alignées sur
 chaque décision — sans quoi le site et le bot continueront de se
