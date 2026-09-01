@@ -15,9 +15,10 @@ réponse.
 > corrigées. Le détail est conservé ci-dessous, parce qu'une correction
 > dont on a perdu le motif finit par être défaite.
 >
-> Les points 3 à 6 attendent toujours, avec quatre questions ouvertes en
-> chemin : la graphie MEVIN qui subsiste dans deux documents, l'âge du
-> Me'ubin, le 4ᵉ ZAKAÏ, et la borne des 30ᵉ à 32ᵉ.
+> **Points 1 à 3 tranchés, plus le 4ᵉ ZAKAÏ et l'âge du Me'ubin.** Restent
+> ouverts : les lettres des 22 Sentiers (point 4 — deux systèmes
+> incompatibles), la borne des 30ᵉ à 32ᵉ, le 3ᵉ ADON, le 33ᵉ sans texte,
+> et les trois ouvrages transversaux.
 
 ---
 
@@ -152,45 +153,80 @@ tombent. C'est la seule question qui reste ouverte sur ce point.
   son Monde et l'article qui l'atteste.
 - Joshua connaît la classification et la restitue avec ses Mondes.
 
-## 3. Le nom du 18ᵉ : HARUACH ou CHAYIM ?
+## 3. Le nom du 18ᵉ — TRANCHÉ : HARUACH
 
-Trouvé en vérifiant la couverture du corpus, et non des moindres.
+Le **Recueil des rituels** le dit en titre :
 
-Le **Tome III — Les 22 Sentiers, rituels intégraux**, approuvé par le
-Suprême Conseil comme manuel de référence pour les 11ᵉ à 18ᵉ degrés,
-donne la table des huit premiers Sentiers :
+> « RITUEL DU 18ème DEGRÉ : **HARUACH** (L'Esprit / Le Souffle Vital) »
 
-| Degré | Tome III | Lettre | Sentier | Roue du site |
-|---|---|---|---|---|
-| 11ᵉ | NISTAR | Aleph א | Kether→Hokhmah | NISTAR |
-| 12ᵉ | NATIV | Beth ב | Kether→Binah | NATIV |
-| 13ᵉ | GISHRA | Guimel ג | Kether→Tiphéret | GISHRA |
-| 14ᵉ | ROSH | Daleth ד | Hokhmah→Hesed | ROSH |
-| 15ᵉ | SOFER | Hé ה | Hokhmah→Tiphéret | SOFER |
-| 16ᵉ | PATA'H | Vav ו | Hokhmah→Da'at | PATA'H |
-| 17ᵉ | TZEMAH | Zayin ז | Binah→Geburah | TZEMAH |
-| 18ᵉ | **CHAYIM** (חַיִּים) | Chet ח | Binah→Chesed | **HARUACH** |
+et son ouverture le confirme : « Que l'Esprit souffle ! Au Nom de ELOHIM
+TZEVAOT, j'ouvre les Travaux du 18ème Degré. »
 
-Sept noms sur huit concordent. Le huitième non — et c'est le 18ᵉ, le
-degré le plus visible du Rite après les trois premiers.
+La Roue du site portait déjà HARUACH : **elle n'avait pas tort, et rien
+n'a été changé.** C'est le **Tome III** qui fait exception en écrivant
+« 18° CHAYIM — La Vie », et c'est lui qu'il faudrait reprendre.
 
-Le Tome III le décrit ainsi : « 18° CHAYIM — Chet ח — Binah→Chesed —
-Aaron et l'encensoir. La Vie. LECHAIM. » *Chayim* est la Vie ;
-*Ha-Ruach* est l'Esprit. Ce ne sont pas deux traductions d'un même mot.
+## 4. Les lettres des 22 Sentiers — DEUX SYSTÈMES, non tranché
 
-C'est le même cas que ME'UBIN au 8ᵉ, et il se tranche de la même façon :
-en disant lequel des deux est le nom du grade. Rien n'a été touché.
+C'est le désaccord le plus étendu du corpus, et il n'apparaît qu'en
+mettant les deux tables côte à côte.
 
-## 4. Points mineurs
+**Les noms et les Sentiers concordent** pour les 11ᵉ à 17ᵉ : NISTAR,
+NATIV, GISHRA, ROSH, SOFER, PATA'H, TZEMAH, et les mêmes trajets d'une
+Séphira à l'autre. **Les lettres, non.**
+
+| Degré | Recueil des rituels | Tome III et Roue |
+|---|---|---|
+| 11ᵉ | Yod (10ᵉ lettre) | **Aleph** (1ʳᵉ) |
+| 12ᵉ | Lamed (12ᵉ) | **Beth** (2ᵉ) |
+| 13ᵉ | Mem (13ᵉ) | **Guimel** (3ᵉ) |
+| … | … | … |
+| 18ᵉ | Tsadé (18ᵉ) | **Heth** (8ᵉ) |
+| 22ᵉ | Tav (22ᵉ) | **Lamed** (12ᵉ) |
+| 23ᵉ | Aleph — reprise | **Mem** (13ᵉ) |
+| 32ᵉ | Tav — de nouveau | **Tav** (22ᵉ) |
+
+Deux logiques, donc :
+
+- **Le Recueil** donne au degré la lettre du même rang — 12ᵉ degré, 12ᵉ
+  lettre — puis reprend à Aleph au 23ᵉ.
+- **Le Tome III et la Roue** déroulent les vingt-deux lettres dans
+  l'ordre sur les vingt-deux degrés : Aleph au 11ᵉ, Tav au 32ᵉ.
+
+Une observation, qui n'est pas une décision : la table du Recueil se
+contredit elle-même. **Tav y paraît deux fois** (22ᵉ et 32ᵉ), **le 24ᵉ
+KEDEM y figure deux fois** avec deux lettres différentes (Beth, puis
+Teth), **Kaf n'y paraît jamais**, et le 29ᵉ porte un « Mem final » qui
+n'est pas une lettre distincte des vingt-deux. Le système du Tome III,
+lui, épuise exactement les vingt-deux lettres sur les vingt-deux degrés,
+sans reste ni répétition — ce qui est précisément ce qu'annonce le Sefer
+Yetsirah.
+
+Cela n'emporte pas la décision : c'est au Souverain Grand Commandeur de
+dire lequel des deux fait foi. Mais si c'est le Recueil, sa table
+demande d'abord d'être reprise.
+
+## 5. Points mineurs
 
 - **3° ADON** : « Hod – Netzach » sur la Roue, « Hod » seul dans l'index.
-- **4° ZAKAÏ** : « Tiphereth – Yesod » sur la Roue, « Tiphereth » seul
-  dans les instructions.
+  Non tranché.
+- **4° ZAKAÏ** — TRANCHÉ : **Tiphereth** seul. Le Recueil des rituels le
+  dit en titre — « RITUEL DU 4ème DEGRÉ : ZAKAÏ (Le Purifié) — Séphira :
+  TIPHERETH » — et le tableau du Tome II le confirme. La Roue et la carte
+  portaient « Tiphereth – Yesod » : corrigées, avec la traduction
+  « Le Purifié », qui est celle du rituel.
+- **L'âge du Me'ubin** — TRANCHÉ : **63 ans**. Le catéchisme du 8ᵉ le
+  demande et y répond : « quel est l'Âge des Me'ubinim ? — Ils ont
+  Soixante-Trois (63) Ans… C'est le nombre sacré (Shem SaG) de Binah,
+  l'âge où la Lumière est parfaitement structurée par l'Intelligence pour
+  créer les Mondes. » Le rituel donne sa raison ; les 840 ans du Tome II
+  sont dans un tableau, sans justification. C'est le tableau du Tome II
+  qu'il faut reprendre.
 - **Plan Maître Tome III** : l'index l'annonce en « 11° → 33° » dans sa
   fiche, et en « 11°-32° » dans son récapitulatif. La carte retient
   11-32.
 
-## 5. Le 33ᵉ degré n'a aucun texte
+## 6. Le 33ᵉ degré n'a aucun texte
 
 Trente-deux degrés sur trente-trois sont pourvus. Le **33ᵉ — KETHER
 ATZILUTH** n'est couvert par aucun ouvrage de l'index : ni le Recueil
@@ -200,7 +236,7 @@ Ce n'est peut-être pas une lacune : un grade qui ne se transmet qu'en
 personne n'a pas à figurer dans un corpus indexé. Mais il faut le
 décider, et non le laisser au hasard.
 
-## 6. Ouvrages sans degré assigné
+## 7. Ouvrages sans degré assigné
 
 Trois ouvrages sont transversaux — ils n'appartiennent à aucun degré :
 
@@ -220,16 +256,25 @@ trop restrictif, mais mieux vaut un texte trop fermé qu'un texte ouvert
 
 ## Ce que j'attends de vous
 
-Les points 1 et 2 sont tranchés et appliqués. Restent les points 3 à 6,
-plus les quatre questions ouvertes par la lecture des textes :
+Les points 1, 2 et 3 sont tranchés et appliqués, ainsi que le 4ᵉ ZAKAÏ
+et l'âge du Me'ubin. Reste **une seule vraie question** :
 
-- le nom MEVIN à reprendre dans le Tome II (sommaire et tableaux) et
-  dans le Manuel d'Architecture Sacrée ;
-- l'âge du Me'ubin : 63 ans ou 840 ans ;
-- le 4ᵉ ZAKAÏ : Tiphereth seul, ou Tiphereth – Yesod ;
+- **les lettres des 22 Sentiers** (point 4) : deux systèmes
+  incompatibles, sur vingt-deux degrés. C'est le dernier arbitrage de
+  fond.
+
+Et quatre points de moindre portée :
+
 - les 30ᵉ à 32ᵉ : Chapitre ou Aréopage ? Aucun texte ne le dit ;
-- le 18ᵉ : HARUACH, comme le porte la Roue, ou CHAYIM, comme l'écrit le
-  Tome III ?
+- le 3ᵉ ADON : Hod seul, ou Hod – Netzach ;
+- le 33ᵉ, qu'aucun texte ne couvre — est-ce voulu ?
+- les trois ouvrages transversaux, dont la plage d'accès n'est pas fixée.
+
+**Ce qu'il faudrait reprendre dans les documents eux-mêmes**, une fois
+ces décisions prises : la graphie MEVIN dans le sommaire du Tome II et
+dans le Manuel d'Architecture ; le nom CHAYIM au 18ᵉ du Tome III ; l'âge
+de 840 ans dans le tableau du Tome II ; la phrase de la Bible du Rite qui
+annonce un Consistoire au Volume III.
 
 Et, s'il faut aller au bout : la phrase de la *Bible du Rite* qui annonce
 un « Consistoire » au Volume III devrait être reprise, sans quoi le
