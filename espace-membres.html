@@ -254,6 +254,55 @@
     .doc-card a.btn-or,
     .doc-card a.btn-or:hover { color: var(--fond); }
 
+    /* ── Mode d'emploi de Joshua ──
+       Une notice se lit en diagonale : les étapes sont numérotées et les
+       commandes détachées du texte, pour qu'on retrouve d'un coup d'œil
+       celle qu'on cherche sans relire le paragraphe. */
+    .notice { margin-top: 3rem; }
+    .notice__titre {
+      font-size: 1rem; color: var(--or); font-variant: small-caps;
+      letter-spacing: .08em; text-align: center; margin-bottom: .4rem;
+    }
+    .notice__intro {
+      font-size: .8rem; color: var(--gris); text-align: center;
+      line-height: 1.7; margin-bottom: 2rem; font-style: italic;
+    }
+    .etapes { list-style: none; counter-reset: etape; padding: 0; margin: 0; }
+    .etapes li {
+      counter-increment: etape;
+      position: relative;
+      padding: 0 0 1.4rem 3rem;
+      border-left: 1px solid rgba(201,168,76,.25);
+      margin-left: 1rem;
+    }
+    .etapes li:last-child { border-left-color: transparent; padding-bottom: 0; }
+    .etapes li::before {
+      content: counter(etape);
+      position: absolute; left: -1rem; top: -.15rem;
+      width: 2rem; height: 2rem; line-height: 2rem;
+      background: var(--fond); border: 1px solid var(--or);
+      color: var(--or); font-size: .8rem; text-align: center;
+      border-radius: 50%;
+    }
+    .etapes strong { color: var(--or2); font-weight: 600; }
+    .etapes p { font-size: .82rem; color: var(--gris); line-height: 1.7; margin: 0; }
+    .etapes p + p { margin-top: .5rem; }
+    code.cmd {
+      font-family: 'Courier New', monospace;
+      background: var(--fond3); border: 1px solid rgba(201,168,76,.3);
+      color: var(--or2); padding: .1rem .4rem; font-size: .8rem;
+      white-space: nowrap;
+    }
+    .notice__reserve {
+      margin-top: 2rem; padding: 1.2rem 1.4rem;
+      background: var(--fond3); border-left: 2px solid var(--or);
+      font-size: .78rem; color: var(--gris); line-height: 1.7;
+    }
+    .notice__reserve strong { color: var(--or2); }
+    @media (max-width: 600px) {
+      .etapes li { padding-left: 2.4rem; }
+    }
+
     /* ── Porte de tuilage ── */
     .porte {
       position: fixed; inset: 0; z-index: 500;
@@ -557,6 +606,94 @@
         ni l'instruction en Loge ni le Vénérable Maître.<br>
         Ce qu'elle ne trouve pas dans les textes, elle ne l'invente pas.
       </p>
+    </div>
+  </div>
+
+  <!-- ── Mode d'emploi ──────────────────────────────────────────────
+       Placé sous les trois cartes : elles disent ce qu'est Joshua, la
+       notice dit comment s'en servir. Un Frère qui découvre l'outil lit
+       les premières ; celui qui revient chercher une commande saute
+       directement ici. -->
+  <div class="notice">
+    <h3 class="notice__titre">Mode d'emploi</h3>
+    <p class="notice__intro">
+      Tout se fait dans la conversation. Il n'y a pas de menu à chercher :
+      vous écrivez, Joshua répond.
+    </p>
+
+    <ol class="etapes">
+      <li>
+        <p><strong>Première venue.</strong> Ouvrez Joshua, envoyez
+        <code class="cmd">/commencer</code>, répondez aux questions d'usage,
+        donnez votre nom de famille, puis <strong>choisissez votre mot de
+        passe</strong>. Personne d'autre ne le connaît — pas même le
+        Souverain Grand Commandeur, qui administre les noms et les degrés,
+        jamais les mots de passe.</p>
+        <p>Les fois suivantes : <code class="cmd">/entrer</code>, votre nom,
+        votre mot de passe. <code class="cmd">/motdepasse</code> pour en
+        changer, <code class="cmd">/sortir</code> pour fermer la session.</p>
+      </li>
+
+      <li>
+        <p><strong>Poser une question.</strong> En français, comme à un
+        Frère plus avancé. Joshua cherche dans les ouvrages de votre degré,
+        répond, et <strong>cite ses sources</strong> — ouvrage et page —
+        sous chaque réponse. Vous pouvez enchaîner : il se souvient de
+        l'échange en cours.</p>
+        <p>Il peut citer des sources classiques extérieures au Rite
+        (Talmud, Zohar, Tanya, Sefarim) quand elles éclairent un point :
+        il dit alors d'où elles viennent, et qu'elles ne sont pas du corpus
+        du Rite.</p>
+      </li>
+
+      <li>
+        <p><strong>Évaluer ses connaissances.</strong>
+        <code class="cmd">/quiz</code> ouvre un questionnaire de
+        <strong>50 questions</strong> tirées de vos ouvrages, et d'aucun
+        autre. Vous répondez par A, B, C ou D.</p>
+        <p>Joshua <strong>corrige en marchant</strong> : après chaque
+        réponse il dit si c'est juste, pourquoi, et de quel ouvrage et
+        quelle page cela vient. Le questionnaire enseigne pendant qu'il
+        évalue. <code class="cmd">/abandonner</code> si le devoir vous
+        appelle ailleurs — rien n'est alors consigné.</p>
+        <p>Joshua peut aussi vous le proposer de lui-même, lorsque vos
+        questions montrent que la matière du degré est en place. C'est une
+        invitation, jamais une convocation.</p>
+      </li>
+
+      <li>
+        <p><strong>L'attestation.</strong> À partir de
+        <strong>30 bonnes réponses sur 50</strong>, vous recevez une
+        attestation d'instruction en PDF, scellée du sceau du Suprême
+        Conseil et signée du Souverain Grand Commandeur. Elle porte votre
+        prénom, votre nom, votre degré et votre pourcentage de réussite.</p>
+        <p><code class="cmd">/attestations</code> retrouve à tout moment
+        celles que vous avez obtenues, avec leur référence et leur lien de
+        téléchargement.</p>
+      </li>
+
+      <li>
+        <p><strong>En cas d'échec — qui n'en est pas un.</strong> Joshua
+        vous dit ce qui manque, thème par thème, <strong>du plus faible au
+        moins faible</strong>, avec l'ouvrage à relire, la page, et le degré
+        auquel le point s'enseigne : un point venu d'un degré inférieur est
+        une base à reprendre, le même point à votre degré est une lecture à
+        refaire.</p>
+        <p>L'épreuve se repasse <strong>autant de fois qu'on le
+        souhaite</strong>. Chaque passage est numéroté, et les questions ne
+        sont jamais les mêmes : Joshua tire dans tout le corpus de votre
+        degré. C'est le texte qu'il faut connaître, pas les questions.</p>
+      </li>
+    </ol>
+
+    <div class="notice__reserve">
+      <strong>Ce que l'attestation atteste.</strong> La connaissance des
+      textes du degré, et elle seule. <strong>Elle ne confère aucun grade et
+      n'en tient pas lieu</strong> : un grade se reçoit en Loge, par
+      l'initiation, et rien d'autre ne le donne.<br><br>
+      Le document ne vaut pas par son apparence — une signature scannée se
+      recopie — mais par <strong>sa référence</strong>, inscrite au registre
+      du Rite et vérifiable auprès de lui.
     </div>
   </div>
 </section>
