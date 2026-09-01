@@ -1,0 +1,40 @@
+# ═══════════════════════════════════════════════════════════════════
+#  RITE BRITH ISRAËL — politique de cache
+#
+#  Sans ces règles, une correction publiée peut rester invisible :
+#  le navigateur d'un visiteur ressert sa copie en mémoire au lieu de
+#  redemander la nouvelle. C'est arrivé — une page corrigée et mise en
+#  ligne s'affichait encore dans son ancienne version.
+#
+#  Deux règles, et une seule idée : les pages sont toujours vérifiées,
+#  les fichiers qui portent un numéro de version ne le sont jamais.
+# ═══════════════════════════════════════════════════════════════════
+
+# ── Les pages ──────────────────────────────────────────────────────
+# Vérifiées à chaque visite. Le navigateur peut garder sa copie, mais
+# il doit demander au serveur si elle est encore bonne avant de
+# l'afficher. Une correction est donc visible immédiatement.
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+/
+  Cache-Control: public, max-age=0, must-revalidate
+
+# Ces trois fichiers guident les moteurs de recherche et les IA :
+# ils doivent refléter le site tel qu'il est, pas tel qu'il était.
+/llms.txt
+  Cache-Control: public, max-age=0, must-revalidate
+
+/sitemap.xml
+  Cache-Control: public, max-age=0, must-revalidate
+
+/robots.txt
+  Cache-Control: public, max-age=0, must-revalidate
+
+# ── Les fichiers de fonctionnement ─────────────────────────────────
+# Ils sont appelés avec un numéro de version : assets/musique.js?v=…
+# Changer le fichier, c'est changer le numéro, donc changer l'adresse —
+# et une adresse nouvelle n'est jamais dans le cache de personne.
+# On peut donc les garder un an sans risque de servir du périmé.
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
