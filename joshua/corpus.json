@@ -1,7 +1,7 @@
 {
-  "$commentaire": "Carte du corpus du Rite Brith Israël, destinée à Joshua. Les 33 degrés viennent de la Roue des Degrés du site ; les ouvrages et leurs plages de degrés viennent de l'INDEX CORPUS RBI du 28 avril 2026. Aucune plage n'est supposée. Les degrés 7 à 10 et la classification des ateliers ont été arbitrés le 01/09/2026 d'après les rituels eux-mêmes (Tome II) : voir conflits.md, qui conserve la trace de ce qui divergeait et de ce qui reste à trancher.",
-  "version": "2.7.0",
-  "etabli_le": "2026-09-01",
+  "$commentaire": "Carte du corpus du Rite Brith Israël, destinée à Joshua. Les 33 degrés viennent de la Roue des Degrés du site ; les ouvrages et leurs plages de degrés viennent de l'INDEX CORPUS RBI du 28 avril 2026. Aucune plage n'est supposée. Les degrés 7 à 10 et la classification des ateliers ont été arbitrés le 01/09/2026 d'après les rituels eux-mêmes (Tome II) : voir conflits.md, qui conserve la trace de ce qui divergeait et de ce qui reste à trancher. Le degré ZÉRO — le degré public, celui du visiteur tuilé et du profane — a été ouvert le 02/09/2026 : il ne porte qu'un seul ouvrage, et c'est délibéré.",
+  "version": "2.8.0",
+  "etabli_le": "2026-09-02",
   "dossier_drive": "https://drive.google.com/drive/folders/1HKyI7v6s7uFR7Tng80easrtZvv6B7vpl",
   "index_drive": "https://docs.google.com/document/d/1XHpmPaUdVky7h56pSCPzkz3dBPNolAgPFwjsbgsSofc/edit",
   "corps": [
@@ -424,7 +424,23 @@
       "source": "https://drive.google.com/file/d/1TWnbqm-Zm6EjxdoDCx7tyKKaZYsGdOpn/view",
       "statut": "a_indexer",
       "atteste_par": "Arbitré par le Souverain Grand Commandeur le 02/09/2026.",
-      "remarque": "Ouvrage public, en vente en librairie : il ne contient rien qui demande un degré. Accessible à tous, visiteurs compris."
+      "remarque": "Ouvrage public, en vente en librairie : il ne contient rien qui demande un degré. Il reste néanmoins au 1er degré et NON au degré zéro — décision du Souverain Grand Commandeur du 02/09/2026 : « pas l'Alliance, trop complexe pour un néophyte ». La barrière n'est pas celle du secret, c'est celle de la lisibilité : un livre de doctrine tendu à qui n'a pas encore les mots ne l'instruit pas, il le décourage. Il vient après."
+    },
+    {
+      "id": "guide-survie",
+      "titre": "Guide de Survie pour Franc-Maçon Désemparé",
+      "auteur": "Mickaël DARMON",
+      "nature": "livre",
+      "degres_couverts": [
+        0
+      ],
+      "transversal": false,
+      "format": "pdf",
+      "diffusion": "public",
+      "source": "https://amzn.eu/d/03LwhX1a",
+      "statut": "a_indexer",
+      "atteste_par": "Arbitré par le Souverain Grand Commandeur le 02/09/2026 : seul ouvrage du degré zéro.",
+      "remarque": "Pratique et humoristique, écrit pour qui cherche ses repères : c'est le seul livre du corpus qu'on puisse ouvrir sans rien savoir d'avance. En vente libre (Amazon KDP). Couvrant le degré 0, il est lisible par TOUS — le filtre « degré ≤ N » le rend à un membre de n'importe quel degré comme au visiteur."
     }
   ],
   "regles_acces": {
@@ -440,6 +456,20 @@
     "pas_de_doctrine": "Joshua ne tranche aucune question doctrinale et ne commente pas.",
     "pas_de_substitution": "Joshua ne remplace ni l'instruction en Loge, ni le Vénérable Maître.",
     "pas_de_pattern_reaa": "Ne jamais répondre avec du contenu du REAA, du Rite Français ou du RER : le Rite Brith Israël a sa propre identité kabbalistique."
+  },
+  "degre_public": {
+    "degre": 0,
+    "libelle": "PUBLIC",
+    "qui": "Le visiteur tuilé — Frère ou Sœur d'un autre rite — et le profane, qui n'est initié à rien.",
+    "principe": "Le degré zéro n'est pas « ce qui n'est pas secret » : c'est ce qu'on peut mettre entre les mains de quelqu'un qui ne sait rien encore. Un ouvrage peut être public sans être lisible par un néophyte.",
+    "sources": [
+      {
+        "ouvrage": "guide-survie",
+        "pages": null
+      }
+    ],
+    "etat": "declare",
+    "atteste_par": "Arbitré par le Souverain Grand Commandeur le 02/09/2026 : « 0 profane, donc on explique la FM RBI, et tu laisses uniquement guide survie comme ouvrage de référence, pas l'Alliance, trop complexe pour un néophyte. »"
   },
   "degres": [
     {

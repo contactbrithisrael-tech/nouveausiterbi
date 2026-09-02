@@ -38,11 +38,14 @@ var RBI_CONFIG = {
   { label: "Devenir FM",       href: "devenir-fm.html", style: "cta" },
   { label: "Tuilage",          href: "#tuilage", style: "discret" },
   { label: "Espace Membres",   href: "espace-membres.html" },
-  // Joshua ouvre dans un onglet séparé : c'est un autre service, sur un
-  // autre serveur, et un Frère qui le consulte ne doit pas perdre la
-  // page du Rite en cours de lecture.
-  { label: "Joshua",           href: "https://joshua-studio.onrender.com/joshua",
-    cible: "_blank" },
+  // Le lien mène à la SECTION Joshua, et non directement au service.
+  // Depuis qu'il est ouvert à tous, un curieux qui atterrit sans
+  // préambule sur une fenêtre de conversation ne sait ni à qui il parle
+  // ni ce qu'il peut demander. La section le lui dit, et porte le
+  // bouton qui ouvre le service dans un onglet séparé — car c'est un
+  // autre serveur, et on ne perd pas la page du Rite en cours de
+  // lecture.
+  { label: "Joshua",           href: "index.html#joshua" },
   { label: "Contact",          href: "#contact" }
 ]
   },
@@ -85,9 +88,102 @@ var RBI_CONFIG = {
       {
         icone: "◈",
         titre: "Joshua, l'IA du Rite",
-        texte: "Une intelligence artificielle nourrie des seuls ouvrages du Rite, qui cite ouvrage et page pour chaque réponse et ne répond jamais de mémoire. Réservée aux membres de l'Ordre, elle n'ouvre à chacun que les textes de son degré."
+        texte: "Une intelligence artificielle nourrie des seuls ouvrages du Rite, qui cite ouvrage et page pour chaque réponse et ne répond jamais de mémoire. Ouverte à tous — membres, visiteurs, curieux —, elle n'ouvre à chacun que les textes de son degré."
       }
     ]
+  },
+
+  /* ──────────────────────────────────────────────
+     SECTION : JOSHUA — l'IA du Rite
+     Publique, et placée avant le tuilage : Joshua est ouvert à tous,
+     et l'annoncer après une porte réservée aux membres ferait croire
+     l'inverse.
+     ► Modifier ici la présentation de Joshua ◄
+  ────────────────────────────────────────────── */
+  joshua: {
+    titre: "Joshua — l'IA du Rite Brith Israël",
+    intro: "Ouvert à tous : aux membres de l'Ordre, aux Frères et Sœurs " +
+           "d'autres rites, et aux curieux qui n'ont jamais mis les pieds " +
+           "dans une Loge. Il ne demande qu'une chose au premier message : " +
+           "à qui il parle.",
+    cartes: [
+      {
+        icone: "◈",
+        titre: "Ce qu'il est",
+        texte: "Une intelligence artificielle nourrie des seuls ouvrages du " +
+               "Rite — rituels, Bible du Rite, traités —, et de rien d'autre. " +
+               "Ce n'est pas un moteur de recherche à qui l'on aurait appris " +
+               "trois mots de kabbale."
+      },
+      {
+        icone: "❝",
+        titre: "Il cite, il n'invente pas",
+        texte: "Chaque affirmation porte son ouvrage et sa page. Ce qu'il ne " +
+               "trouve pas dans les textes, il le dit — au lieu de le " +
+               "combler. C'est ce qui le distingue d'une IA générale, et " +
+               "c'est la règle qui ne se négocie pas."
+      },
+      {
+        icone: "▲",
+        titre: "Il parle à votre degré",
+        texte: "Un membre du degré N accède aux textes des degrés 1 à N, et " +
+               "à aucun autre. Le filtre est appliqué par l'index avant même " +
+               "que le texte soit lu : ce n'est pas une consigne de " +
+               "politesse, c'est une arithmétique."
+      },
+      {
+        icone: "🤝",
+        titre: "Il reçoit les visiteurs",
+        texte: "Frère ou Sœur d'un autre rite : un tuilage de vive voix, et " +
+               "il compare son rite au vôtre, à la hauteur de votre grade. " +
+               "Aucun rituel ne vous sera communiqué — vous en diriez autant " +
+               "chez vous."
+      },
+      {
+        icone: "✦",
+        titre: "Il reçoit les profanes",
+        texte: "Dites-lui simplement que vous n'êtes pas maçon. Il commence " +
+               "alors par le commencement : ce qu'est la franc-maçonnerie, " +
+               "d'où elle vient, ce qu'est ce Rite — sans jargon, et sans " +
+               "mystères de pacotille."
+      },
+      {
+        icone: "✓",
+        titre: "Il vous fait travailler",
+        texte: "Il propose de lui-même un questionnaire quand il sent le " +
+               "degré compris, corrige chaque réponse avec sa source, et " +
+               "délivre une attestation signée et scellée. En cas d'échec, " +
+               "il dit quoi retravailler, où, et à quel grade."
+      }
+    ],
+    pourquoi: {
+      titre: "Pourquoi une intelligence artificielle ?",
+      paragraphes: [
+        "Parce qu'un Frère qui travaille son degré à minuit n'a personne à " +
+        "qui demander. L'instruction se donne en Loge, une fois par mois ; " +
+        "l'étude, elle, se fait tous les jours, et c'est là qu'on abandonne.",
+
+        "Parce qu'une IA générale répond à tout, avec aplomb, et se trompe " +
+        "sur ce Rite-ci — dont les textes ne sont nulle part sur internet. " +
+        "Elle plaquerait le Rite Écossais sur nos degrés et personne ne s'en " +
+        "apercevrait. Joshua ne connaît que nos ouvrages, et refuse de " +
+        "répondre quand ils se taisent.",
+
+        "Parce que le degré, justement, se garde mieux par une machine que " +
+        "par une bonne volonté : un index qui filtre ne se laisse pas " +
+        "attendrir, ne se trompe pas de Frère et n'oublie pas la règle un " +
+        "soir de fatigue.",
+
+        "Et parce qu'elle dit ce qu'elle est. Joshua se présente comme une " +
+        "machine dès la première phrase, ne joue jamais au Frère en chair " +
+        "et en os, et ne remplace ni l'instruction en Loge, ni le Vénérable " +
+        "Maître. Il fait une chose : il tient les textes ouverts entre deux " +
+        "tenues."
+      ]
+    },
+    bouton: "Parler à Joshua",
+    lien: "https://joshua-studio.onrender.com/joshua",
+    note: "Aucun contenu de rituel n'est communiqué à qui n'en a pas reçu les degrés."
   },
 
   /* ──────────────────────────────────────────────
@@ -210,13 +306,21 @@ var RBI_CONFIG = {
     /* Annonce faite AVANT le tuilage du site, et redite après : un Frère
        d'un autre rite n'a pas besoin des documents réservés, il vient
        pour comprendre. Lui faire passer un tuilage pour découvrir qu'il
-       y avait une autre porte serait le perdre en route. */
+       y avait une autre porte serait le perdre en route.
+
+       Elle nomme aussi le profane, depuis que Joshua le reçoit. Celui
+       qui tombe sur un tuilage sans y être nommé se croit à la mauvaise
+       adresse, et personne ne le détrompe. */
     visiteur: {
-      titre: "Vous êtes Frère ou Sœur d'un autre rite ?",
+      titre: "Vous n'êtes pas membre du Rite ?",
       texte: "Vous n'avez pas besoin de ce tuilage pour venir vous renseigner. " +
-             "Joshua, l'assistant d'étude du Rite, reçoit les visiteurs après " +
-             "un simple tuilage de vive voix, et répond à vos questions sur le " +
-             "Rite : son origine, sa structure, ce qui le distingue du vôtre. " +
+             "Joshua, l'assistant d'étude du Rite, reçoit les Frères et Sœurs " +
+             "d'autres rites après un simple tuilage de vive voix, et répond à " +
+             "leurs questions : l'origine du Rite, sa structure, ce qui le " +
+             "distingue du leur. " +
+             "Et si vous n'êtes pas franc-maçon du tout, dites-le-lui : il " +
+             "vous est ouvert aussi, et il commence alors par le commencement " +
+             "— ce qu'est la franc-maçonnerie, et ce qu'est ce Rite. " +
              "Écrivez-lui bonjour, il fait le reste.",
       bouton: "Poser une question à Joshua",
       lien: "https://joshua-studio.onrender.com/joshua",
