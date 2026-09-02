@@ -204,6 +204,52 @@
   }
 
   /* ════════════════════════════════════════════════
+     5 bis. JOSHUA — section publique
+  ════════════════════════════════════════════════ */
+  function buildJoshua() {
+    var cfg = C.joshua;
+    if (!cfg) return;
+
+    var t = $('joshua-titre'); if (t) t.textContent = cfg.titre;
+    var i = $('joshua-intro'); if (i) i.textContent = cfg.intro;
+
+    var grid = $('joshua-cards');
+    if (grid && cfg.cartes) {
+      grid.innerHTML = '';
+      cfg.cartes.forEach(function (c) {
+        grid.appendChild(el('div', { class: 'card reveal' }, [
+          el('span', { class: 'card__icon', text: c.icone }),
+          el('h3',   { class: 'card__title', text: c.titre }),
+          el('p',    { class: 'card__text',  text: c.texte })
+        ]));
+      });
+    }
+
+    /* Le « pourquoi » est en prose : c'est un raisonnement, et un
+       raisonnement découpé en vignettes n'en est plus un. */
+    var quoi = $('joshua-pourquoi');
+    if (quoi && cfg.pourquoi) {
+      quoi.innerHTML = '';
+      quoi.className = 'joshua-pourquoi reveal';
+      quoi.appendChild(el('h3', { text: cfg.pourquoi.titre }));
+      (cfg.pourquoi.paragraphes || []).forEach(function (para) {
+        quoi.appendChild(el('p', { text: para }));
+      });
+    }
+
+    var cta = $('joshua-cta');
+    if (cta && cfg.lien) {
+      cta.innerHTML = '';
+      cta.className = 'joshua-cta reveal';
+      cta.appendChild(el('a', {
+        class: 'btn btn--outline', href: cfg.lien,
+        target: '_blank', rel: 'noopener', text: cfg.bouton
+      }));
+      if (cfg.note) cta.appendChild(el('p', { class: 'joshua-cta__note', text: cfg.note }));
+    }
+  }
+
+  /* ════════════════════════════════════════════════
      6. TUILAGE
   ════════════════════════════════════════════════ */
   function buildTuilage() {
@@ -591,6 +637,7 @@
     buildRite();
     buildChefs();
     buildLivres();
+    buildJoshua();
     buildTuilage();
     buildContact();
     buildFooter();

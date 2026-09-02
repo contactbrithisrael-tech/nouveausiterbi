@@ -235,6 +235,27 @@ ul { list-style: none; }
 }
 
 /* ─── ROUE BOUTON ──────────────────────────── */
+/* ── Section Joshua ──────────────────────────────────────────────
+   La grille est bornée à trois colonnes : six cartes sur quatre
+   colonnes donnaient une seconde rangée de deux, orpheline au milieu
+   d'un grand vide. Trois et trois se tiennent. */
+#joshua-cards { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); max-width: 1020px; margin: 0 auto; }
+/* ── Section Joshua ──────────────────────────────────────────────
+   Le bloc « pourquoi une IA » est en prose et non en cartes : c'est un
+   raisonnement, et un raisonnement découpé en vignettes n'en est plus
+   un. Il est donc bordé à gauche plutôt qu'encadré, pour se lire comme
+   une citation et non comme une quatrième colonne. */
+.joshua-pourquoi        { max-width: 760px; margin: 3rem auto 0; border-left: 2px solid rgba(201,168,76,0.35); padding-left: 1.6rem; }
+.joshua-pourquoi h3     { font-family: var(--font-sous); font-size: 0.9rem; letter-spacing: 0.1em; color: var(--or); text-transform: uppercase; margin-bottom: 1rem; }
+.joshua-pourquoi p      { font-size: 0.98rem; color: #ccc; line-height: 1.85; margin-bottom: 1rem; }
+.joshua-pourquoi p:last-child { margin-bottom: 0; }
+.joshua-cta             { text-align: center; margin-top: 2.5rem; }
+.joshua-cta .btn        { font-size: 0.9rem; padding: 1rem 2.5rem; letter-spacing: 0.12em; }
+.joshua-cta__note       { font-size: 0.85rem; color: #999; font-style: italic; margin-top: 1rem; }
+@media (max-width: 600px) {
+  .joshua-pourquoi { padding-left: 1rem; margin-top: 2.2rem; }
+}
+
 .rite-roue-wrap { text-align: center; margin-top: 2.5rem; }
 .rite-roue-wrap .btn { font-size: 0.9rem; padding: 1rem 2.5rem; letter-spacing: 0.12em; }
 
