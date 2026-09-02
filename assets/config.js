@@ -45,7 +45,7 @@ var RBI_CONFIG = {
   // bouton qui ouvre le service dans un onglet séparé — car c'est un
   // autre serveur, et on ne perd pas la page du Rite en cours de
   // lecture.
-  { label: "Joshua",           href: "index.html#joshua" },
+  { label: "Joshua — IA du RBI", href: "index.html#joshua" },
   { label: "Contact",          href: "#contact" }
 ]
   },
@@ -87,7 +87,7 @@ var RBI_CONFIG = {
       },
       {
         icone: "◈",
-        titre: "Joshua, l'IA du Rite",
+        titre: "Joshua, l'IA du RBI",
         texte: "Une intelligence artificielle nourrie des seuls ouvrages du Rite, qui cite ouvrage et page pour chaque réponse et ne répond jamais de mémoire. Ouverte à tous — membres, visiteurs, curieux —, elle n'ouvre à chacun que les textes de son degré."
       }
     ]
