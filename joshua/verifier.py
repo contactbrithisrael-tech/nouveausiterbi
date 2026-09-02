@@ -27,8 +27,27 @@ def verifier(chemin):
     degres = c.get("degres", [])
     ouvrages = {o["id"]: o for o in c.get("ouvrages", [])}
 
+    # Le degré ZÉRO — le degré public — n'est pas l'un des trente-trois :
+    # il n'a ni nom hébreu, ni Séphira, ni corps d'appartenance. Il est
+    # décrit à part, et repris ici pour que les deux contrôles qui
+    # suivent — l'état, et la concordance des deux sens — s'appliquent à
+    # lui comme aux autres. Sans cela, un ouvrage annoncé au degré zéro
+    # passerait pour orphelin.
+    public = c.get("degre_public")
+    if public is not None:
+        if public.get("degre") != 0:
+            fautes.append("degre_public : « degre » vaut %r, attendu 0"
+                          % public.get("degre"))
+        if not public.get("sources"):
+            fautes.append("degre_public : aucun ouvrage — le degré zéro "
+                          "existe mais ne rend rien")
+        if not public.get("atteste_par"):
+            fautes.append("degre_public : aucune attestation — un degré "
+                          "ouvert sans décision tracée se referme mal")
+        degres = list(degres) + [public]
+
     # ── Les 33 degrés, une fois chacun ────────────────────────────
-    numeros = [d.get("degre") for d in degres]
+    numeros = [d.get("degre") for d in degres if d.get("degre") != 0]
     attendus = set(range(1, 34))
     if set(numeros) != attendus:
         manquants = sorted(attendus - set(numeros))

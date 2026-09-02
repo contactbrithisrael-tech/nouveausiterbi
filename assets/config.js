@@ -210,13 +210,21 @@ var RBI_CONFIG = {
     /* Annonce faite AVANT le tuilage du site, et redite après : un Frère
        d'un autre rite n'a pas besoin des documents réservés, il vient
        pour comprendre. Lui faire passer un tuilage pour découvrir qu'il
-       y avait une autre porte serait le perdre en route. */
+       y avait une autre porte serait le perdre en route.
+
+       Elle nomme aussi le profane, depuis que Joshua le reçoit. Celui
+       qui tombe sur un tuilage sans y être nommé se croit à la mauvaise
+       adresse, et personne ne le détrompe. */
     visiteur: {
-      titre: "Vous êtes Frère ou Sœur d'un autre rite ?",
+      titre: "Vous n'êtes pas membre du Rite ?",
       texte: "Vous n'avez pas besoin de ce tuilage pour venir vous renseigner. " +
-             "Joshua, l'assistant d'étude du Rite, reçoit les visiteurs après " +
-             "un simple tuilage de vive voix, et répond à vos questions sur le " +
-             "Rite : son origine, sa structure, ce qui le distingue du vôtre. " +
+             "Joshua, l'assistant d'étude du Rite, reçoit les Frères et Sœurs " +
+             "d'autres rites après un simple tuilage de vive voix, et répond à " +
+             "leurs questions : l'origine du Rite, sa structure, ce qui le " +
+             "distingue du leur. " +
+             "Et si vous n'êtes pas franc-maçon du tout, dites-le-lui : il " +
+             "vous est ouvert aussi, et il commence alors par le commencement " +
+             "— ce qu'est la franc-maçonnerie, et ce qu'est ce Rite. " +
              "Écrivez-lui bonjour, il fait le reste.",
       bouton: "Poser une question à Joshua",
       lien: "https://joshua-studio.onrender.com/joshua",

@@ -58,7 +58,7 @@ d'un bloc à un degré.
 
 ## Ce qui manque
 
-**Quinze ouvrages sont déclarés, et trente-deux degrés sur trente-trois
+**Seize ouvrages sont déclarés, et trente-deux degrés sur trente-trois
 sont pourvus d'au moins un texte.** Le 33ᵉ n'est couvert par aucun.
 
 Mais tous les textes ne se valent pas, et le compte brut trompe. Ce qui
@@ -73,6 +73,12 @@ seulement d'un ouvrage qui l'englobe avec vingt et un autres :
 | 19 – 25 | le **Tome IV** | solide, à confirmer |
 | 26 – 32 | le Recueil intégral et *Les Trente-Deux Voies* — deux ouvrages qui couvrent vingt-deux degrés chacun | mince |
 | 33 | rien | vide |
+
+Et, sous les trente-trois, un degré qui n'en est pas un :
+
+| Degré | Ce qui le couvre | État |
+|---|---|---|
+| **0 — public** | le **Guide de Survie pour Franc-Maçon Désemparé**, et lui seul | voulu |
 
 Le **Tome V** reste à écrire : c'est lui qui pourvoira les 26ᵉ à 32ᵉ.
 
@@ -163,6 +169,25 @@ Joshua l'a effectivement chargé.
 ### Un membre du degré N voit les degrés 1 à N. Rien au-delà.
 
 Le degré de chacun est fixé par le Souverain Grand Commandeur.
+
+### Le degré zéro est public, et il est presque vide
+
+Zéro n'est pas un degré du Rite : c'est le degré de qui n'en a reçu aucun
+— le Frère de passage, tuilé, et le profane, qui n'est initié à rien. Il
+est ouvert à tous, et le filtre `degré ≤ 0` ne lui rend que ce qui y est
+posé.
+
+**Un seul ouvrage y est posé**, et c'est délibéré. Le degré zéro n'est
+pas « ce qui n'est pas secret » : c'est ce qu'on peut mettre entre les
+mains de quelqu'un qui ne sait rien encore. *L'Alliance de Lumière* se
+vend en librairie et ne cache rien ; elle reste pourtant au 1ᵉʳ degré,
+parce qu'un livre de doctrine tendu à un néophyte ne l'instruit pas, il
+le décourage. Voir `conflits.md`, point 9.
+
+À ce degré, Joshua explique d'abord ce qu'est la franc-maçonnerie, puis
+ce qu'est le Rite : le second ne veut rien dire à qui ignore le premier.
+Il ne donne aucune ligne de rituel — pas davantage à un Maître d'un autre
+rite qu'à un profane.
 
 ### Le silence sur ce qui est au-dessus
 

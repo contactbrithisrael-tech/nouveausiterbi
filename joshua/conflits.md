@@ -297,6 +297,43 @@ Les deux autres suivent :
 conservée dans `corpus.json` pour un ouvrage futur, mais elle ne
 s'applique plus à personne.
 
+## 9. Le degré zéro — ce qu'on met entre les mains d'un néophyte — TRANCHÉ
+
+**Arbitré par le Souverain Grand Commandeur le 02/09/2026** :
+
+> « 0 profane, donc on explique la FM RBI, et tu laisses uniquement guide
+> survie comme ouvrage de référence, pas l'Alliance, trop complexe pour un
+> néophyte. »
+
+Le degré zéro existait déjà, mais comme un degré **vide** : il ne servait
+qu'à garantir arithmétiquement qu'un visiteur tuilé n'atteignait aucun
+texte. La décision lui donne un contenu, et lui donne aussi un second
+interlocuteur.
+
+**Le degré zéro est le degré PUBLIC, et non celui du seul visiteur.** Un
+profane y est reçu — quelqu'un qui n'est initié à rien et qui le dit.
+Joshua lui explique alors ce qu'est la franc-maçonnerie **avant** de lui
+expliquer ce qu'est le Rite : le second ne veut rien dire à qui ignore le
+premier. L'accès, lui, ne change pas : degré zéro, donc aucune ligne de
+rituel, pour lui comme pour le Frère de passage.
+
+**Un seul ouvrage y figure**, et l'arbitrage porte moins sur ce qui entre
+que sur ce qui n'entre pas :
+
+| Ouvrage | Degré | Motif |
+|---|---|---|
+| **Guide de Survie pour Franc-Maçon Désemparé** | **0** | Le seul livre du corpus qu'on puisse ouvrir sans rien savoir d'avance. En vente libre. |
+| **Brith Israël — L'Alliance de Lumière** | **1ᵉʳ**, et public | Public sans être lisible par un néophyte : « trop complexe ». |
+
+La distinction est celle de la **lisibilité**, non celle du secret.
+*L'Alliance de Lumière* se vend en librairie et ne cache rien ; elle reste
+néanmoins au 1ᵉʳ degré, parce qu'un livre de doctrine tendu à qui n'a pas
+encore les mots ne l'instruit pas — il le renvoie chez lui persuadé que ce
+n'est pas pour lui, et cela ne se rattrape pas. Elle vient après.
+
+C'est le premier arbitrage du mémoire qui ne tranche pas entre deux
+sources, mais entre deux lecteurs.
+
 ## Ce qu'il reste à faire
 
 **Rien du côté du site ni de Joshua : ils sont d'accord avec les
@@ -312,7 +349,7 @@ encore les formes anciennes.
 | Recueil — table des lettres | Yod au 11ᵉ, Tav deux fois, KEDEM deux fois, Kaf jamais | Aleph au 11ᵉ, Tav au 32ᵉ |
 | Bible du Rite, Vol. I et II | « le Consistoire » au Volume III | le Rite n'en a pas |
 
-**Plus aucune décision n'est en attente.** Les huit points sont
+**Plus aucune décision n'est en attente.** Les neuf points sont
 tranchés, et la Roue comme la carte sont d'accord avec les textes.
 
 ---
