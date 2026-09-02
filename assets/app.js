@@ -216,9 +216,26 @@
 
     zone.innerHTML = '';
 
+    /* L'annonce du mode visiteur. Elle est construite à la demande, pour
+       en poser deux exemplaires : avant le tuilage, pour qui n'en a pas
+       besoin, et après, pour qui l'aurait passé sans la lire. */
+    function blocVisiteur() {
+      var v = cfg.visiteur;
+      if (!v) return null;
+      return el('div', { class: 'tuilage__visiteur' }, [
+        el('h3', { class: 'tuilage__visiteur-titre', text: v.titre }),
+        el('p',  { class: 'tuilage__visiteur-texte', text: v.texte }),
+        el('a',  { class: 'btn btn--outline', href: v.lien,
+                   target: '_blank', rel: 'noopener', text: v.bouton }),
+        el('p',  { class: 'tuilage__visiteur-note', text: v.note })
+      ]);
+    }
+
     var stepStart = el('div', { class: 'tuilage__step', id: 'tuilage-start' }, [
       el('button', { class: 'btn btn--primary btn--lg', id: 'tuilage-start-btn', text: 'Commencer le Tuilage' })
     ]);
+    var annonce = blocVisiteur();
+    if (annonce) stepStart.appendChild(annonce);
 
     var stepEls = cfg.questions.map(function (q, idx) {
       var n = idx + 1;
@@ -244,6 +261,8 @@
         el('a', { class: 'btn btn--primary', href: 'espace-membres.html', text: '✡ Accéder à l\'Espace Membres' })
       ])
     ]);
+    var annonceApres = blocVisiteur();
+    if (annonceApres) stepSucces.appendChild(annonceApres);
 
     var stepEchec = el('div', { class: 'tuilage__step tuilage__step--hidden', id: 'tuilage-fail' }, [
       el('div', { class: 'tuilage__fail' }, [

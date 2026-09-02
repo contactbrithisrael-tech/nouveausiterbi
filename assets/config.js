@@ -207,6 +207,21 @@ var RBI_CONFIG = {
   tuilage: {
     titre: "Tuilage Maçonnique",
     intro: "Frère, avant d'accéder aux documents réservés, veuillez répondre aux questions de tuilage.",
+    /* Annonce faite AVANT le tuilage du site, et redite après : un Frère
+       d'un autre rite n'a pas besoin des documents réservés, il vient
+       pour comprendre. Lui faire passer un tuilage pour découvrir qu'il
+       y avait une autre porte serait le perdre en route. */
+    visiteur: {
+      titre: "Vous êtes Frère ou Sœur d'un autre rite ?",
+      texte: "Vous n'avez pas besoin de ce tuilage pour venir vous renseigner. " +
+             "Joshua, l'assistant d'étude du Rite, reçoit les visiteurs après " +
+             "un simple tuilage de vive voix, et répond à vos questions sur le " +
+             "Rite : son origine, sa structure, ce qui le distingue du vôtre. " +
+             "Écrivez-lui bonjour, il fait le reste.",
+      bouton: "Poser une question à Joshua",
+      lien: "https://joshua-studio.onrender.com/joshua",
+      note: "Aucun contenu de rituel n'est communiqué à qui n'en a pas reçu les degrés."
+    },
     max_essais: 3,           // Nombre d'essais par question
     questions: [
       {
