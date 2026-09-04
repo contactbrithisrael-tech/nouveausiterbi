@@ -200,14 +200,14 @@ var RBI_CONFIG = {
                  "pas à ceux qui lisent l'hébreu."
         },
         {
-          commande: "/source RBI Tome II p. 45",
+          commande: "/rbi 21 p. 12",
           titre: "Un ouvrage du Rite, à sa page",
-          texte: "Réservé aux membres, et à leur degré seul. C'est la " +
-                 "citation qui engage le plus : une erreur sur la Genèse " +
-                 "se vérifie partout, une erreur sur le rituel d'un " +
-                 "degré ne se vérifie nulle part ailleurs. Le mot RBI " +
-                 "dit « l'ouvrage d'ici », quand un même titre peut " +
-                 "désigner un traité et le livre qui le commente."
+          texte: "Le corpus est rangé par degré : donnez le degré et la " +
+                 "page, c'est la forme la plus courte — le titre marche " +
+                 "aussi. Réservé aux membres, et à leur degré seul. " +
+                 "C'est la citation qui engage le plus : une erreur sur " +
+                 "la Genèse se vérifie partout, une erreur sur le rituel " +
+                 "d'un degré ne se vérifie nulle part ailleurs."
         },
         {
           commande: "/quiz    /quiz 3",
