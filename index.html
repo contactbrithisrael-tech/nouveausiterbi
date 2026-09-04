@@ -3,11 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Icônes de l'onglet et de l'écran d'accueil. Le motif est le triangle
+       et la ménorah du sceau : le sceau entier devient illisible en dessous
+       de 32px, ce détail reste reconnaissable jusqu'à 16px. -->
+  <link rel="icon" href="/assets/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="icon" href="/assets/favicon-16.png" sizes="16x16" type="image/png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+  <meta name="theme-color" content="#080808">
   <title>Rite Brith Israël – Rite Maçonnique Kabbalistique de 33 Degrés</title>
   <meta name="description" content="Rite maçonnique d'inspiration hébraïque et kabbalistique à 33 degrés, ouvert à tous sans condition d'origine ni de religion. Filiation, traités et vocabulaire expliqués sans emphase.">
   <meta property="og:title"       content="Rite Brith Israël">
   <meta property="og:description" content="Rite maçonnique d'inspiration hébraïque et kabbalistique à 33 degrés, ouvert à tous.">
-  <meta property="og:url"         content="https://www.brith-israel.org">
+  <meta property="og:url"         content="https://www.brith-israel.org/">
   <!-- SEO complémentaire -->
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://www.brith-israel.org/">
@@ -67,6 +74,10 @@
 </script>
   <link rel="stylesheet" href="assets/style.css?v=20260902b">
   <link rel="preconnect" href="https://fonts.googleapis.com">
+  <!-- Les fichiers de police viennent de gstatic, pas de googleapis :
+       sans cette seconde ligne, le preconnect ne sert qu'a moitie.
+       crossorigin est obligatoire, une police se charge en anonyme. -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
 </head>
 <body>
