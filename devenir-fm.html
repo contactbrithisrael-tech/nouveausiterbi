@@ -60,7 +60,9 @@
 <a href="index.html" style="position:fixed;top:1rem;left:1rem;z-index:999;color:#c9a84c;font-family:Georgia,serif;font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;border:1px solid rgba(201,168,76,.4);padding:.4rem .9rem;background:rgba(13,13,13,.9);text-decoration:none;">← Accueil</a>
 
 <div class="hero">
-  <img id="hero-seal" class="header-logo" src="" alt="Sceau RBI">
+  <!-- Pas de src="" : un src vide se résout à l'URL de la page et la fait
+       redemander comme image. Sans attribut, l'élément n'émet aucune requête. -->
+  <img id="hero-seal" class="header-logo" alt="Sceau RBI">
   <span class="hero__etoile">✡</span>
   <h1 class="hero__titre">Devenir Franc-Maçon</h1>
   <p class="hero__sous">Au sein du Rite Brith Israël</p>

@@ -1210,7 +1210,9 @@
   <!-- TOME I -->
   <div class="livre-carte">
     <div class="livre-carte__cover">
-      <img id="cover-tome1-membres" src="" alt="L'Alliance de Lumière">
+      <!-- Pas de src="" : un src vide se résout à l'URL de la page et la fait
+           redemander comme image. Sans attribut, l'élément n'émet aucune requête. -->
+      <img id="cover-tome1-membres" alt="L'Alliance de Lumière">
     </div>
     <div class="livre-carte__info">
       <div class="livre-carte__titre">L'Alliance de Lumière</div>
@@ -1227,7 +1229,7 @@
   <!-- GUIDE DE SURVIE -->
   <div class="livre-carte">
     <div class="livre-carte__cover">
-      <img id="cover-guide-membres" src="" alt="Guide de Survie">
+      <img id="cover-guide-membres" alt="Guide de Survie">
     </div>
     <div class="livre-carte__info">
       <div class="livre-carte__titre">Guide de Survie pour Franc-Maçon Désemparé</div>
@@ -1244,7 +1246,7 @@
   <!-- DU PÉTRIN AU COMPAS -->
   <div class="livre-carte">
     <div class="livre-carte__cover">
-      <img id="cover-petrin-membres" src="" alt="Du Pétrin au Compas">
+      <img id="cover-petrin-membres" alt="Du Pétrin au Compas">
     </div>
     <div class="livre-carte__info">
       <div class="livre-carte__titre">Du Pétrin au Compas</div>

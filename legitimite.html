@@ -133,7 +133,9 @@
 <a href="index.html" class="retour">← Accueil</a>
 
 <div class="hero">
-  <img id="hero-seal" class="hero__logo" src="" alt="Sceau du Rite Brith Israël">
+  <!-- Pas de src="" : un src vide se résout à l'URL de la page et la fait
+       redemander comme image. Sans attribut, l'élément n'émet aucune requête. -->
+  <img id="hero-seal" class="hero__logo" alt="Sceau du Rite Brith Israël">
   <h1 class="hero__titre">Légitimité, filiation et vocabulaire</h1>
   <p class="hero__sous">Ce sur quoi le Rite s'appuie — et ce qu'il ne prétend pas être</p>
   <div class="sep"></div>
