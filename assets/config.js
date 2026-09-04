@@ -165,6 +165,71 @@ var RBI_CONFIG = {
                "il dit quoi retravailler, où, et à quel grade."
       }
     ],
+    /* Le mode d'emploi est SUR LE SITE et pas seulement dans /aide :
+       une commande que personne ne connaît n'existe pas, et /aide ne se
+       tape que par ceux qui savent déjà qu'il y a quelque chose à
+       chercher. Des exemples réels, pas une liste de commandes — on
+       apprend une syntaxe en la voyant employée. */
+    modeEmploi: {
+      titre: "Comment s'en servir",
+      intro: "Il suffit d'écrire. Aucune commande n'est nécessaire pour " +
+             "poser une question, se présenter ou demander à Joshua de " +
+             "reprendre depuis le début. Les commandes ne servent qu'à " +
+             "des choses précises — et une seule mérite d'être connue " +
+             "de tous : celle qui ouvre les textes.",
+      entrees: [
+        {
+          commande: "/source Genèse 1:1",
+          titre: "Le texte juif, tel quel",
+          texte: "Joshua va le chercher chez Sefaria et vous rend " +
+                 "l'hébreu, le français et le lien. Vous vérifiez au " +
+                 "lieu de le croire sur parole. Les livres se nomment " +
+                 "comme vous en avez l'habitude : Genèse ou Bereshit, " +
+                 "Psaumes ou Tehillim, Sanhédrin ou Sanhedrin, Pirke " +
+                 "Avoth ou Pirkei Avot. Ces textes sont publics — nul " +
+                 "besoin d'être connecté."
+        },
+        {
+          commande: "/source+ Bereshit 1:1",
+          titre: "Avec la prononciation",
+          texte: "Le même passage, avec l'hébreu écrit en lettres " +
+                 "latines sous le texte : « bereichit bara élohim èt " +
+                 "hachamayim ve'èt ha'arets ». Pour dire le verset " +
+                 "quand on ne déchiffre pas l'alphabet. C'est un peu " +
+                 "plus long à venir, d'où le signe + : on ne l'impose " +
+                 "pas à ceux qui lisent l'hébreu."
+        },
+        {
+          commande: "/source RBI Tome II p. 45",
+          titre: "Un ouvrage du Rite, à sa page",
+          texte: "Réservé aux membres, et à leur degré seul. C'est la " +
+                 "citation qui engage le plus : une erreur sur la Genèse " +
+                 "se vérifie partout, une erreur sur le rituel d'un " +
+                 "degré ne se vérifie nulle part ailleurs. Le mot RBI " +
+                 "dit « l'ouvrage d'ici », quand un même titre peut " +
+                 "désigner un traité et le livre qui le commente."
+        },
+        {
+          commande: "/quiz    /quiz 3",
+          titre: "Se faire interroger",
+          texte: "Le questionnaire d'instruction de votre degré, ou " +
+                 "celui d'un grade déjà reçu qu'on veut retravailler. " +
+                 "Joshua corrige chaque réponse avec sa source et " +
+                 "délivre une attestation en cas de réussite."
+        },
+        {
+          commande: "/aide",
+          titre: "Tout le reste",
+          texte: "Inscription, connexion, tuilage des visiteurs, " +
+                 "coordonnées au secrétariat, attestations, mot de " +
+                 "passe. La liste complète, à tout moment."
+        }
+      ],
+      note: "Sous chaque passage, Joshua rappelle sefarim.fr — la " +
+            "traduction du Rabbinat. Une traduction reste un choix : " +
+            "vous devez pouvoir aller voir ailleurs sans le demander."
+    },
+
     pourquoi: {
       titre: "Pourquoi une intelligence artificielle ?",
       paragraphes: [
