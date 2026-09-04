@@ -94,11 +94,12 @@
     <img id="hero-seal" alt="Sceau du Rite Brith Israël" class="hero__seal-img"
          width="280" height="280" decoding="async">
   </div>
-  <!-- H1 SEO — invisible à l'écran, lu par Google -->
-<h1 style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);">
-  Rite Brith Israël — Rite Maçonnique Kabbalistique à 33 Degrés
-</h1>
-<h1 class="hero__title" id="hero-title"></h1>
+  <!-- Un seul h1, et il porte le titre visible. Le contenu est celui que
+       app.js reconstruit depuis assets/config.js (hero.titre_fr et
+       hero.titre_he) : il est écrit ici pour que la page servie ne présente
+       pas un titre vide à un lecteur d'écran ou à un robot qui n'exécute pas
+       le script. app.js le réécrit ensuite à l'identique. -->
+  <h1 class="hero__title" id="hero-title"><span class="hero__title-fr">Rite Brith Israël®</span><span class="hero__title-he" dir="rtl">ברית ישראל</span></h1>
   <p class="hero__subtitle" id="hero-subtitle"></p>
   <div class="hero__cta" id="hero-cta"></div>
   <div class="hero__ornament"><span class="ornament__star">✦</span><span class="ornament__star ornament__star--sm">✧</span><span class="ornament__star">✦</span></div>
