@@ -124,6 +124,15 @@ var RBI_CONFIG = {
                "c'est la règle qui ne se négocie pas."
       },
       {
+        icone: "📖",
+        titre: "Il ouvre les sources",
+        texte: "Le Rite cite la Torah, le Talmud, le Zohar — mais ne les " +
+               "contient pas. La commande /source va chercher le passage " +
+               "chez Sefaria et le rend tel quel : l'hébreu, le français, " +
+               "et le lien. Vous vérifiez au lieu de le croire sur parole. " +
+               "Avec /source+, la prononciation s'ajoute sous l'hébreu."
+      },
+      {
         icone: "▲",
         titre: "Il parle à votre degré",
         texte: "Un membre du degré N accède aux textes des degrés 1 à N, et " +
