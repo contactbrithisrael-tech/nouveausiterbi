@@ -225,6 +225,33 @@
       });
     }
 
+    /* Le mode d'emploi. Chaque entrée montre la commande TELLE QU'ON
+       LA TAPE : on apprend une syntaxe en la voyant employée, pas en
+       lisant sa grammaire. */
+    var emploi = $('joshua-emploi');
+    if (emploi && cfg.modeEmploi) {
+      emploi.innerHTML = '';
+      emploi.className = 'joshua-emploi reveal';
+      emploi.appendChild(el('h3', { text: cfg.modeEmploi.titre }));
+      if (cfg.modeEmploi.intro) {
+        emploi.appendChild(el('p', { class: 'joshua-emploi__intro',
+                                     text: cfg.modeEmploi.intro }));
+      }
+      var liste = el('dl', { class: 'joshua-emploi__liste' });
+      (cfg.modeEmploi.entrees || []).forEach(function (e) {
+        liste.appendChild(el('dt', {}, [
+          el('code', { text: e.commande }),
+          el('span', { class: 'joshua-emploi__quoi', text: e.titre })
+        ]));
+        liste.appendChild(el('dd', { text: e.texte }));
+      });
+      emploi.appendChild(liste);
+      if (cfg.modeEmploi.note) {
+        emploi.appendChild(el('p', { class: 'joshua-emploi__note',
+                                     text: cfg.modeEmploi.note }));
+      }
+    }
+
     /* Le « pourquoi » est en prose : c'est un raisonnement, et un
        raisonnement découpé en vignettes n'en est plus un. */
     var quoi = $('joshua-pourquoi');
