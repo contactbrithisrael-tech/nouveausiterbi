@@ -86,7 +86,7 @@ ul { list-style: none; }
 
 .hero__seal     { margin-bottom: 2.5rem; animation: fade-up 1.5s ease forwards; opacity: 0; }
 .hero__seal-img { width: 280px; height: 280px; object-fit: contain; border-radius: 0; filter: drop-shadow(0 0 40px rgba(201,168,76,0.5)); margin: 0 auto; display: block; }
-.hero__seal-img[src=""] { display: none; }
+.hero__seal-img[src=""], .hero__seal-img:not([src]) { display: none; }
 
 .hero__title    { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem; opacity: 0; animation: fade-up 1.8s ease forwards; animation-delay: 0.3s; }
 .hero__title-fr { font-family: var(--font-titre); font-size: clamp(2rem,6vw,4rem); color: var(--or); letter-spacing: 0.04em; text-shadow: 0 0 40px rgba(201,168,76,0.3); }

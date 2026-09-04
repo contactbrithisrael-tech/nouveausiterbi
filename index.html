@@ -19,12 +19,17 @@
 <meta property="og:site_name"   content="Rite Brith Israël">
 <meta property="og:locale"      content="fr_FR">
 <meta property="og:image"       content="https://www.brith-israel.org/assets/og-image.jpg">
+<meta property="og:image:width"  content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:type"   content="image/jpeg">
+<meta property="og:image:alt"    content="Sceau du Rite Brith Israël sur fond noir, avec le nom du Rite en français et en hébreu.">
 
 <!-- Twitter/X Cards -->
 <meta name="twitter:card"        content="summary_large_image">
 <meta name="twitter:title"       content="Rite Brith Israël – Rite Maçonnique Kabbalistique 33 Degrés">
 <meta name="twitter:description" content="Site officiel du Rite Brith Israël, rite maçonnique d'inspiration hébraïque et kabbalistique à 33 degrés, ouvert à tous.">
 <meta name="twitter:image"       content="https://www.brith-israel.org/assets/og-image.jpg">
+<meta name="twitter:image:alt"   content="Sceau du Rite Brith Israël sur fond noir, avec le nom du Rite en français et en hébreu.">
 
 <!-- Schema JSON-LD Organisation -->
 <script type="application/ld+json">
@@ -83,7 +88,11 @@
   <div class="hero__stars" id="stars-container"></div>
   <div class="hero__banner" id="hero-banner"></div>
   <div class="hero__seal">
-    <img src="" id="hero-seal" alt="Sceau du Rite Brith Israël" class="hero__seal-img">
+    <!-- Pas de src="" : un src vide se résout à l'URL de la page et la fait
+         redemander comme image. Sans attribut, l'élément n'émet aucune
+         requête. Le sceau est injecté par images.js. -->
+    <img id="hero-seal" alt="Sceau du Rite Brith Israël" class="hero__seal-img"
+         width="280" height="280" decoding="async">
   </div>
   <!-- H1 SEO — invisible à l'écran, lu par Google -->
 <h1 style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);">
