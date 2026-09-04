@@ -259,6 +259,11 @@ ul { list-style: none; }
 .joshua-emploi__liste dt code { font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; font-size: 0.88rem; color: var(--or); background: rgba(201,168,76,0.09); border: 1px solid rgba(201,168,76,0.25); border-radius: 5px; padding: 0.35rem 0.7rem; white-space: pre; }
 .joshua-emploi__quoi    { font-family: var(--font-sous); font-size: 0.82rem; letter-spacing: 0.08em; text-transform: uppercase; color: #aaa; }
 .joshua-emploi__liste dd { margin: 0.7rem 0 0; font-size: 0.95rem; color: #bbb; line-height: 1.8; }
+.joshua-emploi__sources { margin-top: 2.4rem; padding-left: 1.6rem; border-left: 2px solid rgba(201,168,76,0.35); }
+.joshua-emploi__sources h4 { font-family: var(--font-sous); font-size: 0.82rem; letter-spacing: 0.1em; color: var(--or); text-transform: uppercase; margin-bottom: 1rem; }
+.joshua-emploi__sources p { font-size: 0.95rem; color: #bbb; line-height: 1.85; margin-bottom: 1rem; }
+.joshua-emploi__sources p:last-child { margin-bottom: 0; }
+@media (max-width: 600px) { .joshua-emploi__sources { padding-left: 1rem; } }
 .joshua-emploi__note    { margin-top: 2rem; padding-left: 1rem; border-left: 2px solid rgba(201,168,76,0.35); font-size: 0.9rem; color: #999; font-style: italic; line-height: 1.8; }
 @media (max-width: 600px) {
   .joshua-emploi        { margin-top: 2.2rem; }

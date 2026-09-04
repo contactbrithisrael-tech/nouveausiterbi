@@ -246,6 +246,17 @@
         liste.appendChild(el('dd', { text: e.texte }));
       });
       emploi.appendChild(liste);
+      /* Le rôle de chaque source est en PROSE : c'est une hiérarchie
+         d'autorité, et une hiérarchie découpée en vignettes se lit
+         comme une liste d'égaux. */
+      if (cfg.modeEmploi.sources) {
+        var src = el('div', { class: 'joshua-emploi__sources' });
+        src.appendChild(el('h4', { text: cfg.modeEmploi.sources.titre }));
+        (cfg.modeEmploi.sources.paragraphes || []).forEach(function (para) {
+          src.appendChild(el('p', { text: para }));
+        });
+        emploi.appendChild(src);
+      }
       if (cfg.modeEmploi.note) {
         emploi.appendChild(el('p', { class: 'joshua-emploi__note',
                                      text: cfg.modeEmploi.note }));

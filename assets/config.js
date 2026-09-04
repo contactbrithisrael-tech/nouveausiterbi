@@ -225,9 +225,34 @@ var RBI_CONFIG = {
                  "passe. La liste complète, à tout moment."
         }
       ],
-      note: "Sous chaque passage, Joshua rappelle sefarim.fr — la " +
-            "traduction du Rabbinat. Une traduction reste un choix : " +
-            "vous devez pouvoir aller voir ailleurs sans le demander."
+      sources: {
+        titre: "Quatre sources, et laquelle fait autorité",
+        paragraphes: [
+          "Le corpus du Rite, c'est Joshua. Rituels, traités, " +
+          "instructions : sur le Rite, c'est lui qui répond, et rien de " +
+          "ce qui suit n'a autorité là-dessus.",
+
+          "Sefaria rend les textes juifs à leur référence exacte — Torah, " +
+          "Talmud, Zohar. Le Rite s'y réfère sans les contenir, et il en " +
+          "donne parfois une lecture propre : c'est alors la lecture du " +
+          "Rite qui vaut pour le Rite, pas celle du texte reçu.",
+
+          "sefarim.fr publie le Tanakh en français : la traduction du " +
+          "Rabbinat, avec l'hébreu en regard. C'est une édition, établie " +
+          "par des hommes et publiée — elle vaut mieux qu'une traduction " +
+          "de machine, et Joshua la signale sous chaque passage pour " +
+          "qu'on puisse le contredire. Elle n'a pas le Talmud.",
+
+          "torah-ai.org est un service d'étude consacré aux sources " +
+          "juives. Il n'est pas du Rite, il ne parle pas en son nom, et " +
+          "Joshua ne répond jamais à sa place : il l'indique quand la " +
+          "question sort de ce qu'il sait, sans préjuger de la réponse."
+        ]
+      },
+      note: "Une traduction reste un choix. Vous devez pouvoir aller voir " +
+            "ailleurs sans avoir à le demander — c'est pourquoi les deux " +
+            "adresses figurent sous chaque passage, et non dans un coin " +
+            "du mode d'emploi."
     },
 
     pourquoi: {
