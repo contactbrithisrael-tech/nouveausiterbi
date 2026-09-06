@@ -334,6 +334,45 @@ n'est pas pour lui, et cela ne se rattrape pas. Elle vient après.
 C'est le premier arbitrage du mémoire qui ne tranche pas entre deux
 sources, mais entre deux lecteurs.
 
+## 10. Sept degrés ou trente-trois — TRANCHÉ : trente-trois
+
+Signalé par Joshua lui-même le 4 septembre 2026, en cours de
+conversation, et c'est le premier conflit qu'il a trouvé seul :
+
+> Un point à signaler, en pointilleux : le document RBI OVED 1er DEGRÉ
+> COMPLET parle d'un Rite à SEPT degrés, Malkuth à Kether. Cela
+> contredit l'article 6 de la Constitution, qui en fixe trente-trois.
+> Deux textes, deux comptes — je vous les donne tels quels plutôt que
+> de trancher.
+
+**Il a eu raison de le voir, et tort de ne pas trancher.** Sa règle
+ordinaire — rendre les deux versions sans décider — est bonne sur une
+lecture, un symbole, une date de rédaction. Elle ne vaut pas sur ce que
+la Constitution règle.
+
+**L'arbitrage du Souverain Grand Commandeur, le 4 septembre 2026 :**
+trente-trois, et le calcul le montre — **10 + 22 + 1**.
+
+Dix Séphiroth pour les dix premiers degrés. Vingt-deux lettres, d'Aleph
+à Tav, pour les degrés 11 à 32 — les trente-deux voies du Sefer
+Yetsirah, et trente-deux est la valeur de לב, *lev*, le cœur. Puis
+Kether Atziluth, qui n'est pas une trente-troisième voie mais
+l'achèvement des trente-deux.
+
+**Sept ne décrit pas l'échelle du Rite.** Le nombre peut nommer les sept
+Séphiroth inférieures, ou une lecture partielle de l'Arbre — mais pas la
+succession des degrés.
+
+**Ce qui a changé côté Joshua :** le prompt porte désormais la règle
+d'arbitrage. Quand un ouvrage contredit la Constitution sur ce qu'elle
+règle — le nombre des degrés, les trois catégories d'ateliers,
+l'unicité du 33ᵉ —, la Constitution l'emporte et Joshua dit que le
+document se trompe. Il le nomme, pour qu'on le corrige. Sur tout le
+reste, il continue de rendre les deux versions sans décider.
+
+Le cas des sept degrés y est nommé explicitement, pour qu'il ne se
+rejoue pas à chaque conversation.
+
 ## Ce qu'il reste à faire
 
 **Rien du côté du site ni de Joshua : ils sont d'accord avec les
@@ -348,12 +387,13 @@ encore les formes anciennes.
 | Tome III | CHAYIM au 18ᵉ | HARUACH, dit par le Recueil |
 | Recueil — table des lettres | Yod au 11ᵉ, Tav deux fois, KEDEM deux fois, Kaf jamais | Aleph au 11ᵉ, Tav au 32ᵉ |
 | Bible du Rite, Vol. I et II | « le Consistoire » au Volume III | le Rite n'en a pas |
+| RBI OVED 1er DEGRÉ COMPLET, p. 1 | « un Rite à sept degrés, Malkuth à Kether » | trente-trois, article 6 de la Constitution |
 
-**Plus aucune décision n'est en attente.** Les neuf points sont
+**Plus aucune décision n'est en attente.** Les dix points sont
 tranchés, et la Roue comme la carte sont d'accord avec les textes.
 
 ---
 
-*Ce mémoire a été tenu du 1ᵉʳ au 2 septembre 2026. Chaque point y porte
+*Ce mémoire a été tenu du 1ᵉʳ au 4 septembre 2026. Chaque point y porte
 la citation qui l'a tranché, parce qu'une correction dont on a perdu le
 motif finit par être défaite.*
