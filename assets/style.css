@@ -149,6 +149,8 @@ ul { list-style: none; }
 .chef-card__grade--sgc{ background: var(--or); color: var(--noir); font-weight: 700; }
 .chef-card__grade--gma{ background: rgba(201,168,76,0.15); color: var(--or); border: 1px solid rgba(201,168,76,0.3); }
 .chef-card__grade--agm{ background: rgba(201,168,76,0.08); color: var(--or-dark); border: 1px solid rgba(201,168,76,0.2); }
+.chef-card__grade--hon{ background: rgba(201,168,76,0.08); color: var(--or-dark); border: 1px solid rgba(201,168,76,0.2); }
+.chef-card--hon       { border-style: dashed; border-color: rgba(201,168,76,0.28); }
 
 .chef-card__nom   { font-family: var(--font-sous); font-size: 0.95rem; color: var(--or); letter-spacing: 0.06em; margin-bottom: 0.3rem; }
 .chef-card--sgc .chef-card__nom { font-size: 1.1rem; }

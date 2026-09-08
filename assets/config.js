@@ -335,11 +335,11 @@ var RBI_CONFIG = {
         rang:   "agm"
       },
       {
-        nom:    "Laurent NOTARIANNI",
+        nom:    "Valérie ROUME",
         grade:  "32°",
         titre:  "Assistant Grand Maître",
         role:   " Grand Orateur",
-        img_id: "photo-notarianni",
+        img_id: "photo-roume",
         rang:   "agm"
       },
       {
@@ -351,6 +351,15 @@ var RBI_CONFIG = {
         // À sa demande, pas de photographie : silhouette anonyme.
         img_data: RBI_AVATAR_ANONYME,
         rang:   "agm"
+      },
+      /* ── Membre d'honneur ── */
+      {
+        nom:    "Laurent NOTARIANNI",
+        grade:  "32°",
+        titre:  "Membre Fondateur",
+        role:   "Membre d'honneur Ad Vitam",
+        img_id: "photo-notarianni",
+        rang:   "hon"
       }
     ]
   },
