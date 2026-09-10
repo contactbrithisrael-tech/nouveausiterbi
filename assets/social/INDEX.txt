@@ -1,0 +1,18 @@
+Visuels de promotion — Rite Brith Israël
+Régénérer : node outils/generer-visuels.mjs
+Ne pas retoucher à la main : toute modification est écrasée.
+
+  citation-perfection-paysage.png
+  citation-perfection-carre.png
+  citation-ombres-paysage.png
+  citation-ombres-carre.png
+  citation-verite-paysage.png
+  citation-verite-carre.png
+  citation-loge-paysage.png
+  citation-loge-carre.png
+  auteur-parcours-paysage.png
+  auteur-parcours-carre.png
+  livre-guide-paysage.png
+  livre-guide-carre.png
+  livre-petrin-paysage.png
+  livre-petrin-carre.png

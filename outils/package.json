@@ -1,0 +1,12 @@
+{
+  "name": "rbi-outils",
+  "private": true,
+  "type": "module",
+  "description": "Outils hors-site du Rite Brith Israël. Volontairement isolé à la racine : un package.json à la racine du dépôt ferait croire à Cloudflare Pages qu'il y a une étape de compilation, et le déploiement du site tomberait.",
+  "scripts": {
+    "visuels": "node generer-visuels.mjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.56.1"
+  }
+}
