@@ -47,6 +47,17 @@ CREATE TABLE planches_tracees (
   prochaine_tenue_id INTEGER REFERENCES tenues(id) ON DELETE SET NULL,
   observations  TEXT,
 
+  -- Le procès-verbal n'est pas tenu par un Secrétaire : il n'y en a
+  -- pas dans ce Rite. Règlement Général : « le procès-verbal de chaque
+  -- tenue est rédigé par ROTATION entre les membres présents, sous la
+  -- responsabilité du Vénérable Maître, et lu et approuvé à
+  -- l'ouverture de la tenue suivante. »
+  --
+  -- D'où deux colonnes distinctes : qui a tenu la plume ce soir-là, et
+  -- quel compte l'a saisie. Le tour de rôle se calcule à partir des
+  -- planches précédentes — c'est ce qui évite qu'il retombe toujours
+  -- sur le même.
+  redacteur_id  INTEGER REFERENCES membres(id) ON DELETE SET NULL,
   redigee_par   INTEGER REFERENCES utilisateurs(id) ON DELETE SET NULL,
   redigee_le    TEXT,
   soumise_le    TEXT,

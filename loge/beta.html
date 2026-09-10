@@ -1,3 +1,4 @@
+<meta charset="utf-8">
 <title>Bêta Bereshit</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
@@ -214,8 +215,9 @@ legend{font-family:var(--titre);font-size:15px;font-weight:600;margin-bottom:12p
 <main>
   <p class="note"><b>Ceci est un bêta.</b> Rien n'est envoyé, rien n'est encaissé,
   aucune donnée ne quitte votre navigateur — vos essais sont enregistrés sur cet
-  appareil seulement, et le bouton en bas de page les efface. Les noms sont ceux
-  de vos documents ; les montants sont inventés, faute de connaître votre barème.</p>
+  appareil seulement, et le bouton en bas de page les efface. Noms, degrés, charges
+  et montants viennent tous de la Constitution, du Règlement Général et de vos
+  corrections. Rien n'y est inventé.</p>
 
   <section id="v-tableau"></section>
   <section id="v-fiche" hidden></section>
@@ -246,30 +248,30 @@ legend{font-family:var(--titre);font-size:15px;font-weight:600;margin-bottom:12p
 'use strict';
 const CLE = 'rbi-beta-v1';
 
+/* Constitution V9, article 9quater : « Chaque Loge est dirigée par
+   trois Officiers, et trois seulement ». Pas d'Orateur — le Premier
+   Surveillant en assume la fonction. Pas de Secrétaire — le PV est
+   tenu par rotation. Pas de Trésorier, pas d'Hospitalier en Loge. */
 const OFFICES = {
-  venerable:{l:'Vénérable Maître',a:'VM∴',r:1}, premier_surveillant:{l:'Premier Surveillant',a:'1er Surv∴',r:2},
-  deuxieme_surveillant:{l:'Second Surveillant',a:'2d Surv∴',r:3}, orateur:{l:'Orateur',a:'Or∴',r:4},
-  secretaire:{l:'Secrétaire',a:'Secr∴',r:5}, tresorier:{l:'Trésorier',a:'Trés∴',r:6},
-  hospitalier:{l:'Hospitalier',a:'Hosp∴',r:7},
-  maitre_banquets:{l:'Maître des Banquets',a:'MDB∴',r:10}
+  venerable:{l:'Vénérable Maître',a:'VM∴',h:'הנשיא',r:1},
+  premier_surveillant:{l:'Premier Surveillant',a:'1er Surv∴',h:'השומר ראשון',r:2},
+  second_surveillant:{l:'Second Surveillant',a:'2d Surv∴',h:'השומר שני',r:3}
 };
-const REAA = 'M∴M∴ du Rite Écossais Ancien & Accepté';
 
 function neuf(){ return {
   membres:[
-    {id:1,nom:"DARMON",prenoms:"Mickaël",grade:"33°",dignite:"Souverain Grand Commandeur — Fondateur du Rite",office:null,statut:"actif",email:"contact.brith.israel@gmail.com",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:null,qualite:"",du:300,regle:150},
-    {id:2,nom:"RAUX",prenoms:"Jean-Michel",grade:"32°",dignite:"Grand Maître Adjoint — Lieutenant Souverain Grand Commandeur, Grand Trésorier",office:"venerable",statut:"actif",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:null,qualite:"",du:300,regle:300},
-    {id:3,nom:"HABERT",prenoms:"Martine",grade:"32°",dignite:"Grand Maître Adjoint — Grand Secrétaire",office:"secretaire",statut:"actif",email:"habertmartine@gmail.com",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:null,qualite:"",du:300,regle:300},
-    {id:4,nom:"CARILLO",prenoms:"Jean-Louis",grade:"32°",dignite:"Grand Maître Adjoint — Grand Expert",office:null,statut:"actif",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:null,qualite:"",du:300,regle:0},
-    {id:5,nom:"BUHLER",prenoms:"Didier",grade:"32°",dignite:"Assistant Grand Maître — Grand Chancelier",office:"orateur",statut:"actif",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:null,qualite:"",du:300,regle:300},
-    {id:6,nom:"ROUME",prenoms:"Valérie",grade:"32°",dignite:"Assistant Grand Maître — Grand Orateur",office:"maitre_banquets",statut:"actif",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:null,qualite:"",du:300,regle:0},
-    {id:7,nom:"JOURDAN",prenoms:"Pierre",grade:"32°",dignite:"Assistant Grand Maître — Grand Hospitalier",office:"hospitalier",statut:"actif",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:null,qualite:"",du:300,regle:0},
-    {id:8,nom:"NOTARIANNI",prenoms:"Laurent",grade:"32°",dignite:"Membre Fondateur — Membre d’honneur Ad Vitam",office:null,statut:"honoraire",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:null,qualite:"",du:0,regle:0},
-    {id:9,nom:"ALLAN",prenoms:"Caroline",grade:"",dignite:"",office:null,statut:"actif",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"2026-09-07",degre:1,qualite:"",du:300,regle:0},
-    {id:10,nom:"GASMI",prenoms:"Sam",grade:"",dignite:"",office:null,statut:"candidat",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:null,qualite:"",du:0,regle:0},
-    {id:11,nom:"NAKACHE",prenoms:"Philippe",grade:"",dignite:"",office:null,statut:"candidat",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:null,qualite:"",du:0,regle:0},
-    {id:12,nom:"PETIT",prenoms:"Sophie",grade:"",dignite:"",office:null,statut:"candidat",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:null,qualite:"",du:0,regle:0},
-    {id:13,nom:"SAFFARO",prenoms:"Jean-Marc",grade:"",dignite:"",office:null,statut:"candidat",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:null,qualite:"",du:0,regle:0}
+    {id:1,nom:"DARMON",prenoms:"Mickaël",grade:"33°",dignite:"Souverain Grand Commandeur — Fondateur, Gardien du Rite",office:null,statut:"actif",email:"contact.brith.israel@gmail.com",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:3,qualite:"",du:480,regle:240},
+    {id:2,nom:"RAUX",prenoms:"Jean-Michel",grade:"32°",dignite:"Lieutenant Souverain Grand Commandeur, Grand Maître Adjoint, Grand Trésorier",office:"venerable",statut:"actif",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:3,qualite:"",du:480,regle:480},
+    {id:3,nom:"HABERT",prenoms:"Martine",grade:"32°",dignite:"Grand Maître Adjoint, Grand Secrétaire",office:"premier_surveillant",statut:"actif",email:"habertmartine@gmail.com",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:3,qualite:"",du:480,regle:480},
+    {id:4,nom:"CARILLO",prenoms:"Jean-Louis",grade:"32°",dignite:"Grand Maître Adjoint, Grand Expert",office:"second_surveillant",statut:"actif",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:3,qualite:"",du:480,regle:0},
+    {id:5,nom:"BUHLER",prenoms:"Didier",grade:"32°",dignite:"Assistant Grand Maître, Grand Chancelier",office:null,statut:"actif",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:3,qualite:"",du:480,regle:480},
+    {id:6,nom:"ROUME",prenoms:"Valérie",grade:"32°",dignite:"Assistant Grand Maître, Grand Orateur",office:null,statut:"actif",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:3,qualite:"",du:480,regle:0},
+    {id:7,nom:"JOURDAN",prenoms:"Pierre",grade:"32°",dignite:"Assistant Grand Maître, Grand Hospitalier, Grand Maître des Cérémonies",office:null,statut:"actif",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:3,qualite:"",du:480,regle:0},
+    {id:8,nom:"NOTARIANNI",prenoms:"Laurent",grade:"32°",dignite:"Membre Fondateur — Membre d’honneur Ad Vitam",office:null,statut:"honoraire",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:3,qualite:"",du:0,regle:0},
+    {id:9,nom:"GASMI",prenoms:"Sam",grade:"",dignite:"",office:null,statut:"actif",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:3,qualite:"",du:480,regle:0},
+    {id:10,nom:"SAFFARO",prenoms:"Jean-Marc",grade:"",dignite:"",office:null,statut:"actif",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:2,qualite:"",du:480,regle:0},
+    {id:11,nom:"ALLAN",prenoms:"Caroline",grade:"",dignite:"",office:null,statut:"actif",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"2026-09-07",degre:1,qualite:"",du:480,regle:0},
+    {id:12,nom:"NAKACHE",prenoms:"Philippe",grade:"",dignite:"",office:null,statut:"candidat",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:null,qualite:"",du:0,regle:0}
   ],
   presences:{}, agapes:{}, convoquee:false, journal:[],
   tenue:{
@@ -443,13 +445,15 @@ function vueTresor(){
     </tr>`).join('');
   $('#v-tresor').innerHTML = `
     <div class="bloc"><header><div><h2>Exercice 2026-2027</h2>
-      <p class="sous">Barème fictif : 60 € pour l'Obédience, 120 € pour la Loge,
-        20 € pour le Tronc. Encaissez pour voir les soldes bouger.</p></div></header>
+      <p class="sous">Constitution et Règlement Général : 25 € par mois, majorés de
+        15 € au titre des agapes, soit <b>40 € par mois du 1er janvier au 31 décembre</b>
+        — 480 € sur l'année. Droits d'initiation et d'affiliation : 150 €. Les membres
+        d'honneur ad vitam en sont exemptés.</p></div></header>
     <div class="tuiles">
       <div class="tuile souligne"><div class="n">${euro(reg)}</div><div class="l">Encaissé</div></div>
       <div class="tuile"><div class="n">${euro(du-reg)}</div><div class="l">Reste à recouvrer</div></div>
-      <div class="tuile"><div class="n">${euro(app.length*60)}</div><div class="l">À reverser à l'Obédience</div></div>
-      <div class="tuile"><div class="n">${pierrePlate(app.length*20)}</div><div class="l">Tronc de la Veuve</div></div>
+      <div class="tuile"><div class="n">${euro(app.length*180)}</div><div class="l">Part des agapes · 15 €/mois</div></div>
+      <div class="tuile"><div class="n">${app.length}</div><div class="l">Membres appelés</div></div>
     </div></div>
     <div class="bloc"><div class="enveloppe"><table class="tab">
       <thead><tr><th>Sœur ou Frère</th><th class="num">Dû</th><th class="num">Réglé</th>
@@ -485,7 +489,7 @@ function emargement(){
    laisser une virgule orpheline derrière un nom. */
 function qualiteImprimee(x){
   if (x.degre) return DEGRES[x.degre].replace(/^l[ea] /,'') + ' du Rite Brith Israël';
-  if (x.grade) return x.grade + (x.dignite ? ', ' + x.dignite : '');
+  if (x.grade) return x.grade + ' du Rite Brith Israël' + (x.dignite ? ', ' + x.dignite : '');
   return x.qualite || '';
 }
 
@@ -501,17 +505,19 @@ function planche(){
   };
   const vm = E.membres.find(x=>x.office==='venerable');
   const tronc = pierrePlate(pres.length * 7.5);   // don libre, montant d'exemple
-  return `${ENTETE}<h1>Planche à Tracer du lundi 7 septembre 2026<br>6026 A∴V∴L∴</h1>
-  <p>Dans un lieu très éclairé, très pur, le septième jour du 7<sup>ème</sup> mois de
-     l'An de Vraie Lumière 6026, s'est réunie la R∴L∴ BERESHIT n°00, à l'O∴ de
-     l'Alliance, au Temple « Le Venaqui », à Ventabren.</p>
+  const T = E.tenue;
+  return `${ENTETE}<h1>Planche à Tracer du ${dateLongue(T.date)}<br>${avl(T.date)} A∴V∴L∴</h1>
+  <p>Dans un lieu très éclairé, très pur, le ${new Date(T.date+'T12:00:00').getDate()}<sup>ème</sup>
+     jour du ${moisMac(T.date)}<sup>ème</sup> mois de l'An de Vraie Lumière ${avl(T.date)},
+     s'est réunie la R∴L∴ BERESHIT n°00, à l'O∴ de l'Alliance, au Temple
+     ${ech(T.lieuNom)}, à ${ech(T.lieuVille)}.</p>
   <div class="rub">Sont présents les SS∴ et FF∴ Membres de la Loge</div>
   <ul style="list-style:none">${pres.length?pres.map(li).join(''):'<li><i>Aucun présent annoncé.</i></li>'}</ul>
   <div class="rub">Se sont fait excuser</div>
   <ul style="list-style:none">${exc.length?exc.map(li).join(''):'<li><i>Aucun.</i></li>'}</ul>
   <p>Après une allocution de bienvenue, le VM∴ ${vm?ech(vm.prenoms+' '+vm.nom):'…'} ouvre les
-     travaux sous les auspices du Suprême Conseil Mondial du Rite Brith Israël, au premier
-     degré de l'Apprenti Oved du Rite Brith Israël.</p>
+     travaux sous les auspices du Suprême Conseil Mondial du Rite Brith Israël, au
+     ${RANGS[T.degre]} degré de ${ech(DEGRES[T.degre])} du Rite Brith Israël.</p>
   ${E.odj.slice(2,6).map(o=>`<div class="pt">${ech(o.t)}</div>
      <div class="vide">Le récit de ce point — écrit par le Secrétaire, par personne d'autre.</div>`).join('')}
   <p>Les colonnes ayant résonné de ces précieuses paroles, l'ordre du jour étant épuisé,
@@ -519,8 +525,12 @@ function planche(){
   <p>S'ensuit une chaleureuse et fraternelle chaîne d'union ; le sac aux propositions
      revient pur et sans attaches ; le Tronc de la Veuve est alourdi d'une pierre plate
      de ${tronc}.</p>
-  <div class="rub">Signatures des Officiers</div>
-  ${['venerable','orateur','secretaire'].map(c=>{const m=E.membres.find(x=>x.office===c);
+  <p style="margin-top:6mm;font-size:10pt;color:#5c5346">Procès-verbal rédigé par
+     rotation entre les membres présents, sous la responsabilité du Vénérable Maître,
+     et lu et approuvé à l'ouverture de la tenue suivante — Règlement Général,
+     en l'absence de Secrétaire distinct.</p>
+  <div class="rub">Signatures du Collège des Trois Lumières</div>
+  ${['venerable','premier_surveillant','second_surveillant'].map(c=>{const m=E.membres.find(x=>x.office===c);
     return `<p style="margin-top:9mm">${ech(OFFICES[c].l)} — <i>${m?ech(m.prenoms+' '+m.nom):''}</i>
       <div class="sig" style="margin-top:8mm"></div></p>`;}).join('')}`;
 }
@@ -617,7 +627,10 @@ function dateLongue(iso){
   const d = new Date(iso+'T12:00:00');
   return d.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
 }
-function avl(iso){ return iso ? Number(iso.slice(0,4)) + 4000 : '…'; }
+/* Constitution V9 : « L'An de la Vraie Lumière 5786 (2026 de l'ère
+   vulgaire) » — année hébraïque, +3760. Le +4000 de la planche à
+   tracer est un reste du Rite Écossais. */
+function avl(iso){ return iso ? Number(iso.slice(0,4)) + 3760 : '…'; }
 /* mars = 1er mois — NON CONFIRMÉ par le Rite. */
 function moisMac(iso){ return ((new Date(iso+'T12:00:00').getMonth()+10)%12)+1; }
 
@@ -825,7 +838,7 @@ function vueFiche(){
           <option value=""${!x.degre?' selected':''}>— aucun —</option>
           ${[1,2,3].map(d=>`<option value="${d}"${+x.degre===d?' selected':''}>${DEGRES[d]}</option>`).join('')}
         </select><span class="aide">${x.degre?ech(DEGRES[x.degre].replace(/^l[ea] /,'')+' du Rite Brith Israël'):'S’imprimera avec la qualité d’origine'}</span></div>
-      ${fChamp(x,'qualite','Qualité d’un autre rite','text','« M∴M∴ du Rite Écossais Ancien & Accepté »')}
+      ${fChamp(x,'qualite','Qualité d’un autre Ordre','text','Pour un Maçon affilié venant d’ailleurs')}
     </div></fieldset>
 
     <fieldset><legend>Charges</legend><div class="rangee">
@@ -840,7 +853,7 @@ function vueFiche(){
     </div></fieldset>
 
     <fieldset><legend>Trésorerie ${new Date().getFullYear()}</legend><div class="rangee">
-      ${fChamp(x,'du','Capitation due (€)','number','25 € × 12 tenues')}
+      ${fChamp(x,'du','Dû sur l’année (€)','number','40 € × 12 mois = 480 €')}
       ${fChamp(x,'regle','Déjà réglé (€)','number')}
       <div class="champ"><label>Reste</label>
         <input value="${reste ? reste.toLocaleString('fr-FR')+' €' : 'Soldé'}" readonly

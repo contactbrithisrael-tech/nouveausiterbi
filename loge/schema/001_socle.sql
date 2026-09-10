@@ -155,21 +155,40 @@ CREATE TABLE offices_types (
   CHECK (signe_planche IN (0,1) AND actif IN (0,1))
 );
 
--- Charges usuelles, posées pour que le logiciel démarre. Le Rite les
--- corrige, les renomme et en ajoute — c'est le but de cette table.
+-- Les trois Offices de la Loge, et trois seulement. Constitution V9,
+-- article 9quater : « Chaque Loge est dirigée par trois Officiers, et
+-- trois seulement ». Ils forment le Collège des Trois Lumières
+-- (שלוש האורות — Shalosh HaOrot).
+--
+-- ► CE QUE LA CONSTITUTION EXCLUT EXPRESSÉMENT : « pas de Grand
+--   Hospitalier en Loge (fonction au niveau du Suprême Conseil), pas
+--   d'Orateur distinct (le 1er Surveillant assume cette fonction), pas
+--   de Secrétaire distinct (PV tenus par rotation), pas de Trésorier
+--   distinct ». J'avais d'abord semé douze charges tirées de l'usage
+--   maçonnique courant : elles n'existent pas dans ce Rite.
+--
+-- ► Les charges du SUPRÊME CONSEIL — Grand Secrétaire, Grand Trésorier,
+--   Grand Chancelier, Grand Orateur, Grand Expert, Grand Hospitalier —
+--   sont d'un autre ordre : elles s'attachent à l'atelier de type
+--   « obedience », pas à une loge symbolique.
 INSERT INTO offices_types (code, libelle, abreviation, rang, signe_planche) VALUES
-  ('venerable',            'Vénérable Maître',       'VM∴',    1, 1),
-  ('premier_surveillant',  'Premier Surveillant',    '1er Surv∴', 2, 0),
-  ('deuxieme_surveillant', 'Second Surveillant',     '2d Surv∴',  3, 0),
-  ('orateur',              'Orateur',                'Or∴',    4, 1),
-  ('secretaire',           'Secrétaire',             'Secr∴',  5, 1),
-  ('tresorier',            'Trésorier',              'Trés∴',  6, 0),
-  ('hospitalier',          'Hospitalier',            'Hosp∴',  7, 0),
-  ('expert',               'Expert',                 'Exp∴',   8, 0),
-  ('maitre_ceremonies',    'Maître des Cérémonies',  'MC∴',    9, 0),
-  ('maitre_banquets',      'Maître des Banquets',    'MDB∴',  10, 0),
-  ('couvreur',             'Couvreur',               'Couv∴', 11, 0),
-  ('archiviste',           'Archiviste',             'Arch∴', 12, 0);
+  ('venerable',           'Vénérable Maître',    'VM∴',       1, 1),
+  ('premier_surveillant', 'Premier Surveillant', '1er Surv∴', 2, 1),
+  ('second_surveillant',  'Second Surveillant',  '2d Surv∴',  3, 1);
+
+-- Charges du Suprême Conseil, distinctes de celles des Loges.
+INSERT INTO offices_types (code, libelle, abreviation, rang, signe_planche) VALUES
+  ('sgc',              'Souverain Grand Commandeur',        'SGC∴',   10, 0),
+  ('lt_sgc',           'Lieutenant Souverain Grand Commandeur','LtSGC∴',11, 0),
+  ('grand_maitre_adj', 'Grand Maître Adjoint',              'GMA∴',   12, 0),
+  ('assistant_gm',     'Assistant Grand Maître',            'AGM∴',   13, 0),
+  ('grand_secretaire', 'Grand Secrétaire',                  'GSecr∴', 14, 0),
+  ('grand_tresorier',  'Grand Trésorier',                   'GTrés∴', 15, 0),
+  ('grand_chancelier', 'Grand Chancelier',                  'GChanc∴',16, 0),
+  ('grand_orateur',    'Grand Orateur',                     'GOr∴',   17, 0),
+  ('grand_expert',     'Grand Expert',                      'GExp∴',  18, 0),
+  ('grand_hospitalier','Grand Hospitalier',                 'GHosp∴', 19, 0),
+  ('grand_mc',         'Grand Maître des Cérémonies',       'GMC∴',   20, 0);
 
 CREATE TABLE offices (
   id            INTEGER PRIMARY KEY,

@@ -11,10 +11,24 @@
 ════════════════════════════════════════════════════════════════════ */
 
 /* ── L'An de Vraie Lumière ──────────────────────────────────────────
-   Source : planche à tracer de Bereshit, « l'AVL 6025 » pour 2025.
-   L'année vulgaire plus quatre mille.                                */
+   Source : Constitution V9 et Règlement Général — « L'An de la Vraie
+   Lumière 5786 (2026 de l'ère vulgaire) ». C'est l'année HÉBRAÏQUE,
+   soit l'année vulgaire plus 3760.
+
+   ► J'avais d'abord écrit +4000, d'après la planche à tracer de
+     Bereshit qui porte « AVL 6025 » pour 2025. C'était faux : +4000
+     est la convention du Rite Écossais, et ce 6025 est un reste du
+     modèle recopié, au même titre que la R∴L∴ Nostradamus qui y
+     figurait encore. La Constitution fait foi.
+
+   ► RESTE À TRANCHER : l'année hébraïque ne change pas au 1er janvier
+     mais à Roch Hachana, en septembre ou octobre. Une tenue du
+     7 septembre 2026 relève-t-elle de 5786 ou de 5787 ? Le calcul
+     ci-dessous ignore la question et ajoute 3760 à l'année civile,
+     ce qui donne le résultat des documents fournis. À confirmer par
+     le Rite avant toute impression officielle.                       */
 export function avl(anneeVulgaire) {
-  return anneeVulgaire + 4000;
+  return anneeVulgaire + 3760;
 }
 
 /* ── La pierre plate du Tronc de la Veuve ───────────────────────────
