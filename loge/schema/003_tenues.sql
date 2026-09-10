@@ -45,10 +45,28 @@ CREATE TABLE nomenclature_degres (
 
 CREATE UNIQUE INDEX idx_nomenclature ON nomenclature_degres(rite, degre);
 
--- Seule ligne attestée par les documents fournis (matrice de
--- convocation du 7 septembre 2026). Le reste est à compléter.
-INSERT INTO nomenclature_degres (rite, degre, nom, nom_feminin) VALUES
-  ('RBI', 1, 'Apprenti-Boneh', 'Apprentie-Boneh');
+-- Les trois degrés symboliques, donnés par le Souverain Grand
+-- Commandeur. Les degrés 4 à 33 restent à nommer.
+--
+-- ► AVERTISSEMENT : la matrice de convocation du 7 septembre 2026
+--   imprime « au Premier Degré — Apprenti-Boneh ». D'après la
+--   nomenclature ci-dessous, Boneh est le nom du DEUXIÈME degré. La
+--   convocation annonce donc une initiation au premier degré sous le
+--   nom du second. C'est la convocation qui est fautive, pas cette
+--   table — et c'est très exactement le genre d'erreur que cette
+--   table existe pour rendre impossible : le logiciel n'écrira plus
+--   jamais un nom de degré à la main.
+--
+-- Les formes féminines ne sont renseignées que là où un document les
+-- atteste : la convocation écrit « notre Première Apprentie ». Pour
+-- Boneh et Adon, elles restent à trancher par le Rite.
+--
+-- L'hébreu est transcrit d'après le sens usuel de ces trois mots
+-- (ouvrier, bâtisseur, maître) — à confirmer par le Rite.
+INSERT INTO nomenclature_degres (rite, degre, nom, nom_feminin, abreviation, nom_hebreu) VALUES
+  ('RBI', 1, 'Apprenti Oved',  'Apprentie Oved', 'App∴ O∴', 'עובד'),
+  ('RBI', 2, 'Compagnon Boneh', NULL,            'Comp∴ B∴', 'בונה'),
+  ('RBI', 3, 'Maître Adon',     NULL,            'M∴ A∴',    'אדון');
 
 -- ── Qualifications acquises hors du Rite ───────────────────────────
 -- La planche à tracer désigne les membres par leur grade d'origine :
