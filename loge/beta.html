@@ -84,6 +84,9 @@ h2{font-family:var(--titre);font-size:19px;font-weight:600;letter-spacing:.02em}
         vertical-align:middle}
 .tab tr:last-child td{border-bottom:0}
 .tab .num{text-align:right;font-variant-numeric:tabular-nums}
+tr.cliquable{cursor:pointer}
+.tab tr.cliquable:hover td{background:var(--or-pale)}
+.tab tr.cliquable:focus-visible{outline:2px solid var(--or-vif);outline-offset:-2px}
 .tab .qual{color:var(--encre-3);font-size:12.5px}
 .nom-membre{font-weight:500}
 
@@ -215,6 +218,7 @@ legend{font-family:var(--titre);font-size:15px;font-weight:600;margin-bottom:12p
   de vos documents ; les montants sont inventés, faute de connaître votre barème.</p>
 
   <section id="v-tableau"></section>
+  <section id="v-fiche" hidden></section>
   <section id="v-convoc" hidden></section>
   <section id="v-tenue" hidden></section>
   <section id="v-tresor" hidden></section>
@@ -246,21 +250,26 @@ const OFFICES = {
   venerable:{l:'Vénérable Maître',a:'VM∴',r:1}, premier_surveillant:{l:'Premier Surveillant',a:'1er Surv∴',r:2},
   deuxieme_surveillant:{l:'Second Surveillant',a:'2d Surv∴',r:3}, orateur:{l:'Orateur',a:'Or∴',r:4},
   secretaire:{l:'Secrétaire',a:'Secr∴',r:5}, tresorier:{l:'Trésorier',a:'Trés∴',r:6},
+  hospitalier:{l:'Hospitalier',a:'Hosp∴',r:7},
   maitre_banquets:{l:'Maître des Banquets',a:'MDB∴',r:10}
 };
 const REAA = 'M∴M∴ du Rite Écossais Ancien & Accepté';
 
 function neuf(){ return {
   membres:[
-    {id:1,nom:'RAUX',prenoms:'Jean-Michel',qualite:REAA,office:'venerable',statut:'actif',du:300,regle:300},
-    {id:2,nom:'DARMON',prenoms:'Mickaël',qualite:'33ème, Souverain Grand Commandeur',office:null,statut:'actif',du:300,regle:150},
-    {id:3,nom:'KESSALIS',prenoms:'Frédéric',qualite:REAA,office:'premier_surveillant',statut:'actif',du:300,regle:300},
-    {id:4,nom:'KESSALIS',prenoms:'Marion',qualite:REAA,office:'deuxieme_surveillant',statut:'actif',du:300,regle:0},
-    {id:5,nom:'BUHLER',prenoms:'Didier',qualite:REAA,office:'orateur',statut:'actif',du:300,regle:300},
-    {id:6,nom:'HABERT',prenoms:'Martine',qualite:REAA,office:'secretaire',statut:'actif',du:300,regle:300},
-    {id:7,nom:'ROUME',prenoms:'Valérie',qualite:REAA,office:'maitre_banquets',statut:'honoraire',du:0,regle:0},
-    {id:8,nom:'CARILLO',prenoms:'Jean-Louis',qualite:REAA,office:null,statut:'actif',du:300,regle:0},
-    {id:9,nom:'MATRONE',prenoms:'Nicolas',qualite:'App∴ M∴ du Rite Écossais Ancien & Accepté',office:null,statut:'sommeil',du:300,regle:0}
+    {id:1,nom:"DARMON",prenoms:"Mickaël",grade:"33°",dignite:"Souverain Grand Commandeur — Fondateur du Rite",office:null,statut:"actif",email:"contact.brith.israel@gmail.com",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:null,qualite:"",du:300,regle:150},
+    {id:2,nom:"RAUX",prenoms:"Jean-Michel",grade:"32°",dignite:"Grand Maître Adjoint — Lieutenant Souverain Grand Commandeur, Grand Trésorier",office:"venerable",statut:"actif",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:null,qualite:"",du:300,regle:300},
+    {id:3,nom:"HABERT",prenoms:"Martine",grade:"32°",dignite:"Grand Maître Adjoint — Grand Secrétaire",office:"secretaire",statut:"actif",email:"habertmartine@gmail.com",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:null,qualite:"",du:300,regle:300},
+    {id:4,nom:"CARILLO",prenoms:"Jean-Louis",grade:"32°",dignite:"Grand Maître Adjoint — Grand Expert",office:null,statut:"actif",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:null,qualite:"",du:300,regle:0},
+    {id:5,nom:"BUHLER",prenoms:"Didier",grade:"32°",dignite:"Assistant Grand Maître — Grand Chancelier",office:"orateur",statut:"actif",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:null,qualite:"",du:300,regle:300},
+    {id:6,nom:"ROUME",prenoms:"Valérie",grade:"32°",dignite:"Assistant Grand Maître — Grand Orateur",office:"maitre_banquets",statut:"actif",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:null,qualite:"",du:300,regle:0},
+    {id:7,nom:"JOURDAN",prenoms:"Pierre",grade:"32°",dignite:"Assistant Grand Maître — Grand Hospitalier",office:"hospitalier",statut:"actif",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:null,qualite:"",du:300,regle:0},
+    {id:8,nom:"NOTARIANNI",prenoms:"Laurent",grade:"32°",dignite:"Membre Fondateur — Membre d’honneur Ad Vitam",office:null,statut:"honoraire",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:null,qualite:"",du:0,regle:0},
+    {id:9,nom:"ALLAN",prenoms:"Caroline",grade:"",dignite:"",office:null,statut:"actif",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"2026-09-07",degre:1,qualite:"",du:300,regle:0},
+    {id:10,nom:"GASMI",prenoms:"Sam",grade:"",dignite:"",office:null,statut:"candidat",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:null,qualite:"",du:0,regle:0},
+    {id:11,nom:"NAKACHE",prenoms:"Philippe",grade:"",dignite:"",office:null,statut:"candidat",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:null,qualite:"",du:0,regle:0},
+    {id:12,nom:"PETIT",prenoms:"Sophie",grade:"",dignite:"",office:null,statut:"candidat",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:null,qualite:"",du:0,regle:0},
+    {id:13,nom:"SAFFARO",prenoms:"Jean-Marc",grade:"",dignite:"",office:null,statut:"candidat",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:null,qualite:"",du:0,regle:0}
   ],
   presences:{}, agapes:{}, convoquee:false, journal:[],
   tenue:{
@@ -307,31 +316,57 @@ const auxAgapes = () => convocables().filter(m => rep(m.id) === 'present' && E.a
 /* ── Tableau de la Loge ─────────────────────────────────────────── */
 function vueTableau(){
   const m = E.membres;
-  const lignes = [...m].sort((a,b)=>(OFFICES[a.office]?.r||99)-(OFFICES[b.office]?.r||99))
-    .map(x=>`<tr>
+  const rang = x => (OFFICES[x.office]?.r || 99);
+  const lignes = [...m].sort((x,y)=>rang(x)-rang(y) || x.nom.localeCompare(y.nom))
+    .map(x=>`<tr class="cliquable" data-fiche="${x.id}" tabindex="0" role="button"
+        aria-label="Ouvrir la fiche de ${ech(x.prenoms)} ${ech(x.nom)}">
       <td><span class="nom-membre">${ech(x.prenoms)} ${ech(x.nom)}</span>
-          <div class="qual">${ech(x.qualite)}</div></td>
+          ${x.dignite?`<div class="qual">${ech(x.dignite)}</div>`:''}</td>
+      <td>${x.grade?`<span class="p p-neutre">${ech(x.grade)}</span>`:'<span class="qual">—</span>'}</td>
       <td>${x.office?`<span class="p p-neutre">${ech(nomOffice(x.office))}</span>`:''}</td>
       <td>${statutPastille(x.statut)}</td>
-      <td class="num">${x.du? euro(x.du):'—'}</td>
-      <td class="num">${soldePastille(x)}</td></tr>`).join('');
+      <td class="num">${soldePastille(x)}</td>
+      <td class="num">${jaugeManques(x)}</td></tr>`).join('');
   $('#v-tableau').innerHTML = `
     <div class="bloc"><header><div>
       <h2>Tableau de la Loge</h2>
-      <p class="sous">Neuf Sœurs et Frères. Les capitations viennent du barème de
-        l'exercice ; les montants sont fictifs tant que le vôtre ne m'est pas connu.</p>
-    </div></header>
+      <p class="sous">Cliquez sur une ligne pour ouvrir sa fiche. Les dignités
+        proviennent de votre site, les offices de la convocation et de la planche ;
+        tout le reste est à saisir.</p>
+    </div><div class="groupe"><button class="btn btn-or" id="nouveau">＋ Nouvelle fiche</button></div></header>
     <div class="tuiles">
       <div class="tuile souligne"><div class="n">${m.filter(x=>x.statut==='actif').length}</div><div class="l">Membres actifs</div></div>
-      <div class="tuile"><div class="n">${m.filter(x=>x.statut==='sommeil').length}</div><div class="l">En sommeil</div></div>
+      <div class="tuile"><div class="n">${m.filter(x=>x.statut==='candidat').length}</div><div class="l">Candidats en instance</div></div>
       <div class="tuile"><div class="n">${m.filter(x=>x.statut==='honoraire').length}</div><div class="l">Honoraires</div></div>
-      <div class="tuile"><div class="n">${m.filter(x=>x.office).length}</div><div class="l">Officiers en charge</div></div>
+      <div class="tuile"><div class="n">${m.filter(x=>!x.email).length}</div><div class="l">Sans adresse courriel</div></div>
     </div></div>
     <div class="bloc"><div class="enveloppe"><table class="tab">
-      <thead><tr><th>Sœur ou Frère</th><th>Office</th><th>Statut</th>
-        <th class="num">Capitation</th><th class="num">Solde</th></tr></thead>
+      <thead><tr><th>Sœur ou Frère</th><th>Degré de l’Ordre</th><th>Office en Loge</th>
+        <th>Statut</th><th class="num">Solde</th><th class="num">Fiche</th></tr></thead>
       <tbody>${lignes}</tbody></table></div></div>`;
 }
+
+/* Ce qui manque dans une fiche, et POURQUOI cela manque. Une liste de
+   champs vides n'apprend rien ; « sans courriel, elle ne recevra pas sa
+   convocation » dit à la Secrétaire par quoi commencer. */
+function manques(x){
+  const M = [];
+  if (!x.email)      M.push(['Adresse courriel', "ne recevra aucune convocation ni rappel"]);
+  if (!x.tel)        M.push(['Téléphone', "injoignable en cas d'urgence le soir d'une tenue"]);
+  if (!x.naissance)  M.push(['Date de naissance', "l'âge à l'initiation ne se calcule pas"]);
+  if (x.statut !== 'candidat'){
+    if (!x.initiation) M.push(['Date d’initiation', "l'ancienneté ne se calcule pas"]);
+    if (!x.degre && !x.qualite) M.push(['Degré', "s'imprimera sans qualité sur la planche"]);
+  }
+  if (!x.ville)      M.push(['Ville', "absente des courriers"]);
+  return M;
+}
+function jaugeManques(x){
+  const n = manques(x).length;
+  if (!n) return `<span class="p p-ok">Complète</span>`;
+  return `<span class="p ${n>3?'p-al':'p-att'}">${n} manque${n>1?'s':''}</span>`;
+}
+
 function statutPastille(s){
   const t={actif:['p-ok','Actif'],sommeil:['p-att','En sommeil'],
            honoraire:['p-neutre','Honoraire'],demission:['p-al','Démission']}[s]||['p-neutre',s];
@@ -443,12 +478,27 @@ function emargement(){
     <tbody>${'<tr><td></td><td></td><td></td><td class="sig"></td></tr>'.repeat(5)}</tbody></table>`;
 }
 
+/* La qualité telle qu'elle s'imprime, dans l'ordre où le Rite la
+   reconnaît : son degré au Rite d'abord, à défaut son degré dans
+   l'Ordre et sa dignité, à défaut celui de son rite d'origine. Aucune
+   des trois n'est obligatoire — et une qualité absente ne doit pas
+   laisser une virgule orpheline derrière un nom. */
+function qualiteImprimee(x){
+  if (x.degre) return DEGRES[x.degre].replace(/^l[ea] /,'') + ' du Rite Brith Israël';
+  if (x.grade) return x.grade + (x.dignite ? ', ' + x.dignite : '');
+  return x.qualite || '';
+}
+
 function planche(){
   const ordre = a => (OFFICES[a.office]?.r||99);
   const pres = convocables().filter(x=>rep(x.id)==='present').sort((a,b)=>ordre(a)-ordre(b));
   const exc  = convocables().filter(x=>rep(x.id)==='excuse').sort((a,b)=>ordre(a)-ordre(b));
-  const li = x => `<li>— ${ech(x.prenoms)} ${ech(x.nom)}, ${ech(x.qualite)}${
-    x.office?`, <i>${ech(nomOffice(x.office))}</i>`:''}.</li>`;
+  const li = x => {
+    const parts = [`${ech(x.prenoms)} ${ech(x.nom)}`];
+    const q = qualiteImprimee(x); if (q) parts.push(ech(q));
+    if (x.office) parts.push(`<i>${ech(nomOffice(x.office))}</i>`);
+    return `<li>— ${parts.join(', ')}.</li>`;
+  };
   const vm = E.membres.find(x=>x.office==='venerable');
   const tronc = pierrePlate(pres.length * 7.5);   // don libre, montant d'exemple
   return `${ENTETE}<h1>Planche à Tracer du lundi 7 septembre 2026<br>6026 A∴V∴L∴</h1>
@@ -481,7 +531,7 @@ function planche(){
 /* Les vues sont appelées par leur nom au moment du dessin, et non
    résolues ici : vueConvocation est déclarée dans un bloc <script>
    ultérieur, et la nommer directement ferait échouer tout celui-ci. */
-const VUES = {tableau:()=>vueTableau(), convoc:()=>vueConvocation(),
+const VUES = {tableau:()=>vueTableau(), fiche:()=>vueFiche(), convoc:()=>vueConvocation(),
               tenue:()=>vueTenue(), tresor:()=>vueTresor()};
 let courante = 'tableau';
 
@@ -489,7 +539,9 @@ function dessiner(){
   VUES[courante]();
   for (const k of Object.keys(VUES)){
     $('#v-'+k).hidden = (k !== courante);
-    $('#t-'+k).setAttribute('aria-selected', String(k === courante));
+    const ong = $('#t-'+k);          // la fiche s'ouvre depuis le tableau :
+    if (ong) ong.setAttribute(       // elle n'a pas d'onglet à elle
+      'aria-selected', String(k === courante));
   }
   garder();
 }
@@ -714,4 +766,154 @@ document.addEventListener('click', e => {
 'use strict';
 /* Premier dessin : après la déclaration de toutes les vues. */
 dessiner();
+</script>
+<script>
+'use strict';
+/* ═══════════════════════════════════════════════════════════════════
+   La fiche membre. Ouverte depuis le tableau, modifiable, et qui dit
+   elle-même ce qui lui manque.
+═══════════════════════════════════════════════════════════════════ */
+const STATUTS = {candidat:'Candidat en instance', actif:'Actif', sommeil:'En sommeil',
+  honoraire:'Membre honoraire', demission:'Démissionnaire', radiation:'Radié', decede:'Décédé'};
+
+function fChamp(x,cle,label,type,aide){
+  const v = x[cle] ?? '';
+  return `<div class="champ"><label for="m-${cle}">${label}</label>
+    <input id="m-${cle}" type="${type}" data-m="${cle}" value="${ech(v)}">
+    ${aide?`<span class="aide">${aide}</span>`:''}</div>`;
+}
+
+function vueFiche(){
+  const x = E.membres.find(m => m.id === E.fiche);
+  if (!x){ courante = 'tableau'; return vueTableau(); }
+  const M = manques(x);
+  const reste = Math.max(0, (x.du||0) - (x.regle||0));
+  $('#v-fiche').innerHTML = `
+  <div class="bloc"><header><div>
+    <button class="btn btn-mini" id="retour" style="margin-bottom:9px">‹ Tableau de la Loge</button>
+    <h2>${ech(x.prenoms)} ${ech(x.nom)}</h2>
+    <p class="sous">${x.dignite ? ech(x.dignite) : 'Aucune dignité au Suprême Conseil.'}</p>
+  </div><div class="groupe">
+    <button class="btn" id="imp-fiche">Imprimer la fiche</button>
+    <button class="btn" id="suppr-fiche">Retirer du tableau</button>
+  </div></header>
+
+  ${M.length ? `<div class="note" style="margin-bottom:20px"><b>Cette fiche est incomplète.</b>
+    <ul style="margin-top:7px;list-style:none;display:grid;gap:4px">${M.map(([c,p])=>
+      `<li>— <b>${c}</b> : ${p}.</li>`).join('')}</ul></div>`
+   : `<div class="note" style="background:var(--ok-fond);border-left-color:var(--ok);margin-bottom:20px">
+      <b>Fiche complète.</b> Rien ne manque pour convoquer, appeler la capitation et imprimer la planche.</div>`}
+
+  <div class="forme">
+    <fieldset><legend>Identité</legend><div class="rangee">
+      ${fChamp(x,'prenoms','Prénoms','text')}
+      ${fChamp(x,'nom','Nom','text')}
+      ${fChamp(x,'email','Adresse courriel','email','C’est par là que partent les convocations')}
+      ${fChamp(x,'tel','Téléphone','tel')}
+      ${fChamp(x,'naissance','Date de naissance','date')}
+      ${fChamp(x,'ville','Ville','text')}
+      ${fChamp(x,'profession','Profession','text')}
+    </div></fieldset>
+
+    <fieldset><legend>Parcours au Rite</legend><div class="rangee">
+      <div class="champ"><label for="m-statut">Statut</label>
+        <select id="m-statut" data-m="statut">${Object.entries(STATUTS).map(([k,v])=>
+          `<option value="${k}"${x.statut===k?' selected':''}>${v}</option>`).join('')}</select></div>
+      ${fChamp(x,'initiation','Date d’initiation','date')}
+      <div class="champ"><label for="m-degre">Degré du Rite</label>
+        <select id="m-degre" data-m="degre">
+          <option value=""${!x.degre?' selected':''}>— aucun —</option>
+          ${[1,2,3].map(d=>`<option value="${d}"${+x.degre===d?' selected':''}>${DEGRES[d]}</option>`).join('')}
+        </select><span class="aide">${x.degre?ech(DEGRES[x.degre].replace(/^l[ea] /,'')+' du Rite Brith Israël'):'S’imprimera avec la qualité d’origine'}</span></div>
+      ${fChamp(x,'qualite','Qualité d’un autre rite','text','« M∴M∴ du Rite Écossais Ancien & Accepté »')}
+    </div></fieldset>
+
+    <fieldset><legend>Charges</legend><div class="rangee">
+      <div class="champ"><label for="m-office">Office en Loge</label>
+        <select id="m-office" data-m="office">
+          <option value=""${!x.office?' selected':''}>— aucun —</option>
+          ${Object.entries(OFFICES).sort((a,b)=>a[1].r-b[1].r).map(([k,o])=>
+            `<option value="${k}"${x.office===k?' selected':''}>${o.l}</option>`).join('')}
+        </select></div>
+      ${fChamp(x,'grade','Degré de l’Ordre','text','« 32° », « 33° »')}
+      ${fChamp(x,'dignite','Dignité au Suprême Conseil','text')}
+    </div></fieldset>
+
+    <fieldset><legend>Trésorerie ${new Date().getFullYear()}</legend><div class="rangee">
+      ${fChamp(x,'du','Capitation due (€)','number','25 € × 12 tenues')}
+      ${fChamp(x,'regle','Déjà réglé (€)','number')}
+      <div class="champ"><label>Reste</label>
+        <input value="${reste ? reste.toLocaleString('fr-FR')+' €' : 'Soldé'}" readonly
+               style="background:var(--trait);border-style:dashed"></div>
+    </div></fieldset>
+  </div></div>`;
+}
+
+function fichePapier(){
+  const x = E.membres.find(m => m.id === E.fiche); if (!x) return '';
+  const l = (c,v) => v ? `<tr><td style="width:52mm;color:#5c5346">${c}</td><td>${ech(v)}</td></tr>` : '';
+  return `${ENTETE}<h1>Fiche individuelle</h1>
+    <table><tbody>
+      ${l('Nom et prénoms', x.prenoms+' '+x.nom)}
+      ${l('Statut', STATUTS[x.statut])}
+      ${l('Degré du Rite', x.degre ? DEGRES[x.degre].replace(/^l[ea] /,'')+' du Rite Brith Israël' : '')}
+      ${l('Qualité d’origine', x.qualite)}
+      ${l('Degré de l’Ordre', x.grade)}
+      ${l('Dignité', x.dignite)}
+      ${l('Office en Loge', nomOffice(x.office))}
+      ${l('Initiation', x.initiation)}
+      ${l('Courriel', x.email)}${l('Téléphone', x.tel)}
+      ${l('Ville', x.ville)}${l('Profession', x.profession)}
+      ${l('Naissance', x.naissance)}
+    </tbody></table>
+    <p style="margin-top:8mm;font-size:9.5pt;color:#5c5346">Document interne à la
+      R∴L∴ Bereshit n°00. Il porte des données personnelles : il ne sort pas de l’Atelier.</p>`;
+}
+</script>
+<script>
+'use strict';
+/* Ouvrir, modifier et retirer une fiche. La saisie n'entraîne pas de
+   redessin, sauf pour les champs dont d'autres parties dépendent. */
+document.addEventListener('click', e => {
+  const l = e.target.closest('tr[data-fiche]');
+  if (l){ E.fiche = +l.dataset.fiche; courante = 'fiche'; dessiner(); return; }
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.id === 'retour'){ courante = 'tableau'; dessiner(); return; }
+  if (b.id === 'imp-fiche'){ ouvrir(fichePapier()); return; }
+  if (b.id === 'nouveau'){
+    const id = Math.max(0, ...E.membres.map(m=>m.id)) + 1;
+    E.membres.push({id, nom:'', prenoms:'', grade:'', dignite:'', office:null,
+      statut:'candidat', email:'', tel:'', ville:'', naissance:'', profession:'',
+      initiation:'', degre:null, qualite:'', du:0, regle:0});
+    E.fiche = id; courante = 'fiche'; dessiner();
+    setTimeout(()=>document.getElementById('m-prenoms')?.focus(), 0); return;
+  }
+  if (b.id === 'suppr-fiche'){
+    const x = E.membres.find(m=>m.id===E.fiche);
+    if (!confirm(`Retirer ${x.prenoms} ${x.nom} du tableau ?\n\nDans la vraie application, un membre n'est jamais effacé : son statut passe à « démission » ou « radiation », et son histoire reste.`)) return;
+    E.membres = E.membres.filter(m=>m.id!==E.fiche); courante='tableau'; dessiner(); return;
+  }
+});
+document.addEventListener('keydown', e => {
+  const l = e.target.closest?.('tr[data-fiche]');
+  if (l && (e.key === 'Enter' || e.key === ' ')){
+    e.preventDefault(); E.fiche = +l.dataset.fiche; courante = 'fiche'; dessiner();
+  }
+});
+document.addEventListener('input', e => {
+  const el = e.target; if (!el.dataset.m) return;
+  const x = E.membres.find(m => m.id === E.fiche); if (!x) return;
+  const c = el.dataset.m;
+  x[c] = (c === 'du' || c === 'regle') ? Number(el.value||0)
+       : (c === 'degre') ? (el.value ? Number(el.value) : null)
+       : (c === 'office') ? (el.value || null)
+       : el.value;
+  garder();
+  /* Ces trois-là changent ce que la fiche dit d'elle-même. */
+  if (['email','tel','naissance','ville','initiation','degre','statut','qualite'].includes(c)){
+    const pos = el.selectionStart; dessiner();
+    const r = document.getElementById('m-'+c);
+    if (r){ r.focus(); try{ r.setSelectionRange(pos,pos); }catch(err){} }
+  }
+});
 </script>
