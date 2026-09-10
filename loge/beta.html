@@ -162,6 +162,19 @@ tr.cliquable{cursor:pointer}
             text-transform:uppercase;color:#7a6a3e;margin-bottom:1.5mm}
 .barre{max-width:190mm;margin:0 auto 12px;display:flex;gap:8px;justify-content:flex-end}
 .barre .btn{background:#1A1814;color:#F0EADD;border-color:#4A4238}
+.barre[hidden]{display:none!important}
+.mention-edition{color:#C9A84C;font-size:13px;margin-right:auto;align-self:center}
+.etat-edition{color:#8B8272;font-size:12.5px;align-self:center;min-width:150px;text-align:right}
+#corps{outline:0}
+#corps:focus-visible{outline:0}
+.papier .entete-fixe{position:relative}
+.papier .entete-fixe::after{content:'';position:absolute;inset:0}
+@media screen{
+  .papier .entete-fixe{background:#fbf8f1;margin:-18mm -16mm 6mm;padding:14mm 16mm 4mm;
+    border-bottom:1px solid #e8dfc9}
+  #corps{min-height:120mm}
+}
+@media print{ .papier .entete-fixe{background:none;margin:0;padding:0;border:0} }
 @media print{
   .chrome,.onglets,main,.barre{display:none!important}
   .voile{position:static;background:#fff;padding:0;overflow:visible}
@@ -263,9 +276,15 @@ details.replie summary:hover{color:var(--encre)}
 </main>
 
 <div class="voile" id="voile" hidden>
+  <div class="barre" id="barre-edition" hidden>
+    <span class="mention-edition">✎ Cliquez dans le texte pour le modifier.
+      L’en-tête, lui, ne bouge pas.</span>
+    <span id="etat-edition" class="etat-edition"></span>
+    <button class="btn" id="planche-neuve">Reprendre depuis le tableau</button>
+  </div>
   <div class="barre">
     <button class="btn btn-or" id="tel-word">⤓ Télécharger en Word</button>
-    <button class="btn" onclick="window.print()">Imprimer ou enregistrer en PDF</button>
+    <button class="btn btn-or" onclick="window.print()">⤓ Enregistrer en PDF ou imprimer</button>
     <button class="btn" id="fermer">Fermer</button>
   </div>
   <div class="papier" id="papier"></div>
@@ -575,7 +594,7 @@ function qualiteImprimee(x){
   return x.qualite || '';
 }
 
-function planche(){
+function corpsPlanche(){
   const ordre = a => a.rangProtocole || 99;
   const pres = convocables().filter(x=>rep(x.id)==='present').sort((a,b)=>ordre(a)-ordre(b));
   const exc  = convocables().filter(x=>rep(x.id)==='excuse').sort((a,b)=>ordre(a)-ordre(b));
@@ -588,7 +607,7 @@ function planche(){
   const vm = E.membres.find(x=>x.office==='venerable');
   const tronc = pierrePlate(pres.length * 7.5);   // don libre, montant d'exemple
   const T = E.tenue;
-  return `${ENTETE}<h1>Planche à Tracer du ${dateLongue(T.date)}<br>${avl(T.date)} A∴V∴L∴</h1>
+  return `<h1>Planche à Tracer du ${dateLongue(T.date)}<br>${avl(T.date)} A∴V∴L∴</h1>
   <p>Dans un lieu très éclairé, très pur, le ${new Date(T.date+'T12:00:00').getDate()}<sup>ème</sup>
      jour du ${moisMac(T.date)}<sup>ème</sup> mois de l'An de Vraie Lumière ${avl(T.date)},
      s'est réunie la R∴L∴ BERESHIT n°00, à l'O∴ de l'Alliance, au Temple
@@ -654,10 +673,23 @@ function dessiner(){
 document.querySelectorAll('.onglets button').forEach(b =>
   b.addEventListener('click', () => { courante = b.id.slice(2); dessiner(); }));
 
-let docCourant = {nom:'Document', html:''};
-function ouvrir(html, nom){
-  docCourant = {nom: nom || 'Document', html};
-  $('#papier').innerHTML = html; $('#voile').hidden = false;
+let docCourant = {nom:'Document', html:'', editable:false};
+
+/* Un document s'ouvre en lecture, ou en écriture.
+   En écriture, l'en-tête reste hors du champ modifiable : il porte les
+   sceaux et la qualité de l'Atelier, et rien ne justifie qu'une frappe
+   malheureuse les efface. Tout le reste s'écrit librement. */
+function ouvrir(html, nom, editable){
+  docCourant = {nom: nom || 'Document', html, editable: !!editable};
+  const P = $('#papier');
+  if (editable){
+    P.innerHTML = `<div class="entete-fixe">${ENTETE}</div>` +
+      `<div id="corps" contenteditable="true" spellcheck="true">${html}</div>`;
+  } else {
+    P.innerHTML = html;
+  }
+  $('#voile').hidden = false;
+  $('#barre-edition').hidden = !editable;
 }
 $('#fermer').addEventListener('click', () => { $('#voile').hidden = true; });
 document.addEventListener('keydown', e => {
@@ -701,7 +733,10 @@ document.addEventListener('click', e => {
     dessiner(); return;
   }
   if (b.id === 'imp-emarg'){ ouvrir(emargement(), 'Emargement ' + E.tenue.date); return; }
-  if (b.id === 'imp-planche'){ ouvrir(planche(), 'Planche a tracer ' + E.tenue.date); return; }
+    if (b.id === 'imp-planche'){
+    ouvrir(E.plancheTexte || corpsPlanche(), 'Planche a tracer ' + E.tenue.date, true);
+    return;
+  }
 });
 </script>
 <script>
@@ -1080,6 +1115,9 @@ th{font-size:9pt;text-transform:uppercase;letter-spacing:.06em;color:#5c5346;
    La Sœur Secrétaire ne voit rien de tout cela : un bouton, un
    fichier. */
 function documentWord(nom){
+  /* Ce qui est exporté est ce qui est affiché : si la Sœur Secrétaire a
+     corrigé le texte à l'écran, c'est le texte corrigé qui part. */
+  docCourant.html = document.getElementById('papier').innerHTML;
   return '<html xmlns:o="urn:schemas-microsoft-com:office:office" ' +
     'xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">' +
     '<head><meta charset="utf-8"><title>' + nom + '</title>' + STYLE_DOC +
@@ -1331,8 +1369,18 @@ function vueAide(){
         arrivant. Les noms y sont déjà, dans l’ordre. Il y a aussi des lignes vides
         pour les visiteurs.</li>
       <li><b class="bouton">Planche à tracer</b> — le compte rendu. Les présents, les
-        excusés et l’ordre du jour y sont déjà écrits. Les cadres en pointillés sont
-        les seuls endroits à remplir : c’est le récit de ce qui s’est dit.</li>
+        excusés, les visiteurs et l’ordre du jour y sont déjà écrits.</li>
+    </ol>
+    <div class="rassure"><b>La planche s’écrit directement dans la page.</b>
+      Cliquez n’importe où dans le texte et tapez, comme dans Word : vous pouvez tout
+      changer, tout effacer, tout réécrire. Vos modifications s’enregistrent seules —
+      la mention « Modifications enregistrées » vous le confirme en haut.
+      <b>Seul l’en-tête ne bouge pas</b> : il porte les sceaux et le nom de l’Atelier,
+      et il vaut mieux qu’une frappe malheureuse ne puisse pas l’effacer.
+      Le bouton <b class="bouton">Reprendre depuis le tableau</b> efface vos
+      modifications et recalcule tout à partir des présences — utilisez-le si vous
+      voulez repartir de zéro.</div>
+    <ol style="margin-top:16px">
     </ol>
     <p>Une fois le document affiché, vous avez trois boutons en haut :</p>
     <ol>
@@ -1713,6 +1761,47 @@ document.addEventListener('click', e => {
     alert(Object.keys(lu).length + " renseignement(s) repris de l’annuaire.\n\n" +
           "Vérifiez la fiche, et complétez l’obédience si elle manque : " +
           "l’annuaire du site ne la demande pas.");
+    return;
+  }
+});
+</script>
+<script>
+'use strict';
+/* ═══════════════════════════════════════════════════════════════════
+   LA PLANCHE MODIFIABLE
+
+   Cent pour cent du corps s'écrit dans la page : les présents, le
+   récit, la clôture, les signatures. Seul l'en-tête est hors d'atteinte
+   — il porte les sceaux et la qualité de l'Atelier.
+
+   Ce qui est tapé est gardé. Le bouton de régénération revient au texte
+   calculé depuis le tableau, quand la Secrétaire préfère repartir de là.
+═══════════════════════════════════════════════════════════════════ */
+let sauveMinuteur = null;
+document.addEventListener('input', e => {
+  if (e.target.id !== 'corps' && !e.target.closest?.('#corps')) return;
+  clearTimeout(sauveMinuteur);
+  sauveMinuteur = setTimeout(() => {
+    const c = document.getElementById('corps');
+    if (c){ E.plancheTexte = c.innerHTML; garder();
+      const t = document.getElementById('etat-edition');
+      if (t) t.textContent = 'Modifications enregistrées';
+    }
+  }, 700);
+  const t = document.getElementById('etat-edition');
+  if (t) t.textContent = 'Enregistrement…';
+});
+
+document.addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.id === 'planche-neuve'){
+    if (E.plancheTexte && !confirm(
+      "Effacer vos modifications et reprendre la planche telle que le logiciel la calcule ?\n\n" +
+      "Les présents, les excusés, les visiteurs et l'ordre du jour seront repris du tableau.")) return;
+    E.plancheTexte = null; garder();
+    ouvrir(corpsPlanche(), 'Planche a tracer ' + E.tenue.date, true);
+    const t = document.getElementById('etat-edition');
+    if (t) t.textContent = 'Planche reprise depuis le tableau';
     return;
   }
 });
