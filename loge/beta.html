@@ -401,8 +401,10 @@ function jaugeManques(x){
 }
 
 function statutPastille(s){
-  const t={actif:['p-ok','Actif'],sommeil:['p-att','En sommeil'],
-           honoraire:['p-neutre','Honoraire'],demission:['p-al','Démission']}[s]||['p-neutre',s];
+  const t={candidat:['p-att','Candidat'],actif:['p-ok','Actif'],
+           sommeil:['p-att','En sommeil'],honoraire:['p-neutre','Honoraire'],
+           demission:['p-al','Démission'],radiation:['p-al','Radié'],
+           decede:['p-neutre','Décédé']}[s]||['p-neutre',s];
   return `<span class="p ${t[0]}">${t[1]}</span>`;
 }
 function soldePastille(x){
