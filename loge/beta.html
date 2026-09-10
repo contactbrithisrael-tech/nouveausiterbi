@@ -236,6 +236,7 @@ details.replie summary:hover{color:var(--encre)}
 <div class="onglets" role="tablist">
   <button role="tab" id="t-aide" aria-selected="true">Mode d’emploi</button>
   <button role="tab" id="t-tableau" aria-selected="false">Tableau de la Loge</button>
+  <button role="tab" id="t-visiteurs" aria-selected="false">Visiteurs</button>
   <button role="tab" id="t-convoc" aria-selected="false">Convocation</button>
   <button role="tab" id="t-tenue" aria-selected="false">Réponses &amp; documents</button>
   <button role="tab" id="t-tresor" aria-selected="false">Trésorerie</button>
@@ -251,6 +252,7 @@ details.replie summary:hover{color:var(--encre)}
   <section id="v-aide"></section>
   <section id="v-tableau" hidden></section>
   <section id="v-fiche" hidden></section>
+  <section id="v-visiteurs" hidden></section>
   <section id="v-convoc" hidden></section>
   <section id="v-tenue" hidden></section>
   <section id="v-tresor" hidden></section>
@@ -291,20 +293,20 @@ const OFFICES = {
 
 function neuf(){ return {
   membres:[
-    {id:1,nom:"DARMON",prenoms:"Mickaël",grade:"33°",dignite:"Souverain Grand Commandeur — Fondateur, Gardien du Rite",office:null,statut:"actif",email:"contact.brith.israel@gmail.com",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:3,qualite:"",du:480,regle:240},
-    {id:2,nom:"RAUX",prenoms:"Jean-Michel",grade:"32°",dignite:"Lieutenant Souverain Grand Commandeur, Grand Maître Adjoint, Grand Trésorier",office:"venerable",statut:"actif",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:3,qualite:"",du:480,regle:480},
-    {id:3,nom:"HABERT",prenoms:"Martine",grade:"32°",dignite:"Grand Maître Adjoint, Grand Secrétaire",office:"premier_surveillant",statut:"actif",email:"habertmartine@gmail.com",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:3,qualite:"",du:480,regle:480},
-    {id:4,nom:"CARILLO",prenoms:"Jean-Louis",grade:"32°",dignite:"Grand Maître Adjoint, Grand Expert",office:"second_surveillant",statut:"actif",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:3,qualite:"",du:480,regle:0},
-    {id:5,nom:"BUHLER",prenoms:"Didier",grade:"32°",dignite:"Assistant Grand Maître, Grand Chancelier",office:null,statut:"actif",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:3,qualite:"",du:480,regle:480},
-    {id:6,nom:"ROUME",prenoms:"Valérie",grade:"32°",dignite:"Assistant Grand Maître, Grand Orateur",office:null,statut:"actif",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:3,qualite:"",du:480,regle:0},
-    {id:7,nom:"JOURDAN",prenoms:"Pierre",grade:"32°",dignite:"Assistant Grand Maître, Grand Hospitalier, Grand Maître des Cérémonies",office:null,statut:"actif",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:3,qualite:"",du:480,regle:0},
-    {id:8,nom:"NOTARIANNI",prenoms:"Laurent",grade:"32°",dignite:"Membre Fondateur — Membre d’honneur Ad Vitam",office:null,statut:"honoraire",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:3,qualite:"",du:0,regle:0,excusePermanent:true,motifExcuse:"Excusé pour une durée indéterminée"},
-    {id:9,nom:"GASMI",prenoms:"Sam",grade:"",dignite:"",office:null,statut:"actif",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:3,qualite:"",du:480,regle:0},
-    {id:10,nom:"SAFFARO",prenoms:"Jean-Marc",grade:"",dignite:"",office:null,statut:"actif",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:2,qualite:"",du:480,regle:0},
-    {id:11,nom:"ALLAN",prenoms:"Caroline",grade:"",dignite:"",office:null,statut:"actif",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"2026-09-07",degre:1,qualite:"",du:480,regle:0},
-    {id:12,nom:"NAKACHE",prenoms:"Philippe",grade:"",dignite:"",office:null,statut:"actif",email:"",tel:"",ville:"Nouméa",naissance:"",profession:"",initiation:"",degre:3,qualite:"",du:480,regle:0,excusePermanent:true,motifExcuse:"Réside en Nouvelle-Calédonie"}
+    {id:1,nom:"DARMON",prenoms:"Mickaël",grade:"33°",dignite:"Souverain Grand Commandeur — Fondateur, Gardien du Rite",office:null,statut:"actif",email:"contact.brith.israel@gmail.com",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:3,qualite:"",du:480,regle:240,rangProtocole:1},
+    {id:2,nom:"RAUX",prenoms:"Jean-Michel",grade:"32°",dignite:"Lieutenant Souverain Grand Commandeur, Grand Maître Adjoint, Grand Trésorier",office:"venerable",statut:"actif",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:3,qualite:"",du:480,regle:480,rangProtocole:2},
+    {id:3,nom:"HABERT",prenoms:"Martine",grade:"32°",dignite:"Grand Maître Adjoint, Grand Secrétaire",office:"premier_surveillant",statut:"actif",email:"habertmartine@gmail.com",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:3,qualite:"",du:480,regle:480,rangProtocole:3},
+    {id:4,nom:"CARILLO",prenoms:"Jean-Louis",grade:"32°",dignite:"Grand Maître Adjoint, Grand Expert",office:"second_surveillant",statut:"actif",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:3,qualite:"",du:480,regle:0,rangProtocole:4},
+    {id:5,nom:"BUHLER",prenoms:"Didier",grade:"32°",dignite:"Assistant Grand Maître, Grand Chancelier",office:null,statut:"actif",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:3,qualite:"",du:480,regle:480,rangProtocole:5},
+    {id:6,nom:"ROUME",prenoms:"Valérie",grade:"32°",dignite:"Assistant Grand Maître, Grand Orateur",office:null,statut:"actif",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:3,qualite:"",du:480,regle:0,rangProtocole:6},
+    {id:7,nom:"JOURDAN",prenoms:"Pierre",grade:"32°",dignite:"Assistant Grand Maître, Grand Hospitalier, Grand Maître des Cérémonies",office:null,statut:"actif",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:3,qualite:"",du:480,regle:0,rangProtocole:7},
+    {id:8,nom:"NOTARIANNI",prenoms:"Laurent",grade:"32°",dignite:"Membre Fondateur — Membre d’honneur Ad Vitam",office:null,statut:"honoraire",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:3,qualite:"",du:0,regle:0,excusePermanent:true,motifExcuse:"Excusé pour une durée indéterminée",rangProtocole:8},
+    {id:9,nom:"GASMI",prenoms:"Sam",grade:"",dignite:"",office:null,statut:"actif",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:3,qualite:"",du:480,regle:0,rangProtocole:9},
+    {id:10,nom:"SAFFARO",prenoms:"Jean-Marc",grade:"",dignite:"",office:null,statut:"actif",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:2,qualite:"",du:480,regle:0,rangProtocole:11},
+    {id:11,nom:"ALLAN",prenoms:"Caroline",grade:"",dignite:"",office:null,statut:"actif",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"2026-09-07",degre:1,qualite:"",du:480,regle:0,rangProtocole:12},
+    {id:12,nom:"NAKACHE",prenoms:"Philippe",grade:"",dignite:"",office:null,statut:"actif",email:"",tel:"",ville:"Nouméa",naissance:"",profession:"",initiation:"",degre:3,qualite:"",du:480,regle:0,excusePermanent:true,motifExcuse:"Réside en Nouvelle-Calédonie",rangProtocole:10}
   ],
-  presences:{}, agapes:{}, envoyes:{}, convoquee:false, journal:[],
+  presences:{}, agapes:{}, envoyes:{}, convoquee:false, journal:[], visiteurs:[],
   tenue:{
     date:'2026-09-07', heureConv:'17:30', heureOuv:'19:30',
     type:'obligation', titre:"TENUE D'OBLIGATION", degre:1,
@@ -356,7 +358,13 @@ const auxAgapes = () => convocables().filter(m => rep(m.id) === 'present' && E.a
 /* ── Tableau de la Loge ─────────────────────────────────────────── */
 function vueTableau(){
   const m = E.membres;
-  const rang = x => (OFFICES[x.office]?.r || 99);
+/* La préséance vient de la Constitution, qui énumère le Souverain
+   Grand Commandeur en tête puis ses Grands Officiers. Elle n'est PAS
+   l'ordre des offices en Loge : le SGC n'a pas de charge à Bereshit et
+   y figure pourtant le premier. Chaque fiche porte son rang, et il se
+   change à la main — je ne fixe pas une règle de préséance de mon
+   propre chef. */
+  const rang = x => x.rangProtocole || 99;
   const lignes = [...m].sort((x,y)=>rang(x)-rang(y) || x.nom.localeCompare(y.nom))
     .map(x=>`<tr class="cliquable" data-fiche="${x.id}" tabindex="0" role="button"
         aria-label="Ouvrir la fiche de ${ech(x.prenoms)} ${ech(x.nom)}">
@@ -524,7 +532,7 @@ const ENTETE = `<div class="ent">
   <div class="o">Atelier Mixte à l'O∴ de l'Alliance</div></div>`;
 
 function emargement(){
-  const l = convocables().sort((a,b)=>(OFFICES[a.office]?.r||99)-(OFFICES[b.office]?.r||99))
+  const l = convocables().sort((a,b)=>(a.rangProtocole||99)-(b.rangProtocole||99))
     .map(x=>`<tr><td>${ech(x.prenoms)} ${ech(x.nom)}</td>
       <td>${ech(nomOffice(x.office))}</td><td class="sig"></td></tr>`).join('');
   return `${ENTETE}<h1>Feuille d'émargement<br>Tenue du lundi 7 septembre 2026 — 6026 A∴V∴L∴</h1>
@@ -534,7 +542,12 @@ function emargement(){
     <tbody>${l}</tbody></table>
     <div class="rub">Visiteurs</div>
     <table><thead><tr><th>Nom</th><th>Loge, Orient, Obédience</th><th>Tuilé par</th><th>Signature</th></tr></thead>
-    <tbody>${'<tr><td></td><td></td><td></td><td class="sig"></td></tr>'.repeat(5)}</tbody></table>`;
+    <tbody>${visiteursDeLaTenue().map(v=>`<tr>
+        <td>${ech((v.prenom+' '+v.nom).trim())}${v.grade?', '+ech(v.grade):''}</td>
+        <td>${ech(v.loge||'')}${v.orient?', à l’O∴ de '+ech(v.orient):''}${v.obedience?' — '+ech(v.obedience):''}</td>
+        <td>${ech(v.tuilePar||'')}</td><td class="sig"></td></tr>`).join('')}
+      ${'<tr><td></td><td></td><td></td><td class="sig"></td></tr>'.repeat(
+        Math.max(2, 5 - visiteursDeLaTenue().length))}</tbody></table>`;
 }
 
 /* La qualité telle qu'elle s'imprime, dans l'ordre où le Rite la
@@ -549,7 +562,7 @@ function qualiteImprimee(x){
 }
 
 function planche(){
-  const ordre = a => (OFFICES[a.office]?.r||99);
+  const ordre = a => a.rangProtocole || 99;
   const pres = convocables().filter(x=>rep(x.id)==='present').sort((a,b)=>ordre(a)-ordre(b));
   const exc  = convocables().filter(x=>rep(x.id)==='excuse').sort((a,b)=>ordre(a)-ordre(b));
   const li = x => {
@@ -568,6 +581,11 @@ function planche(){
      ${ech(T.lieuNom)}, à ${ech(T.lieuVille)}.</p>
   <div class="rub">Sont présents les SS∴ et FF∴ Membres de la Loge</div>
   <ul style="list-style:none">${pres.length?pres.map(li).join(''):'<li><i>Aucun présent annoncé.</i></li>'}</ul>
+  ${visiteursDeLaTenue().length?`<div class="rub">Les SS∴ et FF∴ Visiteurs</div>
+  <ul style="list-style:none">${visiteursDeLaTenue().map(v=>
+    `<li>— ${ech((v.prenom+' '+v.nom).trim())}${v.grade?', '+ech(v.grade):''}, de la
+      ${ech(v.loge||'…')}${v.orient?' à l’O∴ de '+ech(v.orient):''}${v.obedience?' — '+ech(v.obedience):''}${
+      v.tuilePar?', tuilé par '+ech(v.tuilePar):''}.</li>`).join('')}</ul>`:''}
   <div class="rub">Se sont fait excuser</div>
   <ul style="list-style:none">${exc.length?exc.map(li).join(''):'<li><i>Aucun.</i></li>'}</ul>
   <p>Après une allocution de bienvenue, le VM∴ ${vm?ech(vm.prenoms+' '+vm.nom):'…'} ouvre les
@@ -597,13 +615,14 @@ function planche(){
    résolues ici : vueConvocation est déclarée dans un bloc <script>
    ultérieur, et la nommer directement ferait échouer tout celui-ci. */
 const VUES = {aide:()=>vueAide(), tableau:()=>vueTableau(), fiche:()=>vueFiche(),
-              convoc:()=>vueConvocation(), tenue:()=>vueTenue(), tresor:()=>vueTresor()};
+              visiteurs:()=>vueVisiteurs(), convoc:()=>vueConvocation(),
+              tenue:()=>vueTenue(), tresor:()=>vueTresor()};
 /* L'onglet en cours est retenu : après un rechargement — ou une
    fermeture accidentelle du navigateur — elle retrouve son écran, et
    non le point de départ. */
 /* À la toute première ouverture, c'est le mode d'emploi qui s'affiche.
    Ensuite, l'écran quitté la fois d'avant. */
-let courante = (E.onglet && ['aide','tableau','fiche','convoc','tenue','tresor'].includes(E.onglet))
+let courante = (E.onglet && ['aide','tableau','fiche','visiteurs','convoc','tenue','tresor'].includes(E.onglet))
              ? E.onglet : 'aide';
 
 function dessiner(){
@@ -914,6 +933,7 @@ function vueFiche(){
             `<option value="${k}"${x.office===k?' selected':''}>${o.l}</option>`).join('')}
         </select></div>
       ${fChamp(x,'grade','Degré de l’Ordre','text','« 32° », « 33° »')}
+      ${fChamp(x,'rangProtocole','Rang de préséance','number','1 en tête du tableau')}
       ${fChamp(x,'dignite','Dignité au Suprême Conseil','text')}
     </div></fieldset>
 
@@ -982,7 +1002,8 @@ document.addEventListener('input', e => {
   const el = e.target; if (!el.dataset.m) return;
   const x = E.membres.find(m => m.id === E.fiche); if (!x) return;
   const c = el.dataset.m;
-  x[c] = (c === 'excusePermanent') ? (el.value === '1')
+  x[c] = (c === 'rangProtocole') ? Number(el.value||99)
+       : (c === 'excusePermanent') ? (el.value === '1')
        : (c === 'du' || c === 'regle') ? Number(el.value||0)
        : (c === 'degre') ? (el.value ? Number(el.value) : null)
        : (c === 'office') ? (el.value || null)
@@ -1180,6 +1201,7 @@ function vueAide(){
     <ol>
       <li><b>Tableau de la Loge</b> — la liste des Sœurs et Frères. Une ligne par
         personne.</li>
+      <li><b>Visiteurs</b> — les Sœurs et Frères d’autres Loges reçus en tenue.</li>
       <li><b>Convocation</b> — pour préparer la prochaine tenue.</li>
       <li><b>Réponses &amp; documents</b> — pour envoyer la convocation, noter qui vient,
         et imprimer les papiers.</li>
@@ -1203,7 +1225,23 @@ function vueAide(){
     <div class="rassure">Quand une fiche ne manque plus de rien, le cadre devient vert
       et vous dit « Fiche complète ». C’est votre repère.</div>
 
-    <h3><span class="no">4</span>Préparer une convocation</h3>
+    <h3><span class="no">4</span>Un visiteur s’annonce</h3>
+    <p>Un Frère ou une Sœur d’une autre Loge vient à la tenue. Sa fiche est différente
+      de celle des membres, et plus courte.</p>
+    <ol>
+      <li>Cliquez en haut sur <b>Visiteurs</b>.</li>
+      <li>Cliquez sur <b class="bouton">＋ Nouveau visiteur</b>.</li>
+      <li>Remplissez : prénom, nom, grade, sa Loge, son Orient, son Obédience,
+        son téléphone, son adresse e-mail.</li>
+      <li>Tout en bas, à <b>Attendu à la prochaine tenue</b>, choisissez <b>Oui</b>.</li>
+      <li>C’est tout. Son nom apparaîtra <b>tout seul</b> sur la feuille d’émargement
+        et sur la planche à tracer.</li>
+      <li><b class="bouton">‹ Tous les visiteurs</b> pour revenir au carnet.</li>
+    </ol>
+    <p>Le grade et la Loge servent au tuilage : sans eux, on ne peut pas le recevoir.
+      La fiche vous le dit si vous les oubliez.</p>
+
+    <h3><span class="no">5</span>Préparer une convocation</h3>
     <ol>
       <li>Cliquez en haut sur <b>Convocation</b>.</li>
       <li>Il n’y a que trois choses à remplir. Le reste est déjà écrit.</li>
@@ -1223,7 +1261,7 @@ function vueAide(){
       rangés sous la petite ligne <b>Ce qui ne change presque jamais</b>, tout en bas.
       Cliquez dessus seulement le jour où le lieu change.</p>
 
-    <h3><span class="no">5</span>Envoyer la convocation</h3>
+    <h3><span class="no">6</span>Envoyer la convocation</h3>
     <ol>
       <li>Cliquez en haut sur <b>Réponses &amp; documents</b>.</li>
       <li>Descendez jusqu’à <b>Envoyer la convocation</b>. Vous voyez la liste des
@@ -1242,7 +1280,7 @@ function vueAide(){
       mais c’est vous qui appuyez sur « Envoyer ». Tant que vous n’avez pas appuyé,
       rien n’est parti.</div>
 
-    <h3><span class="no">6</span>Noter qui vient</h3>
+    <h3><span class="no">7</span>Noter qui vient</h3>
     <ol>
       <li>Toujours dans <b>Réponses &amp; documents</b>, remontez jusqu’à
         <b>Réponses</b>.</li>
@@ -1261,7 +1299,7 @@ function vueAide(){
       et le motif sont écrits sous leur nom. Vous pouvez toujours changer, si l'un
       d'eux vient.</div>
 
-    <h3><span class="no">7</span>Imprimer les papiers</h3>
+    <h3><span class="no">8</span>Imprimer les papiers</h3>
     <p>En haut de <b>Réponses &amp; documents</b>, deux boutons :</p>
     <ol>
       <li><b class="bouton">Feuille d’émargement</b> — la feuille que chacun signe en
@@ -1281,7 +1319,7 @@ function vueAide(){
       <li><b class="bouton">Fermer</b> — pour revenir en arrière.</li>
     </ol>
 
-    <h3><span class="no">8</span>Les paiements</h3>
+    <h3><span class="no">9</span>Les paiements</h3>
     <ol>
       <li>Cliquez en haut sur <b>Trésorerie</b>.</li>
       <li>Chaque ligne dit ce qu’une personne doit, ce qu’elle a versé, et ce qui
@@ -1292,7 +1330,7 @@ function vueAide(){
       <li>La ligne passe à <b>Soldé</b>, et les totaux du haut se recalculent.</li>
     </ol>
 
-    <h3><span class="no">9</span>Si quelque chose ne va pas</h3>
+    <h3><span class="no">10</span>Si quelque chose ne va pas</h3>
     <p><b>« J’ai fermé la page, j’ai tout perdu. »</b> Non. Rouvrez le fichier : tout
       est là, y compris l’onglet où vous étiez.</p>
     <p><b>« Les accents s’affichent bizarrement. »</b> Vous avez ouvert une vieille
@@ -1303,7 +1341,7 @@ function vueAide(){
       logiciel n’envoie rien tout seul. Seul votre clic sur « Envoyer », dans votre
       messagerie, envoie quelque chose.</p>
 
-    <h3><span class="no">10</span>Ce que le logiciel ne fait pas encore</h3>
+    <h3><span class="no">11</span>Ce que le logiciel ne fait pas encore</h3>
     <p>Il ne relance pas tout seul ceux qui n’ont pas répondu. Il ne réclame pas les
       capitations en retard. Les réponses des Sœurs et Frères n’arrivent pas toutes
       seules : c’est vous qui les notez.</p>
@@ -1326,4 +1364,184 @@ document.addEventListener('click', e => {
 'use strict';
 /* Premier dessin : après la déclaration de toutes les vues. */
 dessiner();
+</script>
+<script>
+'use strict';
+/* ═══════════════════════════════════════════════════════════════════
+   LES VISITEURS
+
+   Fiche distincte de celle des membres, et volontairement plus courte :
+   un visiteur n'appartient pas au Rite. L'exception qui vous autorise à
+   tenir le tableau de vos Sœurs et Frères ne le couvre pas — d'où le
+   minimum utile, de quoi le tuiler et le reconvoquer s'il le souhaite,
+   et rien de plus.
+═══════════════════════════════════════════════════════════════════ */
+function vChamp(v,cle,label,type,aide){
+  return `<div class="champ"><label for="v-${cle}">${label}</label>
+    <input id="v-${cle}" type="${type}" data-v="${cle}" value="${ech(v[cle]??'')}">
+    ${aide?`<span class="aide">${aide}</span>`:''}</div>`;
+}
+const visiteursDeLaTenue = () => E.visiteurs.filter(v => v.presentTenue);
+
+function vueVisiteurs(){
+  const ouvert = E.visiteurOuvert ? E.visiteurs.find(v => v.id === E.visiteurOuvert) : null;
+  $('#v-visiteurs').innerHTML = ouvert ? ficheVisiteur(ouvert) : listeVisiteurs();
+}
+
+function listeVisiteurs(){
+  const l = E.visiteurs.map(v=>`<tr class="cliquable" data-vis="${v.id}" tabindex="0" role="button"
+      aria-label="Ouvrir la fiche de ${ech(v.prenom)} ${ech(v.nom)}">
+      <td><span class="nom-membre">${ech(v.prenom)} ${ech(v.nom)}</span>
+          ${v.grade?`<div class="qual">${ech(v.grade)}</div>`:''}</td>
+      <td>${ech(v.loge||'')}${v.orient?`<div class="qual">à l’O∴ de ${ech(v.orient)}</div>`:''}</td>
+      <td>${ech(v.obedience||'')}</td>
+      <td><span class="qual">${ech(v.email||'')}${v.tel?'<br>'+ech(v.tel):''}</span></td>
+      <td>${v.presentTenue?`<span class="p p-ok">Attendu</span>`:`<span class="p p-neutre">—</span>`}</td>
+    </tr>`).join('');
+  return `
+  <div class="bloc"><header><div>
+    <h2>Visiteurs</h2>
+    <p class="sous">Les Sœurs et Frères d’autres Ateliers reçus en tenue. Fiche distincte
+      de celle des membres, et plus courte : un visiteur n’appartient pas au Rite.</p>
+  </div><div class="groupe">
+    <button class="btn btn-or" id="vis-nouveau">＋ Nouveau visiteur</button>
+    ${E.visiteurs.length?`<button class="btn" id="imp-carnet">Imprimer le carnet</button>`:''}
+  </div></header>
+  ${E.visiteurs.length ? `<div class="enveloppe"><table class="tab">
+      <thead><tr><th>Sœur ou Frère</th><th>Loge</th><th>Obédience</th>
+        <th>Contact</th><th>Cette tenue</th></tr></thead>
+      <tbody>${l}</tbody></table></div>`
+    : `<div class="note"><b>Aucun visiteur enregistré.</b> Cliquez sur
+        « ＋ Nouveau visiteur » quand un Frère ou une Sœur d’un autre Atelier
+        s’annonce. Sa fiche se remplit en une minute, et son nom apparaîtra tout seul
+        sur la feuille d’émargement et sur la planche à tracer.</div>`}
+  </div>`;
+}
+
+function ficheVisiteur(v){
+  const manque = [];
+  if (!v.nom || !v.prenom) manque.push('son nom et son prénom');
+  if (!v.grade) manque.push('son grade, pour le tuilage');
+  if (!v.loge) manque.push('sa Loge d’origine');
+  return `
+  <div class="bloc"><header><div>
+    <button class="btn btn-mini" id="vis-retour" style="margin-bottom:9px">‹ Tous les visiteurs</button>
+    <h2>${ech((v.prenom+' '+v.nom).trim()) || 'Nouveau visiteur'}</h2>
+    <p class="sous">${v.loge ? ech(v.loge) + (v.obedience ? ' — ' + ech(v.obedience) : '')
+                             : 'Loge et obédience à renseigner.'}</p>
+  </div><div class="groupe">
+    <button class="btn" id="imp-visiteur">Imprimer la fiche</button>
+    <button class="btn" id="vis-suppr">Retirer</button>
+  </div></header>
+
+  ${manque.length?`<div class="note" style="margin-bottom:20px"><b>Il manque ${manque.join(', ')}.</b>
+    Sans le grade et la Loge, le tuilage n’est pas possible.</div>`:''}
+
+  <div class="forme">
+    <fieldset><legend>Qui</legend><div class="rangee">
+      ${vChamp(v,'prenom','Prénom','text')}
+      ${vChamp(v,'nom','Nom','text')}
+      ${vChamp(v,'grade','Grade','text','« Maître Maçon », « 18ème », « Apprenti »')}
+    </div></fieldset>
+
+    <fieldset><legend>D’où il vient</legend><div class="rangee">
+      ${vChamp(v,'loge','Loge','text','« R∴L∴ Les Amis Réunis n°12 »')}
+      ${vChamp(v,'orient','Orient','text','La ville de sa Loge')}
+      ${vChamp(v,'obedience','Obédience','text','« GLNF », « FLTS », « GLDF »…')}
+      ${vChamp(v,'rite','Rite','text','« Rite Écossais Ancien & Accepté »')}
+    </div></fieldset>
+
+    <fieldset><legend>Pour le joindre</legend><div class="rangee">
+      ${vChamp(v,'email','Adresse courriel','email')}
+      ${vChamp(v,'tel','Téléphone','tel')}
+    </div></fieldset>
+
+    <fieldset><legend>Sa visite</legend><div class="rangee">
+      ${vChamp(v,'invitePar','Invité par','text','Le Frère ou la Sœur qui l’a convié')}
+      ${vChamp(v,'tuilePar','Tuilé par','text','Qui l’a tuilé à l’entrée')}
+      <div class="champ"><label for="v-presentTenue">Attendu à la prochaine tenue</label>
+        <select id="v-presentTenue" data-v="presentTenue">
+          <option value=""${!v.presentTenue?' selected':''}>Non</option>
+          <option value="1"${v.presentTenue?' selected':''}>Oui — le ${dateLongue(E.tenue.date)}</option>
+        </select></div>
+    </div>
+    <p class="aide" style="margin-top:10px">Un visiteur n’est pas membre du Rite :
+      sa fiche ne garde que ce qui sert à le recevoir, et se supprime dès qu’elle
+      ne sert plus.</p></fieldset>
+  </div></div>`;
+}
+</script>
+<script>
+'use strict';
+/* ── Documents des visiteurs ────────────────────────────────────── */
+function visiteurPapier(v){
+  const l = (c,x) => x ? `<tr><td style="width:52mm;color:#5c5346">${c}</td><td>${ech(x)}</td></tr>` : '';
+  return `${ENTETE}<h1>Fiche de visiteur</h1>
+    <table><tbody>
+      ${l('Nom et prénom', (v.prenom+' '+v.nom).trim())}
+      ${l('Grade', v.grade)}${l('Rite', v.rite)}
+      ${l('Loge', v.loge)}${l('Orient', v.orient)}${l('Obédience', v.obedience)}
+      ${l('Courriel', v.email)}${l('Téléphone', v.tel)}
+      ${l('Invité par', v.invitePar)}${l('Tuilé par', v.tuilePar)}
+      ${l('Tenue', v.presentTenue ? dateLongue(E.tenue.date) : '')}
+    </tbody></table>
+    <p style="margin-top:8mm;font-size:9.5pt;color:#5c5346">Un visiteur n’est pas membre
+      du Rite. Cette fiche ne conserve que ce qui sert à le recevoir et à le
+      reconvoquer s’il le souhaite ; elle ne sort pas de l’Atelier.</p>`;
+}
+function carnetPapier(){
+  return `${ENTETE}<h1>Carnet des visiteurs</h1>
+    <table><thead><tr><th>Sœur ou Frère</th><th>Grade</th><th>Loge et Orient</th>
+      <th>Obédience</th><th>Contact</th></tr></thead><tbody>
+      ${E.visiteurs.map(v=>`<tr><td>${ech((v.prenom+' '+v.nom).trim())}</td>
+        <td>${ech(v.grade||'')}</td>
+        <td>${ech(v.loge||'')}${v.orient?' — '+ech(v.orient):''}</td>
+        <td>${ech(v.obedience||'')}</td>
+        <td>${ech(v.email||'')}</td></tr>`).join('')}
+    </tbody></table>`;
+}
+
+/* ── Gestes ─────────────────────────────────────────────────────── */
+document.addEventListener('click', e => {
+  const ligne = e.target.closest('tr[data-vis]');
+  if (ligne){ E.visiteurOuvert = +ligne.dataset.vis; dessiner(); return; }
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.id === 'vis-nouveau'){
+    const id = Math.max(0, ...E.visiteurs.map(v=>v.id)) + 1;
+    E.visiteurs.push({id, prenom:'', nom:'', grade:'', rite:'', loge:'', orient:'',
+      obedience:'', email:'', tel:'', invitePar:'', tuilePar:'', presentTenue:false});
+    E.visiteurOuvert = id; dessiner();
+    setTimeout(()=>document.getElementById('v-prenom')?.focus(), 0); return;
+  }
+  if (b.id === 'vis-retour'){ E.visiteurOuvert = null; dessiner(); return; }
+  if (b.id === 'imp-carnet'){ ouvrir(carnetPapier(), 'Carnet des visiteurs'); return; }
+  if (b.id === 'imp-visiteur'){
+    const v = E.visiteurs.find(x=>x.id===E.visiteurOuvert);
+    ouvrir(visiteurPapier(v), 'Fiche visiteur ' + v.nom); return;
+  }
+  if (b.id === 'vis-suppr'){
+    const v = E.visiteurs.find(x=>x.id===E.visiteurOuvert);
+    if (!confirm(`Retirer ${(v.prenom+' '+v.nom).trim()} du carnet des visiteurs ?`)) return;
+    E.visiteurs = E.visiteurs.filter(x=>x.id!==E.visiteurOuvert);
+    E.visiteurOuvert = null; dessiner(); return;
+  }
+});
+document.addEventListener('keydown', e => {
+  const l = e.target.closest?.('tr[data-vis]');
+  if (l && (e.key === 'Enter' || e.key === ' ')){
+    e.preventDefault(); E.visiteurOuvert = +l.dataset.vis; dessiner();
+  }
+});
+document.addEventListener('input', e => {
+  const el = e.target; if (!el.dataset.v) return;
+  const v = E.visiteurs.find(x => x.id === E.visiteurOuvert); if (!v) return;
+  const c = el.dataset.v;
+  v[c] = (c === 'presentTenue') ? (el.value === '1') : el.value;
+  garder();
+  if (['nom','prenom','grade','loge','obedience','presentTenue'].includes(c)){
+    const pos = el.selectionStart; dessiner();
+    const r = document.getElementById('v-'+c);
+    if (r){ r.focus(); try{ r.setSelectionRange(pos,pos); }catch(err){} }
+  }
+});
 </script>
