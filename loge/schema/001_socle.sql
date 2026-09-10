@@ -137,20 +137,48 @@ CREATE INDEX idx_degres_date ON degres(date);
 -- viendront les droits du logiciel : le Trésorier en exercice voit la
 -- comptabilité, son prédécesseur ne la voit plus le lendemain de la
 -- passation. Aucun droit n'est accordé « à une personne ».
+-- Les charges existantes, que le Rite complète lui-même. Elles ne sont
+-- PAS une liste figée dans une contrainte SQL : ajouter un office ne
+-- doit demander ni développeur ni migration, seulement une ligne ici.
+--
+-- « rang » donne l'ordre protocolaire : c'est celui dans lequel les
+-- Officiers apparaissent au tableau des présents de la planche.
+-- « signe_planche » désigne les trois qui la signent — d'après votre
+-- modèle : le Vénérable Maître, l'Orateur, le Secrétaire.
+CREATE TABLE offices_types (
+  code          TEXT    PRIMARY KEY,       -- 'venerable'
+  libelle       TEXT    NOT NULL,          -- 'Vénérable Maître'
+  abreviation   TEXT,                      -- 'VM∴'
+  rang          INTEGER NOT NULL DEFAULT 99,
+  signe_planche INTEGER NOT NULL DEFAULT 0,
+  actif         INTEGER NOT NULL DEFAULT 1,
+  CHECK (signe_planche IN (0,1) AND actif IN (0,1))
+);
+
+-- Charges usuelles, posées pour que le logiciel démarre. Le Rite les
+-- corrige, les renomme et en ajoute — c'est le but de cette table.
+INSERT INTO offices_types (code, libelle, abreviation, rang, signe_planche) VALUES
+  ('venerable',            'Vénérable Maître',       'VM∴',    1, 1),
+  ('premier_surveillant',  'Premier Surveillant',    '1er Surv∴', 2, 0),
+  ('deuxieme_surveillant', 'Second Surveillant',     '2d Surv∴',  3, 0),
+  ('orateur',              'Orateur',                'Or∴',    4, 1),
+  ('secretaire',           'Secrétaire',             'Secr∴',  5, 1),
+  ('tresorier',            'Trésorier',              'Trés∴',  6, 0),
+  ('hospitalier',          'Hospitalier',            'Hosp∴',  7, 0),
+  ('expert',               'Expert',                 'Exp∴',   8, 0),
+  ('maitre_ceremonies',    'Maître des Cérémonies',  'MC∴',    9, 0),
+  ('maitre_banquets',      'Maître des Banquets',    'MDB∴',  10, 0),
+  ('couvreur',             'Couvreur',               'Couv∴', 11, 0),
+  ('archiviste',           'Archiviste',             'Arch∴', 12, 0);
+
 CREATE TABLE offices (
   id            INTEGER PRIMARY KEY,
   loge_id       INTEGER NOT NULL REFERENCES loges(id),
   membre_id     INTEGER NOT NULL REFERENCES membres(id) ON DELETE CASCADE,
-  office        TEXT    NOT NULL,
+  office        TEXT    NOT NULL REFERENCES offices_types(code),
   date_debut    TEXT    NOT NULL,
   date_fin      TEXT,                      -- NULL = office en cours
   cree_le       TEXT    NOT NULL DEFAULT (datetime('now')),
-  CHECK (office IN (
-    'venerable','premier_surveillant','deuxieme_surveillant',
-    'orateur','secretaire','tresorier','hospitalier',
-    'expert','maitre_ceremonies','couvreur','archiviste',
-    'maitre_banquets','orateur_adjoint','secretaire_adjoint'
-  )),
   CHECK (date_fin IS NULL OR date_fin >= date_debut)
 );
 

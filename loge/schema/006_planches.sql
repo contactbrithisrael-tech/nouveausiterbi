@@ -89,10 +89,12 @@ CREATE UNIQUE INDEX idx_paragraphes_rang ON planche_paragraphes(planche_id, rang
 CREATE TABLE planche_signatures (
   id            INTEGER PRIMARY KEY,
   planche_id    INTEGER NOT NULL REFERENCES planches_tracees(id) ON DELETE CASCADE,
-  office        TEXT    NOT NULL,
+  office        TEXT    NOT NULL REFERENCES offices_types(code),
   membre_id     INTEGER REFERENCES membres(id) ON DELETE SET NULL,
-  signe_le      TEXT,
-  CHECK (office IN ('venerable','orateur','secretaire'))
+  signe_le      TEXT
+  -- Quels offices signent n'est plus écrit ici mais dans
+  -- offices_types.signe_planche : le Rite peut décider demain que le
+  -- Grand Expert signe aussi, sans qu'on touche à ce fichier.
 );
 
 CREATE UNIQUE INDEX idx_signatures_office ON planche_signatures(planche_id, office);

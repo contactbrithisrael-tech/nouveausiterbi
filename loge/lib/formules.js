@@ -74,3 +74,15 @@ export function dateLongue(date) {
     weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
   }).format(date);
 }
+
+/* ── La qualité d'un membre, telle qu'elle s'imprime ────────────────
+   Source : Souverain Grand Commandeur — « Maître Adon du RBI »,
+   « Compagnon Boneh du RBI », « Apprenti Oved du RBI ».
+
+   Le nom du degré vient de la table nomenclature_degres ; seule la
+   forme de la phrase est ici. Un Frère qui n'a pas encore de degré du
+   Rite garde la qualité acquise dans son rite d'origine, telle qu'elle
+   est enregistrée dans qualifications_externes.                       */
+export function qualite(nomDuDegre, { abrege = false } = {}) {
+  return `${nomDuDegre} du ${abrege ? 'R∴B∴I∴' : 'Rite Brith Israël'}`;
+}
