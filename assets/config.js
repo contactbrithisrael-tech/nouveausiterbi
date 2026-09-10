@@ -32,7 +32,7 @@ var RBI_CONFIG = {
    liens: [
   { label: "Le Rite",          href: "#rite"   },
   { label: "Chefs de l'Ordre", href: "#chefs"  },
-  { label: "Publications",     href: "#livres" },
+  { label: "Publications",     href: "livres.html" },
   { label: "Traités",          href: "traites.html" },
   { label: "Légitimité",       href: "legitimite.html" },
   { label: "Devenir FM",       href: "devenir-fm.html", style: "cta" },
@@ -384,7 +384,7 @@ var RBI_CONFIG = {
       {
         img_id:   "book-guide",
         titre:    "Guide de Survie pour Franc-Maçon Désemparé",
-        sous:     "Mickaël DARMON — Amazon KDP",
+        sous:     "Démystification, résilience et sagesse au quotidien — Mickaël DARMON · Amazon KDP, 212 pages",
         desc:     "Un guide pratique et humoristique pour naviguer dans le monde maçonnique, par le fondateur du Rite Brith Israël.",
         placeholder: "G",
         liens: [

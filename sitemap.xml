@@ -6,6 +6,11 @@
     <priority>1.0</priority>
   </url>
   <url>
+    <loc>https://www.brith-israel.org/livres.html</loc>
+    <lastmod>2026-09-10</lastmod>
+    <priority>0.9</priority>
+  </url>
+  <url>
     <loc>https://www.brith-israel.org/legitimite.html</loc>
     <lastmod>2026-09-01</lastmod>
     <priority>0.9</priority>
