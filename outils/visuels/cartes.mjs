@@ -36,6 +36,15 @@ export const LIVRES = {
 
 export const CARTES = [
   {
+    /* Aucun titre d'ouvrage, aucune adresse : cette carte accompagne
+       une réflexion partagée, pas une annonce. Elle ne doit rien
+       vendre, sinon le texte qu'elle illustre devient une publicité. */
+    id: 'reflexion-perfection', type: 'reflexion',
+    texte: 'Arrêtez de chercher la perfection.<br>Elle est le tombeau<br>des bonnes volontés.',
+    nom: 'Mickaël Darmon',
+    formats: ['paysage', 'carre']
+  },
+  {
     id: 'citation-perfection', type: 'citation',
     texte: 'Arrêtez de chercher la perfection.<br>Elle est le tombeau<br>des bonnes volontés.',
     source: 'Guide de Survie pour Franc-Maçon Désemparé',

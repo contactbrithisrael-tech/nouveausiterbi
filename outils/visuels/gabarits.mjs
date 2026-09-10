@@ -84,4 +84,18 @@ export function livre({ couverture, titre, sous, meta, lien }, l, h) {
   </div>`);
 }
 
-export const GABARITS = { citation, auteur, livre };
+export function reflexion({ texte, nom }, l, h) {
+  return socle(l, h, `<div class="zone">
+    <div class="orn">\u2726 \u2727 \u2726</div>
+    <div class="filet"></div>
+    <div style="font-size:${Math.round(l*0.0445)}px;line-height:1.5;color:${TEXTE};font-style:italic">
+      <span style="color:${OR};font-size:1.5em;line-height:0;vertical-align:-.25em">\u00ab</span>
+      ${texte}
+      <span style="color:${OR};font-size:1.5em;line-height:0;vertical-align:-.35em">\u00bb</span>
+    </div>
+    <div class="filet"></div>
+    <div style="font-size:${Math.round(l*0.019)}px;letter-spacing:.14em;color:${GRIS};text-transform:uppercase">${nom}</div>
+  </div>`);
+}
+
+export const GABARITS = { citation, auteur, livre, reflexion };
