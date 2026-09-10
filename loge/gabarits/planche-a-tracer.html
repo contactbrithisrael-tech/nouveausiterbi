@@ -1,0 +1,182 @@
+<!-- ═══════════════════════════════════════════════════════════════════
+     RITE BRITH ISRAËL — Gabarit : PLANCHE À TRACER
+     Format A4. Rendu en PDF par le service d'impression.
+
+     ► LA FORME EST CELLE DE VOTRE MODÈLE. Les formules rituelles sont
+       reprises mot pour mot, y compris « unir ce qui est épars » que
+       d'autres écrivent « rassembler ». Ce qui a disparu, ce sont les
+       trois mentions qui venaient d'ailleurs : la R∴L∴ Nostradamus, la
+       Grande Loge Nationale des Rites Maçonniques, et le premier degré
+       d'Apprenti du Rite Écossais Ancien & Accepté.
+
+     ► TOUT CE QUI EST ENTRE {{ }} EST CALCULÉ. Le Secrétaire ne saisit
+       que les paragraphes du récit. S'il n'y a plus rien à recopier,
+       il n'y a plus rien à recopier de travers.
+════════════════════════════════════════════════════════════════════ -->
+<style>
+  @page { size: A4; margin: 26mm 20mm 22mm 20mm; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'EB Garamond', Garamond, Georgia, serif;
+    font-size: 11.5pt; line-height: 1.55; color: #14110c; background: #fff;
+    counter-reset: page;
+  }
+
+  /* L'en-tête se répète sur chaque page imprimée : un document de loge
+     de trois pages doit porter son atelier sur les trois. */
+  .entete {
+    position: fixed; top: -20mm; left: 0; right: 0;
+    text-align: center; line-height: 1.3;
+  }
+  .entete .formule { font-size: 8.5pt; letter-spacing: .18em; color: #7a6a3e; }
+  .entete .conseil { font-family: 'Cinzel', Georgia, serif;
+                     font-size: 10pt; letter-spacing: .05em; margin-top: 2mm; }
+  .entete .qualite { font-size: 7.5pt; letter-spacing: .12em;
+                     text-transform: uppercase; color: #5c5346; }
+  .entete .devise  { font-size: 8pt; color: #7a6a3e; margin-top: 1mm; }
+  .entete .atelier { font-family: 'Cinzel', Georgia, serif; font-size: 10.5pt;
+                     margin-top: 2.5mm; }
+  .entete .orient  { font-size: 8.5pt; font-style: italic; color: #5c5346; }
+  .entete hr { border: 0; border-top: .4pt solid #b9a25e; margin: 3mm 18mm 0; }
+
+  /* Le filigrane du Rite, très pâle, derrière le texte. */
+  .filigrane {
+    position: fixed; top: 42%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 105mm; opacity: .05; z-index: -1;
+  }
+
+  .titre {
+    font-family: 'Cinzel', Georgia, serif; font-size: 15pt;
+    text-align: center; margin: 4mm 0 7mm; letter-spacing: .02em;
+  }
+
+  p { margin-bottom: 3.6mm; text-align: justify; }
+  .rubrique {
+    font-family: 'Cinzel', Georgia, serif; font-size: 10pt;
+    letter-spacing: .06em; margin: 6mm 0 2.5mm;
+  }
+
+  ul.tableau { list-style: none; margin-bottom: 4mm; }
+  ul.tableau li { margin-bottom: 1.6mm; padding-left: 5mm; text-indent: -5mm; }
+  ul.tableau li::before { content: "— "; color: #7a6a3e; }
+  ul.tableau .office { font-style: italic; color: #453d31; }
+  .aucun { font-style: italic; color: #6b6357; padding-left: 5mm; }
+
+  .paragraphe { margin-bottom: 4.5mm; }
+  .paragraphe .point {
+    font-size: 9.5pt; letter-spacing: .04em; color: #7a6a3e;
+    text-transform: uppercase; display: block; margin-bottom: 1.2mm;
+  }
+
+  .signatures { margin-top: 12mm; page-break-inside: avoid; }
+  .signatures .bloc {
+    margin-bottom: 16mm; page-break-inside: avoid;
+  }
+  .signatures .role {
+    font-family: 'Cinzel', Georgia, serif; font-size: 10.5pt;
+  }
+  .signatures .nom { font-size: 9.5pt; color: #5c5346; font-style: italic; }
+  .signatures .ligne {
+    border-bottom: .4pt solid #a89a76; width: 72mm; margin-top: 11mm;
+  }
+
+  .pied {
+    position: fixed; bottom: -16mm; left: 0; right: 0;
+    text-align: center; font-size: 7.5pt; color: #8a8172;
+    letter-spacing: .06em;
+  }
+</style>
+
+<img class="filigrane" src="{{filigrane}}" alt="">
+
+<header class="entete">
+  <div class="formule">A∴L∴G∴D∴G∴A∴D∴L∴U∴ &nbsp;—&nbsp; ב∴ס∴ד∴</div>
+  <div class="conseil">Suprême Conseil Mondial du Rite BRITH ISRAËL</div>
+  <div class="qualite">Francs-Maçons de Tradition Hébraïque &amp; Kabbalistique</div>
+  <div class="devise">חי חי חי ויקיים &nbsp;—&nbsp; HAI HAI HAI VEQAYAM</div>
+  <div class="atelier">R∴L∴ {{loge_nom}} {{loge_mention}} n°{{loge_numero}} &nbsp;בראשית</div>
+  <div class="orient">Atelier {{loge_mixite}} à l'O∴ de {{loge_orient}}</div>
+  <hr>
+</header>
+
+<main>
+  <h1 class="titre">Planche à Tracer du {{tenue_date_longue}}<br>{{avl}} A∴V∴L∴</h1>
+
+  <p>Dans un lieu très éclairé, très pur, le {{jour_ordinal}} jour du
+     {{mois_maconnique}}<sup>ème</sup> mois de l'An de Vraie Lumière {{avl}},
+     s'est réunie la R∴L∴ {{loge_nom}} n°{{loge_numero}}, constituée le
+     {{loge_date_creation}}, à l'O∴ de {{loge_orient}}, au Temple
+     {{tenue_lieu}}.</p>
+
+  <div class="rubrique">Sont présents les SS∴ et FF∴ Membres de la Loge</div>
+  <ul class="tableau">{{#presents}}
+    <li>{{nom}}, {{qualite}}{{#office}}, <span class="office">{{office}}</span>{{/office}}.</li>{{/presents}}
+  </ul>
+
+  <div class="rubrique">Se sont fait excuser</div>
+  {{#excuses_vides}}<p class="aucun">Aucun.</p>{{/excuses_vides}}
+  <ul class="tableau">{{#excuses}}
+    <li>{{nom}}, {{qualite}}.</li>{{/excuses}}
+  </ul>
+
+  <div class="rubrique">Les SS∴ et FF∴ Visiteurs</div>
+  {{#visiteurs_vides}}<p class="aucun">Aucun visiteur n'a été tuilé ce jour.</p>{{/visiteurs_vides}}
+  <ul class="tableau">{{#visiteurs}}
+    <li>{{nom}}, {{qualite}}, de la {{loge_origine}}{{#obedience}} — {{obedience}}{{/obedience}},
+        tuilé par {{tuile_par}}.</li>{{/visiteurs}}
+  </ul>
+
+  <p>Après une allocution de bienvenue, le VM∴ {{venerable}} ouvre les travaux
+     sous les auspices du Suprême Conseil Mondial du Rite Brith Israël, au
+     {{degre_ordinal}} degré de {{degre_nom}} du Rite Brith Israël.</p>
+
+  {{#allocution}}<p>{{allocution}}</p>{{/allocution}}
+
+  {{#paragraphes}}
+  <div class="paragraphe">
+    <span class="point">{{intitule}}</span>
+    <p>{{texte}}</p>
+  </div>{{/paragraphes}}
+
+  <p>Les colonnes ayant résonné de ces précieuses paroles, l'ordre du jour étant
+     épuisé, et tout ayant été conforme au Rite, le VM∴ procède à la clôture
+     des travaux.</p>
+
+  <p>S'ensuit une chaleureuse et fraternelle chaîne d'union ; le VM∴ fait
+     circuler le sac aux propositions et le Tronc de la Veuve. Le premier
+     {{sac_propositions}}, le second alourdi d'une pierre plate de
+     {{tronc_montant}} kg. Le montant sera confié à la garde de notre
+     {{tronc_confie_a}}.</p>
+
+  <p>Les Officiers ayant éteint leurs plateaux, les SS∴ et FF∴ de la R∴L∴
+     {{loge_nom}}, ayant mérité le repos, se retirent en jurant de garder le
+     silence sur les travaux venant de se dérouler, et, ayant à cœur de
+     continuer à œuvrer à l'extérieur du Temple pour unir ce qui est épars, se
+     réuniront le {{prochaine_tenue}} pour leur prochaine tenue.</p>
+
+  <div class="signatures">
+    <div class="rubrique">Signatures des Officiers</div>
+    <div class="bloc">
+      <div class="role">Le Vénérable Maître</div>
+      <div class="nom">{{venerable}}</div>
+      <div class="ligne"></div>
+    </div>
+    <div class="bloc">
+      <div class="role">L'Orateur</div>
+      <div class="nom">{{orateur}}</div>
+      <div class="ligne"></div>
+    </div>
+    <div class="bloc">
+      <div class="role">Le Secrétaire</div>
+      <div class="nom">{{secretaire}}</div>
+      <div class="ligne"></div>
+    </div>
+  </div>
+</main>
+
+<footer class="pied">
+  R∴L∴ {{loge_nom}} n°{{loge_numero}} &nbsp;·&nbsp; Planche à tracer du
+  {{tenue_date_courte}} &nbsp;·&nbsp; {{statut_mention}}
+</footer>
