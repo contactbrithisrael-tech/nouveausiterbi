@@ -163,6 +163,30 @@ h2{font-family:var(--titre);font-size:19px;font-weight:600;letter-spacing:.02em}
   .voile{position:static;background:#fff;padding:0;overflow:visible}
   .papier{box-shadow:none;max-width:none;padding:0}
 }
+
+/* ── Formulaire ── */
+.forme{background:var(--carte);border:1px solid var(--trait);border-radius:var(--r);
+       padding:18px 20px;display:grid;gap:16px}
+.rangee{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px}
+.champ{display:flex;flex-direction:column;gap:5px;min-width:0}
+.champ label{font-size:12px;font-weight:600;letter-spacing:.04em;color:var(--encre-3);
+             text-transform:uppercase}
+.champ input,.champ select,.champ textarea{
+  font:inherit;font-size:14px;color:var(--encre);background:var(--fond);
+  border:1px solid var(--trait);border-radius:var(--r);padding:8px 10px;width:100%}
+.champ input:focus,.champ select:focus,.champ textarea:focus{
+  outline:2px solid var(--or-vif);outline-offset:0;border-color:var(--or)}
+.champ .aide{font-size:12px;color:var(--encre-3)}
+fieldset{border:0}
+legend{font-family:var(--titre);font-size:15px;font-weight:600;margin-bottom:12px;
+       padding-bottom:7px;border-bottom:1px solid var(--trait);width:100%}
+.pt-odj{display:grid;grid-template-columns:88px 1fr auto;gap:9px;align-items:center}
+.pt-odj input{font-size:14px}
+.pt-odj .x{padding:6px 10px;color:var(--encre-3);border:1px solid var(--trait);
+           border-radius:var(--r);line-height:1}
+.pt-odj .x:hover{color:var(--alerte);border-color:var(--alerte)}
+.interrupteur{display:flex;align-items:center;gap:9px;font-size:14px}
+.interrupteur input{width:auto;accent-color:var(--or)}
 .note{background:var(--attente-fond);border-left:3px solid var(--attente);
       border-radius:0 var(--r) var(--r) 0;padding:12px 16px;font-size:13.5px;
       color:var(--encre-2);margin-bottom:22px}
@@ -179,7 +203,8 @@ h2{font-family:var(--titre);font-size:19px;font-weight:600;letter-spacing:.02em}
 
 <div class="onglets" role="tablist">
   <button role="tab" id="t-tableau" aria-selected="true">Tableau de la Loge</button>
-  <button role="tab" id="t-tenue" aria-selected="false">Tenue du 7 septembre</button>
+  <button role="tab" id="t-convoc" aria-selected="false">Convocation</button>
+  <button role="tab" id="t-tenue" aria-selected="false">Réponses &amp; documents</button>
   <button role="tab" id="t-tresor" aria-selected="false">Trésorerie</button>
 </div>
 
@@ -190,6 +215,7 @@ h2{font-family:var(--titre);font-size:19px;font-weight:600;letter-spacing:.02em}
   de vos documents ; les montants sont inventés, faute de connaître votre barème.</p>
 
   <section id="v-tableau"></section>
+  <section id="v-convoc" hidden></section>
   <section id="v-tenue" hidden></section>
   <section id="v-tresor" hidden></section>
 
@@ -226,17 +252,27 @@ const REAA = 'M∴M∴ du Rite Écossais Ancien & Accepté';
 
 function neuf(){ return {
   membres:[
-    {id:1,nom:'RAUX',prenoms:'Jean-Michel',qualite:REAA,office:'venerable',statut:'actif',du:200,regle:200},
-    {id:2,nom:'DARMON',prenoms:'Mickaël',qualite:'33ème, Souverain Grand Commandeur',office:null,statut:'actif',du:200,regle:100},
-    {id:3,nom:'KESSALIS',prenoms:'Frédéric',qualite:REAA,office:'premier_surveillant',statut:'actif',du:200,regle:200},
-    {id:4,nom:'KESSALIS',prenoms:'Marion',qualite:REAA,office:'deuxieme_surveillant',statut:'actif',du:200,regle:0},
-    {id:5,nom:'BUHLER',prenoms:'Didier',qualite:REAA,office:'orateur',statut:'actif',du:200,regle:200},
-    {id:6,nom:'HABERT',prenoms:'Martine',qualite:REAA,office:'secretaire',statut:'actif',du:200,regle:200},
+    {id:1,nom:'RAUX',prenoms:'Jean-Michel',qualite:REAA,office:'venerable',statut:'actif',du:300,regle:300},
+    {id:2,nom:'DARMON',prenoms:'Mickaël',qualite:'33ème, Souverain Grand Commandeur',office:null,statut:'actif',du:300,regle:150},
+    {id:3,nom:'KESSALIS',prenoms:'Frédéric',qualite:REAA,office:'premier_surveillant',statut:'actif',du:300,regle:300},
+    {id:4,nom:'KESSALIS',prenoms:'Marion',qualite:REAA,office:'deuxieme_surveillant',statut:'actif',du:300,regle:0},
+    {id:5,nom:'BUHLER',prenoms:'Didier',qualite:REAA,office:'orateur',statut:'actif',du:300,regle:300},
+    {id:6,nom:'HABERT',prenoms:'Martine',qualite:REAA,office:'secretaire',statut:'actif',du:300,regle:300},
     {id:7,nom:'ROUME',prenoms:'Valérie',qualite:REAA,office:'maitre_banquets',statut:'honoraire',du:0,regle:0},
-    {id:8,nom:'CARILLO',prenoms:'Jean-Louis',qualite:REAA,office:null,statut:'actif',du:200,regle:0},
-    {id:9,nom:'MATRONE',prenoms:'Nicolas',qualite:'App∴ M∴ du Rite Écossais Ancien & Accepté',office:null,statut:'sommeil',du:200,regle:0}
+    {id:8,nom:'CARILLO',prenoms:'Jean-Louis',qualite:REAA,office:null,statut:'actif',du:300,regle:0},
+    {id:9,nom:'MATRONE',prenoms:'Nicolas',qualite:'App∴ M∴ du Rite Écossais Ancien & Accepté',office:null,statut:'sommeil',du:300,regle:0}
   ],
   presences:{}, agapes:{}, convoquee:false, journal:[],
+  tenue:{
+    date:'2026-09-07', heureConv:'17:30', heureOuv:'19:30',
+    type:'obligation', titre:"TENUE D'OBLIGATION", degre:1,
+    lieuNom:'Temple « Le Venaqui »', lieuAdresse:"Ancienne Route d'Éguilles",
+    lieuCp:'13122', lieuVille:'VENTABREN',
+    adage:"L'assiduité aux travaux est le premier devoir du Maçon",
+    agapesOui:true, agapesPrix:15, agapesLimite:'2026-09-03',
+    agapesTraiteur:'Traiteur — inscription obligatoire',
+    contact:"Secrétaire — TIS∴ Martine HABERT · Vénérable Maître — VM∴ Jean-Michel RAUX"
+  },
   odj:[
     {h:'17:30',t:'Convocation de tous les SS∴ et FF∴ pour répétition'},
     {h:'19:30',t:'Ouverture de la Tenue au premier degré de l’Apprenti Oved'},
@@ -245,7 +281,7 @@ function neuf(){ return {
     {h:'',t:'Cérémonie d’initiation de la Première Apprentie de l’Atelier'},
     {h:'',t:'Planche d’accueil, par le F∴ Orateur'},
     {h:'',t:'Clôture des travaux'},
-    {h:'',t:'Agapes rituelles — triangle de 25 €, inscription avant le 3 septembre'}
+    {h:'',t:'Agapes rituelles — triangle de 15 €, inscription avant le 3 septembre'}
   ]
 };}
 
@@ -325,9 +361,10 @@ function vueTenue(){
     </tr>`;}).join('');
   $('#v-tenue').innerHTML = `
     <div class="bloc"><header><div>
-      <h2>Tenue d'Obligation — lundi 7 septembre 2026</h2>
-      <p class="sous">Premier degré de l'Apprenti Oved · Temple « Le Venaqui », Ventabren ·
-        convocation 17h30, ouverture 19h30 · 6026 A∴V∴L∴</p>
+      <h2>${ech(E.tenue.titre||TYPES[E.tenue.type])} — ${dateLongue(E.tenue.date)}</h2>
+      <p class="sous">${RANGS[E.tenue.degre]} degré de ${ech(DEGRES[E.tenue.degre])} ·
+        ${ech(E.tenue.lieuNom)}, ${ech(E.tenue.lieuVille)} · convocation ${ech(E.tenue.heureConv)},
+        ouverture ${ech(E.tenue.heureOuv)} · ${avl(E.tenue.date)} A∴V∴L∴</p>
     </div>
     <div class="groupe">
       <button class="btn btn-or" id="convoquer">${E.convoquee?'Relancer les sans-réponse':'Envoyer la convocation'}</button>
@@ -338,7 +375,7 @@ function vueTenue(){
       <div class="tuile souligne"><div class="n">${compte('present')}</div><div class="l">Présents annoncés</div></div>
       <div class="tuile"><div class="n">${compte('excuse')}</div><div class="l">Excusés</div></div>
       <div class="tuile"><div class="n">${compte('attendu')}</div><div class="l">Sans réponse</div></div>
-      <div class="tuile"><div class="n">${auxAgapes()}</div><div class="l">Aux agapes · ${euro(auxAgapes()*25)}</div></div>
+      <div class="tuile"><div class="n">${auxAgapes()}</div><div class="l">Aux agapes · ${euro(auxAgapes()*(E.tenue.agapesPrix||0))}</div></div>
     </div></div>
     <div class="bloc"><header><div><h2>Ordre du jour</h2></div></header>
       <ul class="odj">${E.odj.map(o=>`<li><span class="h">${o.h||'—'}</span><span>${ech(o.t)}</span></li>`).join('')}</ul>
@@ -413,7 +450,7 @@ function planche(){
   const li = x => `<li>— ${ech(x.prenoms)} ${ech(x.nom)}, ${ech(x.qualite)}${
     x.office?`, <i>${ech(nomOffice(x.office))}</i>`:''}.</li>`;
   const vm = E.membres.find(x=>x.office==='venerable');
-  const tronc = pierrePlate(pres.length * 7.5);
+  const tronc = pierrePlate(pres.length * 7.5);   // don libre, montant d'exemple
   return `${ENTETE}<h1>Planche à Tracer du lundi 7 septembre 2026<br>6026 A∴V∴L∴</h1>
   <p>Dans un lieu très éclairé, très pur, le septième jour du 7<sup>ème</sup> mois de
      l'An de Vraie Lumière 6026, s'est réunie la R∴L∴ BERESHIT n°00, à l'O∴ de
@@ -441,7 +478,11 @@ function planche(){
 <script>
 'use strict';
 /* ── Navigation et actions ──────────────────────────────────────── */
-const VUES = {tableau:vueTableau, tenue:vueTenue, tresor:vueTresor};
+/* Les vues sont appelées par leur nom au moment du dessin, et non
+   résolues ici : vueConvocation est déclarée dans un bloc <script>
+   ultérieur, et la nommer directement ferait échouer tout celui-ci. */
+const VUES = {tableau:()=>vueTableau(), convoc:()=>vueConvocation(),
+              tenue:()=>vueTenue(), tresor:()=>vueTresor()};
 let courante = 'tableau';
 
 function dessiner(){
@@ -501,6 +542,176 @@ document.addEventListener('click', e => {
   if (b.id === 'imp-emarg'){ ouvrir(emargement()); return; }
   if (b.id === 'imp-planche'){ ouvrir(planche()); return; }
 });
+</script>
+<script>
+'use strict';
+/* ═══════════════════════════════════════════════════════════════════
+   L'écran que la Secrétaire ouvre en premier : elle remplit sa tenue,
+   et la convocation en sort. Les champs n'entraînent PAS de redessin —
+   sans quoi le curseur sauterait à chaque lettre tapée.
+═══════════════════════════════════════════════════════════════════ */
+const TYPES = {obligation:"Tenue d'Obligation", initiation:"Tenue d'Initiation",
+  passage:"Tenue de Passage", elevation:"Tenue d'Élévation",
+  installation:"Tenue d'Installation", blanche_fermee:"Tenue Blanche Fermée",
+  blanche_ouverte:"Tenue Blanche Ouverte", assemblee_generale:"Assemblée Générale",
+  saint_jean:"Tenue de Saint-Jean", funebre:"Tenue Funèbre"};
+const DEGRES = {1:"l'Apprenti Oved", 2:"le Compagnon Boneh", 3:"le Maître Adon"};
+const RANGS  = {1:'premier', 2:'deuxième', 3:'troisième'};
+const MOIS = ['janvier','février','mars','avril','mai','juin','juillet','août',
+              'septembre','octobre','novembre','décembre'];
 
+function dateLongue(iso){
+  if(!iso) return '…';
+  const d = new Date(iso+'T12:00:00');
+  return d.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+}
+function avl(iso){ return iso ? Number(iso.slice(0,4)) + 4000 : '…'; }
+/* mars = 1er mois — NON CONFIRMÉ par le Rite. */
+function moisMac(iso){ return ((new Date(iso+'T12:00:00').getMonth()+10)%12)+1; }
+
+function champ(cle,label,type,aide){
+  const v = E.tenue[cle] ?? '';
+  return `<div class="champ"><label for="f-${cle}">${label}</label>
+    <input id="f-${cle}" type="${type}" data-t="${cle}" value="${ech(v)}">
+    ${aide?`<span class="aide">${aide}</span>`:''}</div>`;
+}
+
+/* La date se relit en clair sous les champs. Elle est rafraîchie seule,
+   sans redessiner le formulaire : un redessin à chaque frappe ferait
+   sauter le curseur hors du champ. */
+function relireDate(iso){
+  if(!iso) return 'Aucune date saisie.';
+  return `${dateLongue(iso)} — ${avl(iso)} A∴V∴L∴, ${moisMac(iso)}ème mois`;
+}
+
+function vueConvocation(){
+  const T = E.tenue;
+  $('#v-convoc').innerHTML = `
+  <div class="bloc"><header><div>
+    <h2>Préparer la convocation</h2>
+    <p class="sous">Remplissez, puis regardez. Rien n'est envoyé depuis ce bêta —
+      le bouton d'aperçu ouvre le document tel qu'il sortira de l'imprimante.</p>
+  </div><div class="groupe">
+    <button class="btn btn-or" id="imp-convoc">Aperçu de la convocation</button>
+  </div></header>
+
+  <div class="forme">
+    <fieldset><legend>Quand</legend><div class="rangee">
+      ${champ('date','Date de la tenue','date')}
+      ${champ('heureConv','Convocation','time','Répétition, mise en place')}
+      ${champ('heureOuv','Ouverture des travaux','time')}
+    </div>
+    <p class="aide" id="echo-date" style="margin-top:9px">${relireDate(T.date)}</p></fieldset>
+
+    <fieldset><legend>Quoi</legend><div class="rangee">
+      <div class="champ"><label for="f-type">Nature de la tenue</label>
+        <select id="f-type" data-t="type">${Object.entries(TYPES).map(([k,v])=>
+          `<option value="${k}"${T.type===k?' selected':''}>${v}</option>`).join('')}</select></div>
+      <div class="champ"><label for="f-degre">Degré</label>
+        <select id="f-degre" data-t="degre">${[1,2,3].map(d=>
+          `<option value="${d}"${+T.degre===d?' selected':''}>${RANGS[d]} degré — ${DEGRES[d]}</option>`).join('')}</select></div>
+      ${champ('titre','Titre imprimé','text','Tel qu’il figurera en gros sur la convocation')}
+    </div></fieldset>
+
+    <fieldset><legend>Où</legend><div class="rangee">
+      ${champ('lieuNom','Temple','text')}
+      ${champ('lieuAdresse','Adresse','text')}
+      ${champ('lieuCp','Code postal','text')}
+      ${champ('lieuVille','Ville','text')}
+    </div></fieldset>
+
+    <fieldset><legend>Ordre du jour</legend>
+      <div style="display:grid;gap:9px">${E.odj.map((o,i)=>`
+        <div class="pt-odj">
+          <input type="time" data-odj="${i}" data-k="h" value="${ech(o.h||'')}" aria-label="Heure du point ${i+1}">
+          <input type="text" data-odj="${i}" data-k="t" value="${ech(o.t)}" aria-label="Point ${i+1}">
+          <button class="x" data-odj-sup="${i}" aria-label="Supprimer ce point">✕</button>
+        </div>`).join('')}</div>
+      <button class="btn btn-mini" id="odj-plus" style="margin-top:11px">＋ Ajouter un point</button>
+    </fieldset>
+
+    <fieldset><legend>Agapes</legend>
+      <label class="interrupteur"><input type="checkbox" data-t="agapesOui"
+        ${T.agapesOui?'checked':''}> Agapes rituelles après la tenue</label>
+      <div class="rangee" style="margin-top:13px">
+        ${champ('agapesPrix','Triangle (€)','number')}
+        ${champ('agapesLimite','Inscription avant le','date')}
+        ${champ('agapesTraiteur','Mention','text')}
+      </div></fieldset>
+
+    <fieldset><legend>Pied de convocation</legend><div class="rangee">
+      ${champ('adage','Adage','text')}
+      ${champ('contact','Contacts','text')}
+    </div></fieldset>
+  </div></div>`;
+}
+</script>
+<script>
+'use strict';
+/* ── La convocation imprimable ──────────────────────────────────── */
+function convocation(){
+  const T = E.tenue;
+  return `<div class="ent">
+    <div class="f">A∴L∴G∴D∴G∴A∴D∴L∴U∴</div>
+    <div class="c">Suprême Conseil Mondial du Rite Brith Israël</div>
+    <div class="o" style="font-style:normal;letter-spacing:.08em;font-size:8pt;
+      text-transform:uppercase">Francs-Maçons de Tradition Hébraïque et Kabbalistique</div>
+    <div class="f" style="margin-top:1mm">חי חי חי ויקיים &nbsp;—&nbsp; HAI HAI HAI VEQAYAM</div>
+    <div class="a" style="margin-top:4mm">R∴L∴ BERESHIT &nbsp;בראשית&nbsp; n°00</div>
+    <div class="o">Loge Mère du Rite Brith Israël — Atelier Mixte à l'O∴ de l'Alliance</div>
+  </div>
+  <p style="text-align:center;margin-top:6mm">L'ensemble des FF∴ et SS∴ sont convoqués à une</p>
+  <h1 style="margin:2mm 0">✦&nbsp; ${ech(T.titre||TYPES[T.type])} &nbsp;✦</h1>
+  <p style="text-align:center;margin-bottom:5mm">au ${RANGS[T.degre]} degré — ${ech(DEGRES[T.degre])}<br>
+    <b>${dateLongue(T.date)} à ${ech(T.heureOuv)}</b><br>
+    <span style="font-size:10pt">${avl(T.date)} A∴V∴L∴</span></p>
+  <p style="text-align:center;margin-bottom:6mm">
+    ${ech(T.lieuNom)}<br>${ech(T.lieuAdresse)} — ${ech(T.lieuCp)} ${ech(T.lieuVille)}</p>
+  <div class="rub" style="text-align:center">Ordre du jour</div>
+  <table><tbody>${E.odj.filter(o=>o.t.trim()).map(o=>
+    `<tr><td style="width:22mm;color:#7a6a3e;font-size:10pt">${ech(o.h||'')}</td>
+     <td>${ech(o.t)}</td></tr>`).join('')}</tbody></table>
+  ${T.agapesOui?`<p style="margin-top:5mm"><b>Agapes rituelles.</b> ${ech(T.agapesTraiteur)} —
+    le triangle est de ${ech(T.agapesPrix)} €. Inscription avant le
+    ${dateLongue(T.agapesLimite)}.</p>`:''}
+  ${T.adage?`<p style="text-align:center;font-style:italic;margin-top:7mm">« ${ech(T.adage)} »</p>`:''}
+  ${T.contact?`<p style="font-size:9.5pt;color:#5c5346;margin-top:7mm">${ech(T.contact)}</p>`:''}`;
+}
+
+/* ── Saisie du formulaire : on écrit dans E sans redessiner ──────── */
+document.addEventListener('input', e => {
+  const el = e.target;
+  if (el.dataset.t){
+    const c = el.dataset.t;
+    E.tenue[c] = el.type === 'checkbox' ? el.checked
+               : el.type === 'number'   ? Number(el.value)
+               : el.value;
+    if (c === 'date') {
+      const e2 = document.getElementById('echo-date');
+      if (e2) e2.textContent = relireDate(el.value);
+    }
+    if (c === 'type' && TYPES[el.value]) {
+      E.tenue.titre = TYPES[el.value].toUpperCase();
+      const t = document.getElementById('f-titre'); if (t) t.value = E.tenue.titre;
+    }
+    garder(); return;
+  }
+  if (el.dataset.odj !== undefined){
+    E.odj[+el.dataset.odj][el.dataset.k] = el.value; garder(); return;
+  }
+});
+document.addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.id === 'odj-plus'){ E.odj.push({h:'',t:''}); dessiner();
+    setTimeout(()=>{const l=document.querySelectorAll('[data-k="t"]');
+      if(l.length) l[l.length-1].focus();},0); return; }
+  if (b.dataset.odjSup !== undefined){ E.odj.splice(+b.dataset.odjSup,1); dessiner(); return; }
+  if (b.id === 'imp-convoc'){ ouvrir(convocation()); return; }
+});
+</script>
+
+<script>
+'use strict';
+/* Premier dessin : après la déclaration de toutes les vues. */
 dessiner();
 </script>
