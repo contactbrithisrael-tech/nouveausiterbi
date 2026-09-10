@@ -197,6 +197,28 @@ details.replie summary{cursor:pointer;font-family:var(--titre);font-size:14px;
 details.replie summary::before{content:'▸';color:var(--or);font-size:12px}
 details[open].replie summary::before{content:'▾'}
 details.replie summary:hover{color:var(--encre)}
+/* ── Mode d'emploi ── */
+.guide{max-width:70ch}
+.guide h3{font-family:var(--titre);font-size:17px;font-weight:600;margin:30px 0 4px;
+  padding-bottom:8px;border-bottom:1px solid var(--trait)}
+.guide h3 .no{display:inline-flex;align-items:center;justify-content:center;
+  width:26px;height:26px;border-radius:50%;background:var(--or);color:#fff;
+  font-family:var(--sans);font-size:13px;margin-right:10px}
+.guide p{margin-top:10px;font-size:15.5px;line-height:1.62}
+.guide ol{margin:12px 0 0 0;padding:0;list-style:none;counter-reset:etape;
+  display:grid;gap:11px}
+.guide ol li{counter-increment:etape;padding-left:34px;position:relative;font-size:15.5px}
+.guide ol li::before{content:counter(etape);position:absolute;left:0;top:1px;
+  width:22px;height:22px;border-radius:50%;border:1.5px solid var(--or);
+  color:var(--or);font-size:12px;font-weight:600;display:flex;
+  align-items:center;justify-content:center}
+.guide b.bouton{display:inline-block;border:1px solid var(--or);border-radius:4px;
+  padding:1px 7px;font-size:14px;font-weight:500;color:var(--encre);
+  background:var(--or-pale);white-space:nowrap}
+.guide .rassure{background:var(--ok-fond);border-left:3px solid var(--ok);
+  padding:14px 18px;border-radius:0 5px 5px 0;margin-top:16px;font-size:15px}
+.guide .prudence{background:var(--attente-fond);border-left:3px solid var(--attente);
+  padding:14px 18px;border-radius:0 5px 5px 0;margin-top:16px;font-size:15px}
 .note{background:var(--attente-fond);border-left:3px solid var(--attente);
       border-radius:0 var(--r) var(--r) 0;padding:12px 16px;font-size:13.5px;
       color:var(--encre-2);margin-bottom:22px}
@@ -212,7 +234,8 @@ details.replie summary:hover{color:var(--encre)}
 </div></div>
 
 <div class="onglets" role="tablist">
-  <button role="tab" id="t-tableau" aria-selected="true">Tableau de la Loge</button>
+  <button role="tab" id="t-aide" aria-selected="true">Mode d’emploi</button>
+  <button role="tab" id="t-tableau" aria-selected="false">Tableau de la Loge</button>
   <button role="tab" id="t-convoc" aria-selected="false">Convocation</button>
   <button role="tab" id="t-tenue" aria-selected="false">Réponses &amp; documents</button>
   <button role="tab" id="t-tresor" aria-selected="false">Trésorerie</button>
@@ -225,7 +248,8 @@ details.replie summary:hover{color:var(--encre)}
   et montants viennent tous de la Constitution, du Règlement Général et de vos
   corrections. Rien n'y est inventé.</p>
 
-  <section id="v-tableau"></section>
+  <section id="v-aide"></section>
+  <section id="v-tableau" hidden></section>
   <section id="v-fiche" hidden></section>
   <section id="v-convoc" hidden></section>
   <section id="v-tenue" hidden></section>
@@ -562,13 +586,15 @@ function planche(){
 /* Les vues sont appelées par leur nom au moment du dessin, et non
    résolues ici : vueConvocation est déclarée dans un bloc <script>
    ultérieur, et la nommer directement ferait échouer tout celui-ci. */
-const VUES = {tableau:()=>vueTableau(), fiche:()=>vueFiche(), convoc:()=>vueConvocation(),
-              tenue:()=>vueTenue(), tresor:()=>vueTresor()};
+const VUES = {aide:()=>vueAide(), tableau:()=>vueTableau(), fiche:()=>vueFiche(),
+              convoc:()=>vueConvocation(), tenue:()=>vueTenue(), tresor:()=>vueTresor()};
 /* L'onglet en cours est retenu : après un rechargement — ou une
    fermeture accidentelle du navigateur — elle retrouve son écran, et
    non le point de départ. */
-let courante = (E.onglet && ['tableau','fiche','convoc','tenue','tresor'].includes(E.onglet))
-             ? E.onglet : 'tableau';
+/* À la toute première ouverture, c'est le mode d'emploi qui s'affiche.
+   Ensuite, l'écran quitté la fois d'avant. */
+let courante = (E.onglet && ['aide','tableau','fiche','convoc','tenue','tresor'].includes(E.onglet))
+             ? E.onglet : 'aide';
 
 function dessiner(){
   E.onglet = courante;
@@ -803,11 +829,6 @@ document.addEventListener('click', e => {
 });
 </script>
 
-<script>
-'use strict';
-/* Premier dessin : après la déclaration de toutes les vues. */
-dessiner();
-</script>
 <script>
 'use strict';
 /* ═══════════════════════════════════════════════════════════════════
@@ -1102,4 +1123,184 @@ document.addEventListener('click', e => {
     garder(); setTimeout(dessiner, 600); return;
   }
 });
+</script>
+<script>
+'use strict';
+/* ═══════════════════════════════════════════════════════════════════
+   Le mode d'emploi. Écrit pour quelqu'un qui n'aime pas les
+   ordinateurs : des phrases courtes, un geste par ligne, et le nom
+   exact du bouton sur lequel appuyer.
+═══════════════════════════════════════════════════════════════════ */
+function vueAide(){
+  $('#v-aide').innerHTML = `
+  <div class="bloc"><header><div>
+    <h2>Mode d’emploi</h2>
+    <p class="sous">À lire une fois, tranquillement. Vous pouvez l’imprimer et le
+      poser à côté de vous.</p>
+  </div><div class="groupe">
+    <button class="btn" id="imp-aide">Imprimer le mode d’emploi</button>
+  </div></header>
+
+  <div class="guide">
+
+    <div class="rassure"><b>D’abord, soyez tranquille.</b> Vous ne pouvez rien casser.
+      Rien de ce que vous faites ici n’est envoyé à qui que ce soit. Tout reste sur
+      votre ordinateur. Si quelque chose vous semble de travers, il y a tout en bas de
+      la page un bouton <b class="bouton">Effacer mes essais et repartir de zéro</b> :
+      il remet tout comme au premier jour.</p></div>
+
+    <h3><span class="no">1</span>À quoi sert ce logiciel</h3>
+    <p>Il fait à votre place les papiers de la Loge : la convocation, la feuille où
+      chacun signe en arrivant, le compte rendu de la tenue, et le suivi de qui a payé
+      sa capitation.</p>
+    <p>Son principe tient en une phrase : <b>vous ne tapez jamais deux fois la même
+      chose.</b> Vous écrivez la date une fois, et elle se met toute seule sur la
+      convocation, sur la feuille de présence et sur le compte rendu.</p>
+
+    <h3><span class="no">2</span>Les cinq onglets, en haut</h3>
+    <p>Ce sont les cinq mots en haut de l’écran. Vous cliquez dessus pour changer de
+      page, comme les intercalaires d’un classeur.</p>
+    <ol>
+      <li><b>Tableau de la Loge</b> — la liste des Sœurs et Frères. Une ligne par
+        personne.</li>
+      <li><b>Convocation</b> — pour préparer la prochaine tenue.</li>
+      <li><b>Réponses &amp; documents</b> — pour envoyer la convocation, noter qui vient,
+        et imprimer les papiers.</li>
+      <li><b>Trésorerie</b> — qui a payé, qui n’a pas payé.</li>
+      <li><b>Mode d’emploi</b> — cette page.</li>
+    </ol>
+
+    <h3><span class="no">3</span>Par quoi commencer : les adresses</h3>
+    <p>Aujourd’hui, presque personne n’a son adresse e-mail dans le logiciel. Sans
+      adresse, on ne peut pas envoyer de convocation. C’est donc la première chose à
+      faire, et vous n’avez à la faire qu’une fois.</p>
+    <ol>
+      <li>Cliquez en haut sur <b>Tableau de la Loge</b>.</li>
+      <li>Cliquez sur la ligne d’une personne. Sa fiche s’ouvre.</li>
+      <li>En haut de la fiche, un cadre jaune vous dit ce qui manque, et pourquoi.</li>
+      <li>Tapez son adresse e-mail dans la case <b>Adresse courriel</b>.</li>
+      <li>C’est enregistré tout seul. Il n’y a pas de bouton « Sauvegarder ».</li>
+      <li>Cliquez sur <b class="bouton">‹ Tableau de la Loge</b> pour revenir, et
+        recommencez avec la personne suivante.</li>
+    </ol>
+    <div class="rassure">Quand une fiche ne manque plus de rien, le cadre devient vert
+      et vous dit « Fiche complète ». C’est votre repère.</div>
+
+    <h3><span class="no">4</span>Préparer une convocation</h3>
+    <ol>
+      <li>Cliquez en haut sur <b>Convocation</b>.</li>
+      <li>Il n’y a que trois choses à remplir. Le reste est déjà écrit.</li>
+      <li><b>1. Quand</b> — la date de la tenue, l’heure d’ouverture, l’heure à laquelle
+        les Officiers arrivent, et le degré.</li>
+      <li>Juste en dessous, une ligne vous relit ce que vous avez tapé :
+        « lundi 7 septembre 2026 ». Si ce n’est pas le bon jour, c’est là que vous le
+        voyez.</li>
+      <li><b>2. Ordre du jour</b> — une ligne par point. Le bouton
+        <b class="bouton">＋ Ajouter une ligne</b> en crée une nouvelle. La petite
+        croix <b class="bouton">✕</b> à droite en enlève une.</li>
+      <li><b>3. Agapes</b> — le prix et la date limite d’inscription.</li>
+      <li>Cliquez sur <b class="bouton">Voir la convocation</b>. Elle apparaît, telle
+        qu’elle sera imprimée.</li>
+    </ol>
+    <p>Le temple, l’adresse, l’adage et les contacts ne changent jamais : ils sont
+      rangés sous la petite ligne <b>Ce qui ne change presque jamais</b>, tout en bas.
+      Cliquez dessus seulement le jour où le lieu change.</p>
+
+    <h3><span class="no">5</span>Envoyer la convocation</h3>
+    <ol>
+      <li>Cliquez en haut sur <b>Réponses &amp; documents</b>.</li>
+      <li>Descendez jusqu’à <b>Envoyer la convocation</b>. Vous voyez la liste des
+        Sœurs et Frères.</li>
+      <li>Cliquez sur <b class="bouton">Écrire le courriel</b> à côté d’un nom.</li>
+      <li>Votre logiciel de messagerie s’ouvre. <b>Le message est déjà écrit.</b></li>
+      <li>Vous n’avez plus qu’à cliquer sur « Envoyer », comme pour un message
+        ordinaire.</li>
+      <li>Revenez sur cette page : la ligne est devenue <b>✓ Envoyé</b>. Passez à la
+        suivante.</li>
+    </ol>
+    <p>Un bouton <b class="bouton">Tout envoyer en copie cachée</b> écrit un seul
+      message pour tout le monde d’un coup. « Copie cachée » veut dire que personne ne
+      voit l’adresse des autres. C’est plus rapide, et c’est correct.</p>
+    <div class="prudence"><b>Attention à une chose.</b> Le logiciel écrit le message,
+      mais c’est vous qui appuyez sur « Envoyer ». Tant que vous n’avez pas appuyé,
+      rien n’est parti.</div>
+
+    <h3><span class="no">6</span>Noter qui vient</h3>
+    <ol>
+      <li>Toujours dans <b>Réponses &amp; documents</b>, remontez jusqu’à
+        <b>Réponses</b>.</li>
+      <li>À côté de chaque nom, trois boutons : <b class="bouton">Présent</b>,
+        <b class="bouton">Excusé</b>, <b class="bouton">Sans réponse</b>. Cliquez sur
+        le bon.</li>
+      <li>Si la personne vient aux agapes, cliquez aussi sur
+        <b class="bouton">Aux agapes</b>.</li>
+      <li>Les quatre cases du haut comptent toutes seules : présents, excusés, sans
+        réponse, et le total des agapes en euros.</li>
+    </ol>
+
+    <h3><span class="no">7</span>Imprimer les papiers</h3>
+    <p>En haut de <b>Réponses &amp; documents</b>, deux boutons :</p>
+    <ol>
+      <li><b class="bouton">Feuille d’émargement</b> — la feuille que chacun signe en
+        arrivant. Les noms y sont déjà, dans l’ordre. Il y a aussi des lignes vides
+        pour les visiteurs.</li>
+      <li><b class="bouton">Planche à tracer</b> — le compte rendu. Les présents, les
+        excusés et l’ordre du jour y sont déjà écrits. Les cadres en pointillés sont
+        les seuls endroits à remplir : c’est le récit de ce qui s’est dit.</li>
+    </ol>
+    <p>Une fois le document affiché, vous avez trois boutons en haut :</p>
+    <ol>
+      <li><b class="bouton">⤓ Télécharger en Word</b> — vous obtenez un fichier que
+        vous ouvrez dans Word, que vous corrigez et que vous envoyez.</li>
+      <li><b class="bouton">Imprimer ou enregistrer en PDF</b> — la fenêtre
+        d’impression s’ouvre. Pour avoir un PDF au lieu du papier, choisissez
+        « Enregistrer au format PDF » à la place de votre imprimante.</li>
+      <li><b class="bouton">Fermer</b> — pour revenir en arrière.</li>
+    </ol>
+
+    <h3><span class="no">8</span>Les paiements</h3>
+    <ol>
+      <li>Cliquez en haut sur <b>Trésorerie</b>.</li>
+      <li>Chaque ligne dit ce qu’une personne doit, ce qu’elle a versé, et ce qui
+        reste.</li>
+      <li>Quand quelqu’un paie, cliquez sur le moyen employé :
+        <b class="bouton">SumUp</b>, <b class="bouton">HelloAsso</b> ou
+        <b class="bouton">Chèque</b>.</li>
+      <li>La ligne passe à <b>Soldé</b>, et les totaux du haut se recalculent.</li>
+    </ol>
+
+    <h3><span class="no">9</span>Si quelque chose ne va pas</h3>
+    <p><b>« J’ai fermé la page, j’ai tout perdu. »</b> Non. Rouvrez le fichier : tout
+      est là, y compris l’onglet où vous étiez.</p>
+    <p><b>« Les accents s’affichent bizarrement. »</b> Vous avez ouvert une vieille
+      version du fichier. Demandez la dernière.</p>
+    <p><b>« Rien ne se télécharge. »</b> Vous êtes sur la page internet et non sur le
+      fichier enregistré. Enregistrez le fichier sur votre bureau et ouvrez-le de là.</p>
+    <p><b>« J’ai peur d’avoir envoyé quelque chose par erreur. »</b> Impossible. Le
+      logiciel n’envoie rien tout seul. Seul votre clic sur « Envoyer », dans votre
+      messagerie, envoie quelque chose.</p>
+
+    <h3><span class="no">10</span>Ce que le logiciel ne fait pas encore</h3>
+    <p>Il ne relance pas tout seul ceux qui n’ont pas répondu. Il ne réclame pas les
+      capitations en retard. Les réponses des Sœurs et Frères n’arrivent pas toutes
+      seules : c’est vous qui les notez.</p>
+    <p>Tout cela viendra, mais plus tard. Pour l’instant, vous essayez — et c’est
+      exactement ce qu’on vous demande.</p>
+
+  </div></div>`;
+}
+
+function aidePapier(){
+  const g = document.querySelector('#v-aide .guide');
+  return `${ENTETE}<h1>Mode d’emploi — Gestion de la R∴L∴ Bereshit n°00</h1>` +
+         (g ? g.innerHTML : '');
+}
+document.addEventListener('click', e => {
+  if (e.target.closest('#imp-aide')) ouvrir(aidePapier(), 'Mode d emploi');
+});
+</script>
+<script>
+'use strict';
+/* Premier dessin : après la déclaration de toutes les vues. */
+dessiner();
 </script>
