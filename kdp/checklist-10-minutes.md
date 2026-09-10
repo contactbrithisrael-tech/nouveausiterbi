@@ -1,5 +1,73 @@
 # À faire dans KDP — dix minutes, aucune ligne de code
 
+## État au 10 septembre 2026, 5h33
+
+Séance faite sur téléphone, dans KDP directement.
+
+| Fiche | ASIN | Description | Prix |
+|---|---|---|---|
+| Du Pétrin au Compas — Kindle | B0H872YJSX | ✅ | ✅ 8,59 € → **4,99 €** |
+| Du Pétrin au Compas — Broché | B0H87J53RG | ✅ | ✅ 24,00 € → **14,99 €** |
+| Guide de Survie — Kindle | B0GR29BGHN | ❌ | ❌ toujours 8,59 € |
+| Guide de Survie — Broché | B0GR1WPKR8 | ❌ | ❌ toujours 20,00 € |
+
+Les deux fiches du roman sont en « Mises à jour en cours de révision ».
+Compter jusqu'à 72 heures avant que les pages Amazon changent.
+
+### Le chemin, pour les deux fiches restantes
+
+1. Bibliothèque → sous l'ouvrage, ligne du format → les **`···`**
+   *(sur téléphone, dézoomer : ils sont hors écran à droite)*
+2. **Modifier les informations relatives à…**
+3. Champ **Description** → bouton **Source** → **appui long → Tout
+   sélectionner → supprimer** → coller le HTML → **Source** à nouveau
+4. Vérifier le gras, le titre, l'italique
+5. **Enregistrer et continuer** jusqu'à la page du prix
+6. Case **Amazon.fr** → saisir le prix → vérifier la redevance
+7. **Publier**
+
+### Deux pièges rencontrés, à ne pas réapprendre
+
+**« Enregistrement effectué » ne veut pas dire publié.** C'est le
+brouillon qui est sauvegardé. Sans le bouton jaune de publication, la
+fiche Amazon ne change pas.
+
+**« Certaines modifications n'ont pas été enregistrées »** → toujours
+**Enregistrer et continuer**, jamais *Continuer sans enregistrer* : la
+saisie de prix en cours serait perdue.
+
+**Le validateur refuse la description** avec un message sur les symboles
+`<` et `>` → la zone Source n'a pas été vidée complètement, il reste un
+fragment de balise. Tout sélectionner, supprimer, vérifier que la zone
+est vide, recoller. Si le refus persiste, remplacer le `<h4>` par un
+`<p><b>…</b></p>`.
+
+### Prix cibles restants
+
+| Fiche | Aujourd'hui | Cible | Redevance attendue |
+|---|---|---|---|
+| Guide — Kindle | 8,59 € *(conversion depuis 9,99 $)* | **3,99 €** | ~70 % |
+| Guide — Broché (212 p.) | 20,00 € | **12,99 €** | lire le minimum affiché par KDP |
+
+Le Guide est un guide pratique, pas un roman : sa fourchette naturelle
+est plus basse que celle du roman.
+
+### Reste aussi
+
+- **Le titre du Guide est en MAJUSCULES** sur KDP. Les règles de style
+  d'Amazon les découragent. À corriger en casse normale.
+- **Un « Livre relié » du Guide traîne en Brouillon** depuis le 3 mars.
+  Soit le finir, soit le laisser — mais savoir qu'il est là.
+- **Les promos KDP Select** : toujours pas vérifiées. Menu `···` →
+  *Gestion de KDP Select*. Gratuites, périssables, sans report.
+- **Les 7 mots-clés et les catégories** : voir
+  `mots-cles-et-categories.md`. C'est la couche qui décide si Amazon
+  affiche l'ouvrage — la seule qui touche au vrai problème, l'absence
+  de trafic.
+
+---
+
+
 Ordre délibéré : le prix d'abord, la promo ensuite. Une promo qui
 envoie des lecteurs vers une fiche à 9,99 $ gâche la promo.
 
