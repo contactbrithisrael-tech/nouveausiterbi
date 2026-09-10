@@ -54,10 +54,26 @@
         "bookFormat": "https://schema.org/Paperback",
         "isbn": "9798250336369",
         "numberOfPages": 212,
-        "datePublished": "2026",
+        "datePublished": "2026-03-03",
         "publisher": { "@type": "Organization", "name": "Amazon KDP" },
         "description": "Un guide pratique et humoristique pour naviguer dans le monde maçonnique, par le fondateur du Rite Brith Israël.",
-        "url": "https://www.brith-israel.org/livres.html#guide-de-survie"
+        "url": "https://www.brith-israel.org/livres.html#guide-de-survie",
+        "offers": [
+          {
+            "@type": "Offer",
+            "name": "Livre broché",
+            "price": "20.00",
+            "priceCurrency": "EUR",
+            "availability": "https://schema.org/InStock",
+            "url": "https://www.amazon.fr/dp/B0GR1WPKR8"
+          },
+          {
+            "@type": "Offer",
+            "name": "Édition Kindle",
+            "availability": "https://schema.org/InStock",
+            "url": "https://www.amazon.fr/dp/B0GR29BGHN"
+          }
+        ]
       },
       {
         "@type": "Book",
@@ -66,9 +82,27 @@
         "author": { "@id": "https://www.brith-israel.org/livres.html#auteur" },
         "inLanguage": "fr",
         "genre": "Roman",
+        "alternateName": "Du Pétrin au Compas : Quand on cherche un secret, on trouve une vérité",
         "datePublished": "2026-07-09",
+        "publisher": { "@type": "Organization", "name": "Amazon KDP" },
         "description": "Laure Silvestri, journaliste d'investigation à Marseille, enquête sur les mardis soir de son compagnon boulanger. Ce n'est pas ce qu'elle croyait : c'est une Loge.",
-        "url": "https://www.brith-israel.org/livres.html#du-petrin-au-compas"
+        "url": "https://www.brith-israel.org/livres.html#du-petrin-au-compas",
+        "offers": [
+          {
+            "@type": "Offer",
+            "name": "Livre broché",
+            "price": "24.00",
+            "priceCurrency": "EUR",
+            "availability": "https://schema.org/InStock",
+            "url": "https://www.amazon.fr/dp/B0H87J53RG"
+          },
+          {
+            "@type": "Offer",
+            "name": "Édition Kindle",
+            "availability": "https://schema.org/InStock",
+            "url": "https://www.amazon.fr/dp/B0H872YJSX"
+          }
+        ]
       },
       {
         "@type": "Book",
@@ -129,6 +163,11 @@
     .btn--plein:hover { background:#e0c46a; }
     .btn--vide { color:var(--or); }
     .btn--vide:hover { background:rgba(201,168,76,.12); }
+    .achat { margin-top:1.5rem; display:flex; flex-wrap:wrap; gap:1rem; }
+    .achat__bloc { border:1px solid rgba(201,168,76,.22); padding:.9rem 1.1rem; min-width:190px; }
+    .achat__format { font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; color:var(--gris); }
+    .achat__prix { font-size:1.15rem; color:var(--texte); margin:.25rem 0 .7rem; }
+    .achat__prix--vide { font-size:.85rem; color:var(--gris); font-style:italic; margin:.35rem 0 .7rem; }
     .badge { display:inline-block; border:1px solid rgba(201,168,76,.45); color:var(--or);
              font-size:.72rem; letter-spacing:.12em; padding:.35rem .8rem; text-transform:uppercase; }
 
@@ -174,7 +213,7 @@
       <h2 class="livre__titre">Guide de Survie pour Franc-Maçon Désemparé</h2>
       <p class="livre__soustitre">Démystification, résilience et sagesse au quotidien</p>
       <p class="livre__meta">
-        <span>Mickaël Darmon</span><span>Amazon KDP, 2026</span><span>212 pages</span><span>ISBN 979-8-2503-3636-9</span><span>Français</span>
+        <span>Mickaël Darmon</span><span>Amazon KDP, 3 mars 2026</span><span>212 pages</span><span>ISBN 979-8-2503-3636-9</span><span>Français</span>
       </p>
       <div class="livre__desc">
         <p>
@@ -182,8 +221,17 @@
           fondateur du Rite Brith Israël.
         </p>
       </div>
-      <div class="livre__liens">
-        <a class="btn btn--plein" href="https://amzn.eu/d/03LwhX1a" target="_blank" rel="noopener">Commander sur Amazon</a>
+      <div class="achat">
+        <div class="achat__bloc">
+          <div class="achat__format">Livre broché</div>
+          <div class="achat__prix">20,00 €</div>
+          <a class="btn btn--plein" href="https://www.amazon.fr/dp/B0GR1WPKR8" target="_blank" rel="noopener">Commander</a>
+        </div>
+        <div class="achat__bloc">
+          <div class="achat__format">Édition Kindle</div>
+          <div class="achat__prix--vide">Prix affiché sur Amazon</div>
+          <a class="btn btn--vide" href="https://www.amazon.fr/dp/B0GR29BGHN" target="_blank" rel="noopener">Lire sur Kindle</a>
+        </div>
       </div>
     </div>
   </article>
@@ -206,8 +254,17 @@
           qu'elle commence sans l'avoir prévu, c'est une initiation.
         </p>
       </div>
-      <div class="livre__liens">
-        <a class="btn btn--plein" href="https://amzn.eu/d/05ZcIJ0g" target="_blank" rel="noopener">Commander sur Amazon</a>
+      <div class="achat">
+        <div class="achat__bloc">
+          <div class="achat__format">Livre broché</div>
+          <div class="achat__prix">24,00 €</div>
+          <a class="btn btn--plein" href="https://www.amazon.fr/dp/B0H87J53RG" target="_blank" rel="noopener">Commander</a>
+        </div>
+        <div class="achat__bloc">
+          <div class="achat__format">Édition Kindle</div>
+          <div class="achat__prix--vide">Prix affiché sur Amazon</div>
+          <a class="btn btn--vide" href="https://www.amazon.fr/dp/B0H872YJSX" target="_blank" rel="noopener">Lire sur Kindle</a>
+        </div>
       </div>
     </div>
   </article>

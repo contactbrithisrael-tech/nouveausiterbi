@@ -388,7 +388,8 @@ var RBI_CONFIG = {
         desc:     "Un guide pratique et humoristique pour naviguer dans le monde maçonnique, par le fondateur du Rite Brith Israël.",
         placeholder: "G",
         liens: [
-          { label: "Amazon", url: "https://amzn.eu/d/03LwhX1a", style: "primary" }
+          { label: "Broché — 20 €", url: "https://www.amazon.fr/dp/B0GR1WPKR8", style: "primary" },
+          { label: "Kindle",        url: "https://www.amazon.fr/dp/B0GR29BGHN", style: "outline" }
         ]
       },
       {
@@ -398,7 +399,8 @@ var RBI_CONFIG = {
         desc:     "Un roman. Laure Silvestri, journaliste d'investigation à Marseille, enquête sur les mardis soir de son compagnon boulanger. Ce n'est pas ce qu'elle croyait : c'est une Loge. Et ce qu'elle commence sans l'avoir prévu, c'est une initiation.",
         placeholder: "P",
         liens: [
-          { label: "Amazon", url: "https://amzn.eu/d/05ZcIJ0g", style: "primary" }
+          { label: "Broché — 24 €", url: "https://www.amazon.fr/dp/B0H87J53RG", style: "primary" },
+          { label: "Kindle",        url: "https://www.amazon.fr/dp/B0H872YJSX", style: "outline" }
         ]
       }
     ]
