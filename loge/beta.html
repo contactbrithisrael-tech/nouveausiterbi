@@ -160,11 +160,13 @@ tr.cliquable{cursor:pointer}
               font-style:italic;font-size:10pt;margin-bottom:4mm}
 .papier .pt{font-family:var(--sans);font-size:8.5pt;letter-spacing:.05em;
             text-transform:uppercase;color:#7a6a3e;margin-bottom:1.5mm}
-.barre{max-width:190mm;margin:0 auto 12px;display:flex;gap:8px;justify-content:flex-end}
+.barre{max-width:190mm;margin:0 auto 12px;display:flex;gap:8px;
+  justify-content:flex-end;flex-wrap:wrap;align-items:center}
 .barre .btn{background:#1A1814;color:#F0EADD;border-color:#4A4238}
 .barre[hidden]{display:none!important}
-.mention-edition{color:#C9A84C;font-size:13px;margin-right:auto;align-self:center}
-.etat-edition{color:#8B8272;font-size:12.5px;align-self:center;min-width:150px;text-align:right}
+.mention-edition{color:#C9A84C;font-size:13px;margin-right:auto;flex:1 1 240px;
+  min-width:0;line-height:1.35}
+.etat-edition{color:#8B8272;font-size:12.5px;white-space:nowrap}
 #corps{outline:0}
 #corps:focus-visible{outline:0}
 .papier .entete-fixe{position:relative}
@@ -610,7 +612,7 @@ function corpsPlanche(){
   return `<h1>Planche à Tracer du ${dateLongue(T.date)}<br>${avl(T.date)} A∴V∴L∴</h1>
   <p>Dans un lieu très éclairé, très pur, le ${new Date(T.date+'T12:00:00').getDate()}<sup>ème</sup>
      jour du ${moisMac(T.date)}<sup>ème</sup> mois de l'An de Vraie Lumière ${avl(T.date)},
-     s'est réunie la R∴L∴ BERESHIT n°00, à l'O∴ de l'Alliance, au Temple
+     s'est réunie la R∴L∴ BERESHIT n°00, à l'O∴ de l'Alliance, au
      ${ech(T.lieuNom)}, à ${ech(T.lieuVille)}.</p>
   <div class="rub">Sont présents les SS∴ et FF∴ Membres de la Loge</div>
   <ul style="list-style:none">${pres.length?pres.map(li).join(''):'<li><i>Aucun présent annoncé.</i></li>'}</ul>
