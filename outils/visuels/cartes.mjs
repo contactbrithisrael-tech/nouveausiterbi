@@ -73,6 +73,27 @@ export const CARTES = [
     nom: 'Mickaël Darmon',
     formats: ['paysage', 'carre']
   },
+  {
+    /* La formule de l'auteur, relevée dans sa propre bio Facebook.
+       C'est la meilleure accroche du corpus, et elle ne figurait
+       nulle part ailleurs. */
+    id: 'citation-en-loge', type: 'citation',
+    texte: 'Un livre qui dit ce qu\'on ne dit pas en loge.',
+    source: 'Guide de Survie pour Franc-Maçon Désemparé',
+    formats: ['paysage', 'carre']
+  },
+  {
+    id: 'citation-silence', type: 'citation',
+    texte: 'Apprendre à s\'effacer<br>pour laisser passer la lumière.',
+    source: 'Guide de Survie pour Franc-Maçon Désemparé',
+    formats: ['paysage', 'carre']
+  },
+  {
+    id: 'citation-etoile', type: 'citation',
+    texte: 'Une étoile jaune tachée de sang,<br>une judéité cachée depuis la guerre.',
+    source: 'Du Pétrin au Compas',
+    formats: ['paysage', 'carre']
+  },
   { id: 'livre-guide',  type: 'livre', livre: 'guide',  formats: ['paysage', 'carre'] },
   { id: 'livre-petrin', type: 'livre', livre: 'petrin', formats: ['paysage', 'carre'] }
 ];

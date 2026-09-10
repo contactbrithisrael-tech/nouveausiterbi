@@ -12,6 +12,12 @@ Ne pas retoucher à la main : toute modification est écrasée.
   citation-loge-carre.png
   auteur-parcours-paysage.png
   auteur-parcours-carre.png
+  citation-en-loge-paysage.png
+  citation-en-loge-carre.png
+  citation-silence-paysage.png
+  citation-silence-carre.png
+  citation-etoile-paysage.png
+  citation-etoile-carre.png
   livre-guide-paysage.png
   livre-guide-carre.png
   livre-petrin-paysage.png
