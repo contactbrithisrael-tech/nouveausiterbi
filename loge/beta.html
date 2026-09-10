@@ -298,11 +298,11 @@ function neuf(){ return {
     {id:5,nom:"BUHLER",prenoms:"Didier",grade:"32°",dignite:"Assistant Grand Maître, Grand Chancelier",office:null,statut:"actif",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:3,qualite:"",du:480,regle:480},
     {id:6,nom:"ROUME",prenoms:"Valérie",grade:"32°",dignite:"Assistant Grand Maître, Grand Orateur",office:null,statut:"actif",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:3,qualite:"",du:480,regle:0},
     {id:7,nom:"JOURDAN",prenoms:"Pierre",grade:"32°",dignite:"Assistant Grand Maître, Grand Hospitalier, Grand Maître des Cérémonies",office:null,statut:"actif",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:3,qualite:"",du:480,regle:0},
-    {id:8,nom:"NOTARIANNI",prenoms:"Laurent",grade:"32°",dignite:"Membre Fondateur — Membre d’honneur Ad Vitam",office:null,statut:"honoraire",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:3,qualite:"",du:0,regle:0},
+    {id:8,nom:"NOTARIANNI",prenoms:"Laurent",grade:"32°",dignite:"Membre Fondateur — Membre d’honneur Ad Vitam",office:null,statut:"honoraire",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:3,qualite:"",du:0,regle:0,excusePermanent:true,motifExcuse:"Excusé pour une durée indéterminée"},
     {id:9,nom:"GASMI",prenoms:"Sam",grade:"",dignite:"",office:null,statut:"actif",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:3,qualite:"",du:480,regle:0},
     {id:10,nom:"SAFFARO",prenoms:"Jean-Marc",grade:"",dignite:"",office:null,statut:"actif",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:2,qualite:"",du:480,regle:0},
     {id:11,nom:"ALLAN",prenoms:"Caroline",grade:"",dignite:"",office:null,statut:"actif",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"2026-09-07",degre:1,qualite:"",du:480,regle:0},
-    {id:12,nom:"NAKACHE",prenoms:"Philippe",grade:"",dignite:"",office:null,statut:"candidat",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:null,qualite:"",du:0,regle:0}
+    {id:12,nom:"NAKACHE",prenoms:"Philippe",grade:"",dignite:"",office:null,statut:"actif",email:"",tel:"",ville:"Nouméa",naissance:"",profession:"",initiation:"",degre:3,qualite:"",du:480,regle:0,excusePermanent:true,motifExcuse:"Réside en Nouvelle-Calédonie"}
   ],
   presences:{}, agapes:{}, envoyes:{}, convoquee:false, journal:[],
   tenue:{
@@ -342,7 +342,14 @@ function pierrePlate(m){ const c=Math.round(m*100), kg=Math.floor(c/100), g=c%10
 'use strict';
 const $ = s => document.querySelector(s);
 const convocables = () => E.membres.filter(m => m.statut === 'actif' || m.statut === 'honoraire');
-const rep = id => E.presences[id] || 'attendu';
+/* Un membre excusé de façon permanente — installé au loin, empêché
+   pour une durée indéterminée — figure d'emblée parmi les excusés.
+   Personne n'a à le cocher mois après mois, jusqu'à l'oubli. */
+const rep = id => {
+  if (E.presences[id]) return E.presences[id];
+  const m = E.membres.find(x => x.id === id);
+  return (m && m.excusePermanent) ? 'excuse' : 'attendu';
+};
 const compte = s => convocables().filter(m => rep(m.id) === s).length;
 const auxAgapes = () => convocables().filter(m => rep(m.id) === 'present' && E.agapes[m.id]).length;
 
@@ -420,7 +427,8 @@ function vueTenue(){
     const r = rep(x.id);
     return `<tr>
       <td><span class="nom-membre">${ech(x.prenoms)} ${ech(x.nom)}</span>
-          ${x.office?`<div class="qual">${ech(abrOffice(x.office))}</div>`:''}</td>
+          ${x.office?`<div class="qual">${ech(abrOffice(x.office))}</div>`:''}
+          ${x.excusePermanent?`<div class="qual">✈ ${ech(x.motifExcuse||'Excusé en permanence')}</div>`:''}</td>
       <td><div class="choix" role="group">
         ${['present','excuse','attendu'].map(s=>
           `<button data-rep="${x.id}" data-s="${s}" aria-pressed="${r===s}">${
@@ -884,6 +892,12 @@ function vueFiche(){
         <select id="m-statut" data-m="statut">${Object.entries(STATUTS).map(([k,v])=>
           `<option value="${k}"${x.statut===k?' selected':''}>${v}</option>`).join('')}</select></div>
       ${fChamp(x,'initiation','Date d’initiation','date')}
+      <div class="champ"><label for="m-excusePermanent">Excusé en permanence</label>
+        <select id="m-excusePermanent" data-m="excusePermanent">
+          <option value=""${!x.excusePermanent?' selected':''}>Non</option>
+          <option value="1"${x.excusePermanent?' selected':''}>Oui — excusé d’office à chaque tenue</option>
+        </select></div>
+      ${x.excusePermanent?fChamp(x,'motifExcuse','Motif de l’excuse','text','« Réside en Nouvelle-Calédonie »'):''}
       <div class="champ"><label for="m-degre">Degré du Rite</label>
         <select id="m-degre" data-m="degre">
           <option value=""${!x.degre?' selected':''}>— aucun —</option>
@@ -968,13 +982,14 @@ document.addEventListener('input', e => {
   const el = e.target; if (!el.dataset.m) return;
   const x = E.membres.find(m => m.id === E.fiche); if (!x) return;
   const c = el.dataset.m;
-  x[c] = (c === 'du' || c === 'regle') ? Number(el.value||0)
+  x[c] = (c === 'excusePermanent') ? (el.value === '1')
+       : (c === 'du' || c === 'regle') ? Number(el.value||0)
        : (c === 'degre') ? (el.value ? Number(el.value) : null)
        : (c === 'office') ? (el.value || null)
        : el.value;
   garder();
   /* Ces trois-là changent ce que la fiche dit d'elle-même. */
-  if (['email','tel','naissance','ville','initiation','degre','statut','qualite'].includes(c)){
+  if (['email','tel','naissance','ville','initiation','degre','statut','qualite','excusePermanent'].includes(c)){
     const pos = el.selectionStart; dessiner();
     const r = document.getElementById('m-'+c);
     if (r){ r.focus(); try{ r.setSelectionRange(pos,pos); }catch(err){} }
@@ -1239,6 +1254,12 @@ function vueAide(){
       <li>Les quatre cases du haut comptent toutes seules : présents, excusés, sans
         réponse, et le total des agapes en euros.</li>
     </ol>
+    <div class="rassure"><b>Deux noms sont déjà cochés « Excusé » quand vous arrivez.</b>
+      Ce n'est pas une erreur. Le TIF Philippe NAKACHE vit en Nouvelle-Calédonie et le
+      TIF Laurent NOTARIANNI est excusé pour une durée indéterminée : ils sont excusés
+      d'avance, à chaque tenue, pour que vous n'ayez plus à y penser. Un petit avion ✈
+      et le motif sont écrits sous leur nom. Vous pouvez toujours changer, si l'un
+      d'eux vient.</div>
 
     <h3><span class="no">7</span>Imprimer les papiers</h3>
     <p>En haut de <b>Réponses &amp; documents</b>, deux boutons :</p>
