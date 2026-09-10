@@ -191,6 +191,12 @@ legend{font-family:var(--titre);font-size:15px;font-weight:600;margin-bottom:12p
 .pt-odj .x:hover{color:var(--alerte);border-color:var(--alerte)}
 .interrupteur{display:flex;align-items:center;gap:9px;font-size:14px}
 .interrupteur input{width:auto;accent-color:var(--or)}
+details.replie{border-top:1px solid var(--trait);padding-top:14px}
+details.replie summary{cursor:pointer;font-family:var(--titre);font-size:14px;
+  color:var(--encre-3);list-style:none;display:flex;align-items:center;gap:8px}
+details.replie summary::before{content:'▸';color:var(--or);font-size:12px}
+details[open].replie summary::before{content:'▾'}
+details.replie summary:hover{color:var(--encre)}
 .note{background:var(--attente-fond);border-left:3px solid var(--attente);
       border-radius:0 var(--r) var(--r) 0;padding:12px 16px;font-size:13.5px;
       color:var(--encre-2);margin-bottom:22px}
@@ -232,7 +238,8 @@ legend{font-family:var(--titre);font-size:15px;font-weight:600;margin-bottom:12p
 
 <div class="voile" id="voile" hidden>
   <div class="barre">
-    <button class="btn" onclick="window.print()">Imprimer</button>
+    <button class="btn btn-or" id="tel-word">⤓ Télécharger en Word</button>
+    <button class="btn" onclick="window.print()">Imprimer ou enregistrer en PDF</button>
     <button class="btn" id="fermer">Fermer</button>
   </div>
   <div class="papier" id="papier"></div>
@@ -273,7 +280,7 @@ function neuf(){ return {
     {id:11,nom:"ALLAN",prenoms:"Caroline",grade:"",dignite:"",office:null,statut:"actif",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"2026-09-07",degre:1,qualite:"",du:480,regle:0},
     {id:12,nom:"NAKACHE",prenoms:"Philippe",grade:"",dignite:"",office:null,statut:"candidat",email:"",tel:"",ville:"",naissance:"",profession:"",initiation:"",degre:null,qualite:"",du:0,regle:0}
   ],
-  presences:{}, agapes:{}, convoquee:false, journal:[],
+  presences:{}, agapes:{}, envoyes:{}, convoquee:false, journal:[],
   tenue:{
     date:'2026-09-07', heureConv:'17:30', heureOuv:'19:30',
     type:'obligation', titre:"TENUE D'OBLIGATION", degre:1,
@@ -282,7 +289,7 @@ function neuf(){ return {
     adage:"L'assiduité aux travaux est le premier devoir du Maçon",
     agapesOui:true, agapesPrix:15, agapesLimite:'2026-09-03',
     agapesTraiteur:'Traiteur — inscription obligatoire',
-    contact:"Secrétaire — TIS∴ Martine HABERT · Vénérable Maître — VM∴ Jean-Michel RAUX"
+    contact:"R∴L∴ Bereshit n°00 — contact.brith.israel@gmail.com"
   },
   odj:[
     {h:'17:30',t:'Convocation de tous les SS∴ et FF∴ pour répétition'},
@@ -290,7 +297,7 @@ function neuf(){ return {
     {h:'',t:'Quelques mots de bienvenue du Vénérable Maître'},
     {h:'',t:'Cinq minutes de symbolisme — « L’initiation au Rite Brith Israël », par le SGC∴ Mickaël DARMON'},
     {h:'',t:'Cérémonie d’initiation de la Première Apprentie de l’Atelier'},
-    {h:'',t:'Planche d’accueil, par le F∴ Orateur'},
+    {h:'',t:'Planche d’accueil, par le Premier Surveillant'},
     {h:'',t:'Clôture des travaux'},
     {h:'',t:'Agapes rituelles — triangle de 15 €, inscription avant le 3 septembre'}
   ]
@@ -404,7 +411,6 @@ function vueTenue(){
         ouverture ${ech(E.tenue.heureOuv)} · ${avl(E.tenue.date)} A∴V∴L∴</p>
     </div>
     <div class="groupe">
-      <button class="btn btn-or" id="convoquer">${E.convoquee?'Relancer les sans-réponse':'Envoyer la convocation'}</button>
       <button class="btn" id="imp-emarg">Feuille d'émargement</button>
       <button class="btn" id="imp-planche">Planche à tracer</button>
     </div></header>
@@ -421,12 +427,27 @@ function vueTenue(){
       <p class="sous">Dans la vraie application, ces réponses arrivent seules : chaque
         Sœur et chaque Frère reçoit son propre lien et répond d'un clic. Ici, cliquez
         à leur place pour voir ce qui en découle.</p></div></header>
-      <div class="enveloppe"><table class="tab">
+      <div class="enveloppe"><table class="tab" id="t-reponses">
         <thead><tr><th>Sœur ou Frère</th><th>Réponse</th><th>Agapes</th></tr></thead>
         <tbody>${lignes}</tbody></table></div></div>
-    ${E.journal.length?`<div class="bloc"><header><div><h2>Journal des envois</h2>
-      <p class="sous">Une ligne par destinataire — il n'existe aucun autre chemin d'envoi.</p>
-      </div></header><div class="journal">${E.journal.map(l=>`<div>${l}</div>`).join('')}</div></div>`:''}`;
+    <div class="bloc"><header><div><h2>Envoyer la convocation</h2>
+      <p class="sous">Cliquez sur une ligne : votre logiciel de courrier s'ouvre avec le
+        message déjà écrit. Vous n'avez qu'à cliquer sur « Envoyer ». Une ligne par
+        personne, pour que personne ne voie l'adresse des autres.</p>
+      </div><div class="groupe">
+        <button class="btn" id="mail-tous">Tout envoyer en copie cachée</button>
+      </div></header>
+      <div class="enveloppe"><table class="tab" id="t-envois"><thead><tr>
+        <th>Sœur ou Frère</th><th>Adresse</th><th>Courriel</th></tr></thead>
+        <tbody>${convocables().map(m=>`<tr>
+          <td><span class="nom-membre">${ech(m.prenoms)} ${ech(m.nom)}</span></td>
+          <td>${m.email?`<span class="qual">${ech(m.email)}</span>`
+                       :`<span class="p p-al">Adresse manquante</span>`}</td>
+          <td>${m.email
+            ? `<button class="btn btn-mini${E.envoyes[m.id]?'':' btn-or'}" data-mail="${m.id}">${
+                E.envoyes[m.id] ? '✓ Envoyé le '+E.envoyes[m.id] : 'Écrire le courriel'}</button>`
+            : `<span class="qual">Renseignez sa fiche</span>`}</td></tr>`).join('')}
+        </tbody></table></div></div>`;
 }
 </script>
 <script>
@@ -543,9 +564,14 @@ function planche(){
    ultérieur, et la nommer directement ferait échouer tout celui-ci. */
 const VUES = {tableau:()=>vueTableau(), fiche:()=>vueFiche(), convoc:()=>vueConvocation(),
               tenue:()=>vueTenue(), tresor:()=>vueTresor()};
-let courante = 'tableau';
+/* L'onglet en cours est retenu : après un rechargement — ou une
+   fermeture accidentelle du navigateur — elle retrouve son écran, et
+   non le point de départ. */
+let courante = (E.onglet && ['tableau','fiche','convoc','tenue','tresor'].includes(E.onglet))
+             ? E.onglet : 'tableau';
 
 function dessiner(){
+  E.onglet = courante;
   VUES[courante]();
   for (const k of Object.keys(VUES)){
     $('#v-'+k).hidden = (k !== courante);
@@ -559,7 +585,11 @@ function dessiner(){
 document.querySelectorAll('.onglets button').forEach(b =>
   b.addEventListener('click', () => { courante = b.id.slice(2); dessiner(); }));
 
-function ouvrir(html){ $('#papier').innerHTML = html; $('#voile').hidden = false; }
+let docCourant = {nom:'Document', html:''};
+function ouvrir(html, nom){
+  docCourant = {nom: nom || 'Document', html};
+  $('#papier').innerHTML = html; $('#voile').hidden = false;
+}
 $('#fermer').addEventListener('click', () => { $('#voile').hidden = true; });
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && !$('#voile').hidden) $('#voile').hidden = true;
@@ -601,8 +631,8 @@ document.addEventListener('click', e => {
     E.journal.unshift(`${heure} — règlement de <b>${m.prenoms} ${m.nom}</b> par ${b.dataset.mode} · référence conservée`);
     dessiner(); return;
   }
-  if (b.id === 'imp-emarg'){ ouvrir(emargement()); return; }
-  if (b.id === 'imp-planche'){ ouvrir(planche()); return; }
+  if (b.id === 'imp-emarg'){ ouvrir(emargement(), 'Emargement ' + E.tenue.date); return; }
+  if (b.id === 'imp-planche'){ ouvrir(planche(), 'Planche a tracer ' + E.tenue.date); return; }
 });
 </script>
 <script>
@@ -654,62 +684,60 @@ function vueConvocation(){
   $('#v-convoc').innerHTML = `
   <div class="bloc"><header><div>
     <h2>Préparer la convocation</h2>
-    <p class="sous">Remplissez, puis regardez. Rien n'est envoyé depuis ce bêta —
-      le bouton d'aperçu ouvre le document tel qu'il sortira de l'imprimante.</p>
+    <p class="sous">Trois choses à remplir : la date, l'ordre du jour, les agapes.
+      Tout le reste est déjà écrit et ne bouge pas d'une tenue à l'autre.</p>
   </div><div class="groupe">
-    <button class="btn btn-or" id="imp-convoc">Aperçu de la convocation</button>
+    <button class="btn btn-or" id="imp-convoc">Voir la convocation</button>
   </div></header>
 
   <div class="forme">
-    <fieldset><legend>Quand</legend><div class="rangee">
+    <fieldset><legend>1. Quand</legend><div class="rangee">
       ${champ('date','Date de la tenue','date')}
-      ${champ('heureConv','Convocation','time','Répétition, mise en place')}
-      ${champ('heureOuv','Ouverture des travaux','time')}
-    </div>
-    <p class="aide" id="echo-date" style="margin-top:9px">${relireDate(T.date)}</p></fieldset>
-
-    <fieldset><legend>Quoi</legend><div class="rangee">
-      <div class="champ"><label for="f-type">Nature de la tenue</label>
-        <select id="f-type" data-t="type">${Object.entries(TYPES).map(([k,v])=>
-          `<option value="${k}"${T.type===k?' selected':''}>${v}</option>`).join('')}</select></div>
+      ${champ('heureOuv','Heure d’ouverture','time')}
+      ${champ('heureConv','Heure de convocation','time','Répétition, mise en place')}
       <div class="champ"><label for="f-degre">Degré</label>
         <select id="f-degre" data-t="degre">${[1,2,3].map(d=>
           `<option value="${d}"${+T.degre===d?' selected':''}>${RANGS[d]} degré — ${DEGRES[d]}</option>`).join('')}</select></div>
-      ${champ('titre','Titre imprimé','text','Tel qu’il figurera en gros sur la convocation')}
-    </div></fieldset>
+      <div class="champ"><label for="f-type">Nature de la tenue</label>
+        <select id="f-type" data-t="type">${Object.entries(TYPES).map(([k,v])=>
+          `<option value="${k}"${T.type===k?' selected':''}>${v}</option>`).join('')}</select></div>
+    </div>
+    <p class="aide" id="echo-date" style="margin-top:9px">${relireDate(T.date)}</p></fieldset>
 
-    <fieldset><legend>Où</legend><div class="rangee">
-      ${champ('lieuNom','Temple','text')}
-      ${champ('lieuAdresse','Adresse','text')}
-      ${champ('lieuCp','Code postal','text')}
-      ${champ('lieuVille','Ville','text')}
-    </div></fieldset>
-
-    <fieldset><legend>Ordre du jour</legend>
+    <fieldset><legend>2. Ordre du jour</legend>
       <div style="display:grid;gap:9px">${E.odj.map((o,i)=>`
         <div class="pt-odj">
           <input type="time" data-odj="${i}" data-k="h" value="${ech(o.h||'')}" aria-label="Heure du point ${i+1}">
           <input type="text" data-odj="${i}" data-k="t" value="${ech(o.t)}" aria-label="Point ${i+1}">
           <button class="x" data-odj-sup="${i}" aria-label="Supprimer ce point">✕</button>
         </div>`).join('')}</div>
-      <button class="btn btn-mini" id="odj-plus" style="margin-top:11px">＋ Ajouter un point</button>
+      <button class="btn btn-mini" id="odj-plus" style="margin-top:11px">＋ Ajouter une ligne</button>
     </fieldset>
 
-    <fieldset><legend>Agapes</legend>
+    <fieldset><legend>3. Agapes</legend>
       <label class="interrupteur"><input type="checkbox" data-t="agapesOui"
         ${T.agapesOui?'checked':''}> Agapes rituelles après la tenue</label>
       <div class="rangee" style="margin-top:13px">
         ${champ('agapesPrix','Triangle (€)','number')}
         ${champ('agapesLimite','Inscription avant le','date')}
-        ${champ('agapesTraiteur','Mention','text')}
       </div></fieldset>
 
-    <fieldset><legend>Pied de convocation</legend><div class="rangee">
-      ${champ('adage','Adage','text')}
-      ${champ('contact','Contacts','text')}
-    </div></fieldset>
+    <details class="replie">
+      <summary>Ce qui ne change presque jamais — lieu, adage, contacts</summary>
+      <div class="rangee" style="margin-top:14px">
+        ${champ('titre','Titre imprimé','text')}
+        ${champ('lieuNom','Temple','text')}
+        ${champ('lieuAdresse','Adresse','text')}
+        ${champ('lieuCp','Code postal','text')}
+        ${champ('lieuVille','Ville','text')}
+        ${champ('agapesTraiteur','Mention des agapes','text')}
+        ${champ('adage','Adage','text')}
+        ${champ('contact','Contacts','text')}
+      </div>
+    </details>
   </div></div>`;
 }
+
 </script>
 <script>
 'use strict';
@@ -771,7 +799,7 @@ document.addEventListener('click', e => {
     setTimeout(()=>{const l=document.querySelectorAll('[data-k="t"]');
       if(l.length) l[l.length-1].focus();},0); return; }
   if (b.dataset.odjSup !== undefined){ E.odj.splice(+b.dataset.odjSup,1); dessiner(); return; }
-  if (b.id === 'imp-convoc'){ ouvrir(convocation()); return; }
+  if (b.id === 'imp-convoc'){ ouvrir(convocation(), 'Convocation ' + E.tenue.date); return; }
 });
 </script>
 
@@ -892,7 +920,7 @@ document.addEventListener('click', e => {
   if (l){ E.fiche = +l.dataset.fiche; courante = 'fiche'; dessiner(); return; }
   const b = e.target.closest('button'); if (!b) return;
   if (b.id === 'retour'){ courante = 'tableau'; dessiner(); return; }
-  if (b.id === 'imp-fiche'){ ouvrir(fichePapier()); return; }
+  if (b.id === 'imp-fiche'){ ouvrir(fichePapier(), 'Fiche ' + (E.membres.find(m=>m.id===E.fiche)?.nom||'')); return; }
   if (b.id === 'nouveau'){
     const id = Math.max(0, ...E.membres.map(m=>m.id)) + 1;
     E.membres.push({id, nom:'', prenoms:'', grade:'', dignite:'', office:null,
@@ -927,6 +955,116 @@ document.addEventListener('input', e => {
     const pos = el.selectionStart; dessiner();
     const r = document.getElementById('m-'+c);
     if (r){ r.focus(); try{ r.setSelectionRange(pos,pos); }catch(err){} }
+  }
+});
+</script>
+<script>
+'use strict';
+/* ═══════════════════════════════════════════════════════════════════
+   PRODUIRE DE VRAIS DOCUMENTS, SANS SERVEUR
+
+   Trois sorties, et aucune n'exige d'installer quoi que ce soit :
+     • Imprimer — ou « enregistrer en PDF » dans la fenêtre d'impression ;
+     • Télécharger en Word — un vrai fichier .doc, modifiable ;
+     • Ouvrir le courrier — le message est déjà écrit, il reste à envoyer.
+
+   ► Les téléchargements ne fonctionnent que dans le FICHIER ENREGISTRÉ
+     sur l'ordinateur. L'aperçu en ligne les bloque.
+═══════════════════════════════════════════════════════════════════ */
+const COURRIEL_LOGE = 'contact.brith.israel@gmail.com';
+
+const STYLE_DOC = `<style>
+body{font-family:Garamond,Georgia,serif;font-size:12pt;line-height:1.5;color:#14110c}
+h1{font-size:15pt;text-align:center;margin:0 0 12pt}
+table{width:100%;border-collapse:collapse;margin-top:8pt}
+td,th{padding:5pt 3pt;border-bottom:1px dotted #bbb;text-align:left;font-size:11pt}
+th{font-size:9pt;text-transform:uppercase;letter-spacing:.06em;color:#5c5346;
+   border-bottom:1px solid #b9a25e}
+.ent{text-align:center;margin-bottom:14pt}
+.ent .f{font-size:9pt;letter-spacing:.14em;color:#7a6a3e}
+.ent .c,.ent .a{font-size:11pt;font-weight:bold;margin-top:4pt}
+.ent .o{font-size:9pt;font-style:italic;color:#5c5346}
+.rub{font-weight:bold;font-size:11pt;margin:14pt 0 5pt}
+.sig{border-bottom:1px solid #999;width:180pt;height:26pt}
+.vide{border:1px dashed #c8bda0;padding:16pt 8pt;color:#a2977f;font-style:italic}
+.pt{font-size:9pt;letter-spacing:.05em;text-transform:uppercase;color:#7a6a3e}
+</style>`;
+
+/* Un vrai fichier .doc : Word l'ouvre, la Sœur Secrétaire le modifie
+   et l'envoie comme n'importe quel courrier. */
+function telechargerWord(nom, corpsHtml){
+  const doc = '<html xmlns:o="urn:schemas-microsoft-com:office:office" ' +
+    'xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">' +
+    '<head><meta charset="utf-8"><title>' + nom + '</title>' + STYLE_DOC +
+    '</head><body>' + corpsHtml + '</body></html>';
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob(['﻿' + doc], {type:'application/msword'}));
+  a.download = nom.replace(/[^\wÀ-ÿ \-]/g,'').trim() + '.doc';
+  document.body.appendChild(a); a.click();
+  setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 400);
+}
+
+/* La convocation en texte simple, pour le corps du courriel. */
+function convocationTexte(){
+  const T = E.tenue;
+  const l = [];
+  l.push("A∴L∴G∴D∴G∴A∴D∴L∴U∴");
+  l.push("Suprême Conseil Mondial du Rite Brith Israël");
+  l.push("R∴L∴ BERESHIT n°00 — à l'Orient de l'Alliance");
+  l.push("");
+  l.push("Mes bien chers Sœurs et Frères,");
+  l.push("");
+  l.push("Vous êtes convoqués à une " + (T.titre || TYPES[T.type]));
+  l.push("au " + RANGS[T.degre] + " degré de " + DEGRES[T.degre] + " du Rite Brith Israël,");
+  l.push("le " + dateLongue(T.date) + " à " + T.heureOuv + "  (" + avl(T.date) + " A∴V∴L∴)");
+  if (T.heureConv) l.push("Convocation des Officiers à " + T.heureConv + ".");
+  l.push("");
+  l.push(T.lieuNom); l.push(T.lieuAdresse + " — " + T.lieuCp + " " + T.lieuVille);
+  l.push(""); l.push("ORDRE DU JOUR");
+  E.odj.filter(o=>o.t.trim()).forEach(o => l.push("  " + (o.h ? o.h + "  " : "") + o.t));
+  if (T.agapesOui){
+    l.push("");
+    l.push("AGAPES RITUELLES — triangle de " + T.agapesPrix + " €.");
+    l.push("Merci de confirmer votre présence avant le " + dateLongue(T.agapesLimite) + ".");
+  }
+  if (T.adage){ l.push(""); l.push("« " + T.adage + " »"); }
+  l.push(""); l.push("Fraternellement,");
+  l.push("Pour la R∴L∴ Bereshit n°00 — " + COURRIEL_LOGE);
+  return l.join("\n");
+}
+
+function ouvrirCourriel(dest, sujet, corps){
+  window.location.href = 'mailto:' + encodeURIComponent(dest) +
+    '?subject=' + encodeURIComponent(sujet) + '&body=' + encodeURIComponent(corps);
+}
+</script>
+<script>
+'use strict';
+document.addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+
+  if (b.id === 'tel-word'){ telechargerWord(docCourant.nom, docCourant.html); return; }
+
+  /* Un courriel par destinataire : elle descend la liste et clique.
+     Chaque message s'ouvre dans SON logiciel de courrier, déjà écrit. */
+  if (b.dataset.mail){
+    const m = E.membres.find(x => x.id === +b.dataset.mail);
+    ouvrirCourriel(m.email, 'Convocation — Tenue du ' + dateLongue(E.tenue.date),
+                   convocationTexte());
+    E.envoyes[m.id] = new Date().toLocaleDateString('fr-FR');
+    garder(); setTimeout(dessiner, 600); return;
+  }
+  if (b.id === 'mail-tous'){
+    const dest = convocables().filter(m => m.email).map(m => m.email);
+    if (!dest.length){ alert("Aucune adresse courriel n'est renseignée."); return; }
+    /* Copie cachée : les destinataires ne se voient pas entre eux. */
+    window.location.href = 'mailto:' + encodeURIComponent(COURRIEL_LOGE) +
+      '?bcc=' + encodeURIComponent(dest.join(',')) +
+      '&subject=' + encodeURIComponent('Convocation — Tenue du ' + dateLongue(E.tenue.date)) +
+      '&body=' + encodeURIComponent(convocationTexte());
+    dest.forEach(() => {});
+    convocables().filter(m => m.email).forEach(m => E.envoyes[m.id] = new Date().toLocaleDateString('fr-FR'));
+    garder(); setTimeout(dessiner, 600); return;
   }
 });
 </script>
