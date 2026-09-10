@@ -388,7 +388,7 @@ var RBI_CONFIG = {
         desc:     "« Arrêtez de chercher la perfection. Elle est le tombeau des bonnes volontés. » Et si la plus grande des initiations n'était pas la lumière, mais l'art de vivre avec ses ombres ? Un manuel de résilience éthique par un auteur né grand prématuré de 900 grammes, rescapé d'un coma à six ans, pâtissier devenu docteur en médecine traditionnelle chinoise à Shanghai.",
         placeholder: "G",
         liens: [
-          { label: "Broché — 20 €", url: "https://www.amazon.fr/dp/B0GR1WPKR8", style: "primary" },
+          { label: "Broché", url: "https://www.amazon.fr/dp/B0GR1WPKR8", style: "primary" },
           { label: "Kindle",        url: "https://www.amazon.fr/dp/B0GR29BGHN", style: "outline" }
         ]
       },
@@ -399,7 +399,7 @@ var RBI_CONFIG = {
         desc:     "Laure Silvestri n'aimait pas les matins. Elle n'aimait pas non plus les secrets. Journaliste d'investigation à Marseille, elle enquête sur les mardis soir de son compagnon boulanger. Ce n'est pas ce qu'elle croyait : c'est une loge maçonnique. Puis Mamie Made meurt, et avec elle un secret gardé toute une vie. On cherche un secret, on trouve une vérité.",
         placeholder: "P",
         liens: [
-          { label: "Broché — 24 €", url: "https://www.amazon.fr/dp/B0H87J53RG", style: "primary" },
+          { label: "Broché", url: "https://www.amazon.fr/dp/B0H87J53RG", style: "primary" },
           { label: "Kindle",        url: "https://www.amazon.fr/dp/B0H872YJSX", style: "outline" }
         ]
       }
