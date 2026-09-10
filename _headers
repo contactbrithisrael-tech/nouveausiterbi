@@ -38,3 +38,11 @@
 # On peut donc les garder un an sans risque de servir du périmé.
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
+
+# ── Textes de travail ──────────────────────────────────────────────
+# Le dossier /kdp/ tient les descriptions destinées à Amazon. Elles sont
+# publiées ailleurs, sur les fiches produit : indexées ici aussi, elles
+# feraient deux pages pour un même texte, et Google en choisirait une.
+/kdp/*
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: public, max-age=0, must-revalidate

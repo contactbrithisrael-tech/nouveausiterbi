@@ -385,7 +385,7 @@ var RBI_CONFIG = {
         img_id:   "book-guide",
         titre:    "Guide de Survie pour Franc-Maçon Désemparé",
         sous:     "Démystification, résilience et sagesse au quotidien — Mickaël DARMON · Amazon KDP, 212 pages",
-        desc:     "Un guide pratique et humoristique pour naviguer dans le monde maçonnique, par le fondateur du Rite Brith Israël.",
+        desc:     "« Arrêtez de chercher la perfection. Elle est le tombeau des bonnes volontés. » Et si la plus grande des initiations n'était pas la lumière, mais l'art de vivre avec ses ombres ? Un manuel de résilience éthique par un auteur né grand prématuré de 900 grammes, rescapé d'un coma à six ans, pâtissier devenu docteur en médecine traditionnelle chinoise à Shanghai.",
         placeholder: "G",
         liens: [
           { label: "Broché — 20 €", url: "https://www.amazon.fr/dp/B0GR1WPKR8", style: "primary" },
@@ -396,7 +396,7 @@ var RBI_CONFIG = {
         img_id:   "book-petrin",
         titre:    "Du Pétrin au Compas",
         sous:     "Roman — « Quand on cherche un secret, on trouve une vérité » · 9 juillet 2026",
-        desc:     "Un roman. Laure Silvestri, journaliste d'investigation à Marseille, enquête sur les mardis soir de son compagnon boulanger. Ce n'est pas ce qu'elle croyait : c'est une Loge. Et ce qu'elle commence sans l'avoir prévu, c'est une initiation.",
+        desc:     "Laure Silvestri n'aimait pas les matins. Elle n'aimait pas non plus les secrets. Journaliste d'investigation à Marseille, elle enquête sur les mardis soir de son compagnon boulanger. Ce n'est pas ce qu'elle croyait : c'est une loge maçonnique. Puis Mamie Made meurt, et avec elle un secret gardé toute une vie. On cherche un secret, on trouve une vérité.",
         placeholder: "P",
         liens: [
           { label: "Broché — 24 €", url: "https://www.amazon.fr/dp/B0H87J53RG", style: "primary" },
