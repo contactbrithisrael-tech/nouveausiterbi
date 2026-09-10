@@ -319,7 +319,7 @@ function neuf(){ return {
   },
   odj:[
     {h:'17:30',t:'Convocation de tous les SS∴ et FF∴ pour répétition'},
-    {h:'19:30',t:'Ouverture de la Tenue au premier degré de l’Apprenti Oved'},
+    {h:'19:30',t:'Ouverture de la Tenue au premier degré d’Apprenti Oved'},
     {h:'',t:'Quelques mots de bienvenue du Vénérable Maître'},
     {h:'',t:'Cinq minutes de symbolisme — « L’initiation au Rite Brith Israël », par le SGC∴ Mickaël DARMON'},
     {h:'',t:'Cérémonie d’initiation de la Première Apprentie de l’Atelier'},
@@ -570,7 +570,7 @@ function emargement(){
    des trois n'est obligatoire — et une qualité absente ne doit pas
    laisser une virgule orpheline derrière un nom. */
 function qualiteImprimee(x){
-  if (x.degre) return DEGRES[x.degre].replace(/^l[ea] /,'') + ' du Rite Brith Israël';
+  if (x.degre) return DEGRES[x.degre] + ' du Rite Brith Israël';
   if (x.grade) return x.grade + ' du Rite Brith Israël' + (x.dignite ? ', ' + x.dignite : '');
   return x.qualite || '';
 }
@@ -604,7 +604,7 @@ function planche(){
   <ul style="list-style:none">${exc.length?exc.map(li).join(''):'<li><i>Aucun.</i></li>'}</ul>
   <p>Après une allocution de bienvenue, le VM∴ ${vm?ech(vm.prenoms+' '+vm.nom):'…'} ouvre les
      travaux sous les auspices du Suprême Conseil Mondial du Rite Brith Israël, au
-     ${RANGS[T.degre]} degré de ${ech(DEGRES[T.degre])} du Rite Brith Israël.</p>
+     ${RANGS[T.degre]} degré ${ech(DE[T.degre])} du Rite Brith Israël.</p>
   ${E.odj.slice(2,6).map(o=>`<div class="pt">${ech(o.t)}</div>
      <div class="vide">Le récit de ce point — écrit par le Secrétaire, par personne d'autre.</div>`).join('')}
   <p>Les colonnes ayant résonné de ces précieuses paroles, l'ordre du jour étant épuisé,
@@ -716,7 +716,17 @@ const TYPES = {obligation:"Tenue d'Obligation", initiation:"Tenue d'Initiation",
   installation:"Tenue d'Installation", blanche_fermee:"Tenue Blanche Fermée",
   blanche_ouverte:"Tenue Blanche Ouverte", assemblee_generale:"Assemblée Générale",
   saint_jean:"Tenue de Saint-Jean", funebre:"Tenue Funèbre"};
-const DEGRES = {1:"l'Apprenti Oved", 2:"le Compagnon Boneh", 3:"le Maître Adon"};
+/* Trois formes, parce que la langue en demande trois :
+     DEGRES  — le nom seul, pour une étiquette : « Apprenti Oved » ;
+     DE      — après « au premier degré », avec son élision :
+               « d'Apprenti Oved », « de Compagnon Boneh » ;
+     COURT   — le nom hébreu et son rang, pour une fiche ou un
+               certificat : « Oved — 1er degré du Rite Brith Israël ».
+   Écrire « au premier degré de l'Apprenti Oved » était fautif. */
+const DEGRES = {1:'Apprenti Oved', 2:'Compagnon Boneh', 3:'Maître Adon'};
+const DE     = {1:"d'Apprenti Oved", 2:'de Compagnon Boneh', 3:'de Maître Adon'};
+const HEBREU = {1:'Oved', 2:'Boneh', 3:'Adon'};
+const COURT  = d => `${HEBREU[d]} — ${d}${d===1?'er':'e'} degré du Rite Brith Israël`;
 const RANGS  = {1:'premier', 2:'deuxième', 3:'troisième'};
 const MOIS = ['janvier','février','mars','avril','mai','juin','juillet','août',
               'septembre','octobre','novembre','décembre'];
@@ -766,7 +776,7 @@ function vueConvocation(){
       ${champ('heureConv','Heure de convocation','time','Répétition, mise en place')}
       <div class="champ"><label for="f-degre">Degré</label>
         <select id="f-degre" data-t="degre">${[1,2,3].map(d=>
-          `<option value="${d}"${+T.degre===d?' selected':''}>${RANGS[d]} degré — ${DEGRES[d]}</option>`).join('')}</select></div>
+          `<option value="${d}"${+T.degre===d?' selected':''}>${RANGS[d]} degré ${DE[d]}</option>`).join('')}</select></div>
       <div class="champ"><label for="f-type">Nature de la tenue</label>
         <select id="f-type" data-t="type">${Object.entries(TYPES).map(([k,v])=>
           `<option value="${k}"${T.type===k?' selected':''}>${v}</option>`).join('')}</select></div>
@@ -816,7 +826,8 @@ function convocation(){
   return `${ENTETE}
   <p style="text-align:center;margin-top:6mm">L'ensemble des FF∴ et SS∴ sont convoqués à une</p>
   <h1 style="margin:2mm 0">✦&nbsp; ${ech(T.titre||TYPES[T.type])} &nbsp;✦</h1>
-  <p style="text-align:center;margin-bottom:5mm">au ${RANGS[T.degre]} degré — ${ech(DEGRES[T.degre])}<br>
+  <p style="text-align:center;margin-bottom:5mm">au ${RANGS[T.degre]} degré ${ech(DE[T.degre])}<br>
+    <span style="font-size:10pt">${ech(COURT(T.degre))}</span><br>
     <b>${dateLongue(T.date)} à ${ech(T.heureOuv)}</b><br>
     <span style="font-size:10pt">${avl(T.date)} A∴V∴L∴</span></p>
   <p style="text-align:center;margin-bottom:6mm">
@@ -927,7 +938,7 @@ function vueFiche(){
         <select id="m-degre" data-m="degre">
           <option value=""${!x.degre?' selected':''}>— aucun —</option>
           ${[1,2,3].map(d=>`<option value="${d}"${+x.degre===d?' selected':''}>${DEGRES[d]}</option>`).join('')}
-        </select><span class="aide">${x.degre?ech(DEGRES[x.degre].replace(/^l[ea] /,'')+' du Rite Brith Israël'):'S’imprimera avec la qualité d’origine'}</span></div>
+        </select><span class="aide">${x.degre?ech(COURT(x.degre)):'S’imprimera avec la qualité d’origine'}</span></div>
       ${fChamp(x,'qualite','Qualité d’un autre Ordre','text','Pour un Maçon affilié venant d’ailleurs')}
     </div></fieldset>
 
@@ -960,7 +971,7 @@ function fichePapier(){
     <table><tbody>
       ${l('Nom et prénoms', x.prenoms+' '+x.nom)}
       ${l('Statut', STATUTS[x.statut])}
-      ${l('Degré du Rite', x.degre ? DEGRES[x.degre].replace(/^l[ea] /,'')+' du Rite Brith Israël' : '')}
+      ${l('Degré du Rite', x.degre ? COURT(x.degre) : '')}
       ${l('Qualité d’origine', x.qualite)}
       ${l('Degré de l’Ordre', x.grade)}
       ${l('Dignité', x.dignite)}
@@ -1115,7 +1126,7 @@ function convocationTexte(){
   l.push("Mes bien chers Sœurs et Frères,");
   l.push("");
   l.push("Vous êtes convoqués à une " + (T.titre || TYPES[T.type]));
-  l.push("au " + RANGS[T.degre] + " degré de " + DEGRES[T.degre] + " du Rite Brith Israël,");
+  l.push("au " + RANGS[T.degre] + " degré " + DE[T.degre] + " du Rite Brith Israël,");
   l.push("le " + dateLongue(T.date) + " à " + T.heureOuv + "  (" + avl(T.date) + " A∴V∴L∴)");
   if (T.heureConv) l.push("Convocation des Officiers à " + T.heureConv + ".");
   l.push("");

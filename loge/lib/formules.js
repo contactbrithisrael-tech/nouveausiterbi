@@ -76,9 +76,20 @@ export function ordinal(n) {
    Source : Souverain Grand Commandeur — Apprenti Oved, Compagnon
    Boneh, Maître Adon. Les noms ne sont pas écrits ici : ils viennent
    de la table nomenclature_degres, pour que les degrés 4 à 33 puissent
-   être nommés sans toucher au code.                                  */
+   être nommés sans toucher au code.
+
+   ► « au premier degré D'APPRENTI Oved », et non « de l'Apprenti » :
+     après « degré », le nom du grade suit sans article, avec son
+     élision devant voyelle.                                          */
 export function degrePhrase(rang, nomDuDegre) {
-  return `au ${ordinal(rang)} degré de ${nomDuDegre} du Rite Brith Israël`;
+  const de = /^[aeiouyéèêàâîôûAEIOUY]/.test(nomDuDegre) ? "d'" : 'de ';
+  return `au ${ordinal(rang)} degré ${de}${nomDuDegre} du Rite Brith Israël`;
+}
+
+/* La forme brève, pour une fiche, un diplôme ou un certificat :
+   « Oved — 1er degré du Rite Brith Israël ».                         */
+export function degreBref(rang, nomHebreu) {
+  return `${nomHebreu} — ${rang}${rang === 1 ? 'er' : 'e'} degré du Rite Brith Israël`;
 }
 
 /* ── La date en toutes lettres ──────────────────────────────────────
