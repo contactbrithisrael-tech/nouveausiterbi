@@ -9,3 +9,6 @@ User-agent: *
 Allow: /
 
 Sitemap: https://www.brith-israel.org/sitemap.xml
+
+# Secrétariat de Loge — outil interne, sans donnée embarquée
+Disallow: /secretariat.html
