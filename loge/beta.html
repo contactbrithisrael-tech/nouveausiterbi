@@ -1365,8 +1365,17 @@ function vueAide(){
         PDF reçu par courriel. L’image est réduite automatiquement — une photo de
         téléphone pèse quatre mégaoctets, elle en pèsera vingt fois moins sans rien
         perdre de sa lisibilité.</li>
-      <li>Notez la <b>date de leur tenue</b>, l’heure et l’objet. Ces renseignements
-        alimentent l’<b>agenda des visites</b>, en haut de la page.</li>
+      <li>Sous la photo, un bouton <b class="bouton">✦ Lire la convocation</b> :
+        cliquez dessus et <b>les cases se remplissent toutes seules</b> — le nom de
+        la Loge, l’Orient, l’Obédience, l’adresse, la date, l’heure, le degré,
+        l’ordre du jour. Comptez une minute.</li>
+      <li><b>Relisez ce qui a été lu.</b> Une lecture automatique se trompe : elle
+        confond un 16 et un 17, prend un Orient pour une ville. C’est la photo qui
+        fait foi, jamais la lecture. Ce que vous aviez déjà tapé n’est jamais
+        remplacé.</li>
+      <li>Complétez la <b>date de leur tenue</b>, l’heure et l’objet si la lecture ne
+        les a pas trouvés. Ces renseignements alimentent l’<b>agenda des visites</b>,
+        en haut de la page.</li>
       <li><b class="bouton">‹ Toutes les Loges amies</b> pour revenir.</li>
     </ol>
     <div class="rassure"><b>Pour prévenir les colonnes.</b> En haut de l’agenda,
@@ -1504,6 +1513,9 @@ function vueAide(){
       version du fichier. Demandez la dernière.</p>
     <p><b>« Rien ne se télécharge. »</b> Vous êtes sur la page internet et non sur le
       fichier enregistré. Enregistrez le fichier sur votre bureau et ouvrez-le de là.</p>
+    <p><b>« Le bouton “Lire la convocation” n’apparaît pas. »</b> C’est l’inverse :
+      il n’existe que sur la page internet, pas sur le fichier enregistré. Et il ne
+      s’affiche que sous une photo, jamais sous un PDF.</p>
     <p><b>« J’ai peur d’avoir envoyé quelque chose par erreur. »</b> Impossible. Le
       logiciel n’envoie rien tout seul. Seul votre clic sur « Envoyer », dans votre
       messagerie, envoie quelque chose.</p>
@@ -2474,13 +2486,21 @@ async function rendrePieces(a){
           style="font:inherit;font-size:14px;color:var(--encre);background:var(--fond);
                  border:1px solid var(--trait);border-radius:var(--r);padding:8px 10px;
                  width:100%;resize:vertical">${ech(c.odj||'')}</textarea></div>
-      <div class="groupe" style="margin-top:10px">
+      <div class="groupe" style="margin-top:10px;align-items:center">
+        ${piece && piece.type.startsWith('image/')
+          ? `<button class="btn btn-mini btn-or" data-lire="${c.id}">✦ Lire la convocation</button>
+             <span class="qual" id="etat-lecture-${c.id}"></span>` : ''}
         <span class="qual">${piece ? poidsLisible(piece.poids||0) : ''}</span>
         <span style="flex:1"></span>
         <button class="btn btn-mini" data-conv-sup="${c.id}">Retirer cette convocation</button>
       </div></div>`;
   }));
   zone.innerHTML = `<div class="modules" style="grid-template-columns:1fr">${blocs.join('')}</div>`;
+  /* Hors ligne, la lecture n'existe pas : on retire le bouton plutôt
+     que de le laisser décevoir. */
+  if (!(await lectureDisponible())){
+    zone.querySelectorAll('[data-lire]').forEach(b => b.remove());
+  }
 }
 </script>
 <script>
@@ -2808,5 +2828,145 @@ document.addEventListener('click', e => {
       '&body=' + encodeURIComponent(agendaTexte());
     return;
   }
+});
+</script>
+<script>
+'use strict';
+/* ═══════════════════════════════════════════════════════════════════
+   LIRE LA CONVOCATION REÇUE
+
+   Joindre la photo puis tout retaper contredit le principe du
+   programme. La page peut faire lire l'image et en tirer les champs.
+
+   ► CE QUI EST LU EST PROPOSÉ, JAMAIS IMPOSÉ. Une lecture automatique
+     se trompe : elle confond un 16 et un 17, prend un Orient pour une
+     ville, invente une adresse plausible. Les champs déjà remplis par
+     la Secrétaire ne sont donc jamais écrasés, ce qui est proposé est
+     annoncé champ par champ, et la photo reste la pièce qui fait foi.
+
+   ► La consigne interdit d'inventer : ce qui n'est pas écrit sur
+     l'image doit revenir vide. Un blanc se corrige ; une invention
+     vraisemblable se recopie sans qu'on la voie.
+
+   ► Cela n'existe que dans l'aperçu en ligne, et consomme le crédit
+     Claude de celui qui s'en sert. Hors ligne, le bouton n'apparaît
+     pas — plutôt qu'un bouton sans effet.
+═══════════════════════════════════════════════════════════════════════ */
+let LECTURE = { possible: null, limites: null };
+
+async function lectureDisponible(){
+  if (LECTURE.possible !== null) return LECTURE.possible;
+  try {
+    const s = (typeof claude !== 'undefined' && claude.use)
+            ? await claude.use('sample') : null;
+    if (!s){ LECTURE.possible = false; return false; }
+    const l = await s.limits().catch(() => null);
+    LECTURE = { possible: !!(l && l.images), limites: l, sample: s };
+    return LECTURE.possible;
+  } catch (e){ LECTURE.possible = false; return false; }
+}
+
+/* Un data:URL redevient un fichier, sans passer par le réseau. */
+function dataURLversBlob(url){
+  const [tete, corps] = url.split(',');
+  const type = (tete.match(/data:([^;]+)/) || [,'application/octet-stream'])[1];
+  const bin = atob(corps);
+  const o = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) o[i] = bin.charCodeAt(i);
+  return new Blob([o], { type });
+}
+
+const CONSIGNE_LECTURE = `Tu lis la photo d'une convocation maçonnique française.
+Rends UNIQUEMENT un objet JSON, sans phrase autour, avec exactement ces clés :
+
+{"nom":null,"orient":null,"obedience":null,"rite":null,"particularites":null,
+ "temple":null,"adresse":null,"codePostal":null,"ville":null,
+ "contactNom":null,"contactEmail":null,"contactTel":null,
+ "date":null,"heure":null,"degre":null,"objet":null,"odj":null}
+
+Règles, sans exception :
+- N'INVENTE RIEN. Toute clé dont la réponse n'est pas écrite sur l'image reste null.
+  Un blanc se corrige à la main ; une invention vraisemblable passe inaperçue.
+- "nom" : le nom de la Loge tel qu'écrit, sans son Orient.
+- "orient" : la ville ou le lieu suivant « à l'Orient de ».
+- "obedience" : l'obédience ou le Suprême Conseil mentionné en en-tête.
+- "rite" : le rite auquel elle travaille, s'il est nommé.
+- "particularites" : filiation, chapitre, devise, ou toute mention propre
+  à cet Atelier qu'aucune autre clé ne recueille. Une phrase courte.
+- "date" : la date de la tenue au format AAAA-MM-JJ, d'après la date de l'ère
+  vulgaire. Ignore la datation maçonnique.
+- "heure" : l'heure d'OUVERTURE DES TRAVAUX au format HH:MM, non celle de l'accueil.
+- "degre" : 1, 2 ou 3 si le degré des travaux est indiqué, sinon null.
+- "objet" : la nature de la tenue en quelques mots.
+- "odj" : l'ordre du jour, une ligne par point, séparées par des retours à la ligne.
+- "contactTel" : le numéro tel qu'écrit.
+Rends le JSON seul.`;
+
+async function lireLaConvocation(idConv){
+  const a = amieCourante(); if (!a) return;
+  const c = a.convocations.find(x => x.id === idConv); if (!c) return;
+  const bouton = document.querySelector(`[data-lire="${idConv}"]`);
+  const etat = document.getElementById('etat-lecture-' + idConv);
+  const dire = t => { if (etat) etat.textContent = t; };
+
+  if (!(await lectureDisponible())){
+    alert("La lecture automatique n'est pas disponible ici.\n\n" +
+          "Elle fonctionne depuis la page en ligne, pas depuis le fichier " +
+          "enregistré sur votre ordinateur."); return;
+  }
+  const piece = await PIECES.lire(c.piece);
+  if (!piece || !piece.type.startsWith('image/')){
+    alert("La lecture ne fonctionne que sur une photo ou une image.\n\n" +
+          "Pour un PDF, ouvrez-le et photographiez-le, ou saisissez les champs."); return;
+  }
+
+  if (bouton) bouton.disabled = true;
+  dire('Lecture en cours… cela peut prendre une minute.');
+  try {
+    const lu = await LECTURE.sample.json(CONSIGNE_LECTURE,
+      { images: dataURLversBlob(piece.donnee), modelTier: 'default' });
+
+    /* Ce qu'elle a saisi l'emporte toujours sur ce qui est lu. */
+    const champsLoge = ['nom','orient','obedience','rite','particularites',
+                        'temple','adresse','codePostal','ville',
+                        'contactNom','contactEmail','contactTel'];
+    const champsConv = ['date','heure','degre','objet','odj'];
+    const repris = [], ignores = [];
+    champsLoge.forEach(k => {
+      const v = lu[k]; if (v === null || v === undefined || v === '') return;
+      const cible = k === 'particularites' ? 'notes' : k;
+      if (a[cible]) { ignores.push(k); return; }
+      a[cible] = String(v); repris.push(k);
+    });
+    champsConv.forEach(k => {
+      const v = lu[k]; if (v === null || v === undefined || v === '') return;
+      if (c[k]) { ignores.push(k); return; }
+      c[k] = k === 'degre' ? Number(v) : String(v); repris.push(k);
+    });
+    garder(); dessiner();
+    setTimeout(() => {
+      alert(repris.length
+        ? `${repris.length} renseignement(s) repris de la photo :\n  ` +
+          repris.join(', ') +
+          (ignores.length ? `\n\n${ignores.length} déjà rempli(s), laissé(s) tels quels.` : '') +
+          `\n\n► RELISEZ-LES. Une lecture automatique se trompe, et c'est la photo ` +
+          `qui fait foi.`
+        : "Rien n'a pu être lu sur cette image.\n\nSaisissez les champs à la main.");
+    }, 200);
+  } catch (e){
+    const m = {
+      not_granted: "La lecture demande votre accord, qui n'a pas été donné.",
+      rate_limited: "Trop de lectures d'affilée. Réessayez dans un moment.",
+      invalid_json: "La réponse n'a pas pu être comprise. Réessayez, ou saisissez à la main.",
+      cancelled: null,
+    }[e && e.code] ?? "La lecture n'a pas abouti. Saisissez les champs à la main.";
+    if (m) alert(m);
+    dire('');
+  } finally { if (bouton) bouton.disabled = false; }
+}
+
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-lire]'); if (!b) return;
+  lireLaConvocation(b.dataset.lire);
 });
 </script>
