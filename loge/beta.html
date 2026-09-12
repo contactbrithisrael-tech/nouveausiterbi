@@ -319,6 +319,7 @@ details.replie summary:hover{color:var(--encre)}
     <button class="btn btn-mini btn-or" id="sauver">⤓ Sauvegarder mes données</button>
     <button class="btn btn-mini" id="charger">⤒ Charger une sauvegarde</button>
     <input type="file" id="fichier-sauvegarde" accept=".json,application/json" hidden>
+    <span id="etat-sauvegarde"></span>
     <span style="flex:1"></span>
     <button class="btn btn-mini" id="raz">Tout effacer</button>
   </p>
@@ -399,7 +400,66 @@ function neuf(){ return {
 
 let E;
 try { E = JSON.parse(localStorage.getItem(CLE)) || neuf(); } catch(e){ E = neuf(); }
-function garder(){ try{ localStorage.setItem(CLE, JSON.stringify(E)); }catch(e){} }
+/* Le travail est écrit dans ce navigateur à chaque geste — il survit à
+   un rechargement, à une coupure, à une fermeture. Il ne survit pas à
+   un navigateur vidé, à un ordinateur changé, à une machine perdue :
+   pour cela il faut le fichier de sauvegarde, et c'est une main humaine
+   qui le demande. Le programme doit donc savoir ce qui n'est pas encore
+   à l'abri, et le dire — au lieu d'attendre qu'on y pense.
+
+   Non par un drapeau : dessiner() garde à chaque changement d'onglet, et
+   un drapeau annoncerait du travail en attente là où rien n'a bougé. On
+   compare le contenu lui-même, déduction faite de ce qui ne regarde que
+   l'écran — l'onglet ouvert, la fiche consultée. Ouvrir une fiche ne
+   modifie rien ; y taper un courriel, si. */
+const HORS_DONNEES = ['onglet','fiche','amieOuverte','visiteurOuvert','sauveLe','sigSauvee'];
+function signature(){
+  return JSON.stringify(E, (c,v) => HORS_DONNEES.includes(c) ? undefined : v);
+}
+/* Jamais sauvegardé et déjà du travail saisi : c'est le cas le plus
+   exposé, pas le plus sûr. Il compte pour du travail en attente. */
+function ilYADuTravail(){
+  return (E.membres||[]).length || (E.visiteurs||[]).length || (E.amies||[]).length;
+}
+function aSauver(){
+  if (!ilYADuTravail()) return false;
+  return E.sigSauvee === undefined || E.sigSauvee !== signature();
+}
+function persister(){ try{ localStorage.setItem(CLE, JSON.stringify(E)); }catch(e){} }
+function garder(){ persister(); majPied(); }
+/* « quand » n'est pas toujours maintenant : une sauvegarde qu'on
+   recharge date du jour où elle a été faite, non du jour où on l'ouvre.
+   Annoncer « à l'instant » pour un fichier d'avant-hier tromperait sur
+   ce qui est réellement à l'abri. */
+function mettreAlAbri(quand){
+  E.sigSauvee = signature();
+  E.sauveLe = quand || new Date().toISOString();
+  persister(); majPied();
+}
+/* Le témoin du pied de page. Il ne crie que s'il y a de quoi. */
+function majPied(){
+  const z = document.getElementById('etat-sauvegarde'); if (!z) return;
+  if (!ilYADuTravail()){ z.textContent = ''; return; }
+  if (aSauver()){
+    const d = depuis(E.sauveLe);
+    z.innerHTML = `<span class="p p-att">Travail non sauvegardé</span>` +
+      `<span class="qual" style="margin-left:8px">${d
+        ? 'dernière sauvegarde ' + d : 'jamais sauvegardé sur cet appareil'}</span>`;
+  } else if (E.sauveLe){
+    z.innerHTML = `<span class="p p-ok">À l’abri</span>` +
+      `<span class="qual" style="margin-left:8px">sauvegardé ${depuis(E.sauveLe)}</span>`;
+  } else { z.textContent = ''; }
+}
+/* « il y a trois jours » se comprend ; un horodatage ne se lit pas. */
+function depuis(iso){
+  if (!iso) return null;
+  const s = Math.floor((Date.now() - new Date(iso)) / 1000);
+  if (s < 90) return 'à l’instant';
+  const mn = Math.floor(s/60);   if (mn < 60) return `il y a ${mn} minute${mn>1?'s':''}`;
+  const h  = Math.floor(mn/60);  if (h  < 24) return `il y a ${h} heure${h>1?'s':''}`;
+  const j  = Math.floor(h/24);   if (j  < 31) return `il y a ${j} jour${j>1?'s':''}`;
+  const mo = Math.floor(j/30);   return `il y a ${mo} mois`;
+}
 function nomOffice(c){ return c ? OFFICES[c].l : ''; }
 function abrOffice(c){ return c ? OFFICES[c].a : ''; }
 function euro(n){ return n.toLocaleString('fr-FR',{minimumFractionDigits:2})+' €'; }
@@ -1602,7 +1662,32 @@ function vueAide(){
       <li>La ligne passe à <b>Soldé</b>, et les totaux du haut se recalculent.</li>
     </ol>
 
-    <h3><span class="no">11</span>Si quelque chose ne va pas</h3>
+    <h3><span class="no">11</span>Mettre votre travail à l’abri</h3>
+    <p>C’est le chapitre le plus important de tous. Lisez-le deux fois.</p>
+    <ol>
+      <li>Tout ce que vous saisissez est gardé <b>dans ce navigateur, sur cet
+        appareil</b>. Vous pouvez fermer la page, éteindre l’ordinateur, revenir
+        demain : tout sera là.</li>
+      <li><b>Mais rien n’est ailleurs.</b> Si le navigateur est vidé, si l’ordinateur
+        change ou se perd, il ne reste rien — sauf le fichier de sauvegarde.</li>
+      <li>En bas de page, <b class="bouton">⤓ Sauvegarder mes données</b> fabrique
+        ce fichier. Rangez-le où vous rangez vos documents importants.</li>
+      <li>À côté du bouton, un témoin vous dit où vous en êtes :
+        <b>À l’abri</b> quand tout est sauvegardé,
+        <b>Travail non sauvegardé</b> quand quelque chose attend.</li>
+      <li>Si vous fermez la page avec du travail non sauvegardé, <b>le navigateur
+        vous préviendra</b>. C’est lui qui écrit le message, pas nous : il demande
+        seulement si vous voulez vraiment quitter. Répondez non, sauvegardez,
+        et fermez ensuite.</li>
+      <li>Pour retrouver votre travail sur un autre appareil :
+        <b class="bouton">⤒ Charger une sauvegarde</b>, et choisissez le fichier.</li>
+    </ol>
+    <div class="prudence"><b>Une habitude à prendre.</b> Sauvegardez à la fin de
+      chaque séance de travail, comme on range ses papiers avant de quitter la
+      pièce. Une fois prise, l’habitude ne coûte rien ; sans elle, un jour, tout
+      est à refaire.</div>
+
+    <h3><span class="no">12</span>Si quelque chose ne va pas</h3>
     <p><b>« J’ai fermé la page, j’ai tout perdu. »</b> Non. Rouvrez le fichier : tout
       est là, y compris l’onglet où vous étiez.</p>
     <p><b>« Les accents s’affichent bizarrement. »</b> Vous avez ouvert une vieille
@@ -1616,7 +1701,7 @@ function vueAide(){
       logiciel n’envoie rien tout seul. Seul votre clic sur « Envoyer », dans votre
       messagerie, envoie quelque chose.</p>
 
-    <h3><span class="no">12</span>Ce que le logiciel ne fait pas encore</h3>
+    <h3><span class="no">13</span>Ce que le logiciel ne fait pas encore</h3>
     <p>Il ne relance pas tout seul ceux qui n’ont pas répondu. Il ne réclame pas les
       capitations en retard. Les réponses des Sœurs et Frères n’arrivent pas toutes
       seules : c’est vous qui les notez.</p>
@@ -1639,6 +1724,24 @@ document.addEventListener('click', e => {
 'use strict';
 /* Premier dessin : après la déclaration de toutes les vues. */
 dessiner();
+
+/* Fermer l'onglet sans avoir sauvegardé n'efface rien aujourd'hui — le
+   travail reste dans ce navigateur. Mais un navigateur se vide, un
+   ordinateur se change, une machine se perd, et alors il ne reste que
+   le fichier. L'avertissement ne se déclenche donc que s'il y a
+   vraiment quelque chose qui n'est nulle part ailleurs.
+
+   Le texte est imposé par le navigateur : aucune page ne choisit ce
+   qu'il écrit. Ce que nous choisissons, c'est de ne pas le déranger
+   pour rien. */
+window.addEventListener('beforeunload', e => {
+  if (!aSauver()) return;
+  e.preventDefault(); e.returnValue = '';
+});
+
+/* « il y a deux minutes » devient « il y a une heure » sans qu'on
+   touche à rien : le témoin se relit tout seul. */
+setInterval(majPied, 60000);
 </script>
 <script>
 'use strict';
@@ -2079,7 +2182,7 @@ async function sauvegarder(){
   const dl = (typeof claude !== 'undefined' && claude.use)
            ? await claude.use('downloads').catch(()=>null) : null;
   if (dl){
-    try { await dl.save({filename: nom, data: contenu}); }
+    try { await dl.save({filename: nom, data: contenu}); mettreAlAbri(); }
     catch (e){ if (e && e.code !== 'declined')
       alert("La sauvegarde n'a pas pu être remise."); }
     return;
@@ -2088,6 +2191,7 @@ async function sauvegarder(){
   a.href = URL.createObjectURL(new Blob([contenu], {type:'application/json'}));
   a.download = nom; document.body.appendChild(a); a.click();
   setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 400);
+  mettreAlAbri();
 }
 
 function restaurer(fichier){
@@ -2114,7 +2218,10 @@ function restaurer(fichier){
       for (const [cle, piece] of Object.entries(paquet.pieces || {})){
         try { await PIECES.poser(cle, piece); } catch (err) {}
       }
-      courante = 'tableau'; garder(); dessiner();
+      courante = 'tableau';
+      /* Elle vient d'un fichier : elle est déjà à l'abri, sous ce nom-là.
+         Le dire évite d'annoncer du travail en attente à l'ouverture. */
+      mettreAlAbri(paquet._le); dessiner();
     })();
   };
   lecteur.readAsText(fichier);
