@@ -480,12 +480,18 @@ function vueTableau(){
    moyen de joindre. Avec une adresse, il est un agrément, pas un manque. */
 function manques(x){
   const M = [];
-  if (!x.email){
-    M.push(['Adresse courriel', "ne recevra aucune convocation ni rappel"]);
-    if (!x.tel) M.push(['Téléphone', "sans courriel ni téléphone, aucun moyen de la ou le joindre"]);
-  }
+  if (!x.email)     M.push(['Adresse courriel', "ne recevra aucune convocation ni rappel"]);
+  if (!x.tel)       M.push(['Téléphone', "le seul moyen de joindre le soir d’une tenue"]);
+  if (!x.adresse || !x.ville)
+                    M.push(['Adresse postale', "rien ne peut lui être envoyé par la poste"]);
+  if (!x.naissance) M.push(['Date de naissance', "ne figure pas au registre de l’Atelier"]);
+  /* Le grade réclamé est celui du Rite — Apprenti Oved, Compagnon Boneh,
+     Maître Adon —, que porte chaque Sœur et chaque Frère. Le « Degré de
+     l'Ordre » (32°, 33°) est autre chose : il ne tient qu'aux dignitaires
+     du Suprême Conseil. Le réclamer de tous rendrait la fiche d'une
+     Apprentie incomplète à jamais, faute d'un degré qu'elle n'a pas. */
   if (x.statut !== 'candidat' && !x.degre && !x.qualite)
-    M.push(['Degré', "s’imprimera sans qualité sur la convocation et la planche"]);
+    M.push(['Grade au Rite', "s’imprimera sans qualité sur la convocation et la planche"]);
   return M;
 }
 function jaugeManques(x){
@@ -1041,8 +1047,11 @@ function vueFiche(){
       ${fChamp(x,'email','Adresse courriel','email','C’est par là que partent les convocations')}
       ${fChamp(x,'tel','Téléphone','tel')}
       ${fChamp(x,'naissance','Date de naissance','date')}
+    </div>
+    <div class="rangee" style="margin-top:14px">
+      ${fChamp(x,'adresse','Adresse','text','Numéro et rue')}
+      ${fChamp(x,'codePostal','Code postal','text')}
       ${fChamp(x,'ville','Ville','text')}
-      ${fChamp(x,'profession','Profession','text')}
     </div></fieldset>
 
     <fieldset><legend>Parcours au Rite</legend><div class="rangee">
@@ -1135,7 +1144,8 @@ function fichePapier(){
       ${l('Office en Loge', nomOffice(x.office))}
       ${l('Initiation', x.initiation)}
       ${l('Courriel', x.email)}${l('Téléphone', x.tel)}
-      ${l('Ville', x.ville)}${l('Profession', x.profession)}
+      ${l('Adresse', [x.adresse, [x.codePostal, x.ville].filter(Boolean).join(' ')]
+            .filter(Boolean).join(', '))}
       ${l('Naissance', x.naissance)}
     </tbody></table>
     <p style="margin-top:8mm;font-size:9.5pt;color:#5c5346">Document interne à la
@@ -1156,8 +1166,8 @@ document.addEventListener('click', e => {
   if (b.id === 'nouveau'){
     const id = Math.max(0, ...E.membres.map(m=>m.id)) + 1;
     E.membres.push({id, nom:'', prenoms:'', grade:'', dignite:'', office:null,
-      statut:'candidat', email:'', tel:'', ville:'', naissance:'', profession:'',
-      initiation:'', degre:null, qualite:'', du:0, regle:0});
+      statut:'candidat', email:'', tel:'', adresse:'', codePostal:'', ville:'',
+      naissance:'', initiation:'', degre:null, qualite:'', du:0, regle:0});
     E.fiche = id; courante = 'fiche'; dessiner();
     setTimeout(()=>document.getElementById('m-prenoms')?.focus(), 0); return;
   }
@@ -1184,8 +1194,10 @@ document.addEventListener('input', e => {
        : (c === 'office') ? (el.value || null)
        : el.value;
   garder();
-  /* Ces trois-là changent ce que la fiche dit d'elle-même. */
-  if (['email','tel','naissance','ville','initiation','degre','statut','qualite','excusePermanent'].includes(c)){
+  /* Ceux-là changent ce que la fiche dit d'elle-même : le bandeau des
+     manques se refait, et le curseur revient où il était. */
+  if (['email','tel','adresse','ville','naissance','grade','degre',
+       'statut','qualite','excusePermanent'].includes(c)){
     const pos = el.selectionStart; dessiner();
     const r = document.getElementById('m-'+c);
     if (r){ r.focus(); try{ r.setSelectionRange(pos,pos); }catch(err){} }
@@ -2139,7 +2151,8 @@ function vuePremierJour(){
 /* L'atelier de démonstration. Noms inventés, sans rapport avec quiconque. */
 function demonstration(){
   const f = (id,n,p,g,dig,o,st,deg,em,du,rg,ex,mo) => ({id,nom:n,prenoms:p,grade:g,
-    dignite:dig,office:o,statut:st,email:em,tel:'',ville:'',naissance:'',profession:'',
+    dignite:dig,office:o,statut:st,email:em,tel:'',adresse:'',codePostal:'',ville:'',
+    naissance:'',
     initiation:'',degre:deg,qualite:'',du,regle:rg,rangProtocole:id,
     excusePermanent:!!ex,motifExcuse:mo||''});
   return [
