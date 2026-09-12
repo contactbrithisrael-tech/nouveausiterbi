@@ -2771,29 +2771,52 @@ document.addEventListener('click', async e => {
     const a = amieCourante(); if (!a) return;
     const brut = prompt(
       "Ouvrez la convocation reçue, sélectionnez tout, copiez,\n" +
-      "puis collez ici (Ctrl+V ou Cmd+V) :\n\n" +
-      "Une ligne par renseignement, du genre\n" +
-      "  Loge : R∴L∴ La Sainte Baume n°7\n  Obédience : FLTS\n  Adresse : …", "");
-    if (!brut) return;
-    const lu = lireAmie(brut);
-    const n = Object.keys(lu).length;
-    if (!n){
-      alert("Je n’ai rien reconnu dans ce texte.\n\n" +
-            "Attendu : une ligne par renseignement, avec deux points.\n" +
-            "  Loge : R∴L∴ La Sainte Baume n°7\n  Orient : Aubagne\n  Obédience : FLTS\n\n" +
-            "Si la convocation est une photographie, servez-vous plutôt\n" +
-            "de « ✦ Lire la convocation », sous la pièce jointe.");
-      return;
+      "puis collez ici (Ctrl+V ou Cmd+V) :", "");
+    if (!brut || !brut.trim()) return;
+
+    /* Une convocation est une lettre, non un formulaire. Elle dit « à
+       l'Orient d'Aubagne » au fil d'une phrase, jamais « Orient : Aubagne ».
+       C'est donc le même lecteur que pour la photo qui la lit — il ne lui
+       manquait qu'une porte pour le texte. La grille « clé : valeur » reste
+       en secours, pour un texte déjà rangé ou un navigateur sans lecture. */
+    let lu = null;
+    if (await lectureTexteDisponible()){
+      b.disabled = true;
+      const avant = b.textContent; b.textContent = 'Lecture en cours…';
+      try { lu = await LECTURE.sample.json(CONSIGNE_COLLE + "\n\nLe texte :\n" + brut,
+                                           { modelTier: 'default' }); }
+      catch (e){ lu = null; }
+      finally { b.disabled = false; b.textContent = avant; }
     }
-    /* Ce qui est déjà saisi n'est pas écrasé sans le dire. */
-    const ecrases = Object.keys(lu).filter(c => a[c] && a[c] !== lu[c]);
-    if (ecrases.length && !confirm(
-        `${ecrases.length} renseignement(s) déjà saisi(s) vont être remplacés.\n\n` +
-        `Continuer ?`)) return;
-    Object.assign(a, lu);
+    if (!lu) lu = lireAmie(brut);
+
+    const bilan = { repris: [], ignores: [] };
+    verserLoge(a, lu, bilan);
+
+    /* La date et l'heure n'appartiennent pas à la Loge mais à sa tenue :
+       elles font une convocation à part entière, et c'est elle qui nourrit
+       l'agenda des visites. Sans cela, coller une convocation ne remplissait
+       qu'un carnet d'adresses. */
+    if (lu.date || lu.heure || lu.objet || lu.degre || lu.odj){
+      const id = Math.max(0, ...a.convocations.map(c => c.id)) + 1;
+      const c = {id, piece: null, date:'', heure:'', degre:null, objet:'', lieu:'', odj:''};
+      a.convocations.push(c);
+      verserConv(c, lu, bilan);
+    }
+    const { repris, ignores } = bilan;
+
     garder(); dessiner();
-    alert(n + " renseignement(s) repris de la convocation.\n\n" +
-          "Vérifiez la fiche : ce qui n’a pas été reconnu reste à saisir.");
+    setTimeout(() => {
+      alert(repris.length
+        ? `${repris.length} renseignement(s) repris de la convocation :\n  ` +
+          [...new Set(repris)].join(', ') +
+          (ignores.length ? `\n\n${ignores.length} déjà rempli(s), laissé(s) tels quels.` : '') +
+          `\n\n► RELISEZ-LES. Une lecture automatique se trompe, et c'est la ` +
+          `convocation reçue qui fait foi.`
+        : "Rien n'a pu être lu dans ce texte.\n\n" +
+          "Vérifiez que vous avez bien collé la convocation entière, " +
+          "et non son seul objet. Sinon, saisissez les champs à la main.");
+    }, 200);
     return;
   }
 
@@ -3176,6 +3199,56 @@ Règles, sans exception :
 - "contactTel" : le numéro tel qu'écrit.
 Rends le JSON seul.`;
 
+/* Lire une image exige la capacité « images » ; lire un texte, non.
+   Les confondre privait la colle d'un lecteur parfaitement disponible. */
+async function lectureTexteDisponible(){
+  if (LECTURE.sample) return true;
+  try {
+    const s = (typeof claude !== 'undefined' && claude.use)
+            ? await claude.use('sample') : null;
+    if (!s) return false;
+    const l = await s.limits().catch(() => null);
+    LECTURE = { possible: !!(l && l.images), limites: l, sample: s };
+    return true;
+  } catch (e){ return false; }
+}
+
+/* Un remplacement dans une consigne est muet quand il rate : l'apostrophe
+   droite du texte d'origine et la courbe d'un copier-coller ne sont pas le
+   même caractère, et la consigne aurait continué de parler d'une photo
+   devant un texte, sans que rien ne le signale. On construit donc la
+   consigne de la colle sur la partie commune, explicitement. */
+const REGLES_LECTURE = CONSIGNE_LECTURE.slice(CONSIGNE_LECTURE.indexOf('Rends UNIQUEMENT'));
+const CONSIGNE_COLLE =
+  "Tu lis le TEXTE d'une convocation maçonnique française, copié depuis un\n" +
+  "courriel. Il n'est pas rangé en cases : c'est une lettre, avec un en-tête,\n" +
+  "un corps et une signature. Les renseignements sont dans les phrases.\n\n" +
+  REGLES_LECTURE.replace(/écrite sur l'image/g, "écrite dans le texte");
+
+/* Ce que la lecture a rendu, versé dans la fiche et dans la convocation.
+   Une seule fois, pour la photo comme pour la colle : deux copies de cette
+   règle auraient divergé au premier correctif. */
+const CHAMPS_LOGE = ['nom','orient','obedience','rite','particularites',
+                     'temple','adresse','codePostal','ville',
+                     'contactNom','contactEmail','contactTel'];
+const CHAMPS_CONV = ['date','heure','degre','objet','odj'];
+
+function verserLoge(a, lu, bilan){
+  CHAMPS_LOGE.forEach(k => {
+    const v = lu[k]; if (v === null || v === undefined || v === '') return;
+    const cible = k === 'particularites' ? 'notes' : k;
+    if (a[cible]) { bilan.ignores.push(k); return; }
+    a[cible] = String(v); bilan.repris.push(k);
+  });
+}
+function verserConv(c, lu, bilan){
+  CHAMPS_CONV.forEach(k => {
+    const v = lu[k]; if (v === null || v === undefined || v === '') return;
+    if (c[k]) { bilan.ignores.push(k); return; }
+    c[k] = k === 'degre' ? Number(v) : String(v); bilan.repris.push(k);
+  });
+}
+
 async function lireLaConvocation(idConv){
   const a = amieCourante(); if (!a) return;
   const c = a.convocations.find(x => x.id === idConv); if (!c) return;
@@ -3201,22 +3274,9 @@ async function lireLaConvocation(idConv){
       { images: dataURLversBlob(piece.donnee), modelTier: 'default' });
 
     /* Ce qu'elle a saisi l'emporte toujours sur ce qui est lu. */
-    const champsLoge = ['nom','orient','obedience','rite','particularites',
-                        'temple','adresse','codePostal','ville',
-                        'contactNom','contactEmail','contactTel'];
-    const champsConv = ['date','heure','degre','objet','odj'];
-    const repris = [], ignores = [];
-    champsLoge.forEach(k => {
-      const v = lu[k]; if (v === null || v === undefined || v === '') return;
-      const cible = k === 'particularites' ? 'notes' : k;
-      if (a[cible]) { ignores.push(k); return; }
-      a[cible] = String(v); repris.push(k);
-    });
-    champsConv.forEach(k => {
-      const v = lu[k]; if (v === null || v === undefined || v === '') return;
-      if (c[k]) { ignores.push(k); return; }
-      c[k] = k === 'degre' ? Number(v) : String(v); repris.push(k);
-    });
+    const bilan = { repris: [], ignores: [] };
+    verserLoge(a, lu, bilan); verserConv(c, lu, bilan);
+    const { repris, ignores } = bilan;
     garder(); dessiner();
     setTimeout(() => {
       alert(repris.length
