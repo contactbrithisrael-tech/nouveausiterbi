@@ -452,7 +452,9 @@ function vueTableau(){
       <p class="sous">Cliquez sur une ligne pour ouvrir sa fiche. Les dignités
         proviennent de votre site, les offices de la convocation et de la planche ;
         tout le reste est à saisir.</p>
-    </div><div class="groupe"><button class="btn btn-or" id="nouveau">＋ Nouvelle fiche</button></div></header>
+    </div><div class="groupe">
+      ${m.some(x=>manques(x).length)?`<button class="btn" id="imp-manques">Ce qui manque</button>`:''}
+      <button class="btn btn-or" id="nouveau">＋ Nouvelle fiche</button></div></header>
     <div class="tuiles">
       <div class="tuile souligne"><div class="n">${m.filter(x=>x.statut==='actif').length}</div><div class="l">Membres actifs</div></div>
       <div class="tuile"><div class="n">${m.filter(x=>x.statut==='candidat').length}</div><div class="l">Candidats en instance</div></div>
@@ -1084,6 +1086,35 @@ function vueFiche(){
   </div></div>`;
 }
 
+/* La Secrétaire ne peut pas écrire à qui n'a pas d'adresse. Cette
+   feuille s'imprime, ou se recopie dans un message : elle dit à qui
+   demander quoi, et laisse la place pour écrire la réponse à la main.
+   Sans elle, « 10 manques » reste un chiffre sans suite. */
+function manquesPapier(){
+  const rang = x => x.rangProtocole || 99;
+  const gens = [...E.membres].filter(x=>manques(x).length)
+    .sort((a,b)=>rang(a)-rang(b) || a.nom.localeCompare(b.nom));
+  if (!gens.length) return `${ENTETE}<h1>Fiches à compléter</h1>
+    <p>Aucune fiche n’est incomplète. Rien à demander.</p>`;
+  const sansCourriel = E.membres.filter(x=>!x.email).length;
+  return `${ENTETE}<h1>Fiches à compléter</h1>
+    <p>Voici, Sœur ou Frère par Sœur ou Frère, ce qui manque au tableau de
+      l’Atelier. Demandez-le, puis écrivez la réponse sur la ligne, et
+      reportez-la dans le programme.</p>
+    ${sansCourriel?`<p style="color:#8E3A32"><b>${sansCourriel} ${sansCourriel>1
+      ?'membres n’ont':'membre n’a'} pas d’adresse courriel</b> :
+      ${sansCourriel>1?'ils ne recevront':'il ne recevra'} aucune convocation
+      tant qu’elle n’est pas saisie. À demander en premier.</p>`:''}
+    ${gens.map(x=>`<div style="margin-top:6mm;page-break-inside:avoid">
+      <div class="pt">${ech(x.prenoms)} ${ech(x.nom)}${x.dignite?' — '+ech(x.dignite):''}</div>
+      <table><tbody>${manques(x).map(([c,p])=>
+        `<tr><td style="width:46mm;color:#5c5346">${c}<div style="font-size:8.5pt">${p}</div></td>
+             <td style="border-bottom:.4pt solid #999">&nbsp;</td></tr>`).join('')}
+      </tbody></table></div>`).join('')}
+    <p style="margin-top:8mm;font-size:9.5pt;color:#5c5346">Document interne à la
+      R∴L∴ Bereshit n°00. Il porte des données personnelles : il ne sort pas de l’Atelier.</p>`;
+}
+
 function fichePapier(){
   const x = E.membres.find(m => m.id === E.fiche); if (!x) return '';
   const l = (c,v) => v ? `<tr><td style="width:52mm;color:#5c5346">${c}</td><td>${ech(v)}</td></tr>` : '';
@@ -1115,6 +1146,7 @@ document.addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
   if (b.id === 'retour'){ courante = 'tableau'; dessiner(); return; }
   if (b.id === 'imp-fiche'){ ouvrir(fichePapier(), 'Fiche ' + (E.membres.find(m=>m.id===E.fiche)?.nom||'')); return; }
+  if (b.id === 'imp-manques'){ ouvrir(manquesPapier(), 'Fiches a completer'); return; }
   if (b.id === 'nouveau'){
     const id = Math.max(0, ...E.membres.map(m=>m.id)) + 1;
     E.membres.push({id, nom:'', prenoms:'', grade:'', dignite:'', office:null,
