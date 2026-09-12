@@ -467,19 +467,25 @@ function vueTableau(){
       <tbody>${lignes}</tbody></table></div></div>`;
 }
 
-/* Ce qui manque dans une fiche, et POURQUOI cela manque. Une liste de
-   champs vides n'apprend rien ; « sans courriel, elle ne recevra pas sa
-   convocation » dit à la Secrétaire par quoi commencer. */
+/* Ne manque que ce qui BLOQUE quelque chose. J'avais d'abord réclamé la
+   date de naissance « pour calculer l'âge à l'initiation », la date
+   d'initiation « pour l'ancienneté », la ville « absente des courriers ».
+   Le programme ne calcule ni l'un ni l'autre et ses courriers n'emploient
+   pas la ville : trois exigences sans objet, qui faisaient passer une
+   fiche utilisable pour une fiche en retard, et réclamaient à des
+   personnes des données dont on n'a pas l'usage. Ces champs restent
+   saisissables sur la fiche ; ils ne se réclament plus.
+
+   Le téléphone ne se réclame que faute de courriel : c'est alors le seul
+   moyen de joindre. Avec une adresse, il est un agrément, pas un manque. */
 function manques(x){
   const M = [];
-  if (!x.email)      M.push(['Adresse courriel', "ne recevra aucune convocation ni rappel"]);
-  if (!x.tel)        M.push(['Téléphone', "injoignable en cas d'urgence le soir d'une tenue"]);
-  if (!x.naissance)  M.push(['Date de naissance', "l'âge à l'initiation ne se calcule pas"]);
-  if (x.statut !== 'candidat'){
-    if (!x.initiation) M.push(['Date d’initiation', "l'ancienneté ne se calcule pas"]);
-    if (!x.degre && !x.qualite) M.push(['Degré', "s'imprimera sans qualité sur la planche"]);
+  if (!x.email){
+    M.push(['Adresse courriel', "ne recevra aucune convocation ni rappel"]);
+    if (!x.tel) M.push(['Téléphone', "sans courriel ni téléphone, aucun moyen de la ou le joindre"]);
   }
-  if (!x.ville)      M.push(['Ville', "absente des courriers"]);
+  if (x.statut !== 'candidat' && !x.degre && !x.qualite)
+    M.push(['Degré', "s’imprimera sans qualité sur la convocation et la planche"]);
   return M;
 }
 function jaugeManques(x){
