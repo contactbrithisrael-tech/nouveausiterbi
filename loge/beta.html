@@ -2241,7 +2241,13 @@ function prochainesVisites(){
 
 function carnetAmies(){
   const aujourdhui = new Date().toISOString().slice(0,10);
-  const agenda = prochainesVisites().filter(x => (x.c.date || '') >= aujourdhui);
+  const toutes = prochainesVisites();
+  /* À venir d'abord, par ordre de date. Les passées ne disparaissent
+     pas : elles descendent, repliées — c'est l'historique des visites,
+     et il répond à « quand sommes-nous allés chez eux ? ». */
+  const agenda = toutes.filter(x => (x.c.date || '') >= aujourdhui);
+  const passees = toutes.filter(x => x.c.date && x.c.date < aujourdhui).reverse();
+  const sansDate = toutes.filter(x => !x.c.date);
   const lignes = E.amies.map(a => `<tr class="cliquable" data-amie="${a.id}" tabindex="0" role="button"
       aria-label="Ouvrir la fiche de ${ech(a.nom)}">
       <td><span class="nom-membre">${ech(a.nom)}</span>
@@ -2251,6 +2257,9 @@ function carnetAmies(){
       <td class="num">${(a.convocations||[]).length
           ? `<span class="p p-ok">${a.convocations.length} convocation${a.convocations.length>1?'s':''}</span>`
           : `<span class="p p-neutre">—</span>`}</td>
+      <td>${a.contactEmail
+          ? `<button class="btn btn-mini" data-renvoi="${a.id}">Leur écrire</button>`
+          : `<span class="qual">adresse manquante</span>`}</td>
     </tr>`).join('');
   return `
   <div class="bloc"><header><div>
@@ -2275,11 +2284,28 @@ function carnetAmies(){
       <td><span class="qual">${ech(x.c.lieu||x.a.adresse||'')}</span></td>
       <td>${x.a.contactEmail?`<button class="btn btn-mini" data-renvoi="${x.a.id}"
             >Leur envoyer la nôtre</button>`:''}</td>
-    </tr>`).join('')}</tbody></table></div></div>` : ''}
+    </tr>`).join('')}</tbody></table></div></div>`
+   : (toutes.length ? '' : '')}
+
+  ${sansDate.length ? `<div class="note"><b>${sansDate.length} convocation(s) reçue(s)
+    sans date.</b> Ouvrez la fiche de l’Atelier et notez la date de leur tenue : elle
+    rejoindra l’agenda.</div>` : ''}
+
+  ${passees.length ? `<details class="replie" style="margin-bottom:26px">
+    <summary>Visites passées — ${passees.length}</summary>
+    <div class="enveloppe" style="margin-top:14px"><table class="tab" id="t-passees"><thead><tr>
+      <th>Date</th><th>Loge</th><th>Degré</th><th>Objet</th>
+    </tr></thead><tbody>${passees.map(x=>`<tr>
+      <td style="white-space:nowrap"><span class="qual">${dateLongue(x.c.date)}</span></td>
+      <td>${ech(x.a.nom)}</td>
+      <td>${x.c.degre?`<span class="p p-neutre">${RANGS[x.c.degre]||x.c.degre}</span>`:''}</td>
+      <td><span class="qual">${ech(x.c.objet||'')}</span></td>
+    </tr>`).join('')}</tbody></table></div>
+  </details>` : ''}
 
   ${E.amies.length ? `<div class="bloc"><header><div><h2>Carnet</h2></div></header>
     <div class="enveloppe"><table class="tab"><thead><tr>
-      <th>Loge</th><th>Obédience</th><th>Contact</th><th class="num">Convocations</th>
+      <th>Loge</th><th>Obédience</th><th>Contact</th><th class="num">Convocations</th><th></th>
     </tr></thead><tbody>${lignes}</tbody></table></div></div>`
    : `<div class="note"><b>Aucune Loge amie enregistrée.</b> Quand un Atelier vous
       envoie sa convocation, cliquez sur « ＋ Nouvelle Loge amie », joignez le fichier
@@ -2308,7 +2334,15 @@ function ficheAmie(a){
       ${aChamp(a,'nom','Nom de la Loge','text','« R∴L∴ Les Amis Réunis n°12 »')}
       ${aChamp(a,'orient','Orient','text')}
       ${aChamp(a,'obedience','Obédience','text','« GLNF », « FLTS », « GLDF »…')}
-      ${aChamp(a,'rite','Rite','text')}
+      ${aChamp(a,'rite','Rite','text','« Rite Primitif & Traditionnel de Kilwinning »')}
+    </div>
+    <div class="champ" style="margin-top:14px"><label for="a-notes">Particularités</label>
+      <textarea id="a-notes" data-a="notes" rows="2"
+        placeholder="Filiation, Souverain Chapitre, devise, usages à connaître…"
+        style="font:inherit;font-size:14px;color:var(--encre);background:var(--fond);
+               border:1px solid var(--trait);border-radius:var(--r);padding:8px 10px;
+               width:100%;resize:vertical">${ech(a.notes||'')}</textarea>
+      <span class="aide">Ce que leur convocation dit d’eux et qu’aucune case ne prévoit.</span>
     </div></fieldset>
 
     <fieldset><legend>Où se tiennent leurs travaux</legend><div class="rangee">
@@ -2377,6 +2411,12 @@ async function rendrePieces(a){
         <div class="champ"><label>Lieu, s’il diffère</label>
           <input type="text" data-conv="${c.id}" data-k="lieu" value="${ech(c.lieu||'')}"></div>
       </div>
+      <div class="champ" style="margin-top:10px"><label>Leur ordre du jour</label>
+        <textarea data-conv="${c.id}" data-k="odj" rows="3"
+          placeholder="Recopiez ce qui vous sera utile — le reste est sur la photo."
+          style="font:inherit;font-size:14px;color:var(--encre);background:var(--fond);
+                 border:1px solid var(--trait);border-radius:var(--r);padding:8px 10px;
+                 width:100%;resize:vertical">${ech(c.odj||'')}</textarea></div>
       <div class="groupe" style="margin-top:10px">
         <span class="qual">${piece ? poidsLisible(piece.poids||0) : ''}</span>
         <span style="flex:1"></span>
@@ -2398,8 +2438,8 @@ document.addEventListener('click', async e => {
 
   if (b.id === 'amie-nouvelle'){
     const id = Math.max(0, ...E.amies.map(a=>a.id)) + 1;
-    E.amies.push({id, nom:'', orient:'', obedience:'', rite:'', temple:'', adresse:'',
-      codePostal:'', ville:'', contactNom:'', contactEmail:'', contactTel:'',
+    E.amies.push({id, nom:'', orient:'', obedience:'', rite:'', notes:'', temple:'',
+      adresse:'', codePostal:'', ville:'', contactNom:'', contactEmail:'', contactTel:'',
       convocations:[]});
     E.amieOuverte = id; courante = 'amies'; garder(); dessiner();
     setTimeout(()=>document.getElementById('a-nom')?.focus(), 0); return;
@@ -2483,7 +2523,7 @@ document.addEventListener('change', async e => {
     const piece = await rangerPiece('amie' + a.id + '-' + id, fichier);
     a.convocations = a.convocations || [];
     a.convocations.push({id, piece: 'amie' + a.id + '-' + id, date:'', heure:'',
-                         degre:null, objet:'', lieu:''});
+                         degre:null, objet:'', lieu:'', odj:''});
     garder(); dessiner();
     setTimeout(() => {
       const d = document.querySelector(`[data-conv="${id}"][data-k="date"]`);
