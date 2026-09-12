@@ -1468,6 +1468,10 @@ function vueAide(){
       <li>Complétez la <b>date de leur tenue</b>, l’heure et l’objet si la lecture ne
         les a pas trouvés. Ces renseignements alimentent l’<b>agenda des visites</b>,
         en haut de la page.</li>
+      <li><b>Si la convocation est arrivée par courriel</b>, il y a plus court encore :
+        pas besoin d’en faire une photo. Ouvrez le courriel, sélectionnez tout,
+        copiez, puis cliquez sur <b class="bouton">Coller une convocation reçue</b>,
+        en haut de la fiche. Collez, et les cases se remplissent. Là aussi, relisez.</li>
       <li><b class="bouton">‹ Toutes les Loges amies</b> pour revenir.</li>
     </ol>
     <div class="rassure"><b>Pour prévenir les colonnes.</b> En haut de l’agenda,
@@ -1913,19 +1917,46 @@ const CHAMPS_ANNUAIRE = [
   [/^(rite)\b/i,                 'rite']
 ];
 
-function lireAnnuaire(texte){
+/* Les mêmes règles, pour une Loge amie. Une convocation n'arrive pas
+   toujours en photographie : bien souvent elle arrive dans le corps d'un
+   courriel, ou en pièce jointe qu'on peut sélectionner. « ✦ Lire la
+   convocation » sait lire l'image ; ceci lit le texte, sans rien
+   demander à personne et sans quitter l'appareil. */
+const CHAMPS_AMIE = [
+  [/^(nom de la loge|loge|atelier|respectable loge|r∴l∴)\b/i, 'nom'],
+  [/^(orient|à l.orient de|or\.)\b/i,          'orient'],
+  [/^(ob[ée]dience|puissance|juridiction)\b/i, 'obedience'],
+  [/^(rite)\b/i,                              'rite'],
+  [/^(temple|nom du temple|local)\b/i,         'temple'],
+  [/^(adresse|rue|si[èe]ge)\b/i,               'adresse'],
+  [/^(code postal|cp)\b/i,                     'codePostal'],
+  [/^(ville|commune)\b/i,                      'ville'],
+  [/^(contact|secr[ée]taire|v[ée]n[ée]rable|nom du contact)\b/i, 'contactNom'],
+  [/^(e-?mail|courriel|adresse courriel)\b/i,  'contactEmail'],
+  [/^(t[ée]l[ée]phone|tel)\b/i,                'contactTel'],
+  [/^(particularit[ée]s|notes|remarques)\b/i,  'notes']
+];
+
+/* Une seule mécanique de lecture, deux grilles. Elle se moque du
+   séparateur — deux-points, tabulation, barre verticale — et rend ce
+   qu'elle a reconnu, rien de plus : jamais elle ne devine un champ
+   qu'aucune ligne ne porte. */
+function lireSelon(texte, grille){
   const trouve = {};
   texte.split(/[\n\r]+/).forEach(ligne => {
     const m = ligne.match(/^\s*([^:|\t]{2,40})\s*[:|\t]\s*(.+?)\s*$/);
     if (!m) return;
     const [, cle, val] = m;
     if (!val || /^(-|—|n\/a)$/i.test(val)) return;
-    for (const [motif, champ] of CHAMPS_ANNUAIRE){
+    for (const [motif, champ] of grille){
       if (motif.test(cle.trim()) && !trouve[champ]){ trouve[champ] = val; break; }
     }
   });
   return trouve;
 }
+function lireAmie(texte){ return lireSelon(texte, CHAMPS_AMIE); }
+
+function lireAnnuaire(texte){ return lireSelon(texte, CHAMPS_ANNUAIRE); }
 </script>
 <script>
 'use strict';
@@ -2486,6 +2517,7 @@ function ficheAmie(a){
       a.orient ? ' — à l’O∴ de ' + ech(a.orient) : ''}</p>
   </div><div class="groupe">
     ${a.contactEmail?`<button class="btn btn-or" data-renvoi="${a.id}">Leur envoyer notre convocation</button>`:''}
+    <button class="btn" id="amie-coller">Coller une convocation reçue</button>
     <button class="btn" id="amie-suppr">Retirer</button>
   </div></header>
 
@@ -2618,6 +2650,40 @@ document.addEventListener('click', async e => {
     setTimeout(()=>document.getElementById('a-nom')?.focus(), 0); return;
   }
   if (b.id === 'amie-retour'){ E.amieOuverte = null; dessiner(); return; }
+
+  /* Une convocation reçue par courriel : on la sélectionne, on la copie,
+     on la colle. Ce qui est reconnu remplit la fiche ; ce qui ne l'est
+     pas reste au presse-papiers et se saisit à la main. Rien n'est
+     deviné, et rien ne quitte l'appareil. */
+  if (b.id === 'amie-coller'){
+    const a = amieCourante(); if (!a) return;
+    const brut = prompt(
+      "Ouvrez la convocation reçue, sélectionnez tout, copiez,\n" +
+      "puis collez ici (Ctrl+V ou Cmd+V) :\n\n" +
+      "Une ligne par renseignement, du genre\n" +
+      "  Loge : R∴L∴ La Sainte Baume n°7\n  Obédience : FLTS\n  Adresse : …", "");
+    if (!brut) return;
+    const lu = lireAmie(brut);
+    const n = Object.keys(lu).length;
+    if (!n){
+      alert("Je n’ai rien reconnu dans ce texte.\n\n" +
+            "Attendu : une ligne par renseignement, avec deux points.\n" +
+            "  Loge : R∴L∴ La Sainte Baume n°7\n  Orient : Aubagne\n  Obédience : FLTS\n\n" +
+            "Si la convocation est une photographie, servez-vous plutôt\n" +
+            "de « ✦ Lire la convocation », sous la pièce jointe.");
+      return;
+    }
+    /* Ce qui est déjà saisi n'est pas écrasé sans le dire. */
+    const ecrases = Object.keys(lu).filter(c => a[c] && a[c] !== lu[c]);
+    if (ecrases.length && !confirm(
+        `${ecrases.length} renseignement(s) déjà saisi(s) vont être remplacés.\n\n` +
+        `Continuer ?`)) return;
+    Object.assign(a, lu);
+    garder(); dessiner();
+    alert(n + " renseignement(s) repris de la convocation.\n\n" +
+          "Vérifiez la fiche : ce qui n’a pas été reconnu reste à saisir.");
+    return;
+  }
 
   if (b.id === 'amie-suppr'){
     const a = amieCourante();
