@@ -1328,29 +1328,77 @@ function nomFichier(nom, ext){
   return nom.replace(/[^\wÀ-ÿ \-]/g,'').trim().replace(/\s+/g,'-') + '.' + ext;
 }
 
-async function telechargerWord(nom){
-  const contenu = documentWord(nom);
-  const dl = (typeof claude !== 'undefined' && claude.use)
-         ? await claude.use('downloads').catch(()=>null) : null;
+/* ═══════════════════════════════════════════════════════════════════
+   REMETTRE UN FICHIER
 
-  if (!dl){                                   // fichier local : lien direct
+   Le contrat de la page publiée est net : « Frame code never downloads
+   directly ». Dans la page en ligne, un lien <a download> — fût-il sur
+   un data: ou un blob: — ne fait RIEN. Pas d'erreur, pas de fichier :
+   rien. C'est ce qui faisait dire que le téléchargement d'un PDF ne
+   marche pas ; il ne marchait effectivement pas, et rien ne le disait.
+
+   Un seul chemin, donc, et deux mondes :
+   — la page en ligne, où seule la capacité « downloads » remet un
+     fichier, et où son absence se dit au lieu de se taire ;
+   — un fichier ouvert depuis l'ordinateur, où claude n'existe pas et
+     où le lien direct fonctionne comme partout ailleurs.
+
+   Ce qui n'existe plus, c'est le repli silencieux de l'un sur l'autre. */
+function dansLaPageEnLigne(){
+  return typeof claude !== 'undefined' && !!claude.use;
+}
+
+async function remettre(nom, contenu, typeMime){
+  if (!dansLaPageEnLigne()){
     const a = document.createElement('a');
-    a.href = URL.createObjectURL(new Blob(['\ufeff'+contenu], {type:'application/msword'}));
-    a.download = nomFichier(nom, 'doc');
-    document.body.appendChild(a); a.click();
+    a.href = URL.createObjectURL(contenu instanceof Blob ? contenu
+             : new Blob([contenu], {type: typeMime || 'application/octet-stream'}));
+    a.download = nom; document.body.appendChild(a); a.click();
     setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 400);
-    return;
+    return { remis: true };
+  }
+  const dl = await claude.use('downloads').catch(()=>null);
+  if (!dl){
+    return { remis: false, pourquoi:
+      "La remise de fichiers n’est pas autorisée dans cette fenêtre.\n\n" +
+      "Ouvrez la page dans un vrai navigateur — Safari, Chrome, Firefox —, " +
+      "non dans la fenêtre d’une application de messagerie, et acceptez la " +
+      "demande d’enregistrement quand elle s’affiche." };
   }
   try {
-    await dl.save({filename: nomFichier(nom,'doc'), data: contenu});
-  } catch (e) {
-    if (e && e.code === 'rejected_extension'){
-      try { await dl.save({filename: nomFichier(nom,'html'), data: contenu}); }
-      catch (e2) { if (e2 && e2.code !== 'declined') alert("Le téléchargement n'a pas pu aboutir. Utilisez « Imprimer ou enregistrer en PDF »."); }
-    } else if (e && e.code !== 'declined'){
-      alert("Le téléchargement n'a pas pu aboutir. Utilisez « Imprimer ou enregistrer en PDF ».");
-    }
+    await dl.save({filename: nom, data: contenu});
+    return { remis: true };
+  } catch (e){
+    const code = e && e.code;
+    if (code === 'declined') return { remis: false, pourquoi: null };  // son choix
+    return { remis: false, code, pourquoi: {
+      rejected_extension: "Ce format de fichier n’est pas accepté ici.",
+      extension_not_enabled: "Ce format de fichier n’est pas disponible ici.",
+      rate_limited: "Une demande d’enregistrement est déjà ouverte. Réessayez dans un instant.",
+      too_large: "Le fichier est trop gros pour la destination choisie."
+    }[code] || "L’enregistrement n’a pas abouti." };
   }
+}
+
+/* Un échec se dit, sauf quand c'est la Sœur Secrétaire qui a dit non. */
+function direSiEchec(r){
+  if (!r.remis && r.pourquoi) alert(r.pourquoi);
+  return r.remis;
+}
+
+/* « .doc » n'est pas dans la liste des extensions acceptées en ligne ;
+   « .html » l'est, et Word ouvre l'un comme l'autre. */
+async function telechargerWord(nom){
+  const contenu = documentWord(nom);
+  if (!dansLaPageEnLigne()){
+    await remettre(nomFichier(nom,'doc'),
+                   new Blob(['\ufeff'+contenu], {type:'application/msword'}));
+    return;
+  }
+  let r = await remettre(nomFichier(nom,'doc'), contenu);
+  if (!r.remis && r.code === 'rejected_extension') r = await remettre(nomFichier(nom,'html'), contenu);
+  if (!r.remis && r.pourquoi)
+    alert(r.pourquoi + "\n\nÀ défaut, servez-vous de « Imprimer ou enregistrer en PDF ».");
 }
 
 /* La convocation en texte simple, pour le corps du courriel. */
@@ -2195,20 +2243,14 @@ async function sauvegarder(){
   if (n && contenu.length > 4e6 &&
       !confirm(`Cette sauvegarde pèse environ ${poidsLisible(contenu.length)}, ` +
                `dont ${n} pièce(s) jointe(s).\n\nContinuer ?`)) return;
-  const nom = nomSauvegarde();
-  const dl = (typeof claude !== 'undefined' && claude.use)
-           ? await claude.use('downloads').catch(()=>null) : null;
-  if (dl){
-    try { await dl.save({filename: nom, data: contenu}); mettreAlAbri(); }
-    catch (e){ if (e && e.code !== 'declined')
-      alert("La sauvegarde n'a pas pu être remise."); }
-    return;
-  }
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([contenu], {type:'application/json'}));
-  a.download = nom; document.body.appendChild(a); a.click();
-  setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 400);
-  mettreAlAbri();
+  /* « À l'abri » ne se dit QUE si un fichier est sorti. L'ancien code
+     l'écrivait aussi dans la branche du lien direct — inerte en ligne —,
+     et le témoin annonçait donc un travail à l'abri quand rien n'avait
+     été enregistré. C'est le mensonge le plus grave qu'une sauvegarde
+     puisse faire : il n'inquiète pas, et il fait tout perdre. */
+  const r = await remettre(nomSauvegarde(), contenu, 'application/json');
+  if (r.remis) mettreAlAbri();
+  else if (r.pourquoi) alert("La sauvegarde n’a pas été enregistrée.\n\n" + r.pourquoi);
 }
 
 function restaurer(fichier){
@@ -2712,8 +2754,8 @@ async function rendrePieces(a){
       : piece.type.startsWith('image/')
         ? `<img src="${piece.donnee}" alt="Convocation reçue" style="width:100%;
              border:1px solid var(--trait);border-radius:4px;display:block">`
-        : `<a href="${piece.donnee}" download="${ech(piece.nom||'convocation.pdf')}"
-             class="btn btn-mini">⤓ ${ech(piece.nom||'convocation.pdf')}</a>`;
+        : `<button class="btn btn-mini" data-piece="${c.id}"
+             >⤓ ${ech(piece.nom||'convocation.pdf')}</button>`;
     return `<div class="mod" style="background:var(--carte)">
       <div style="max-width:210px">${vignette}</div>
       <div class="rangee" style="margin-top:10px">
@@ -2874,6 +2916,18 @@ document.addEventListener('click', async e => {
     E.amieOuverte = null; garder(); dessiner(); return;
   }
 
+  /* Un lien <a download> est inerte dans la page en ligne : le fichier
+     joint se remet par la capacité, comme tous les autres. */
+  if (b.dataset.piece){
+    const a2 = amieCourante(); if (!a2) return;
+    const c2 = a2.convocations.find(x => x.id === +b.dataset.piece); if (!c2) return;
+    const pj = await PIECES.lire(c2.piece);
+    if (!pj){ alert("Cette pièce jointe est introuvable."); return; }
+    const nomPJ = pj.nom || ((pj.type||'').includes('pdf') ? 'convocation.pdf' : 'convocation');
+    direSiEchec(await remettre(nomPJ, dataURLversBlob(pj.donnee), pj.type));
+    return;
+  }
+
   if (b.dataset.convSup){
     const a = amieCourante();
     const c = a.convocations.find(x => x.id === b.dataset.convSup);
@@ -3031,25 +3085,13 @@ function evenementsVisites(){
 async function telechargerAgenda(evenements, nom){
   if (!evenements.length){ alert("Aucune visite datée à mettre à l'agenda."); return; }
   const contenu = fabriquerICS(evenements);
-  const dl = (typeof claude !== 'undefined' && claude.use)
-           ? await claude.use('downloads').catch(()=>null) : null;
-  if (!dl){
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(new Blob([contenu], {type:'text/calendar;charset=utf-8'}));
-    a.download = nom + '.ics'; document.body.appendChild(a); a.click();
-    setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 400);
-    return;
-  }
-  try { await dl.save({filename: nom + '.ics', data: contenu}); }
-  catch (e){
-    if (e && e.code === 'rejected_extension'){
-      alert("L'aperçu en ligne n'accepte pas les fichiers d'agenda.\n\n" +
-            "Enregistrez le programme sur votre ordinateur et rouvrez-le de là : " +
-            "le bouton fonctionnera.");
-    } else if (e && e.code !== 'declined'){
-      alert("L'agenda n'a pas pu être remis.");
-    }
-  }
+  const r = await remettre(nom + '.ics', contenu, 'text/calendar;charset=utf-8');
+  if (r.remis) return;
+  if (r.code === 'rejected_extension'){
+    alert("La page en ligne n'accepte pas les fichiers d'agenda.\n\n" +
+          "Enregistrez le programme sur votre ordinateur et rouvrez-le de là : " +
+          "le bouton fonctionnera.");
+  } else if (r.pourquoi) alert(r.pourquoi);
 }
 
 document.addEventListener('click', e => {
