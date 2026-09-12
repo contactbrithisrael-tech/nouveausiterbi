@@ -1699,9 +1699,21 @@ function vueAide(){
       version du fichier. Demandez la dernière.</p>
     <p><b>« Rien ne se télécharge. »</b> Vous êtes sur la page internet et non sur le
       fichier enregistré. Enregistrez le fichier sur votre bureau et ouvrez-le de là.</p>
-    <p><b>« Le bouton “Lire la convocation” n’apparaît pas. »</b> C’est l’inverse :
-      il n’existe que sur la page internet, pas sur le fichier enregistré. Et il ne
-      s’affiche que sous une photo, jamais sous un PDF.</p>
+    <p><b>« Le bouton “Lire la convocation” n’apparaît pas. »</b> À sa place, un
+      avertissement en orange vous dit pourquoi. Trois raisons possibles :</p>
+    <ol>
+      <li>Vous avez ouvert le lien <b>depuis WhatsApp, Messenger ou un autre
+        message</b>. Ces applications ouvrent les pages dans une fenêtre réduite
+        où la lecture n’existe pas. Touchez <b>⧉</b> en haut à droite, puis
+        <b>« Ouvrir dans Safari »</b> — ou copiez le lien et collez-le dans votre
+        navigateur.</li>
+      <li>Vous avez ouvert un <b>fichier enregistré sur l’ordinateur</b>. La lecture
+        n’existe que sur la page internet.</li>
+      <li>Vous avez joint un <b>PDF</b>. La lecture ne fonctionne que sur une photo
+        ou une image.</li>
+    </ol>
+    <p>Dans tous les cas, la photo reste jointe et les champs se saisissent à la
+      main : rien n’est perdu.</p>
     <p><b>« J’ai peur d’avoir envoyé quelque chose par erreur. »</b> Impossible. Le
       logiciel n’envoie rien tout seul. Seul votre clic sur « Envoyer », dans votre
       messagerie, envoie quelque chose.</p>
@@ -2736,10 +2748,26 @@ async function rendrePieces(a){
       </div></div>`;
   }));
   zone.innerHTML = `<div class="modules" style="grid-template-columns:1fr">${blocs.join('')}</div>`;
-  /* Hors ligne, la lecture n'existe pas : on retire le bouton plutôt
-     que de le laisser décevoir. */
+  /* J'avais choisi de retirer le bouton quand la lecture n'est pas
+     disponible, « plutôt que de le laisser décevoir ». C'était pire :
+     la photo jointe, aucun bouton, rien qui se passe, et personne pour
+     dire pourquoi. Un outil qui disparaît sans un mot ne protège de
+     rien — il fait conclure qu'il ne marche pas.
+
+     On dit donc ce qui manque, et ce qu'il faut faire pour l'avoir. */
   if (!(await lectureDisponible())){
-    zone.querySelectorAll('[data-lire]').forEach(b => b.remove());
+    zone.querySelectorAll('[data-lire]').forEach(b => {
+      const note = document.createElement('span');
+      note.className = 'qual';
+      note.style.cssText = 'flex:1 1 100%;color:var(--attente);line-height:1.45';
+      note.innerHTML = '⚠ <b>La lecture automatique n’est pas disponible ici.</b> ' +
+        'Elle demande la page ouverte dans un vrai navigateur — Safari, Chrome, ' +
+        'Firefox —, non dans la fenêtre d’une application de messagerie, ni depuis ' +
+        'un fichier enregistré sur l’ordinateur. Depuis WhatsApp : touchez ' +
+        '⧉ en haut à droite, puis « Ouvrir dans Safari ». Sinon, saisissez les ' +
+        'champs à la main : la photo reste jointe.';
+      b.replaceWith(note);
+    });
   }
 }
 </script>
@@ -2780,7 +2808,8 @@ document.addEventListener('click', async e => {
        manquait qu'une porte pour le texte. La grille « clé : valeur » reste
        en secours, pour un texte déjà rangé ou un navigateur sans lecture. */
     let lu = null;
-    if (await lectureTexteDisponible()){
+    const lisible = await lectureTexteDisponible();
+    if (lisible){
       b.disabled = true;
       const avant = b.textContent; b.textContent = 'Lecture en cours…';
       try { lu = await LECTURE.sample.json(CONSIGNE_COLLE + "\n\nLe texte :\n" + brut,
@@ -2813,9 +2842,17 @@ document.addEventListener('click', async e => {
           (ignores.length ? `\n\n${ignores.length} déjà rempli(s), laissé(s) tels quels.` : '') +
           `\n\n► RELISEZ-LES. Une lecture automatique se trompe, et c'est la ` +
           `convocation reçue qui fait foi.`
-        : "Rien n'a pu être lu dans ce texte.\n\n" +
-          "Vérifiez que vous avez bien collé la convocation entière, " +
-          "et non son seul objet. Sinon, saisissez les champs à la main.");
+        : (lisible
+          ? "Rien n'a pu être lu dans ce texte.\n\n" +
+            "Vérifiez que vous avez bien collé la convocation entière, " +
+            "et non son seul objet. Sinon, saisissez les champs à la main."
+          : "La lecture automatique n'est pas disponible ici, et le texte collé " +
+            "n'est pas rangé en « Clé : valeur ».\n\n" +
+            "Ouvrez cette page dans un vrai navigateur — Safari, Chrome, Firefox —, " +
+            "non dans la fenêtre d'une application de messagerie, ni depuis un " +
+            "fichier enregistré sur l'ordinateur.\n\n" +
+            "Depuis WhatsApp : touchez ⧉ en haut à droite, puis « Ouvrir dans " +
+            "Safari ». Sinon, saisissez les champs à la main."));
     }, 200);
     return;
   }
