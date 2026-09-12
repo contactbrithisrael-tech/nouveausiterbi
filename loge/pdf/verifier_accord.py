@@ -12,6 +12,11 @@
   Ce fichier les fait s'affronter sur les mêmes entrées. La référence
   est formules.js. Si elles ne disent plus la même chose, il échoue.
 
+  Le calendrier hébraïque y est le point sensible : d'un côté celui du
+  navigateur, de l'autre une bibliothèque Python. Deux implémentations
+  entièrement étrangères l'une à l'autre — leur accord vaut donc mieux
+  qu'un contrôle de moi contre moi-même.
+
       python verifier_accord.py
 ═══════════════════════════════════════════════════════════════════════
 """
@@ -26,22 +31,24 @@ import depuis_sauvegarde as py
 
 FORMULES = Path(__file__).resolve().parent.parent / "lib" / "formules.js"
 
-ANNEES = [2024, 2025, 2026, 2030, 2100]
 MONTANTS = [0, 0.05, 0.5, 1, 12.30, 87.5, 87.05, 100, 1234.99]
-DATES = ["2026-01-15", "2026-03-01", "2026-03-31", "2026-07-14",
-         "2026-09-07", "2026-12-31"]
+# Des dates choisies pour éprouver le calendrier : la veille et le jour
+# de Roch Hachana, une année embolismique et ses deux Adar, un 29 février.
+DATES = ["2026-01-15", "2026-09-07", "2026-09-11", "2026-09-12",
+         "2026-10-05", "2026-12-31", "2027-03-01", "2027-03-20",
+         "2028-02-29", "2030-06-15"]
 
 
 def cote_javascript():
     script = f"""
-import {{ avl, pierrePlate, moisMaconnique }} from '{FORMULES.as_uri()}';
-const annees = {json.dumps(ANNEES)};
+import {{ dateHebraique, anneeHebraique, pierrePlate }} from '{FORMULES.as_uri()}';
 const montants = {json.dumps(MONTANTS)};
 const dates = {json.dumps(DATES)};
+const D = s => new Date(s + 'T12:00:00Z');
 console.log(JSON.stringify({{
-  avl: annees.map(avl),
-  pierre: montants.map(pierrePlate),
-  mois: dates.map(d => moisMaconnique(new Date(d + 'T12:00:00')))
+  hebreu: dates.map(d => dateHebraique(D(d))),
+  annee:  dates.map(d => anneeHebraique(D(d))),
+  pierre: montants.map(pierrePlate)
 }}));
 """
     r = subprocess.run(["node", "--input-type=module", "-e", script],
@@ -53,18 +60,19 @@ console.log(JSON.stringify({{
 
 def cote_python():
     return {
-        "avl": [py.avl(a) for a in ANNEES],
+        "hebreu": [py.date_hebraique(date.fromisoformat(d)) for d in DATES],
+        "annee":  [py.annee_hebraique(date.fromisoformat(d)) for d in DATES],
         "pierre": [py.pierre_plate(m) for m in MONTANTS],
-        "mois": [py.mois_maconnique(date.fromisoformat(d)) for d in DATES],
     }
 
 
 def principal():
     js, pyt = cote_javascript(), cote_python()
     desaccords = []
-    intitules = {"avl": "An de Vraie Lumière", "pierre": "pierre plate du Tronc",
-                 "mois": "mois maçonnique"}
-    entrees = {"avl": ANNEES, "pierre": MONTANTS, "mois": DATES}
+    intitules = {"hebreu": "date hébraïque complète",
+                 "annee":  "année hébraïque",
+                 "pierre": "pierre plate du Tronc"}
+    entrees = {"hebreu": DATES, "annee": DATES, "pierre": MONTANTS}
     for cle, titre in intitules.items():
         for e, a, b in zip(entrees[cle], js[cle], pyt[cle]):
             if a != b:

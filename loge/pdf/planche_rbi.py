@@ -169,12 +169,20 @@ def construire(donnees, chemin):
                             topMargin=16 * mm, bottomMargin=18 * mm)
     r = []
     r.append(entete(S, L, avec_hebreu))
-    r.append(Paragraph(f"Planche à Tracer du {D['date_longue']}<br/>{D['avl']} A∴V∴L∴", S["titre"]))
+    r.append(Paragraph(f"Planche à Tracer du {D['date_longue']}<br/>"
+                       f"{D.get('date_hebraique') or D['avl']} A∴V∴L∴", S["titre"]))
 
+    # Les deux dates : celle du calendrier hébraïque et celle de l'ère
+    # vulgaire. L'année hébraïque tourne à Roch Hachana, non au 1er
+    # janvier — d'où un vrai calendrier, et non une addition.
+    heb = D.get("date_hebraique")
+    ouverture = (f"Dans un lieu très éclairé, très pur, le {heb} de l'An de Vraie Lumière, "
+                 f"correspondant au {D['date_longue']} de l'ère vulgaire, "
+                 if heb else
+                 f"Dans un lieu très éclairé, très pur, le {D['date_longue']}, ")
     r.append(Paragraph(
-        f"Dans un lieu très éclairé, très pur, le {D['jour']}<super>ème</super> jour du "
-        f"{D['mois']}<super>ème</super> mois de l'An de Vraie Lumière {D['avl']}, s'est réunie "
-        f"la R∴L∴ {L['nom']} n°{L['numero']}, à l'O∴ de {L['orient']}, au {D['lieu']}.", S["corps"]))
+        ouverture + f"s'est réunie la R∴L∴ {L['nom']} n°{L['numero']}, "
+        f"à l'O∴ de {L['orient']}, au {D['lieu']}.", S["corps"]))
 
     r.append(Paragraph("Sont présents les SS∴ et FF∴ Membres de la Loge", S["rubrique"]))
     for m in D["presents"]:

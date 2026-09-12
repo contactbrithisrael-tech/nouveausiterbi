@@ -10,25 +10,38 @@
    citée à chaque fois.
 ════════════════════════════════════════════════════════════════════ */
 
-/* ── L'An de Vraie Lumière ──────────────────────────────────────────
-   Source : Constitution V9 et Règlement Général — « L'An de la Vraie
-   Lumière 5786 (2026 de l'ère vulgaire) ». C'est l'année HÉBRAÏQUE,
-   soit l'année vulgaire plus 3760.
+/* ── La date hébraïque ──────────────────────────────────────────────
+   Source : Constitution V9, « L'An de la Vraie Lumière 5786 (2026 de
+   l'ère vulgaire) », et décision du Souverain Grand Commandeur — on
+   garde l'année hébraïque ET l'année civile, et l'on porte les deux
+   dates sur les documents.
 
-   ► J'avais d'abord écrit +4000, d'après la planche à tracer de
-     Bereshit qui porte « AVL 6025 » pour 2025. C'était faux : +4000
-     est la convention du Rite Écossais, et ce 6025 est un reste du
-     modèle recopié, au même titre que la R∴L∴ Nostradamus qui y
-     figurait encore. La Constitution fait foi.
+   ► J'avais d'abord écrit « année vulgaire + 3760 ». C'était faux dès
+     l'automne : l'année hébraïque tourne à Roch Hachana, non au 1er
+     janvier. Le 7 septembre 2026 est bien en 5786, mais le 5 octobre
+     2026 est déjà en 5787 — et le calcul par addition l'aurait daté
+     5786 sur la planche à tracer.
 
-   ► RESTE À TRANCHER : l'année hébraïque ne change pas au 1er janvier
-     mais à Roch Hachana, en septembre ou octobre. Une tenue du
-     7 septembre 2026 relève-t-elle de 5786 ou de 5787 ? Le calcul
-     ci-dessous ignore la question et ajoute 3760 à l'année civile,
-     ce qui donne le résultat des documents fournis. À confirmer par
-     le Rite avant toute impression officielle.                       */
-export function avl(anneeVulgaire) {
-  return anneeVulgaire + 3760;
+   ► Le calendrier hébraïque est connu du navigateur. On le lui demande
+     plutôt que de le réimplémenter : il sait les mois embolismiques,
+     les années défectives et abondantes, et la date de Roch Hachana
+     pour chaque année.                                                */
+const MOIS_HEBREUX_MAJ = t => t.replace(/(^|\s)(\p{Ll})/gu, (m, e, l) => e + l.toUpperCase());
+
+export function dateHebraique(date) {
+  const t = new Intl.DateTimeFormat('fr-u-ca-hebrew',
+    { day: 'numeric', month: 'long', year: 'numeric' }).format(date);
+  return MOIS_HEBREUX_MAJ(t.replace(/\s*A\.?\s*M\.?\s*$/, '').trim());
+}
+
+export function anneeHebraique(date) {
+  return Number(new Intl.DateTimeFormat('en-u-ca-hebrew',
+    { year: 'numeric' }).format(date).replace(/\D/g, ''));
+}
+
+/* Les deux dates, comme le Rite les veut désormais. */
+export function doubleDate(date) {
+  return `${dateHebraique(date)} — ${dateLongue(date)}`;
 }
 
 /* ── La pierre plate du Tronc de la Veuve ───────────────────────────

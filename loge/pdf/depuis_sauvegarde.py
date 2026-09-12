@@ -36,9 +36,45 @@ OFFICES = {"venerable": "Vénérable Maître",
 
 
 # ── Les règles du Rite, doublées de formules.js ────────────────────
-def avl(annee):
-    """An de Vraie Lumière : année hébraïque, Constitution V9."""
-    return annee + 3760
+# Noms français des mois hébreux. Une année embolismique compte deux
+# Adar : la bibliothèque les nomme « Adar 1 » et « Adar 2 », et l'on
+# traduit sans deviner lequel, parce qu'elle le sait et pas nous.
+MOIS_HEBREUX = {
+    "Nisan": "Nissan", "Iyar": "Iyar", "Sivan": "Sivan", "Tammuz": "Tamouz",
+    "Av": "Av", "Elul": "Éloul", "Tishrei": "Tichri", "Tishri": "Tichri",
+    "Cheshvan": "Hèchvan", "Marcheshvan": "Hèchvan", "Kislev": "Kislev",
+    "Teves": "Téveth", "Tevet": "Téveth", "Shevat": "Chevat", "Shvat": "Chevat",
+    "Adar": "Adar", "Adar 1": "Adar I", "Adar 2": "Adar II",
+}
+
+
+def date_hebraique(d):
+    """La date hébraïque complète : « 25 Éloul 5786 ».
+
+    ► L'année hébraïque tourne à Roch Hachana, non au 1er janvier.
+      « Année civile + 3760 » — que j'avais d'abord écrit — datait le
+      5 octobre 2026 en 5786, quand il est en 5787. Le vrai calendrier
+      le corrige, et connaît les mois embolismiques.
+
+    ► Sans bibliothèque de calendrier, on renvoie None et le document se
+      fait sans : une date approchée sur une planche à tracer vaut moins
+      que pas de date du tout.
+    """
+    try:
+        from pyluach import dates as _d
+    except ImportError:
+        return None
+    h = _d.HebrewDate.from_pydate(d)
+    mois = MOIS_HEBREUX.get(h.month_name(), h.month_name())
+    return f"{h.day} {mois} {h.year}"
+
+
+def annee_hebraique(d):
+    try:
+        from pyluach import dates as _d
+    except ImportError:
+        return None
+    return _d.HebrewDate.from_pydate(d).year
 
 
 def pierre_plate(euros):
@@ -46,11 +82,6 @@ def pierre_plate(euros):
     centimes = round(euros * 100)
     kg, g = divmod(centimes, 100)
     return f"{kg} kg" if g == 0 else f"{kg} kg {g * 10:03d}"
-
-
-def mois_maconnique(d):
-    """Mars = 1er mois. NON CONFIRMÉ par le Rite."""
-    return (d.month + 9) % 12 + 1
 
 
 def date_longue(iso):
@@ -127,7 +158,8 @@ def convertir(paquet, tronc_euros=0.0):
                  "orient": "l'Alliance",
                  "mention": "Loge Mère du Rite — Atelier Mixte à l'O∴ de l'Alliance"},
         "date_longue": date_longue(T["date"]),
-        "avl": avl(d.year), "jour": d.day, "mois": mois_maconnique(d),
+        "avl": date_hebraique(d) or f"{d.year + 3760} (approché)",
+        "date_hebraique": date_hebraique(d), "jour": d.day,
         "lieu": f"{T.get('lieuNom','')}, à {T.get('lieuVille','')}".strip(", "),
         "degre_ordinal": RANGS[degre], "degre_de": DE[degre],
         "venerable": titulaire(E, "venerable"),

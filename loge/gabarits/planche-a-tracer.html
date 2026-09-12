@@ -104,11 +104,14 @@
 <main>
   <h1 class="titre">Planche à Tracer du {{tenue_date_longue}}<br>{{avl}} A∴V∴L∴</h1>
 
-  <p>Dans un lieu très éclairé, très pur, le {{jour_ordinal}} jour du
-     {{mois_maconnique}}<sup>ème</sup> mois de l'An de Vraie Lumière {{avl}},
-     s'est réunie la R∴L∴ {{loge_nom}} n°{{loge_numero}}, constituée le
-     {{loge_date_creation}}, à l'O∴ de {{loge_orient}}, au Temple
-     {{tenue_lieu}}.</p>
+  <!-- Les deux dates, comme le Rite les veut : celle du calendrier
+       hébraïque et celle de l'ère vulgaire. L'année hébraïque tourne à
+       Roch Hachana, non au 1er janvier — d'où un vrai calendrier et non
+       une addition. -->
+  <p>Dans un lieu très éclairé, très pur, le {{date_hebraique}} de l'An de Vraie
+     Lumière, correspondant au {{tenue_date_longue}} de l'ère vulgaire, s'est réunie
+     la R∴L∴ {{loge_nom}} n°{{loge_numero}}, constituée le {{loge_date_creation}},
+     à l'O∴ de {{loge_orient}}, au {{tenue_lieu}}.</p>
 
   <div class="rubrique">Sont présents les SS∴ et FF∴ Membres de la Loge</div>
   <ul class="tableau">{{#presents}}
