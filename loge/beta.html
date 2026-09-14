@@ -1406,12 +1406,14 @@ const LOGO_LOGE  = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAL4AAAC+CAYAAA
    une convocation qui déborde sur une seconde page à cause du
    contreseing arrive en deux feuillets dans douze boîtes aux lettres,
    et le second ne porte qu'une signature. */
+/* La planche à tracer est le procès-verbal des travaux : elle se
+   signe. Après les Trois Lumières, qui répondent de la tenue, celui
+   qui répond du Rite. Aucun nom n'est imprimé — une charge se
+   transmet, et la main qui signe dit le reste. */
 function contreseing(){
-  return `<div class="contreseing" style="margin-top:5mm;page-break-inside:avoid">
-    <p style="margin:0;text-align:left;font-size:10pt">
-      <b>Vu et contresigné</b> — Le Souverain Grand Commandeur du Rite
-      Brith Israël 33°</p>
-    <div class="sig" style="margin-top:8mm"></div></div>`;
+  return `<div class="contreseing" style="margin-top:9mm;page-break-inside:avoid">
+    <p style="margin:0">Le Souverain Grand Commandeur du Rite Brith Israël 33°
+    <div class="sig" style="margin-top:8mm"></div></p></div>`;
 }
 
 function ENTETE(){ return `<table style="width:100%;border:0;margin:0 0 3.5mm"><tr>
@@ -1454,15 +1456,14 @@ function emargement(){
    écrit dans la marge ne se retrouve pas.
 
    Elle a donc sa page. Elle recommence à l'en-tête, elle porte son
-   propre titre, et elle offre TREIZE lignes — le nombre qui remplit
-   une A4 sans déborder, en-tête et contreseing compris. Ce n'est pas
-   un chiffre choisi au jugé : à dix-huit, le contreseing tombait seul
-   sur une troisième page, soit une feuille de plus à imprimer pour
-   une signature. Treize lignes manuscrites, c'est déjà une Tenue
+   propre titre, et elle offre SEIZE lignes — le nombre qui remplit
+   une A4 sans déborder. Ce n'est pas un chiffre choisi au jugé : il a
+   été mesuré, en produisant le PDF et en comptant les pages, jusqu'à
+   celui qui tient. Seize lignes manuscrites, c'est déjà une Tenue
    d'installation. Les Visiteurs annoncés y sont pré-inscrits ; s'ils
-   sont plus de treize, le tableau s'allonge de lui-même — et c'est
+   sont plus nombreux, le tableau s'allonge de lui-même — et c'est
    alors la seule raison légitime de passer à une page de plus. */
-const LIGNES_VISITEURS = 13;
+const LIGNES_VISITEURS = 16;
 
 function emargementVisiteurs(){
   const vus = visiteursDeLaTenue();
@@ -1543,7 +1544,8 @@ function corpsPlanche(){
   <div class="rub">Signatures du Collège des Trois Lumières</div>
   ${['venerable','premier_surveillant','second_surveillant'].map(c=>{const m=E.membres.find(x=>x.office===c);
     return `<p style="margin-top:9mm">${ech(OFFICES[c].l)} — <i>${m?ech(m.prenoms+' '+m.nom):''}</i>
-      <div class="sig" style="margin-top:8mm"></div></p>`;}).join('')}`;
+      <div class="sig" style="margin-top:8mm"></div></p>`;}).join('')}
+  ${contreseing()}`;
 }
 </script>
 <script>
@@ -1598,26 +1600,24 @@ let docCourant = {nom:'Document', html:'', editable:false};
    sceaux et la qualité de l'Atelier, et rien ne justifie qu'une frappe
    malheureuse les efface. Tout le reste s'écrit librement. */
 function ouvrir(html, nom, editable){
-  /* LE CONTRESEING PASSE PAR ICI, ET PAR NULLE PART AILLEURS. Chaque
-     document de Bereshit doit le porter ; le poser dans chaque
-     fonction de document reviendrait à l'oublier au premier document
-     ajouté. Ici, il n'y a rien à penser. Le mode d'emploi fait
-     exception : c'est une notice, pas un acte de l'Atelier.
+  /* L'AUTORITÉ EST ANNONCÉE EN TÊTE, ELLE N'EST PAS RÉPÉTÉE AU PIED.
+     Chaque document portait un pavé « Vu et contresigné » au bas de
+     la dernière page, alors que l'en-tête dit déjà « sous l'autorité
+     du Souverain Grand Commandeur 33° ». C'était dire deux fois la
+     même chose, et cela coûtait des lignes sur une convocation qui
+     doit tenir sur une feuille.
 
-     Il reste HORS du champ modifiable, comme l'en-tête, et pour deux
-     raisons. Un contreseing qu'on peut retaper n'en est pas un. Et la
-     planche à tracer enregistre ce champ tel quel : le contreseing
-     posé dedans y serait sauvegardé, puis ajouté de nouveau à
-     l'ouverture suivante, et ainsi de suite. */
-  const signe = (nom !== 'Mode d emploi');
+     Une seule pièce se signe de sa main : la planche à tracer, qui
+     est le procès-verbal des travaux. Sa ligne de signature est
+     écrite dans le corps de la planche, avec celles des Trois
+     Lumières — là où elle a toujours eu sa place. */
   docCourant = {nom: nom || 'Document', html, editable: !!editable};
   const P = $('#papier');
   if (editable){
     P.innerHTML = `<div class="entete-fixe">${ENTETE()}</div>` +
-      `<div id="corps" contenteditable="true" spellcheck="true">${html}</div>` +
-      (signe ? contreseing() : '');
+      `<div id="corps" contenteditable="true" spellcheck="true">${html}</div>`;
   } else {
-    P.innerHTML = html + (signe ? contreseing() : '');
+    P.innerHTML = html;
   }
   $('#voile').hidden = false;
   $('#barre-edition').hidden = !editable;

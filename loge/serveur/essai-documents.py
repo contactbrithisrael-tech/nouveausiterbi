@@ -40,32 +40,51 @@ with sync_playwright() as p:
         pg.click("#fermer"); pg.wait_for_timeout(250)
         return h, t
 
-    # ══ 1. LA QUALITÉ ET LE CONTRESEING ═════════════════════════════
-    # LA CHARGE S'IMPRIME, LE NOM NON. Une charge se transmet ; un
-    # contreseing vaut par la fonction, et la main qui signe dit le
-    # reste. Le Tableau d'épreuve porte pourtant un membre marqué
-    # « Souverain Grand Commandeur » : c'est exprès, pour vérifier
-    # qu'aucun nom ne remonte sur le papier.
+    # ══ 1. L'AUTORITÉ EN TÊTE, LA SIGNATURE SUR LA SEULE PLANCHE ════
+    # L'en-tête dit déjà « sous l'autorité du Souverain Grand
+    # Commandeur 33° ». Un pavé « Vu et contresigné » au pied de
+    # chaque document répétait la même chose, et coûtait des lignes.
+    # Une seule pièce se signe de sa main : la planche à tracer, qui
+    # est le procès-verbal des travaux.
+    #
+    # Le Tableau d'épreuve porte un membre marqué « Souverain Grand
+    # Commandeur » : c'est exprès, pour vérifier qu'aucun nom ne
+    # remonte sur le papier.
 
     for nom, bouton, onglet in [
         ("la convocation",          "#imp-convoc", "#t-convoc"),
         ("la feuille d'émargement", "#imp-emarg",  "#t-tenue"),
-        ("la planche à tracer",     "#imp-planche", "#t-tenue"),
         ("le carnet des visiteurs", "#imp-carnet", "#t-visiteurs"),
     ]:
         h, t = doc(bouton, onglet)
-        v("Vu et contresigné" in t, f"{nom} porte le contreseing", t[-200:])
-        v("Souverain Grand Commandeur du Rite Brith Israël" in t,
-          f"{nom} porte sa qualité en toutes lettres")
+        v("Vu et contresigné" not in t,
+          f"{nom} ne porte PLUS de pavé de contreseing au pied", t[-200:])
         v("Souverain Grand Commandeur 33°" in t,
-          f"{nom} porte le trente-troisième degré", t[-200:])
-        pied = t.split("Vu et contresigné")[-1]
-        v("ELOUL" not in pied and "Lamed" not in pied,
-          f"{nom} : AUCUN NOM ne remonte au contreseing", pied[:160])
-        v(t.count("Vu et contresigné") == 1,
-          f"{nom} ne le porte qu'une fois", t.count("Vu et contresigné"))
-        v('class="sig"' in h.split("Vu et contresigné")[-1],
-          f"{nom} laisse une ligne pour la signature")
+          f"{nom} porte l'autorité — en tête, une seule fois")
+        # une fois par en-tête : l'émargement en a deux, une par feuille
+        entetes = t.count("A∴L∴G∴D∴G∴A∴D∴L∴U∴")
+        v(t.count("Souverain Grand Commandeur") == entetes,
+          f"{nom} le dit une fois par en-tête, et pas davantage",
+          f"{t.count('Souverain Grand Commandeur')} pour {entetes} en-tête(s)")
+        # ELOUL est un NOM DE MEMBRE du Tableau d'épreuve : il a toute
+        # sa place dans une liste de présents. Ce qu'on vérifie, c'est
+        # qu'aucun nom ne soit accolé à la charge.
+        suites = [t.split(x, 1)[1][:60] for x in ["Souverain Grand Commandeur"]
+                  if x in t]
+        v(all("ELOUL" not in q and "Lamed" not in q for q in suites),
+          f"{nom} : AUCUN NOM n'est accolé à la charge", suites)
+
+    # ── LA PLANCHE À TRACER, ELLE, SE SIGNE ────────────────────────
+    h, t = doc("#imp-planche", "#t-tenue")
+    v("Signatures du Collège des Trois Lumières" in t,
+      "la planche porte les Trois Lumières")
+    apres3 = t.split("Second Surveillant")[-1]
+    v("Souverain Grand Commandeur du Rite Brith Israël 33°" in apres3,
+      "ET LA SIGNATURE DU SOUVERAIN GRAND COMMANDEUR, après elles", apres3[:200])
+    v("ELOUL" not in apres3 and "Lamed" not in apres3,
+      "sans nom imprimé : la main qui signe dit le reste", apres3[:200])
+    bloc = h.split("contreseing")[-1]
+    v('class="sig"' in bloc, "avec sa ligne pour signer")
 
     # ── L'EN-TÊTE : l'autorité, et ב∴ס∴ד∴ en haut à droite ─────────
     pg.click("#t-convoc"); pg.wait_for_timeout(400)
@@ -108,13 +127,15 @@ with sync_playwright() as p:
       c.dispatchEvent(new Event('input', {bubbles:true})); }""")
     pg.wait_for_timeout(1500)
     enreg = pg.evaluate("E.plancheTexte || ''")
-    v("Vu et contresigné" not in enreg,
-      "la planche enregistrée ne contient PAS le contreseing", enreg[-200:])
+    v(enreg.count("Souverain Grand Commandeur") == 1,
+      "la planche enregistrée porte sa ligne de signature UNE fois",
+      enreg.count("Souverain Grand Commandeur"))
     pg.click("#fermer"); pg.wait_for_timeout(300)
     pg.click("#imp-planche"); pg.wait_for_timeout(700)
     t2 = pg.inner_text("#papier")
-    v(t2.count("Vu et contresigné") == 1,
-      "et rouvrir la planche ne le double pas", t2.count("Vu et contresigné"))
+    v(t2.count("Souverain Grand Commandeur du Rite Brith Israël 33°") == 1,
+      "et rouvrir la planche ne la double pas",
+      t2.count("Souverain Grand Commandeur du Rite Brith Israël 33°"))
     v("Un mot ajouté par la Secrétaire" in t2, "tout en gardant ce qu'elle a écrit")
     pg.click("#fermer"); pg.wait_for_timeout(250)
 
@@ -128,12 +149,12 @@ with sync_playwright() as p:
       h.count("A∴L∴G∴D∴G∴A∴D∴L∴U∴"))
     apres = h.split('class="saut"')[1]
     lignes = apres.count("<tr>") - 1          # moins la ligne d'en-tête
-    v(lignes >= 13, f"elle offre au moins treize lignes (elle en offre {lignes})", lignes)
+    v(lignes >= 16, f"elle offre au moins seize lignes (elle en offre {lignes})", lignes)
     for col in ["Nom et prénom", "Grade", "Loge, Orient, Obédience", "Tuilé par", "Signature"]:
         v(col in apres, f"colonne « {col} »")
     v("après avoir été tuilé" in apres,
       "et elle rappelle que nul ne signe sans avoir été tuilé")
-    v(apres.count('class="sig"') >= 13,
+    v(apres.count('class="sig"') >= 16,
       "chaque ligne porte son trait de signature", apres.count('class="sig"'))
 
     # ── CE QUI TOMBE SUR LE PAPIER ──────────────────────────────────
@@ -154,8 +175,8 @@ with sync_playwright() as p:
     n = pages("#imp-convoc", "#t-convoc")
     v(n == 1, f"LA CONVOCATION TIENT SUR UNE SEULE PAGE (elle en fait {n})", n)
     n = pages("#imp-emarg", "#t-tenue")
-    v(n == 2, f"l'émargement fait deux pages, pas trois : "
-              f"le contreseing ne part pas seul sur une feuille (il en fait {n})", n)
+    v(n == 2, f"l'émargement fait deux pages : les membres, puis les "
+              f"Visiteurs — et rien ne déborde sur une troisième (il en fait {n})", n)
     n = pages("#imp-carnet", "#t-visiteurs")
     v(n == 1, f"le carnet des visiteurs tient sur une page (il en fait {n})", n)
 
