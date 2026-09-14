@@ -23,6 +23,7 @@ sont inventés.
 ```sh
 node loge/serveur/essai-api.mjs          # le serveur seul, sur SQLite
 node loge/serveur/essai-outil-mdp.mjs    # le SQL imprimé ouvre-t-il vraiment ?
+node loge/serveur/essai-gps.mjs          # la lecture du point du Temple
 
 node loge/serveur/faux-tableau.mjs > /tmp/tableau.json
 node loge/serveur/faux-page.mjs    > /tmp/page-epreuve.html
@@ -65,6 +66,9 @@ le monde.
 - **`essai-outil-mdp.mjs`** — le SQL imprimé par `nouveau-mdp.mjs` est
   exécuté sur une vraie base, et l'on entre avec : ce qui est vérifié
   n'est pas un format de texte, c'est que la porte s'ouvre.
+- **`essai-gps.mjs`** — le champ du point du Temple lit les deux
+  nombres, les degrés, et un lien de plan collé tel quel ; il refuse
+  tout le reste, et ne « corrige » jamais deux nombres inversés.
 - **`essai-documents.py`** — la qualité et le contreseing du Souverain
   Grand Commandeur sur chaque document, la feuille des Visiteurs sur sa
   page, le point du Temple sur la convocation.
