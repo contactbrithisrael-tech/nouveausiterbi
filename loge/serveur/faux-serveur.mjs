@@ -43,6 +43,8 @@ const DB = { prepare(sql){ return {
 
 const F = {
   entrer: await import(RACINE + 'functions/api/entrer.js'),
+  porte:  await import(RACINE + 'functions/api/porte.js'),
+  mdp:    await import(RACINE + 'functions/api/mdp.js'),
   sortir: await import(RACINE + 'functions/api/sortir.js'),
   etat:   await import(RACINE + 'functions/api/etat.js'),
 };
@@ -53,7 +55,7 @@ createServer(async (req, res) => {
     res.writeHead(200, {'content-type':'text/html; charset=utf-8'});
     return res.end(fs.readFileSync(PAGE));
   }
-  const m = u.pathname.match(/^\/api\/(entrer|sortir|etat)$/);
+  const m = u.pathname.match(/^\/api\/(entrer|sortir|etat|porte|mdp)$/);
   if (!m){ res.writeHead(404); return res.end('non'); }
 
   const corps = await new Promise(ok => { let d=''; req.on('data',c=>d+=c); req.on('end',()=>ok(d)); });
