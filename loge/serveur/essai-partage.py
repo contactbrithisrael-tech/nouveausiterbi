@@ -1,7 +1,18 @@
+# L'ÉPREUVE DU PARTAGE
+#   node loge/serveur/faux-tableau.mjs > /tmp/tableau.json
+#   node loge/serveur/faux-page.mjs    > /tmp/page-epreuve.html
+#   RBI_PAGE=/tmp/page-epreuve.html node loge/serveur/faux-serveur.mjs &
+#   python3 loge/serveur/essai-partage.py
+#
+# Les mots de passe et les comptes sont INVENTÉS : le dépôt est servi
+# en entier par Cloudflare Pages, rien de vrai ne doit y figurer.
+#
+# Le tableau est INVENTÉ (faux-tableau.mjs) : l'épreuve ne dépend
+# d'aucun fichier privé et se rejoue partout.
 from playwright.sync_api import sync_playwright
-import json, pathlib
-S="/tmp/claude-0/-home-user-nouveausiterbi/7d130877-bf16-5b1d-941f-2441fd899f8b/scratchpad"
-U="http://127.0.0.1:8787/"
+import json, os, pathlib
+TABLEAU = os.environ.get("RBI_TABLEAU", "/tmp/tableau.json")
+U = os.environ.get("RBI_URL", "http://127.0.0.1:8787/")
 ko=[]
 def v(c,n,d=''):
     print(f"  {'✓' if c else '✗'} {n}{'' if c else '  <- '+str(d)[:220]}")
@@ -16,7 +27,7 @@ with sync_playwright() as p:
     M.on("dialog", lambda d: d.accept())
     M.goto(U); M.wait_for_timeout(1000)
     v(M.locator("#porte").is_visible(),"la porte s'ouvre")
-    M.fill("#porte-mdp","MartineHabert"); M.click("#porte-form button[type=submit]")
+    M.fill("#porte-mdp","cleSecretariatEpreuve"); M.click("#porte-form button[type=submit]")
     M.wait_for_timeout(1500)
     v(M.locator("#appli").is_visible(),"Martine entre")
     v(M.evaluate("SERVEUR.actif") is True,"par le SERVEUR, non par l'empreinte de la page")
@@ -27,7 +38,7 @@ with sync_playwright() as p:
 
     # elle charge le tableau UNE fois
     M.click("#t-tableau"); M.wait_for_timeout(400)
-    M.set_input_files("#fichier-sauvegarde", S+"/donnees-bereshit.json"); M.wait_for_timeout(2500)
+    M.set_input_files("#fichier-sauvegarde", TABLEAU); M.wait_for_timeout(2500)
     M.click("#t-tableau"); M.wait_for_timeout(500)
     v(M.locator("#v-tableau tbody tr").count()==12,"les douze fiches sont là",
       M.locator("#v-tableau tbody tr").count())
@@ -40,7 +51,7 @@ with sync_playwright() as p:
 
     # elle saisit une adresse
     M.click('tr[data-fiche="4"]'); M.wait_for_timeout(400)
-    M.fill("#m-email","jl.carillo@example.test"); M.wait_for_timeout(2000)
+    M.fill("#m-email","dalet@exemple.test"); M.wait_for_timeout(2000)
     vM=M.evaluate("SERVEUR.version")
     v(vM>=2,"une saisie part au serveur sans qu'elle y pense",vM)
 
@@ -49,7 +60,7 @@ with sync_playwright() as p:
     eS=[]; Sm.on("pageerror", lambda e: eS.append(str(e)))
     Sm.on("dialog", lambda d: d.accept())
     Sm.goto(U); Sm.wait_for_timeout(1000)
-    Sm.fill("#porte-mdp","SamGasmi"); Sm.click("#porte-form button[type=submit]")
+    Sm.fill("#porte-mdp","cleTresorerieEpreuve"); Sm.click("#porte-form button[type=submit]")
     Sm.wait_for_timeout(2000)
     v(Sm.inner_text("#sceau-role").lower()=="trésorerie","Sam entre à la Trésorerie",
       Sm.inner_text("#sceau-role"))
@@ -57,7 +68,7 @@ with sync_playwright() as p:
     v(Sm.locator("#v-tresor tbody tr").count()==12,
       "IL VOIT LE TABLEAU QUE MARTINE VIENT DE SAISIR, sans aucun fichier",
       Sm.locator("#v-tresor tbody tr").count())
-    v(Sm.evaluate("E.membres.find(m=>m.id===4).email")=="jl.carillo@example.test",
+    v(Sm.evaluate("E.membres.find(m=>m.id===4).email")=="dalet@exemple.test",
       "y compris l'adresse qu'elle a tapée il y a trois secondes",
       Sm.evaluate("E.membres.find(m=>m.id===4).email"))
 
