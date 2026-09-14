@@ -2816,7 +2816,9 @@ function listeVisiteurs(){
   const l = E.visiteurs.map(v=>`<tr class="cliquable" data-vis="${v.id}" tabindex="0" role="button"
       aria-label="Ouvrir la fiche de ${ech(v.prenom)} ${ech(v.nom)}">
       <td><span class="nom-membre">${ech(v.prenom)} ${ech(v.nom)}</span>
-          ${v.grade?`<div class="qual">${ech(v.grade)}</div>`:''}</td>
+          ${v.grade?`<div class="qual">${ech(v.grade)}</div>`:''}
+          ${v.venuDeLAnnuaire && !v.tuilePar
+            ? `<div class="qual">✉ reçu de l’annuaire — <b>pas encore tuilé</b></div>` : ''}</td>
       <td>${ech(v.loge||'')}${v.orient?`<div class="qual">à l’O∴ de ${ech(v.orient)}</div>`:''}</td>
       <td>${ech(v.obedience||'')}</td>
       <td><span class="qual">${ech(v.email||'')}${v.tel?'<br>'+ech(v.tel):''}</span></td>
@@ -2825,7 +2827,20 @@ function listeVisiteurs(){
           v.visites.length>1?'s':''}<br>dernière : ${dateLongue(v.visites.at(-1).date)}</span>`
         :`<span class="p p-neutre">—</span>`}</td>
     </tr>`).join('');
-  return `
+  /* Ce qui vient d'arriver se dit une fois, à l'endroit où l'on
+     travaille — non dans un courriel qu'il faudrait penser à ouvrir. */
+  const b = (typeof ANNUAIRE === 'object' && ANNUAIRE.dernier) || null;
+  const arrivees = (b && (b.neuves || b.completees)) ? `
+    <p class="note" style="margin:0 0 16px"><b>L’annuaire a déposé
+      ${b.neuves ? b.neuves + ' nouvelle' + (b.neuves>1?'s':'') + ' fiche' +
+        (b.neuves>1?'s':'') : ''}${b.neuves && b.completees ? ', et ' : ''}${
+        b.completees ? b.completees + ' fiche' + (b.completees>1?'s':'') +
+        ' complétée' + (b.completees>1?'s':'') : ''}.</b>
+      Elles sont au carnet ci-dessous. Leur case <b>« Tuilé par »</b> est vide :
+      le formulaire garde le seuil d’une page, pas celui du Temple — c’est
+      au Frère qui les introduit d’y porter son nom.</p>` : '';
+
+  return `${arrivees}
   <div class="bloc"><header><div>
     <h2>Visiteurs</h2>
     <p class="sous">Les Sœurs et Frères d’autres Ateliers reçus en tenue. Fiche distincte
@@ -3515,6 +3530,93 @@ async function reprendreSession(){
   return 'ok';
 }
 
+/* ═══════════════════════════════════════════════════════════════════
+   L'ANNUAIRE VERSE AU CARNET, TOUT SEUL
+
+   Un Frère remplit le formulaire de l'Espace Membres ; sa fiche se
+   retrouve au carnet des Visiteurs sans que personne n'ouvre un
+   courriel, ne sélectionne, ne copie et ne colle. Ce qui demandait un
+   geste ce soir-là n'était jamais fait.
+
+   ► LA CASE « TUILÉ PAR » RESTE VIDE, et c'est le point. Le tuilage de
+     l'Espace Membres garde le seuil d'une page ; il ne remplace pas
+     celui du Temple. Le Rite a déjà prévu qui répond de l'introduction
+     d'un Visiteur : son nom se porte en regard sur la feuille
+     d'émargement. La fiche arrive donc dans l'état où elle est —
+     reçue, pas encore tuilée — et non dans un état qu'on lui
+     prêterait.
+
+   ► ON NE DOUBLE PAS. Deux Officiers connectés relèvent la même file
+     en même temps : sans précaution, le même Frère entrerait deux fois
+     au carnet. On reconnaît une fiche à son courriel ; si elle est
+     déjà là, on complète ce qui manque et l'on n'ajoute rien. Ce qui a
+     été saisi à la main l'emporte : c'est une main qui a vérifié.
+═══════════════════════════════════════════════════════════════════ */
+const CHAMPS_RECUS = {
+  prenom:'prenom', nom:'nom', email:'email', telephone:'tel',
+  grade:'grade', loge:'loge', obedience:'obedience', rite:'rite',
+  ville:'orient'
+};
+
+function memeCourriel(a, b){
+  return !!a && !!b && String(a).trim().toLowerCase() === String(b).trim().toLowerCase();
+}
+
+/* Rend le nombre de fiches réellement ajoutées ou complétées. */
+function verserAuCarnet(recues){
+  let neuves = 0, completees = 0;
+  for (const { fiche } of recues){
+    const dej = E.visiteurs.find(v => memeCourriel(v.email, fiche.email));
+    if (dej){
+      let touche = false;
+      for (const [de, vers] of Object.entries(CHAMPS_RECUS))
+        if (fiche[de] && !dej[vers]){ dej[vers] = fiche[de]; touche = true; }
+      if (touche) completees++;
+      continue;
+    }
+    const id = Math.max(0, ...E.visiteurs.map(v => v.id)) + 1;
+    const v = { id, prenom:'', nom:'', grade:'', rite:'', loge:'', orient:'',
+                obedience:'', email:'', tel:'', invitePar:'', tuilePar:'',
+                presentTenue:false, visites:[], venuDeLAnnuaire:true };
+    for (const [de, vers] of Object.entries(CHAMPS_RECUS))
+      if (fiche[de]) v[vers] = fiche[de];
+    E.visiteurs.push(v); neuves++;
+  }
+  return { neuves, completees };
+}
+
+/* Relever la boîte aux lettres. Appelé à l'entrée et à chaque reprise :
+   c'est le moment où la Secrétaire ouvre son écran, et le seul où le
+   versement l'intéresse. */
+async function releverAnnuaire(){
+  if (!SERVEUR.actif) return null;
+  let r;
+  try { r = await appelServeur('annuaire'); } catch (e) { return null; }
+  if (r.statut !== 200 || !r.corps || !Array.isArray(r.corps.fiches)) return null;
+  const recues = r.corps.fiches;
+  if (!recues.length) return { neuves: 0, completees: 0 };
+
+  const bilan = verserAuCarnet(recues);
+
+  /* On ne déclare versé qu'après avoir enregistré : si l'envoi échoue,
+     les fiches restent en attente et reviendront au prochain passage.
+     Mieux vaut les verser deux fois — le dédoublonnage y pourvoit —
+     que les perdre une seule. */
+  persister();
+  await pousserEtat();
+  if (SERVEUR.dernierEchec) return bilan;      // rien n'est monté : on garde la file
+
+  try {
+    await appelServeur('annuaire', { method: 'PUT',
+      body: JSON.stringify({ versees: recues.map(f => f.id) }) });
+  } catch (e) { /* elles reviendront ; le dédoublonnage les écartera */ }
+
+  ANNUAIRE.dernier = bilan;
+  return bilan;
+}
+
+const ANNUAIRE = { dernier: null };
+
 /* Écrire. On ne bombarde pas le serveur à chaque frappe : un envoi est
    en cours, le suivant attend, et un seul rattrapage suffit — ce qui
    compte est le dernier état, non la suite des états. */
@@ -3774,7 +3876,11 @@ function annoncerConflit(corps, entete){
     if (d && ROLES[d]){
       ouvrirAppli(d);
       reprendreSession().then(etat => {
-        if (etat === 'ok'){ dessiner(); majAlerteRepli(); majBoutonMdp(); return; }
+        if (etat === 'ok'){
+          dessiner(); majAlerteRepli(); majBoutonMdp();
+          releverAnnuaire().then(b => { if (b && (b.neuves || b.completees)) dessiner(); });
+          return;
+        }
         if (etat === 'expiree') refermerLaPorte();
       }).catch(() => {});
     }
@@ -3861,6 +3967,10 @@ function annoncerConflit(corps, entete){
         const lu = await lireEtatServeur();
         if (lu){ mettreAlAbri(); dessiner(); }
         majPied();
+        /* La boîte aux lettres de l'annuaire se relève à l'ouverture :
+           c'est le seul moment où cela intéresse la Secrétaire. */
+        const b = await releverAnnuaire();
+        if (b && (b.neuves || b.completees)) dessiner();
       }
     }
     else {

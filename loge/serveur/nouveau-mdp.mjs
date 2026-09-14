@@ -11,7 +11,7 @@
    la ligne SQL à coller dans la console D1. Rien n'est envoyé nulle
    part : il ne fait que du calcul.
 
-       node loge/serveur/nouveau-mdp.mjs habertmartine@gmail.com "le mot neuf"
+       node loge/serveur/nouveau-mdp.mjs secretariat@exemple.test "le mot neuf"
 
    Ensuite, dites-le de vive voix à l'intéressé — jamais par courriel,
    puisqu'un courriel ne s'efface pas — et demandez-lui de le changer

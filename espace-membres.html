@@ -1504,11 +1504,44 @@
     window.scrollTo({ top: msg.offsetTop - 100, behavior: 'smooth' });
   }
 
+  /* ── L'ANNUAIRE VA AUSSI AU REGISTRE DE L'ATELIER ──────────────
+     La fiche partait vers une boîte aux lettres, d'où quelqu'un
+     devait l'ouvrir, la sélectionner, la copier et la coller dans le
+     programme de la Secrétaire. Ce qui demandait un geste ce soir-là
+     n'était jamais fait.
+
+     Elle part désormais AUSSI vers /api/annuaire, et le programme la
+     verse au carnet des Visiteurs tout seul.
+
+     ► LE COURRIEL EST CONSERVÉ. Deux chemins pour une même fiche :
+       si le serveur ne répond pas, le courriel arrive ; si le
+       courriel se perd, le registre l'a. On ne remplace pas un chemin
+       qui marche par un chemin qui marche mieux — on en met deux.
+
+     ► L'ÉCHEC NE SE VOIT PAS. Le Frère qui remplit ce formulaire n'a
+       rien à faire d'un ennui de serveur : son envoi lui est confirmé
+       dès que le courriel est parti. */
+  function deposerAuRegistre(form) {
+    if (form.id !== 'form-annuaire') return;
+    var d = new FormData(form), o = { source: 'espace-membres' };
+    d.forEach(function (v, k) {
+      if (o[k] === undefined) { o[k] = v; }
+      else { o[k] = [].concat(o[k], v).join(', '); }   // cases à cocher
+    });
+    try {
+      fetch('/api/annuaire', {
+        method: 'POST', headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(o)
+      }).catch(function () { /* le courriel suffit */ });
+    } catch (e) { /* idem */ }
+  }
+
   function soumettre(e, formId, msgId) {
     e.preventDefault();
     var form = document.getElementById(formId);
     var msg  = document.getElementById(msgId);
     var objet = RBI_FORM_OBJETS[formId] || 'Formulaire du Rite Brith Israël';
+    deposerAuRegistre(form);
 
     if (RBI_FORM_ENDPOINT) {
       var donnees = new FormData(form);
