@@ -98,13 +98,36 @@ with sync_playwright() as p:
       h.count("A∴L∴G∴D∴G∴A∴D∴L∴U∴"))
     apres = h.split('class="saut"')[1]
     lignes = apres.count("<tr>") - 1          # moins la ligne d'en-tête
-    v(lignes >= 18, f"elle offre au moins dix-huit lignes (elle en offre {lignes})", lignes)
+    v(lignes >= 13, f"elle offre au moins treize lignes (elle en offre {lignes})", lignes)
     for col in ["Nom et prénom", "Grade", "Loge, Orient, Obédience", "Tuilé par", "Signature"]:
         v(col in apres, f"colonne « {col} »")
     v("après avoir été tuilé" in apres,
       "et elle rappelle que nul ne signe sans avoir été tuilé")
-    v(apres.count('class="sig"') >= 18,
+    v(apres.count('class="sig"') >= 13,
       "chaque ligne porte son trait de signature", apres.count('class="sig"'))
+
+    # ── CE QUI TOMBE SUR LE PAPIER ──────────────────────────────────
+    # Une convocation en deux feuillets, c'est douze envois dont le
+    # second ne porte qu'une signature et un adage. Et un contreseing
+    # seul sur une troisième page est une feuille perdue. On compte
+    # donc les pages, pour de bon.
+    import re as _re
+    def pages(bouton, onglet=None):
+        if onglet: pg.click(onglet); pg.wait_for_timeout(400)
+        pg.click(bouton); pg.wait_for_timeout(900)
+        pdf = pg.pdf(format="A4",
+                     margin={"top":"12mm","bottom":"12mm","left":"14mm","right":"14mm"},
+                     print_background=True)
+        pg.click("#fermer"); pg.wait_for_timeout(250)
+        return len(_re.findall(rb'/Type\s*/Page[^s]', pdf))
+
+    n = pages("#imp-convoc", "#t-convoc")
+    v(n == 1, f"LA CONVOCATION TIENT SUR UNE SEULE PAGE (elle en fait {n})", n)
+    n = pages("#imp-emarg", "#t-tenue")
+    v(n == 2, f"l'émargement fait deux pages, pas trois : "
+              f"le contreseing ne part pas seul sur une feuille (il en fait {n})", n)
+    n = pages("#imp-carnet", "#t-visiteurs")
+    v(n == 1, f"le carnet des visiteurs tient sur une page (il en fait {n})", n)
 
     # ══ 3. LE POINT DU TEMPLE ═══════════════════════════════════════
     v(pg.evaluate("E.tenue.lieuGps") in ("", None),
