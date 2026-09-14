@@ -37,6 +37,9 @@ const membres = NOMS.map((nom, i) => {
                m.tel = '06 00 00 00 ' + String(n).padStart(2, '0');
                m.adresse = `${n} rue de l’Épreuve`; m.ville = 'VENTABREN';
                m.naissance = `19${60 + n}-0${(n % 9) + 1}-1${n % 9}`; }
+  /* Un Souverain Grand Commandeur au Tableau : c'est de là que les
+     documents tirent sa qualité et son contreseing. */
+  if (n === 12){ m.grade = '33°'; m.qualite = 'Souverain Grand Commandeur'; }
   if (n === 3) m.office = 'venerable';
   if (n === 4) m.office = 'premier_surveillant';
   if (n === 5) m.office = 'second_surveillant';
@@ -44,12 +47,29 @@ const membres = NOMS.map((nom, i) => {
   return m;
 });
 
+/* Trois Visiteurs annoncés : de quoi éprouver la feuille d'émargement
+   qui leur est réservée, et le carnet. Inventés eux aussi. */
+const visiteurs = [
+  { id: 1, prenom: 'Reouven', nom: 'MISHPAT', grade: 'Maître', rite: 'RBI',
+    loge: 'L∴ EXEMPLE n°01', orient: 'Nulle Part', obedience: 'Obédience d’épreuve',
+    email: 'reouven@exemple.test', tel: '', invitePar: 'Guimel TICHRI',
+    tuilePar: 'Guimel KISLEV', presentTenue: true, visites: [] },
+  { id: 2, prenom: 'Chimon', nom: 'EDOUT', grade: 'Compagnon', rite: 'RBI',
+    loge: 'L∴ SECONDE n°02', orient: 'Ailleurs', obedience: 'Obédience d’épreuve',
+    email: 'chimon@exemple.test', tel: '', invitePar: '',
+    tuilePar: 'Dalet TEVET', presentTenue: true, visites: [] },
+  { id: 3, prenom: 'Lévi', nom: 'HOQIM', grade: 'Apprenti', rite: 'RBI',
+    loge: 'L∴ TROISIÈME n°03', orient: 'Loin', obedience: '',
+    email: '', tel: '', invitePar: '', tuilePar: '',
+    presentTenue: false, visites: [] }
+];
+
 process.stdout.write(JSON.stringify({
   _format: 'gestion-loge-rbi',
   _version: 1,
   _le: '2026-09-01T10:00:00.000Z',
   donnees: { membres, presences: {}, agapes: {}, envoyes: {},
-             convoquee: false, journal: [], visiteurs: [], amies: [],
+             convoquee: false, journal: [], visiteurs, amies: [],
              invitationsRecues: [] },
   pieces: {}
 }, null, 1));

@@ -154,6 +154,14 @@ tr.cliquable{cursor:pointer}
            border-bottom:.6pt solid #b9a25e;padding:2mm 1mm}
 .papier td{padding:3.2mm 1mm;border-bottom:.4pt dotted #bbb2a0;font-size:10.5pt}
 .papier .sig{width:52mm;border-bottom:.4pt solid #999}
+/* Une feuille qui doit commencer sur une page neuve. À l'écran, où il
+   n'y a pas de pages, on montre la coupure — sans quoi on croirait
+   à une seule longue feuille et l'on s'étonnerait de l'impression. */
+.papier .saut{break-before:page;page-break-before:always}
+@media screen{ .papier .saut{border-top:1px dashed #c8bda0;margin:12mm 0 8mm;
+  padding-top:3mm;text-align:center;font-family:var(--sans);font-size:8pt;
+  letter-spacing:.08em;text-transform:uppercase;color:#a2977f}
+  .papier .saut::before{content:'page suivante'} }
 .papier .rub{font-family:var(--titre);font-size:10pt;margin:5mm 0 2mm}
 .papier p{margin-bottom:3mm;text-align:justify}
 .papier .vide{border:1px dashed #c8bda0;padding:6mm 4mm;color:#a2977f;
@@ -383,6 +391,11 @@ function neuf(){ return {
     type:'obligation', titre:"TENUE D'OBLIGATION", degre:1,
     lieuNom:'Temple « Le Venaqui »', lieuAdresse:"Ancienne Route d'Éguilles",
     lieuCp:'13122', lieuVille:'VENTABREN',
+    /* Le point GPS du Temple. VIDE, et il le reste tant qu'une main
+       ne l'a pas relevé : des coordonnées inventées enverraient
+       l'Atelier dans un champ. Tant qu'il manque, la convocation
+       porte un lien vers l'adresse, ce qui est vrai et suffit. */
+    lieuGps:'',
     adage:"L'assiduité aux travaux est le premier devoir du Maçon",
     agapesOui:true, agapesPrix:15, agapesLimite:'2026-09-03',
     agapesTraiteur:'Traiteur — inscription obligatoire',
@@ -400,8 +413,27 @@ function neuf(){ return {
   ]
 };}
 
+/* Un état qui vient d'ailleurs — un fichier de sauvegarde, le
+   registre du serveur, une version plus ancienne du programme — peut
+   ne pas porter toutes les structures que le programme attend. Il
+   manquait « tenue », et l'écran de la convocation s'ouvrait sur une
+   page blanche : une erreur au premier accès arrête tout ce qui suit,
+   sans un mot. On complète ce qui manque, sans jamais toucher à ce
+   qui est là. */
+function complet(d){
+  if (!d || typeof d !== 'object') return neuf();
+  const n = neuf();
+  for (const [k, v] of Object.entries(n))
+    if (d[k] === undefined || d[k] === null) d[k] = v;
+  /* La tenue est un objet : il peut lui manquer un champ sans
+     manquer tout entière. */
+  for (const [k, v] of Object.entries(n.tenue))
+    if (d.tenue[k] === undefined) d.tenue[k] = v;
+  return d;
+}
+
 let E;
-try { E = JSON.parse(localStorage.getItem(CLE)) || neuf(); } catch(e){ E = neuf(); }
+try { E = complet(JSON.parse(localStorage.getItem(CLE))); } catch(e){ E = neuf(); }
 /* Le travail est écrit dans ce navigateur à chaque geste — il survit à
    un rechargement, à une coupure, à une fermeture. Il ne survit pas à
    un navigateur vidé, à un ordinateur changé, à une machine perdue :
@@ -733,7 +765,7 @@ function vueTenue(){
       <td><button class="btn btn-mini" data-agape="${x.id}" ${r!=='present'?'disabled':''}
             aria-pressed="${!!E.agapes[x.id]}">${E.agapes[x.id]?'✓ Aux agapes':'Aux agapes'}</button></td>
     </tr>`;}).join('');
-  $('#v-tenue').innerHTML = `
+  $('#v-tenue').innerHTML = `${avertirSgc()}
     <div class="bloc"><header><div>
       <h2>${ech(E.tenue.titre||TYPES[E.tenue.type])} — ${dateLongue(E.tenue.date)}</h2>
       <p class="sous">${RANGS[E.tenue.degre]} degré de ${ech(DEGRES[E.tenue.degre])} ·
@@ -1302,37 +1334,124 @@ const LOGO_LOGE  = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAL4AAAC+CAYAAA
 /* L'en-tête des documents : le sceau du Suprême Conseil à gauche,
    celui de l'Atelier à droite, la qualité entre les deux. C'est la
    disposition de vos propres papiers à en-tête. */
-const ENTETE = `<table style="width:100%;border:0;margin:0 0 5mm"><tr>
+/* ═══════════════════════════════════════════════════════════════════
+   LA QUALITÉ DU SOUVERAIN GRAND COMMANDEUR
+
+   Tout document de Bereshit porte la qualité du Souverain Grand
+   Commandeur et son contreseing. Son nom n'est PAS écrit dans ce
+   fichier : il est servi en clair sur le site, et ce qui y est écrit
+   ne se corrige plus. On le lit au Tableau de la Loge, où sa qualité
+   est portée comme celle de chacun.
+
+   Rien n'est deviné : si aucune fiche ne porte cette qualité, le
+   contreseing s'imprime avec une ligne vide — et l'écran de la Tenue
+   le dit à la Secrétaire, plutôt que de la laisser envoyer un
+   document muet sans s'en apercevoir. */
+const QUALITE_SGC = /souverain\s+grand\s+commandeur/i;
+
+function souverainGrandCommandeur(){
+  const porte = t => typeof t === 'string' && QUALITE_SGC.test(
+    t.normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
+  return (E.membres || []).find(m =>
+    porte(m.qualite) || porte(m.dignite) || porte(m.grade)) || null;
+}
+
+function nomSgc(){
+  const s = souverainGrandCommandeur();
+  if (!s) return '';
+  const n = `${s.prenoms || ''} ${s.nom || ''}`.trim();
+  return n + (s.grade && !QUALITE_SGC.test(s.grade) ? ', ' + s.grade : '');
+}
+
+/* Le contreseing, au pied de CHAQUE document — il est posé par
+   ouvrir(), le seul passage obligé : ainsi aucun document nouveau ne
+   pourra l'oublier. */
+/* Un contreseing sans nom ne se remarque qu'une fois le document
+   parti. On le dit ici, sur l'écran où l'on prépare l'envoi. */
+function avertirSgc(){
+  if (!(E.membres || []).length) return '';   // tableau pas encore chargé
+  if (nomSgc()) return '';
+  return `<p class="note" style="background:var(--alerte-fond);
+      border-left-color:var(--alerte);margin:0 0 16px">
+    <b>Le contreseing s’imprimera sans nom.</b> Aucune fiche du Tableau ne porte
+    la qualité de Souverain Grand Commandeur. Ouvrez sa fiche et inscrivez
+    « Souverain Grand Commandeur » dans sa qualité : tous les documents de
+    l’Atelier la reprendront d’eux-mêmes.</p>`;
+}
+
+function contreseing(){
+  const n = nomSgc();
+  return `<div class="contreseing" style="margin-top:10mm;page-break-inside:avoid">
+    <div class="rub" style="margin:0 0 1mm">Vu et contresigné</div>
+    <p style="margin:0;text-align:left">Le Souverain Grand Commandeur
+       du Rite Brith Israël${n ? ',' : ''}</p>
+    ${n ? `<p style="margin:0;text-align:left"><i>${ech(n)}</i></p>` : ''}
+    <div class="sig" style="margin-top:12mm"></div></div>`;
+}
+
+function ENTETE(){ return `<table style="width:100%;border:0;margin:0 0 5mm"><tr>
   <td style="width:24mm;border:0;padding:0"><img src="${SCEAU_RITE}" style="width:22mm" alt=""></td>
   <td style="border:0;padding:0;text-align:center">
     <div class="f">A∴L∴G∴D∴G∴A∴D∴L∴U∴ &nbsp;—&nbsp; ב∴ס∴ד∴</div>
     <div class="c">Suprême Conseil Mondial du Rite BRITH ISRAËL</div>
     <div class="o" style="font-style:normal;letter-spacing:.07em;font-size:7.5pt;text-transform:uppercase">Francs-Maçons de Tradition Hébraïque &amp; Kabbalistique</div>
+    ${nomSgc() ? `<div class="o">sous l’autorité du Souverain Grand Commandeur,
+      ${ech(nomSgc())}</div>` : ''}
     <div class="f" style="margin-top:1mm">חי חי חי ויקיים &nbsp;—&nbsp; HAI HAI HAI VEQAYAM</div>
     <div class="a" style="margin-top:2.5mm">R∴L∴ BERESHIT &nbsp;בראשית&nbsp; n°00</div>
     <div class="o">Loge Mère du Rite — Atelier Mixte à l'O∴ de l'Alliance</div>
   </td>
   <td style="width:24mm;border:0;padding:0;text-align:right"><img src="${LOGO_LOGE}" style="width:22mm" alt=""></td>
 </tr></table>
-<hr style="border:0;border-top:.5pt solid #b9a25e;margin:0 0 5mm">`;
+<hr style="border:0;border-top:.5pt solid #b9a25e;margin:0 0 5mm">`; }
 
 function emargement(){
   const l = convocables().sort((a,b)=>(a.rangProtocole||99)-(b.rangProtocole||99))
     .map(x=>`<tr><td>${ech(x.prenoms)} ${ech(x.nom)}</td>
       <td>${ech(nomOffice(x.office))}</td><td class="sig"></td></tr>`).join('');
-  return `${ENTETE}<h1>Feuille d'émargement<br>Tenue du ${dateLongue(E.tenue.date)} — ${dateHebraique(E.tenue.date)} A∴V∴L∴</h1>
+  return `${ENTETE()}<h1>Feuille d'émargement<br>Tenue du ${dateLongue(E.tenue.date)} — ${dateHebraique(E.tenue.date)} A∴V∴L∴</h1>
     <p>Pré-remplie des Sœurs et Frères attendus à cette date, d'après les affiliations
        ouvertes. <b>C'est la feuille signée qui fait foi</b>, jamais une case cochée.</p>
     <table><thead><tr><th>Sœur ou Frère</th><th>Office</th><th>Signature</th></tr></thead>
     <tbody>${l}</tbody></table>
-    <div class="rub">Visiteurs</div>
-    <table><thead><tr><th>Nom</th><th>Loge, Orient, Obédience</th><th>Tuilé par</th><th>Signature</th></tr></thead>
-    <tbody>${visiteursDeLaTenue().map(v=>`<tr>
-        <td>${ech((v.prenom+' '+v.nom).trim())}${v.grade?', '+ech(v.grade):''}</td>
-        <td>${ech(v.loge||'')}${v.orient?', à l’O∴ de '+ech(v.orient):''}${v.obedience?' — '+ech(v.obedience):''}</td>
-        <td>${ech(v.tuilePar||'')}</td><td class="sig"></td></tr>`).join('')}
-      ${'<tr><td></td><td></td><td></td><td class="sig"></td></tr>'.repeat(
-        Math.max(2, 5 - visiteursDeLaTenue().length))}</tbody></table>`;
+    ${emargementVisiteurs()}`;
+}
+
+/* ── LA FEUILLE DES VISITEURS, UNE PAGE ENTIÈRE ────────────────────
+   Elle tenait en quelques lignes sous le tableau des membres : deux
+   ou trois rangs, au bas d'une page déjà pleine. Un soir où douze
+   Visiteurs se présentent, on écrit dans la marge — et ce qui est
+   écrit dans la marge ne se retrouve pas.
+
+   Elle a donc sa page. Elle recommence à l'en-tête, elle porte son
+   propre titre, et elle offre DIX-HUIT lignes : de quoi tenir une
+   Tenue d'installation sans jamais manquer de place. Les Visiteurs
+   déjà annoncés y sont pré-inscrits ; le reste attend la plume. */
+const LIGNES_VISITEURS = 18;
+
+function emargementVisiteurs(){
+  const vus = visiteursDeLaTenue();
+  const rang = v => `<tr>
+    <td>${ech((v.prenom + ' ' + v.nom).trim())}</td>
+    <td>${ech(v.grade || '')}</td>
+    <td>${ech(v.loge || '')}${v.orient ? ', à l’O∴ de ' + ech(v.orient) : ''}${
+        v.obedience ? ' — ' + ech(v.obedience) : ''}</td>
+    <td>${ech(v.tuilePar || '')}</td><td class="sig"></td></tr>`;
+  const vide = `<tr><td>&nbsp;</td><td></td><td></td><td></td><td class="sig"></td></tr>`;
+
+  return `<div class="saut"></div>${ENTETE()}
+    <h1>Feuille d’émargement — Visiteurs<br>Tenue du ${dateLongue(E.tenue.date)} —
+        ${dateHebraique(E.tenue.date)} A∴V∴L∴</h1>
+    <p>Toute Sœur ou tout Frère Visiteur signe ici, <b>après avoir été tuilé</b>.
+       Le nom de qui l’a tuilé est porté en regard : c’est lui qui répond de
+       son introduction dans le Temple. Les Visiteurs annoncés d’avance sont
+       déjà inscrits ; les autres s’ajoutent à la main.</p>
+    <table><thead><tr>
+      <th>Nom et prénom</th><th>Grade</th>
+      <th>Loge, Orient, Obédience</th><th>Tuilé par</th><th>Signature</th>
+    </tr></thead>
+    <tbody>${vus.map(rang).join('')}${
+      vide.repeat(Math.max(4, LIGNES_VISITEURS - vus.length))}</tbody></table>`;
 }
 
 /* La qualité telle qu'elle s'imprime, dans l'ordre où le Rite la
@@ -1445,13 +1564,26 @@ let docCourant = {nom:'Document', html:'', editable:false};
    sceaux et la qualité de l'Atelier, et rien ne justifie qu'une frappe
    malheureuse les efface. Tout le reste s'écrit librement. */
 function ouvrir(html, nom, editable){
+  /* LE CONTRESEING PASSE PAR ICI, ET PAR NULLE PART AILLEURS. Chaque
+     document de Bereshit doit le porter ; le poser dans chaque
+     fonction de document reviendrait à l'oublier au premier document
+     ajouté. Ici, il n'y a rien à penser. Le mode d'emploi fait
+     exception : c'est une notice, pas un acte de l'Atelier.
+
+     Il reste HORS du champ modifiable, comme l'en-tête, et pour deux
+     raisons. Un contreseing qu'on peut retaper n'en est pas un. Et la
+     planche à tracer enregistre ce champ tel quel : le contreseing
+     posé dedans y serait sauvegardé, puis ajouté de nouveau à
+     l'ouverture suivante, et ainsi de suite. */
+  const signe = (nom !== 'Mode d emploi');
   docCourant = {nom: nom || 'Document', html, editable: !!editable};
   const P = $('#papier');
   if (editable){
-    P.innerHTML = `<div class="entete-fixe">${ENTETE}</div>` +
-      `<div id="corps" contenteditable="true" spellcheck="true">${html}</div>`;
+    P.innerHTML = `<div class="entete-fixe">${ENTETE()}</div>` +
+      `<div id="corps" contenteditable="true" spellcheck="true">${html}</div>` +
+      (signe ? contreseing() : '');
   } else {
-    P.innerHTML = html;
+    P.innerHTML = html + (signe ? contreseing() : '');
   }
   $('#voile').hidden = false;
   $('#barre-edition').hidden = !editable;
@@ -1584,7 +1716,7 @@ function relireDate(iso){
 
 function vueConvocation(){
   const T = E.tenue;
-  $('#v-convoc').innerHTML = `
+  $('#v-convoc').innerHTML = `${avertirSgc()}
   <div class="bloc"><header><div>
     <h2>Préparer la convocation</h2>
     <p class="sous">Trois choses à remplir : la date, l'ordre du jour, les agapes.
@@ -1633,6 +1765,12 @@ function vueConvocation(){
         ${champ('lieuAdresse','Adresse','text')}
         ${champ('lieuCp','Code postal','text')}
         ${champ('lieuVille','Ville','text')}
+        ${champ('lieuGps','Point GPS','text',
+          'Deux nombres séparés par une virgule, relevés sur place — ' +
+          'par exemple 43.512340, 5.398760. Sur un téléphone : ouvrez le plan ' +
+          'à l’endroit du Temple, appuyez longuement dessus, et copiez les ' +
+          'coordonnées qui s’affichent. Laissé vide, la convocation porte ' +
+          'un lien vers l’adresse.')}
         ${champ('agapesTraiteur','Mention des agapes','text')}
         ${champ('adage','Adage','text')}
         ${champ('contact','Contacts','text')}
@@ -1645,9 +1783,31 @@ function vueConvocation(){
 <script>
 'use strict';
 /* ── La convocation imprimable ──────────────────────────────────── */
+/* ── OÙ SE TROUVE LE TEMPLE ────────────────────────────────────────
+   Deux cas, et ils ne disent pas la même chose.
+
+   Le point GPS a été relevé : on le donne, et le lien y mène
+   exactement. Aucun doute sur le portail à pousser.
+
+   Il n'a pas été relevé : on NE L'INVENTE PAS. Le lien porte alors
+   l'adresse écrite, que le plan cherchera comme il le fait d'une
+   adresse — c'est moins précis, et cela ne prétend pas l'être. */
+function pointDuTemple(){
+  const T = E.tenue;
+  const gps = (T.lieuGps || '').trim();
+  const adresse = [T.lieuNom, T.lieuAdresse, T.lieuCp, T.lieuVille]
+    .filter(Boolean).join(', ');
+  return gps
+    ? { gps, lien: 'https://www.google.com/maps/search/?api=1&query=' +
+                   encodeURIComponent(gps) }
+    : { gps: null, lien: adresse
+        ? 'https://www.google.com/maps/search/?api=1&query=' +
+          encodeURIComponent(adresse) : null };
+}
+
 function convocation(){
   const T = E.tenue;
-  return `${ENTETE}
+  return `${ENTETE()}
   <p style="text-align:center;margin-top:6mm">L'ensemble des FF∴ et SS∴ sont convoqués à une</p>
   <h1 style="margin:2mm 0">✦&nbsp; ${ech(T.titre||TYPES[T.type])} &nbsp;✦</h1>
   <p style="text-align:center;margin-bottom:5mm">au ${RANGS[T.degre]} degré ${ech(DE[T.degre])}<br>
@@ -1655,7 +1815,11 @@ function convocation(){
     <b>${dateLongue(T.date)} à ${ech(T.heureOuv)}</b><br>
     <span style="font-size:10pt">${dateHebraique(T.date)} A∴V∴L∴</span></p>
   <p style="text-align:center;margin-bottom:6mm">
-    ${ech(T.lieuNom)}<br>${ech(T.lieuAdresse)} — ${ech(T.lieuCp)} ${ech(T.lieuVille)}</p>
+    ${ech(T.lieuNom)}<br>${ech(T.lieuAdresse)} — ${ech(T.lieuCp)} ${ech(T.lieuVille)}
+    ${(() => { const o = pointDuTemple(); if (!o.lien) return '';
+       return `<br><span style="font-size:9.5pt">${o.gps
+         ? 'Point GPS ' + ech(o.gps) + ' — ' : ''}<a href="${ech(o.lien)}"
+         >ouvrir dans un plan</a></span>`; })()}</p>
   <div class="rub" style="text-align:center">Ordre du jour</div>
   <table><tbody>${E.odj.filter(o=>o.t.trim()).map(o=>
     `<tr><td style="width:22mm;color:#7a6a3e;font-size:10pt">${ech(o.h||'')}</td>
@@ -1806,10 +1970,10 @@ function manquesPapier(){
   const rang = x => x.rangProtocole || 99;
   const gens = [...E.membres].filter(x=>manques(x).length)
     .sort((a,b)=>rang(a)-rang(b) || a.nom.localeCompare(b.nom));
-  if (!gens.length) return `${ENTETE}<h1>Fiches à compléter</h1>
+  if (!gens.length) return `${ENTETE()}<h1>Fiches à compléter</h1>
     <p>Aucune fiche n’est incomplète. Rien à demander.</p>`;
   const sansCourriel = E.membres.filter(x=>!x.email).length;
-  return `${ENTETE}<h1>Fiches à compléter</h1>
+  return `${ENTETE()}<h1>Fiches à compléter</h1>
     <p>Voici, Sœur ou Frère par Sœur ou Frère, ce qui manque au tableau de
       l’Atelier. Demandez-le, puis écrivez la réponse sur la ligne, et
       reportez-la dans le programme.</p>
@@ -1830,7 +1994,7 @@ function manquesPapier(){
 function fichePapier(){
   const x = E.membres.find(m => m.id === E.fiche); if (!x) return '';
   const l = (c,v) => v ? `<tr><td style="width:52mm;color:#5c5346">${c}</td><td>${ech(v)}</td></tr>` : '';
-  return `${ENTETE}<h1>Fiche individuelle</h1>
+  return `${ENTETE()}<h1>Fiche individuelle</h1>
     <table><tbody>
       ${l('Nom et prénoms', x.prenoms + (x.dit ? ' « '+x.dit+' »' : '') + ' ' + x.nom)}
       ${l('Statut', STATUTS[x.statut])}
@@ -2050,6 +2214,9 @@ function convocationTexte(){
   if (T.heureConv) l.push("Convocation des Officiers à " + T.heureConv + ".");
   l.push("");
   l.push(T.lieuNom); l.push(T.lieuAdresse + " — " + T.lieuCp + " " + T.lieuVille);
+  { const o = pointDuTemple();
+    if (o.gps) l.push("Point GPS : " + o.gps);
+    if (o.lien) l.push(o.lien); }
   l.push(""); l.push("ORDRE DU JOUR");
   E.odj.filter(o=>o.t.trim()).forEach(o => l.push("  " + (o.h ? o.h + "  " : "") + o.t));
   if (T.agapesOui){
@@ -2359,8 +2526,10 @@ function vueAide(){
     <p>En haut de <b>Réponses &amp; documents</b>, deux boutons :</p>
     <ol>
       <li><b class="bouton">Feuille d’émargement</b> — la feuille que chacun signe en
-        arrivant. Les noms y sont déjà, dans l’ordre. Il y a aussi des lignes vides
-        pour les visiteurs.</li>
+        arrivant. Les noms y sont déjà, dans l’ordre. Elle sort en <b>deux pages</b> :
+        les membres, puis <b>une page entière pour les Visiteurs</b>, avec dix-huit
+        lignes et la colonne « Tuilé par ». Ceux qui sont annoncés y sont déjà
+        inscrits ; les autres s’ajoutent à la main, sans jamais manquer de place.</li>
       <li><b class="bouton">Planche à tracer</b> — le compte rendu. Les présents, les
         excusés, les visiteurs et l’ordre du jour y sont déjà écrits.</li>
     </ol>
@@ -2459,7 +2628,7 @@ function vueAide(){
 
 function aidePapier(){
   const g = document.querySelector('#v-aide .guide');
-  return `${ENTETE}<h1>Mode d’emploi — Gestion de la R∴L∴ Bereshit n°00</h1>` +
+  return `${ENTETE()}<h1>Mode d’emploi — Gestion de la R∴L∴ Bereshit n°00</h1>` +
          (g ? g.innerHTML : '');
 }
 document.addEventListener('click', e => {
@@ -2621,7 +2790,7 @@ function ficheVisiteur(v){
 /* ── Documents des visiteurs ────────────────────────────────────── */
 function visiteurPapier(v){
   const l = (c,x) => x ? `<tr><td style="width:52mm;color:#5c5346">${c}</td><td>${ech(x)}</td></tr>` : '';
-  return `${ENTETE}<h1>Fiche de visiteur</h1>
+  return `${ENTETE()}<h1>Fiche de visiteur</h1>
     <table><tbody>
       ${l('Nom et prénom', (v.prenom+' '+v.nom).trim())}
       ${l('Grade', v.grade)}${l('Rite', v.rite)}
@@ -2635,7 +2804,7 @@ function visiteurPapier(v){
       reconvoquer s’il le souhaite ; elle ne sort pas de l’Atelier.</p>`;
 }
 function carnetPapier(){
-  return `${ENTETE}<h1>Carnet des visiteurs</h1>
+  return `${ENTETE()}<h1>Carnet des visiteurs</h1>
     <table><thead><tr><th>Sœur ou Frère</th><th>Grade</th><th>Loge et Orient</th>
       <th>Obédience</th><th>Contact</th></tr></thead><tbody>
       ${E.visiteurs.map(v=>`<tr><td>${ech((v.prenom+' '+v.nom).trim())}</td>
@@ -2741,7 +2910,7 @@ function tableauRegistre(){
 
 function registrePapier(){
   const l = registreVisites();
-  return `${ENTETE}<h1>Registre des visiteurs</h1>
+  return `${ENTETE()}<h1>Registre des visiteurs</h1>
     <table><thead><tr><th>Date</th><th>Sœur ou Frère</th><th>Grade</th>
       <th>Loge, Orient, Obédience</th><th>Tuilé par</th></tr></thead><tbody>
       ${l.map(x=>`<tr><td>${dateLongue(x.date)}</td>
@@ -2959,9 +3128,7 @@ function restaurer(fichier){
     const n = (paquet.donnees.membres || []).length;
     if (!confirm(`Charger cette sauvegarde ?\n\n${n} fiche(s) de membre.\n\n` +
                  `Ce qui se trouve actuellement dans ce navigateur sera remplacé.`)) return;
-    E = paquet.donnees;
-    E.visiteurs = E.visiteurs || []; E.envoyes = E.envoyes || {};
-    E.amies = E.amies || [];
+    E = complet(paquet.donnees);
     (async () => {
       for (const [cle, piece] of Object.entries(paquet.pieces || {})){
         try { await PIECES.poser(cle, piece); } catch (err) {}
@@ -3170,9 +3337,7 @@ function adopterOuDemander(corps){
       "Le registre de l’Atelier ne dit pas la même chose que cet appareil.");
     return;
   }
-  E = distant;
-  E.visiteurs = E.visiteurs || []; E.envoyes = E.envoyes || {};
-  E.amies = E.amies || [];
+  E = complet(distant);
   persister(); majPied();
 }
 
@@ -3274,9 +3439,7 @@ function annoncerConflit(corps, entete){
     "vous n'aurez pas tranché.\n\n" +
     "Dans les deux cas, rien n'est effacé sans votre réponse.");
   if (garder && corps.donnees){
-    E = corps.donnees;
-    E.visiteurs = E.visiteurs || []; E.envoyes = E.envoyes || {};
-    E.amies = E.amies || [];
+    E = complet(corps.donnees);
     SERVEUR.version = corps.version;
     SERVEUR.dernierEchec = null;
     persister(); mettreAlAbri(); dessiner();
@@ -4167,9 +4330,9 @@ function agendaPourDegre(){
 function agendaPapier(){
   const l = prochainesVisites()
     .filter(x => x.c.date && x.c.date >= new Date().toISOString().slice(0,10));
-  if (!l.length) return `${ENTETE}<h1>Agenda des visites</h1>
+  if (!l.length) return `${ENTETE()}<h1>Agenda des visites</h1>
     <p><i>Aucune visite n’est annoncée à ce jour.</i></p>`;
-  return `${ENTETE}<h1>Agenda des visites</h1>
+  return `${ENTETE()}<h1>Agenda des visites</h1>
   <p>Les Ateliers amis qui nous reçoivent. <b>On ne visite qu’une tenue dont le degré
      n’excède pas le sien</b> : la colonne « ouverte à » le rappelle pour chaque date.
      Annoncez-vous auprès du contact indiqué avant de vous y rendre.</p>
