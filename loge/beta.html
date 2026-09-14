@@ -494,7 +494,15 @@ function majAlerteMemoire(){
     'le fichier est votre seule copie. Si vous êtes en navigation privée, ' +
     'ouvrez la page dans une fenêtre ordinaire.';
 }
-function garder(){ persister(); majPied(); }
+/* Le lien avec le serveur est déclaré dans un bloc plus bas : au tout
+   premier dessin, il n'existe pas encore. Sans cette garde, la page
+   s'ouvrait sur une erreur — et une erreur au premier dessin arrête
+   tout ce qui suit. */
+function garder(){
+  persister();
+  if (typeof envoyerAuServeur === 'function') envoyerAuServeur();
+  majPied();
+}
 /* « quand » n'est pas toujours maintenant : une sauvegarde qu'on
    recharge date du jour où elle a été faite, non du jour où on l'ouvre.
    Annoncer « à l'instant » pour un fichier d'avant-hier tromperait sur
@@ -507,6 +515,34 @@ function mettreAlAbri(quand){
 /* Le témoin du pied de page. Il ne crie que s'il y a de quoi. */
 function majPied(){
   const z = document.getElementById('etat-sauvegarde'); if (!z) return;
+
+  /* Avec le serveur, la phrase change de sens : ce n'est plus « pensez
+     à sauvegarder », c'est « c'est enregistré ». Laisser l'ancienne
+     ferait chercher un geste devenu inutile — et la nouvelle serait un
+     mensonge si le serveur venait à manquer, d'où les deux cas de
+     panne, dits sans détour. */
+  if (typeof SERVEUR === 'object' && (SERVEUR.actif || SERVEUR.dernierEchec)){
+    if (SERVEUR.dernierEchec === 'conflit'){
+      z.innerHTML = `<span class="p p-al">Deux versions</span>` +
+        `<span class="qual" style="margin-left:8px">quelqu’un a enregistré de son ` +
+        `côté : votre prochaine modification tranchera</span>`;
+    } else if (SERVEUR.dernierEchec === 'session'){
+      z.innerHTML = `<span class="p p-al">Session expirée</span>` +
+        `<span class="qual" style="margin-left:8px">rechargez la page pour ` +
+        `enregistrer de nouveau</span>`;
+    } else if (SERVEUR.dernierEchec === 'reseau'){
+      z.innerHTML = `<span class="p p-att">Hors ligne</span>` +
+        `<span class="qual" style="margin-left:8px">votre travail est sur cet ` +
+        `appareil ; il repartira au retour du réseau</span>`;
+    } else {
+      z.innerHTML = `<span class="p p-ok">Enregistré</span>` +
+        `<span class="qual" style="margin-left:8px">sur le registre de l’Atelier` +
+        `${SERVEUR.nom ? ' — ' + ech(SERVEUR.nom) : ''}. ` +
+        `Vous n’avez rien à sauvegarder.</span>`;
+    }
+    return;
+  }
+
   if (!ilYADuTravail()){ z.textContent = ''; return; }
   if (aSauver()){
     const d = depuis(E.sauveLe);
@@ -2414,6 +2450,11 @@ dessiner();
    qu'il écrit. Ce que nous choisissons, c'est de ne pas le déranger
    pour rien. */
 window.addEventListener('beforeunload', e => {
+  /* Le serveur a tout : rien ne se perd en fermant, et déranger pour
+     rien apprend à cliquer « oui » sans lire. On ne retient que s'il
+     reste vraiment quelque chose qui n'est nulle part ailleurs. */
+  if (typeof SERVEUR === 'object' && SERVEUR.actif
+      && !SERVEUR.dernierEchec && !SERVEUR.enCours) return;
   if (!aSauver()) return;
   e.preventDefault(); e.returnValue = '';
 });
@@ -3011,6 +3052,151 @@ document.addEventListener('click', e => {
    profit d'une vraie authentification — celle qu'écrit la migration
    002_acces.sql.
 ═══════════════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════════
+   LE SERVEUR, QUAND IL EST LÀ
+
+   Le programme sait travailler seul — il l'a toujours fait, et il doit
+   continuer : ouvert depuis un fichier, sans réseau, il reste entier.
+   Mais sur le site, un serveur l'attend, et tout change pour qui n'est
+   pas à l'aise avec un ordinateur :
+
+     — plus de fichier à recevoir, à retrouver, à charger ;
+     — plus de sauvegarde à PENSER avant de fermer ;
+     — le Trésorier voit le travail de la Secrétaire, et l'inverse.
+
+   Ce qu'il enregistre part tout seul, à chaque geste. Le fichier de
+   sauvegarde demeure — c'est la copie qu'on emporte —, mais il cesse
+   d'être la seule chose qui sépare une soirée de travail du néant.
+
+   ► RIEN NE CASSE QUAND LE SERVEUR MANQUE. Chaque appel échoue en
+     silence vers le fonctionnement d'avant : la page marche, le
+     stockage local reprend la main, et l'on DIT que le partage est
+     hors service plutôt que de le laisser croire.
+═══════════════════════════════════════════════════════════════════ */
+const SERVEUR = { actif: false, version: 0, nom: null, charge: null,
+                  enCours: false, aRenvoyer: false, dernierEchec: null };
+
+async function appelServeur(chemin, options = {}){
+  const r = await fetch('/api/' + chemin, {
+    credentials: 'same-origin',
+    headers: { 'content-type': 'application/json' },
+    ...options
+  });
+  let corps = null;
+  try { corps = await r.json(); } catch (e) {}
+  return { statut: r.status, corps };
+}
+
+/* Entrer par le serveur. Rend le rôle qu'il accorde, ou null s'il n'y
+   a pas de serveur ici — auquel cas la porte reprend son ancienne
+   mécanique, celle de l'empreinte dans la page. */
+async function entrerParServeur(mdp){
+  try {
+    const { statut, corps } = await appelServeur('entrer', {
+      method: 'POST', body: JSON.stringify({ mdp })
+    });
+    if (statut === 200 && corps && corps.charge){
+      SERVEUR.actif = true; SERVEUR.nom = corps.nom; SERVEUR.charge = corps.charge;
+      return corps.charge;
+    }
+    if (statut === 401) return 'refus';      // le serveur a répondu : il refuse
+    return null;                             // pas de serveur : on se rabat
+  } catch (e) { return null; }
+}
+
+/* Lire l'état de l'Atelier. C'est ce qui remplace le fichier. */
+async function lireEtatServeur(){
+  try {
+    const { statut, corps } = await appelServeur('etat');
+    if (statut !== 200 || !corps) return false;
+    SERVEUR.version = corps.version || 0;
+    if (corps.donnees && typeof corps.donnees === 'object'){
+      E = corps.donnees;
+      E.visiteurs = E.visiteurs || []; E.envoyes = E.envoyes || {};
+      E.amies = E.amies || [];
+      persister();
+    }
+    return true;
+  } catch (e) { return false; }
+}
+
+/* Écrire. On ne bombarde pas le serveur à chaque frappe : un envoi est
+   en cours, le suivant attend, et un seul rattrapage suffit — ce qui
+   compte est le dernier état, non la suite des états. */
+let minuterieEnvoi = null;
+function envoyerAuServeur(){
+  if (!SERVEUR.actif) return;
+  clearTimeout(minuterieEnvoi);
+  minuterieEnvoi = setTimeout(pousserEtat, 900);
+}
+
+async function pousserEtat(){
+  if (!SERVEUR.actif) return;
+  if (SERVEUR.enCours){ SERVEUR.aRenvoyer = true; return; }
+  SERVEUR.enCours = true;
+  try {
+    const { statut, corps } = await appelServeur('etat', {
+      method: 'PUT',
+      body: JSON.stringify({ donnees: sansNavigation(E), version: SERVEUR.version })
+    });
+    if (statut === 200 && corps){
+      SERVEUR.version = corps.version;
+      SERVEUR.dernierEchec = null;
+      mettreAlAbri();
+    } else if (statut === 409 && corps){
+      SERVEUR.dernierEchec = 'conflit';
+      annoncerConflit(corps);
+    } else if (statut === 401){
+      SERVEUR.actif = false; SERVEUR.dernierEchec = 'session';
+      majPied();
+      alert("Votre session a expiré.\n\nRechargez la page et entrez de nouveau " +
+            "votre mot de passe. Votre travail est conservé sur cet appareil.");
+    } else {
+      SERVEUR.dernierEchec = 'reseau'; majPied();
+    }
+  } catch (e) {
+    SERVEUR.dernierEchec = 'reseau'; majPied();
+  } finally {
+    SERVEUR.enCours = false;
+    if (SERVEUR.aRenvoyer){ SERVEUR.aRenvoyer = false; pousserEtat(); }
+  }
+}
+
+/* Ce qui ne regarde que l'écran ne part pas au serveur : l'onglet
+   ouvert par la Secrétaire n'a pas à déplacer celui du Trésorier. */
+function sansNavigation(e){
+  const copie = {};
+  for (const [k, v] of Object.entries(e))
+    if (!['onglet','fiche','amieOuverte','visiteurOuvert','sigSauvee','sauveLe']
+        .includes(k)) copie[k] = v;
+  return copie;
+}
+
+/* Quelqu'un a écrit pendant qu'on écrivait. On ne tranche PAS à sa
+   place : on dit ce qui s'est passé, et on laisse choisir. Écraser
+   silencieusement le travail d'un autre est exactement ce que ce
+   serveur existe pour empêcher. */
+function annoncerConflit(corps){
+  const quand = corps.modifie_le ? ' (' + corps.modifie_le + ')' : '';
+  const garder = confirm(
+    "Quelqu'un d'autre a enregistré pendant que vous travailliez" + quand + ".\n\n" +
+    "• OK : je reprends SA version. Ce que vous venez de saisir sera perdu.\n" +
+    "• Annuler : je garde VOTRE version à l'écran. Rien n'est envoyé tant que " +
+    "vous n'aurez pas tranché.\n\n" +
+    "Dans les deux cas, rien n'est effacé sans votre réponse.");
+  if (garder && corps.donnees){
+    E = corps.donnees;
+    E.visiteurs = E.visiteurs || []; E.envoyes = E.envoyes || {};
+    E.amies = E.amies || [];
+    SERVEUR.version = corps.version;
+    SERVEUR.dernierEchec = null;
+    persister(); mettreAlAbri(); dessiner();
+  } else {
+    SERVEUR.version = corps.version;   // pour pouvoir réessayer sciemment
+    majPied();
+  }
+}
+
 (function(){
   /* ► LA PORTE EST OUVERTE : le programme est en ligne.
 
@@ -3079,6 +3265,8 @@ document.addEventListener('click', e => {
 
   function appliquerRole(nom){
     const r = ROLES[nom]; if (!r) return;
+    /* Le serveur, lui, nomme la charge de qui entre : la page n'a plus
+       qu'à en tirer les onglets. */
     window.ROLE = nom;
     window.ONGLETS_DU_ROLE = r.onglets;
     window.DEPART_DU_ROLE = r.depart;
@@ -3122,13 +3310,37 @@ document.addEventListener('click', e => {
     /* Sans accents ni majuscules : il ou elle le tapera peut-être sur un
        téléphone, et l'exactitude de la casse n'ajoute rien à une
        protection qui n'en est pas une. */
-    const saisi = champ.value.trim().toLowerCase();
-    let trouve = null;
-    try {
-      const e1 = await empreinte(saisi);
-      trouve = Object.keys(ROLES).find(k => ROLES[k].empreinte === e1) || null;
-    } catch (err) { trouve = null; }     // contexte sans WebCrypto
-    if (trouve){ erreur.hidden = true; ouvrirAppli(trouve); }
+    const saisi = champ.value.trim();
+    const bouton = e.target.querySelector('button[type=submit]');
+    if (bouton){ bouton.disabled = true; bouton.textContent = 'Ouverture…'; }
+
+    /* LE SERVEUR D'ABORD. Il détient les vraies empreintes, salées et
+       hors de portée ; celle de la page ne vaut que là où il n'y a pas
+       de serveur — un fichier ouvert depuis l'ordinateur. Interroger
+       la page d'abord reviendrait à préférer la serrure de façade à la
+       vraie, sur le seul site où la vraie existe. */
+    let trouve = await entrerParServeur(saisi);
+
+    if (trouve === 'refus'){ trouve = null; }
+    else if (trouve === null){
+      try {
+        const e1 = await empreinte(saisi.toLowerCase());
+        trouve = Object.keys(ROLES).find(k => ROLES[k].empreinte === e1) || null;
+      } catch (err) { trouve = null; }   // contexte sans WebCrypto
+    }
+
+    if (bouton){ bouton.disabled = false; bouton.textContent = 'Entrer'; }
+    if (trouve){
+      erreur.hidden = true;
+      ouvrirAppli(trouve);
+      if (SERVEUR.actif){
+        /* Le tableau vient du serveur : c'est ce qui dispense la Sœur
+           Secrétaire de recevoir, retrouver et charger un fichier. */
+        const lu = await lireEtatServeur();
+        if (lu){ mettreAlAbri(); dessiner(); }
+        majPied();
+      }
+    }
     else {
       erreur.hidden = false; champ.value = ''; champ.focus();
       champ.style.borderColor = '#E08A80';
