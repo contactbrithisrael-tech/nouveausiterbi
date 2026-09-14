@@ -162,6 +162,11 @@ tr.cliquable{cursor:pointer}
            letter-spacing:.06em;text-transform:uppercase;color:#5c5346;
            border-bottom:.6pt solid #b9a25e;padding:2mm 1mm}
 .papier td{padding:3.2mm 1mm;border-bottom:.4pt dotted #bbb2a0;font-size:10.5pt}
+/* Une liste de points n'a pas besoin de l'air qu'on laisse autour
+   d'un chiffre : à huit points, l'ordre du jour au pas ordinaire
+   poussait la convocation sur une seconde page. */
+.papier .serre td{padding:1.6mm 1mm}
+.papier table.serre{margin-top:2.5mm}
 .papier .sig{width:52mm;border-bottom:.4pt solid #999}
 /* Une feuille qui doit commencer sur une page neuve. À l'écran, où il
    n'y a pas de pages, on montre la coupure — sans quoi on croirait
@@ -1425,17 +1430,20 @@ function avertirSgc(){
     l’Atelier la reprendront d’eux-mêmes.</p>`;
 }
 
+/* Il tient en deux lignes et un trait. Ce n'est pas de l'économie :
+   une convocation qui déborde sur une seconde page à cause du
+   contreseing arrive en deux feuillets dans douze boîtes aux lettres,
+   et le second ne porte qu'une signature. */
 function contreseing(){
   const n = nomSgc();
-  return `<div class="contreseing" style="margin-top:10mm;page-break-inside:avoid">
-    <div class="rub" style="margin:0 0 1mm">Vu et contresigné</div>
-    <p style="margin:0;text-align:left">Le Souverain Grand Commandeur
-       du Rite Brith Israël${n ? ',' : ''}</p>
-    ${n ? `<p style="margin:0;text-align:left"><i>${ech(n)}</i></p>` : ''}
-    <div class="sig" style="margin-top:12mm"></div></div>`;
+  return `<div class="contreseing" style="margin-top:5mm;page-break-inside:avoid">
+    <p style="margin:0;text-align:left;font-size:10pt">
+      <b>Vu et contresigné</b> — Le Souverain Grand Commandeur du Rite
+      Brith Israël${n ? ', <i>' + ech(n) + '</i>' : ''}</p>
+    <div class="sig" style="margin-top:8mm"></div></div>`;
 }
 
-function ENTETE(){ return `<table style="width:100%;border:0;margin:0 0 5mm"><tr>
+function ENTETE(){ return `<table style="width:100%;border:0;margin:0 0 3.5mm"><tr>
   <td style="width:24mm;border:0;padding:0"><img src="${SCEAU_RITE}" style="width:22mm" alt=""></td>
   <td style="border:0;padding:0;text-align:center">
     <div class="f">A∴L∴G∴D∴G∴A∴D∴L∴U∴ &nbsp;—&nbsp; ב∴ס∴ד∴</div>
@@ -1449,7 +1457,7 @@ function ENTETE(){ return `<table style="width:100%;border:0;margin:0 0 5mm"><tr
   </td>
   <td style="width:24mm;border:0;padding:0;text-align:right"><img src="${LOGO_LOGE}" style="width:22mm" alt=""></td>
 </tr></table>
-<hr style="border:0;border-top:.5pt solid #b9a25e;margin:0 0 5mm">`; }
+<hr style="border:0;border-top:.5pt solid #b9a25e;margin:0 0 3.5mm">`; }
 
 function emargement(){
   const l = convocables().sort((a,b)=>(a.rangProtocole||99)-(b.rangProtocole||99))
@@ -1470,10 +1478,15 @@ function emargement(){
    écrit dans la marge ne se retrouve pas.
 
    Elle a donc sa page. Elle recommence à l'en-tête, elle porte son
-   propre titre, et elle offre DIX-HUIT lignes : de quoi tenir une
-   Tenue d'installation sans jamais manquer de place. Les Visiteurs
-   déjà annoncés y sont pré-inscrits ; le reste attend la plume. */
-const LIGNES_VISITEURS = 18;
+   propre titre, et elle offre TREIZE lignes — le nombre qui remplit
+   une A4 sans déborder, en-tête et contreseing compris. Ce n'est pas
+   un chiffre choisi au jugé : à dix-huit, le contreseing tombait seul
+   sur une troisième page, soit une feuille de plus à imprimer pour
+   une signature. Treize lignes manuscrites, c'est déjà une Tenue
+   d'installation. Les Visiteurs annoncés y sont pré-inscrits ; s'ils
+   sont plus de treize, le tableau s'allonge de lui-même — et c'est
+   alors la seule raison légitime de passer à une page de plus. */
+const LIGNES_VISITEURS = 13;
 
 function emargementVisiteurs(){
   const vus = visiteursDeLaTenue();
@@ -1488,10 +1501,9 @@ function emargementVisiteurs(){
   return `<div class="saut"></div>${ENTETE()}
     <h1>Feuille d’émargement — Visiteurs<br>Tenue du ${dateLongue(E.tenue.date)} —
         ${dateHebraique(E.tenue.date)} A∴V∴L∴</h1>
-    <p>Toute Sœur ou tout Frère Visiteur signe ici, <b>après avoir été tuilé</b>.
-       Le nom de qui l’a tuilé est porté en regard : c’est lui qui répond de
-       son introduction dans le Temple. Les Visiteurs annoncés d’avance sont
-       déjà inscrits ; les autres s’ajoutent à la main.</p>
+    <p>Toute Sœur ou tout Frère Visiteur signe ici, <b>après avoir été tuilé</b> —
+       le nom de qui l’a tuilé est porté en regard, car c’est lui qui répond de
+       son introduction dans le Temple.</p>
     <table><thead><tr>
       <th>Nom et prénom</th><th>Grade</th>
       <th>Loge, Orient, Obédience</th><th>Tuilé par</th><th>Signature</th>
@@ -1939,27 +1951,27 @@ function pointDuTemple(){
 function convocation(){
   const T = E.tenue;
   return `${ENTETE()}
-  <p style="text-align:center;margin-top:6mm">L'ensemble des FF∴ et SS∴ sont convoqués à une</p>
+  <p style="text-align:center;margin-top:4mm">L'ensemble des FF∴ et SS∴ sont convoqués à une</p>
   <h1 style="margin:2mm 0">✦&nbsp; ${ech(T.titre||TYPES[T.type])} &nbsp;✦</h1>
   <p style="text-align:center;margin-bottom:5mm">au ${RANGS[T.degre]} degré ${ech(DE[T.degre])}<br>
     <span style="font-size:10pt">${ech(COURT(T.degre))}</span><br>
     <b>${dateLongue(T.date)} à ${ech(T.heureOuv)}</b><br>
     <span style="font-size:10pt">${dateHebraique(T.date)} A∴V∴L∴</span></p>
-  <p style="text-align:center;margin-bottom:6mm">
+  <p style="text-align:center;margin-bottom:4mm">
     ${ech(T.lieuNom)}<br>${ech(T.lieuAdresse)} — ${ech(T.lieuCp)} ${ech(T.lieuVille)}
     ${(() => { const o = pointDuTemple(); if (!o.lien) return '';
        return `<br><span style="font-size:9.5pt">${o.gps
          ? 'Point GPS ' + ech(o.gps) + ' — ' : ''}<a href="${ech(o.lien)}"
          >ouvrir dans un plan</a></span>`; })()}</p>
-  <div class="rub" style="text-align:center">Ordre du jour</div>
-  <table><tbody>${E.odj.filter(o=>o.t.trim()).map(o=>
+  <div class="rub" style="text-align:center;margin-top:3.5mm">Ordre du jour</div>
+  <table class="serre"><tbody>${E.odj.filter(o=>o.t.trim()).map(o=>
     `<tr><td style="width:22mm;color:#7a6a3e;font-size:10pt">${ech(o.h||'')}</td>
      <td>${ech(o.t)}</td></tr>`).join('')}</tbody></table>
   ${T.agapesOui?`<p style="margin-top:5mm"><b>Agapes rituelles.</b> ${ech(T.agapesTraiteur)} —
     le triangle est de ${ech(T.agapesPrix)} €. Inscription avant le
     ${dateLongue(T.agapesLimite)}.</p>`:''}
-  ${T.adage?`<p style="text-align:center;font-style:italic;margin-top:7mm">« ${ech(T.adage)} »</p>`:''}
-  ${T.contact?`<p style="font-size:9.5pt;color:#5c5346;margin-top:7mm">${ech(T.contact)}</p>`:''}`;
+  ${T.adage?`<p style="text-align:center;font-style:italic;margin-top:5mm">« ${ech(T.adage)} »</p>`:''}
+  ${T.contact?`<p style="font-size:9.5pt;color:#5c5346;margin-top:5mm">${ech(T.contact)}</p>`:''}`;
 }
 
 /* ── Saisie du formulaire : on écrit dans E sans redessiner ──────── */
