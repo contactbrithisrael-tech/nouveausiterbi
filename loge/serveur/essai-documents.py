@@ -41,11 +41,11 @@ with sync_playwright() as p:
         return h, t
 
     # ══ 1. LA QUALITÉ ET LE CONTRESEING ═════════════════════════════
-    v(pg.evaluate("nomSgc()") == "Lamed ELOUL, 33°",
-      "le Souverain Grand Commandeur est lu au Tableau, non écrit dans la page",
-      pg.evaluate("nomSgc()"))
-    v(pg.evaluate("souverainGrandCommandeur() && souverainGrandCommandeur().id") == 12,
-      "c'est bien la fiche qui porte la qualité")
+    # LA CHARGE S'IMPRIME, LE NOM NON. Une charge se transmet ; un
+    # contreseing vaut par la fonction, et la main qui signe dit le
+    # reste. Le Tableau d'épreuve porte pourtant un membre marqué
+    # « Souverain Grand Commandeur » : c'est exprès, pour vérifier
+    # qu'aucun nom ne remonte sur le papier.
 
     for nom, bouton, onglet in [
         ("la convocation",          "#imp-convoc", "#t-convoc"),
@@ -57,16 +57,46 @@ with sync_playwright() as p:
         v("Vu et contresigné" in t, f"{nom} porte le contreseing", t[-200:])
         v("Souverain Grand Commandeur du Rite Brith Israël" in t,
           f"{nom} porte sa qualité en toutes lettres")
-        v("Lamed ELOUL" in t, f"{nom} le nomme", t[-200:])
+        v("Souverain Grand Commandeur 33°" in t,
+          f"{nom} porte le trente-troisième degré", t[-200:])
+        pied = t.split("Vu et contresigné")[-1]
+        v("ELOUL" not in pied and "Lamed" not in pied,
+          f"{nom} : AUCUN NOM ne remonte au contreseing", pied[:160])
         v(t.count("Vu et contresigné") == 1,
           f"{nom} ne le porte qu'une fois", t.count("Vu et contresigné"))
         v('class="sig"' in h.split("Vu et contresigné")[-1],
           f"{nom} laisse une ligne pour la signature")
 
-    # l'en-tête aussi
-    h, t = doc("#imp-convoc", "#t-convoc")
-    v("sous l’autorité du Souverain Grand Commandeur" in t,
+    # ── L'EN-TÊTE : l'autorité, et ב∴ס∴ד∴ en haut à droite ─────────
+    pg.click("#t-convoc"); pg.wait_for_timeout(400)
+    pg.click("#imp-convoc"); pg.wait_for_timeout(900)
+    t = pg.inner_text("#papier")
+    v("sous l’autorité du Souverain Grand Commandeur 33°" in t,
       "l'en-tête de chaque document annonce son autorité")
+    v(t.count("ב∴ס∴ד∴") == 1,
+      "ב∴ס∴ד∴ figure UNE fois — il n'est pas écrit deux fois sur la page",
+      t.count("ב∴ס∴ד∴"))
+    # on mesure PENDANT que le document est ouvert : une fois refermé,
+    # le papier n'a plus ni largeur ni position, et tout mesurerait zéro.
+    place = pg.evaluate("""() => {
+      const P = document.getElementById('papier');
+      const rp = P.getBoundingClientRect();
+      const el = [...P.querySelectorAll('div')]
+        .find(d => d.textContent.trim() === 'ב∴ס∴ד∴');
+      if (!el) return null;
+      const r = el.getBoundingClientRect();
+      const entete = P.querySelector('table').getBoundingClientRect();
+      return { centre: Math.round(r.left + r.width / 2 - rp.left),
+               milieu: Math.round(rp.width / 2),
+               depuisLeHaut: Math.round(r.top - entete.top),
+               hauteurEntete: Math.round(entete.height) };
+    }""")
+    pg.click("#fermer"); pg.wait_for_timeout(250)
+    v(place is not None, "on le retrouve dans l'en-tête", place)
+    v(place and place["centre"] > place["milieu"],
+      "IL EST À DROITE : son milieu passe celui du feuillet", place)
+    v(place and place["depuisLeHaut"] <= 6,
+      "ET EN HAUT : rien de l'en-tête ne le précède", place)
 
     # ── la planche s'enregistre SANS le contreseing : sans quoi il
     #    s'ajouterait de nouveau à chaque ouverture
