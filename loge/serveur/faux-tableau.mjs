@@ -37,8 +37,9 @@ const membres = NOMS.map((nom, i) => {
                m.tel = '06 00 00 00 ' + String(n).padStart(2, '0');
                m.adresse = `${n} rue de l’Épreuve`; m.ville = 'VENTABREN';
                m.naissance = `19${60 + n}-0${(n % 9) + 1}-1${n % 9}`; }
-  /* Un Souverain Grand Commandeur au Tableau : c'est de là que les
-     documents tirent sa qualité et son contreseing. */
+  /* Un membre marqué « Souverain Grand Commandeur » : les documents
+     ne doivent PAS reprendre son nom — la charge s'imprime, le nom
+     non. Il est là pour que l'épreuve puisse le vérifier. */
   if (n === 12){ m.grade = '33°'; m.qualite = 'Souverain Grand Commandeur'; }
   if (n === 3) m.office = 'venerable';
   if (n === 4) m.office = 'premier_surveillant';

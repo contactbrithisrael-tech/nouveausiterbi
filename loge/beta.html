@@ -816,7 +816,7 @@ function vueTenue(){
       <td><button class="btn btn-mini" data-agape="${x.id}" ${r!=='present'?'disabled':''}
             aria-pressed="${!!E.agapes[x.id]}">${E.agapes[x.id]?'✓ Aux agapes':'Aux agapes'}</button></td>
     </tr>`;}).join('');
-  $('#v-tenue').innerHTML = `${avertirSgc()}
+  $('#v-tenue').innerHTML = `
     <div class="bloc"><header><div>
       <h2>${ech(E.tenue.titre||TYPES[E.tenue.type])} — ${dateLongue(E.tenue.date)}</h2>
       <p class="sous">${RANGS[E.tenue.degre]} degré de ${ech(DEGRES[E.tenue.degre])} ·
@@ -1388,74 +1388,50 @@ const LOGO_LOGE  = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAL4AAAC+CAYAAA
 /* ═══════════════════════════════════════════════════════════════════
    LA QUALITÉ DU SOUVERAIN GRAND COMMANDEUR
 
-   Tout document de Bereshit porte la qualité du Souverain Grand
-   Commandeur et son contreseing. Son nom n'est PAS écrit dans ce
-   fichier : il est servi en clair sur le site, et ce qui y est écrit
-   ne se corrige plus. On le lit au Tableau de la Loge, où sa qualité
-   est portée comme celle de chacun.
+   Tout document de Bereshit porte sa qualité — en tête, sous la
+   mention du Suprême Conseil — et son contreseing au pied.
 
-   Rien n'est deviné : si aucune fiche ne porte cette qualité, le
-   contreseing s'imprime avec une ligne vide — et l'écran de la Tenue
-   le dit à la Secrétaire, plutôt que de la laisser envoyer un
-   document muet sans s'en apercevoir. */
-const QUALITE_SGC = /souverain\s+grand\s+commandeur/i;
-
-function souverainGrandCommandeur(){
-  const porte = t => typeof t === 'string' && QUALITE_SGC.test(
-    t.normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
-  return (E.membres || []).find(m =>
-    porte(m.qualite) || porte(m.dignite) || porte(m.grade)) || null;
-}
-
-function nomSgc(){
-  const s = souverainGrandCommandeur();
-  if (!s) return '';
-  const n = `${s.prenoms || ''} ${s.nom || ''}`.trim();
-  return n + (s.grade && !QUALITE_SGC.test(s.grade) ? ', ' + s.grade : '');
-}
+   LA CHARGE S'IMPRIME, LE NOM NON. Ce n'est pas une précaution
+   technique, c'est la règle : une charge se transmet, un contreseing
+   vaut par la fonction, et la main qui signe dit le reste. Accessoirement
+   cela résout tout : ce fichier est servi en clair sur un dépôt public,
+   il n'y avait pas à y faire figurer le nom d'un homme, ni à aller le
+   chercher dans le Tableau, ni à prévenir la Secrétaire quand il y
+   manquait. Il n'y a plus rien à configurer, et plus rien à oublier. */
 
 /* Le contreseing, au pied de CHAQUE document — il est posé par
    ouvrir(), le seul passage obligé : ainsi aucun document nouveau ne
    pourra l'oublier. */
-/* Un contreseing sans nom ne se remarque qu'une fois le document
-   parti. On le dit ici, sur l'écran où l'on prépare l'envoi. */
-function avertirSgc(){
-  if (!(E.membres || []).length) return '';   // tableau pas encore chargé
-  if (nomSgc()) return '';
-  return `<p class="note" style="background:var(--alerte-fond);
-      border-left-color:var(--alerte);margin:0 0 16px">
-    <b>Le contreseing s’imprimera sans nom.</b> Aucune fiche du Tableau ne porte
-    la qualité de Souverain Grand Commandeur. Ouvrez sa fiche et inscrivez
-    « Souverain Grand Commandeur » dans sa qualité : tous les documents de
-    l’Atelier la reprendront d’eux-mêmes.</p>`;
-}
-
 /* Il tient en deux lignes et un trait. Ce n'est pas de l'économie :
    une convocation qui déborde sur une seconde page à cause du
    contreseing arrive en deux feuillets dans douze boîtes aux lettres,
    et le second ne porte qu'une signature. */
 function contreseing(){
-  const n = nomSgc();
   return `<div class="contreseing" style="margin-top:5mm;page-break-inside:avoid">
     <p style="margin:0;text-align:left;font-size:10pt">
       <b>Vu et contresigné</b> — Le Souverain Grand Commandeur du Rite
-      Brith Israël${n ? ', <i>' + ech(n) + '</i>' : ''}</p>
+      Brith Israël 33°</p>
     <div class="sig" style="margin-top:8mm"></div></div>`;
 }
 
 function ENTETE(){ return `<table style="width:100%;border:0;margin:0 0 3.5mm"><tr>
   <td style="width:24mm;border:0;padding:0"><img src="${SCEAU_RITE}" style="width:22mm" alt=""></td>
   <td style="border:0;padding:0;text-align:center">
-    <div class="f">A∴L∴G∴D∴G∴A∴D∴L∴U∴ &nbsp;—&nbsp; ב∴ס∴ד∴</div>
+    <div class="f">A∴L∴G∴D∴G∴A∴D∴L∴U∴</div>
     <div class="c">Suprême Conseil Mondial du Rite BRITH ISRAËL</div>
     <div class="o" style="font-style:normal;letter-spacing:.07em;font-size:7.5pt;text-transform:uppercase">Francs-Maçons de Tradition Hébraïque &amp; Kabbalistique</div>
-    ${nomSgc() ? `<div class="o">sous l’autorité du Souverain Grand Commandeur,
-      ${ech(nomSgc())}</div>` : ''}
+    <div class="o">sous l’autorité du Souverain Grand Commandeur 33°</div>
     <div class="f" style="margin-top:1mm">חי חי חי ויקיים &nbsp;—&nbsp; HAI HAI HAI VEQAYAM</div>
     <div class="a" style="margin-top:2.5mm">R∴L∴ BERESHIT &nbsp;בראשית&nbsp; n°00</div>
     <div class="o">Loge Mère du Rite — Atelier Mixte à l'O∴ de l'Alliance</div>
   </td>
-  <td style="width:24mm;border:0;padding:0;text-align:right"><img src="${LOGO_LOGE}" style="width:22mm" alt=""></td>
+  <!-- ב∴ס∴ד∴ se porte en haut et à droite du feuillet. Il figurait
+       jusqu'ici au milieu, accolé à la formule maçonnique ; l'écrire
+       aux deux endroits ferait deux fois la même invocation sur la
+       même page. Il a donc changé de place, il ne s'est pas ajouté. -->
+  <td style="width:24mm;border:0;padding:0;text-align:right;vertical-align:top">
+    <div class="f" style="margin-bottom:1.5mm">ב∴ס∴ד∴</div>
+    <img src="${LOGO_LOGE}" style="width:22mm" alt=""></td>
 </tr></table>
 <hr style="border:0;border-top:.5pt solid #b9a25e;margin:0 0 3.5mm">`; }
 
@@ -1774,7 +1750,7 @@ function relireDate(iso){
 
 function vueConvocation(){
   const T = E.tenue;
-  $('#v-convoc').innerHTML = `${avertirSgc()}
+  $('#v-convoc').innerHTML = `
   <div class="bloc"><header><div>
     <h2>Préparer la convocation</h2>
     <p class="sous">Trois choses à remplir : la date, l'ordre du jour, les agapes.
