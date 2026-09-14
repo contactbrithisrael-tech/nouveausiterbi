@@ -22,6 +22,7 @@ sont inventés.
 
 ```sh
 node loge/serveur/essai-api.mjs          # le serveur seul, sur SQLite
+node loge/serveur/essai-outil-mdp.mjs    # le SQL imprimé ouvre-t-il vraiment ?
 
 node loge/serveur/faux-tableau.mjs > /tmp/tableau.json
 node loge/serveur/faux-page.mjs    > /tmp/page-epreuve.html
@@ -61,6 +62,9 @@ le monde.
   expirée referme la porte au lieu de laisser croire au partage.
 - **`essai-mdp.py`** — chacun change son mot de passe, et **l'ancien
   ne rouvre plus** malgré l'empreinte restée dans la page.
+- **`essai-outil-mdp.mjs`** — le SQL imprimé par `nouveau-mdp.mjs` est
+  exécuté sur une vraie base, et l'on entre avec : ce qui est vérifié
+  n'est pas un format de texte, c'est que la porte s'ouvre.
 - **`essai-documents.py`** — la qualité et le contreseing du Souverain
   Grand Commandeur sur chaque document, la feuille des Visiteurs sur sa
   page, le point du Temple sur la convocation.
@@ -71,3 +75,22 @@ Le dépôt est **public**, et Cloudflare Pages sert tout ce qu'il porte.
 Aucun nom de Sœur ou de Frère, aucune adresse, aucun mot de passe,
 aucune empreinte d'un compte réel — pas même dans un commentaire, pas
 même « le temps d'une épreuve ».
+
+
+## Quand quelqu'un perd son mot de passe
+
+Il n'y a **pas** de « mot de passe oublié », et ce n'est pas un oubli.
+Le renvoyer supposerait de pouvoir le relire ; la base n'en garde
+qu'une empreinte salée que personne ne sait renverser.
+
+```sh
+node loge/serveur/nouveau-mdp.mjs habertmartine@gmail.com "le mot neuf"
+```
+
+L'outil imprime la ligne `UPDATE` à coller dans la console D1, et ne
+calcule rien d'autre — il n'envoie rien, nulle part. Dites ensuite le
+mot de vive voix, jamais par courriel : un courriel ne s'efface pas.
+Et demandez à l'intéressé de le changer lui-même, par « Mon mot de
+passe », dès sa première entrée.
+
+Le même outil crée un compte : la seconde ligne imprimée est l'`INSERT`.
