@@ -43,6 +43,8 @@ const req = (m, corps, biscuit) => new Request('https://x/api/x', {
 const { onRequestPost: entrer } = await import(RACINE + 'functions/api/entrer.js');
 const { onRequestPost: sortir } = await import(RACINE + 'functions/api/sortir.js');
 const { onRequestGet: lire, onRequestPut: ecrire } = await import(RACINE + 'functions/api/etat.js');
+const { onRequestGet: etatPorte } = await import(RACINE + 'functions/api/porte.js');
+const { onRequestPost: changerMdp } = await import(RACINE + 'functions/api/mdp.js');
 
 let ko = 0;
 const v = (c, nom, d='') => { console.log(`  ${c?'✓':'✗'} ${nom}${c?'':'  <- '+JSON.stringify(d)}`); if(!c) ko++; };
@@ -106,10 +108,61 @@ v(Number(n) >= 5, "chaque acte est consigné au journal", n);
 const refus = db.prepare("select count(*) c from journal where quoi like '%périmée%'").get().c;
 v(Number(refus) === 1, "le refus aussi", refus);
 
-// ── sortir
-r = await sortir(ctx(req('POST', undefined, bM)));
-v(/Max-Age=0/.test(r.headers.get('set-cookie')), "sortir efface le biscuit");
+// ── l'état de la porte : juste de quoi savoir si un refus veut dire
+//    quelque chose. Un nombre, et rien d'autre.
+r = await etatPorte(ctx(req('GET', undefined)));
+j = await r.json();
+v(r.status === 200 && j.serveur === true && j.comptes === 2,
+  "la porte dit combien de comptes le serveur peut reconnaître", j);
+v(!('courriel' in j) && !('nom' in j) && !JSON.stringify(j).includes('epreuve.test'),
+  "et rien de plus : ni nom, ni adresse, ni empreinte", j);
+
+// ── changer son mot de passe
+r = await changerMdp(ctx(req('POST', { ancien:'x', nouveau:'yyyyyyyyyy' })));
+v(r.status === 401, "sans session, on ne change le mot de passe de personne", r.status);
+
+r = await changerMdp(ctx(req('POST', { ancien:'faux', nouveau:'un mot bien plus long' }, bM)));
+v(r.status === 403 && (await r.json()).erreur === 'ancien_faux',
+  "l'ancien mot de passe est redemandé, et vérifié", r.status);
+
+r = await changerMdp(ctx(req('POST', { ancien:'cleSecretariatEpreuve', nouveau:'court' }, bM)));
+v(r.status === 400 && (await r.json()).erreur === 'trop_court',
+  "un mot de passe trop court est refusé", r.status);
+
+// une seconde session de la Secrétaire, ouverte ailleurs
+r = await entrer(ctx(req('POST', { mdp: 'cleSecretariatEpreuve' })));
+const bM2 = r.headers.get('set-cookie').split(';')[0];
+const selAvant = db.prepare('select mdp_sel from utilisateurs where charge=?')
+  .get('secretariat').mdp_sel;
+
+r = await changerMdp(ctx(req('POST',
+  { ancien:'cleSecretariatEpreuve', nouveau:'le cèdre du Liban en hiver' }, bM2)));
+v(r.status === 200 && (await r.json()).fait === true, "le changement aboutit", r.status);
+v(db.prepare('select mdp_sel from utilisateurs where charge=?').get('secretariat').mdp_sel
+  !== selAvant, "LE SEL EST NEUF LUI AUSSI : deux empreintes ne se recoupent pas");
+
+r = await entrer(ctx(req('POST', { mdp: 'cleSecretariatEpreuve' })));
+v(r.status === 401, "L'ANCIEN MOT DE PASSE NE VAUT PLUS RIEN", r.status);
+r = await entrer(ctx(req('POST', { mdp: 'le cèdre du Liban en hiver' })));
+v(r.status === 200 && (await r.json()).charge === 'secretariat',
+  "le nouveau ouvre la même charge", r.status);
+
+// la session qui a fait le changement survit, les autres tombent
+r = await lire(ctx(req('GET', undefined, bM2)));
+v(r.status === 200, "la session qui a changé le mot de passe survit", r.status);
 r = await lire(ctx(req('GET', undefined, bM)));
+v(r.status === 401,
+  "MAIS LES AUTRES SESSIONS TOMBENT : changer sans déconnecter ne protège de rien",
+  r.status);
+
+// le Trésorier n'a pas été touché
+r = await entrer(ctx(req('POST', { mdp: 'cleTresorerieEpreuve' })));
+v(r.status === 200, "le compte de l'autre Officier est intact", r.status);
+
+// ── sortir
+r = await sortir(ctx(req('POST', undefined, bM2)));
+v(/Max-Age=0/.test(r.headers.get('set-cookie')), "sortir efface le biscuit");
+r = await lire(ctx(req('GET', undefined, bM2)));
 v(r.status === 401, "et la session ne vaut plus rien", r.status);
 
 console.log(ko ? `\n  ${ko} échec(s)` : '\n  tout passe');
