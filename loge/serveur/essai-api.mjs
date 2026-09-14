@@ -4,10 +4,20 @@ import { DatabaseSync } from 'node:sqlite';
 import fs from 'node:fs';
 
 const db = new DatabaseSync(':memory:');
-db.exec(fs.readFileSync('/tmp/socle.sql','utf8'));
+const RACINE = new URL('../../', import.meta.url).pathname;
+db.exec(fs.readFileSync(RACINE + 'loge/serveur/001-socle-en-ligne.sql','utf8'));
+/* ── LES COMPTES D'ÉPREUVE SONT INVENTÉS ───────────────────────────
+   Ce fichier portait les vraies adresses de la Sœur Secrétaire et du
+   Frère Trésorier, et les empreintes PBKDF2 de leurs vrais mots de
+   passe. Or Cloudflare Pages sert TOUT ce que porte le dépôt : ce
+   fichier était lisible sur le site. Une empreinte salée à cent mille
+   tours ne se renverse pas, mais elle se VÉRIFIE — qui l'a peut
+   essayer autant de mots qu'il veut, sans que rien ne l'en empêche, et
+   « le nom de famille de la Secrétaire » n'est pas un mot rare.
+   Les comptes ci-dessous n'existent nulle part ailleurs. */
 db.exec(`INSERT INTO utilisateurs (loge_id, courriel, nom, charge, mdp_hash, mdp_sel) VALUES
-(1,'habertmartine@gmail.com','Martine HABERT','secretariat','da9fbc9372c41c342f48470f83dbf88dd877f56939db1693564dae40a54efa79','e73c3b53c491a7b0508f50bc83320eca'),
-(1,'samkhanafer13730@gmail.com','Sam','tresorerie','6ce9c78bd13052341c4a1a385f4fb413e317f6b2bdb31f394f5039c2b7497b0f','b490b2a97f25cd9290d86a6b15241933');`);
+(1,'secretariat@epreuve.test','Sœur Secrétaire d’épreuve','secretariat','5570bc41b122b980f0680c90992ed99b5bc55d6cafd02ced6ad321899836debc','540655985750cb2b588fb0ec31f0e412'),
+(1,'tresorerie@epreuve.test','Frère Trésorier d’épreuve','tresorerie','b031d6c36d967c5c76b0976d2b0884e5a92ab94aa45219a7e944e58ebccd311f','32c92cf1e3e315596c33adab03b97b8b');`);
 
 const DB = {
   prepare(sql){
@@ -30,9 +40,9 @@ const req = (m, corps, biscuit) => new Request('https://x/api/x', {
   body: corps === undefined ? undefined : JSON.stringify(corps)
 });
 
-const { onRequestPost: entrer } = await import('/home/user/nouveausiterbi/functions/api/entrer.js');
-const { onRequestPost: sortir } = await import('/home/user/nouveausiterbi/functions/api/sortir.js');
-const { onRequestGet: lire, onRequestPut: ecrire } = await import('/home/user/nouveausiterbi/functions/api/etat.js');
+const { onRequestPost: entrer } = await import(RACINE + 'functions/api/entrer.js');
+const { onRequestPost: sortir } = await import(RACINE + 'functions/api/sortir.js');
+const { onRequestGet: lire, onRequestPut: ecrire } = await import(RACINE + 'functions/api/etat.js');
 
 let ko = 0;
 const v = (c, nom, d='') => { console.log(`  ${c?'✓':'✗'} ${nom}${c?'':'  <- '+JSON.stringify(d)}`); if(!c) ko++; };
@@ -41,7 +51,7 @@ const v = (c, nom, d='') => { console.log(`  ${c?'✓':'✗'} ${nom}${c?'':'  <-
 let r = await entrer(ctx(req('POST', { mdp: 'nimportequoi' })));
 v(r.status === 401, "un mot de passe faux est refusé", r.status);
 
-r = await entrer(ctx(req('POST', { mdp: 'MartineHabert' })));
+r = await entrer(ctx(req('POST', { mdp: 'cleSecretariatEpreuve' })));
 let j = await r.json();
 v(r.status === 200 && j.charge === 'secretariat', "la clé du Secrétariat ouvre", j);
 const bM = r.headers.get('set-cookie').split(';')[0];
@@ -52,7 +62,7 @@ v(/HttpOnly/.test(r.headers.get('set-cookie')) && /Secure/.test(r.headers.get('s
 v(db.prepare('select jeton_hash from sessions').get().jeton_hash !== bM.split('=')[1],
   "la base ne garde QUE l'empreinte du jeton, jamais le jeton");
 
-r = await entrer(ctx(req('POST', { mdp: 'SamGasmi' })));
+r = await entrer(ctx(req('POST', { mdp: 'cleTresorerieEpreuve' })));
 const bS = r.headers.get('set-cookie').split(';')[0];
 v((await r.json()).charge === 'tresorerie', "la clé de la Trésorerie ouvre l'autre charge");
 
