@@ -14,6 +14,7 @@ const PORT = Number(process.env.RBI_PORT || 8787);
 
 const db = new DatabaseSync(':memory:');
 db.exec(fs.readFileSync(RACINE + 'loge/serveur/001-socle-en-ligne.sql', 'utf8'));
+db.exec(fs.readFileSync(RACINE + 'loge/serveur/002-annuaire.sql', 'utf8'));
 
 /* RBI_SANS_COMPTES reproduit la panne du premier soir : le serveur
    répond, la base est en place, mais la table des utilisateurs est
@@ -45,6 +46,7 @@ const F = {
   entrer: await import(RACINE + 'functions/api/entrer.js'),
   porte:  await import(RACINE + 'functions/api/porte.js'),
   mdp:    await import(RACINE + 'functions/api/mdp.js'),
+  annuaire: await import(RACINE + 'functions/api/annuaire.js'),
   sortir: await import(RACINE + 'functions/api/sortir.js'),
   etat:   await import(RACINE + 'functions/api/etat.js'),
 };
@@ -55,7 +57,13 @@ createServer(async (req, res) => {
     res.writeHead(200, {'content-type':'text/html; charset=utf-8'});
     return res.end(fs.readFileSync(PAGE));
   }
-  const m = u.pathname.match(/^\/api\/(entrer|sortir|etat|porte|mdp)$/);
+  /* L'Espace Membres, pour éprouver le formulaire de l'annuaire là où
+     il vit vraiment — et non une imitation qui lui ressemblerait. */
+  if (u.pathname === '/espace-membres.html'){
+    res.writeHead(200, {'content-type':'text/html; charset=utf-8'});
+    return res.end(fs.readFileSync(RACINE + 'espace-membres.html'));
+  }
+  const m = u.pathname.match(/^\/api\/(entrer|sortir|etat|porte|mdp|annuaire)$/);
   if (!m){ res.writeHead(404); return res.end('non'); }
 
   const corps = await new Promise(ok => { let d=''; req.on('data',c=>d+=c); req.on('end',()=>ok(d)); });

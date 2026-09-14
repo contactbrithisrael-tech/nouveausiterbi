@@ -10,9 +10,11 @@ Cloudflare Pages, dans `functions/api/`, qui écrivent dans une base D1.
 | `etat.js`   | lit et écrit le registre partagé de l'Atelier |
 | `porte.js`  | dit si le serveur a de quoi reconnaître quelqu'un |
 | `mdp.js`    | change le mot de passe de qui est connecté |
+| `annuaire.js` | reçoit les fiches du formulaire, et les rend à la Secrétaire |
 
-`001-socle-en-ligne.sql` est le schéma à passer dans la console D1.
-Les comptes s'ajoutent à la main, un `INSERT` par Officier.
+`001-socle-en-ligne.sql` est le schéma à passer dans la console D1,
+puis `002-annuaire.sql`. Les comptes s'ajoutent à la main, un `INSERT`
+par Officier.
 
 ## Rejouer les épreuves
 
@@ -34,6 +36,7 @@ RBI_PORT=8788 RBI_SANS_COMPTES=1 node loge/serveur/faux-serveur.mjs &
 RBI_PORT=8789 node loge/serveur/faux-serveur.mjs &
 RBI_PORT=8790 node loge/serveur/faux-serveur.mjs &
 RBI_PORT=8791 RBI_SANS_COMPTES=1 node loge/serveur/faux-serveur.mjs &
+RBI_PORT=8792 node loge/serveur/faux-serveur.mjs &
 
 RBI_URL=http://127.0.0.1:8787/ python3 loge/serveur/essai-documents.py
 RBI_URL=http://127.0.0.1:8789/ python3 loge/serveur/essai-partage.py
@@ -41,6 +44,7 @@ RBI_URL_SANS=http://127.0.0.1:8788/ RBI_URL_AVEC=http://127.0.0.1:8789/ \
   python3 loge/serveur/essai-verrou.py
 RBI_URL_AVEC=http://127.0.0.1:8790/ RBI_URL_SANS=http://127.0.0.1:8791/ \
   python3 loge/serveur/essai-mdp.py
+RBI_URL=http://127.0.0.1:8792/ python3 loge/serveur/essai-annuaire.py
 ```
 
 **Chaque suite veut un serveur neuf.** La base est en mémoire : une
@@ -69,6 +73,10 @@ le monde.
 - **`essai-gps.mjs`** — le champ du point du Temple lit les deux
   nombres, les degrés, et un lien de plan collé tel quel ; il refuse
   tout le reste, et ne « corrige » jamais deux nombres inversés.
+- **`essai-annuaire.py`** — du VRAI formulaire de l'Espace Membres,
+  tuilage compris, jusqu'au carnet des Visiteurs : la fiche arrive
+  seule, sa case « Tuilé par » reste vide, le même Frère n'entre pas
+  deux fois, et seuls les champs attendus sont gardés.
 - **`essai-documents.py`** — la qualité et le contreseing du Souverain
   Grand Commandeur sur chaque document, la feuille des Visiteurs sur sa
   page, le point du Temple sur la convocation.
@@ -88,7 +96,7 @@ Le renvoyer supposerait de pouvoir le relire ; la base n'en garde
 qu'une empreinte salée que personne ne sait renverser.
 
 ```sh
-node loge/serveur/nouveau-mdp.mjs habertmartine@gmail.com "le mot neuf"
+node loge/serveur/nouveau-mdp.mjs secretariat@exemple.test "le mot neuf"
 ```
 
 L'outil imprime la ligne `UPDATE` à coller dans la console D1, et ne
