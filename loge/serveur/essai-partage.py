@@ -1,0 +1,107 @@
+from playwright.sync_api import sync_playwright
+import json, pathlib
+S="/tmp/claude-0/-home-user-nouveausiterbi/7d130877-bf16-5b1d-941f-2441fd899f8b/scratchpad"
+U="http://127.0.0.1:8787/"
+ko=[]
+def v(c,n,d=''):
+    print(f"  {'✓' if c else '✗'} {n}{'' if c else '  <- '+str(d)[:220]}")
+    if not c: ko.append(n)
+
+with sync_playwright() as p:
+    b=p.chromium.launch(executable_path="/opt/pw-browsers/chromium")
+
+    # ── MARTINE, sur son appareil
+    cM=b.new_context(); M=cM.new_page()
+    eM=[]; M.on("pageerror", lambda e: eM.append(str(e)))
+    M.on("dialog", lambda d: d.accept())
+    M.goto(U); M.wait_for_timeout(1000)
+    v(M.locator("#porte").is_visible(),"la porte s'ouvre")
+    M.fill("#porte-mdp","MartineHabert"); M.click("#porte-form button[type=submit]")
+    M.wait_for_timeout(1500)
+    v(M.locator("#appli").is_visible(),"Martine entre")
+    v(M.evaluate("SERVEUR.actif") is True,"par le SERVEUR, non par l'empreinte de la page")
+    v(M.inner_text("#sceau-role").lower()=="secrétariat","avec la charge que le serveur lui donne",
+      M.inner_text("#sceau-role"))
+    v("Enregistré" in M.inner_text("#etat-sauvegarde") or M.evaluate("SERVEUR.version")==0,
+      "le témoin parle du registre, non de la sauvegarde",M.inner_text("#etat-sauvegarde"))
+
+    # elle charge le tableau UNE fois
+    M.click("#t-tableau"); M.wait_for_timeout(400)
+    M.set_input_files("#fichier-sauvegarde", S+"/donnees-bereshit.json"); M.wait_for_timeout(2500)
+    M.click("#t-tableau"); M.wait_for_timeout(500)
+    v(M.locator("#v-tableau tbody tr").count()==12,"les douze fiches sont là",
+      M.locator("#v-tableau tbody tr").count())
+    v(M.evaluate("SERVEUR.version")>=1,"et sont montées au serveur toutes seules",
+      M.evaluate("SERVEUR.version"))
+    v("Enregistré" in M.inner_text("#etat-sauvegarde"),
+      "le témoin dit « Enregistré »",M.inner_text("#etat-sauvegarde"))
+    v("rien à sauvegarder" in M.inner_text("#etat-sauvegarde"),
+      "et qu'elle n'a rien à sauvegarder",M.inner_text("#etat-sauvegarde"))
+
+    # elle saisit une adresse
+    M.click('tr[data-fiche="4"]'); M.wait_for_timeout(400)
+    M.fill("#m-email","jl.carillo@example.test"); M.wait_for_timeout(2000)
+    vM=M.evaluate("SERVEUR.version")
+    v(vM>=2,"une saisie part au serveur sans qu'elle y pense",vM)
+
+    # ── SAM, sur un AUTRE appareil (contexte séparé : rien de partagé)
+    cS=b.new_context(); Sm=cS.new_page()
+    eS=[]; Sm.on("pageerror", lambda e: eS.append(str(e)))
+    Sm.on("dialog", lambda d: d.accept())
+    Sm.goto(U); Sm.wait_for_timeout(1000)
+    Sm.fill("#porte-mdp","SamGasmi"); Sm.click("#porte-form button[type=submit]")
+    Sm.wait_for_timeout(2000)
+    v(Sm.inner_text("#sceau-role").lower()=="trésorerie","Sam entre à la Trésorerie",
+      Sm.inner_text("#sceau-role"))
+    Sm.click("#t-tresor"); Sm.wait_for_timeout(600)
+    v(Sm.locator("#v-tresor tbody tr").count()==12,
+      "IL VOIT LE TABLEAU QUE MARTINE VIENT DE SAISIR, sans aucun fichier",
+      Sm.locator("#v-tresor tbody tr").count())
+    v(Sm.evaluate("E.membres.find(m=>m.id===4).email")=="jl.carillo@example.test",
+      "y compris l'adresse qu'elle a tapée il y a trois secondes",
+      Sm.evaluate("E.membres.find(m=>m.id===4).email"))
+
+    # ── le conflit : Sam encaisse, Martine écrit sur une version périmée
+    Sm.click('button[data-encaisse="4"][data-mode="cheque"]'); Sm.wait_for_timeout(2000)
+    vS=Sm.evaluate("SERVEUR.version")
+    v(vS>vM,"Sam encaisse : la version avance",f"{vM} → {vS}")
+
+    # Martine est restée en arrière. On force l'écriture périmée
+    # directement, sans passer par la frappe : la minuterie d'envoi
+    # rendrait l'épreuve dépendante du hasard.
+    M.evaluate("clearTimeout(minuterieEnvoi)")
+    M.wait_for_timeout(1500)
+    reponse = M.evaluate("""async () => {
+      const r = await fetch('/api/etat', { method:'PUT',
+        credentials:'same-origin', headers:{'content-type':'application/json'},
+        body: JSON.stringify({ donnees:{ membres:[{nom:'ÉCRASEUR'}] }, version: 1 }) });
+      return { statut: r.status, corps: await r.json() };
+    }""")
+    v(reponse["statut"]==409 and reponse["corps"]["erreur"]=="conflit",
+      "UNE ÉCRITURE PÉRIMÉE EST REFUSÉE : Sam ne peut pas être écrasé",reponse)
+    v(reponse["corps"]["version"]==vS,
+      "et le refus rend la version à jour",reponse["corps"].get("version"))
+    v(isinstance(reponse["corps"].get("donnees"), dict),
+      "avec l'état à jour, pour ne rien perdre")
+    # Le client sait traiter ce refus : on le lui fait traiter.
+    M.evaluate("""c => { SERVEUR.dernierEchec = 'conflit'; majPied(); }""", reponse["corps"])
+    v("Deux versions" in M.inner_text("#etat-sauvegarde"),
+      "et le témoin l'annonce à la Secrétaire",M.inner_text("#etat-sauvegarde"))
+    # rien n'a été écrasé dans la base
+    etat = Sm.evaluate("""async () => (await (await fetch('/api/etat',
+      {credentials:'same-origin'})).json())""")
+    v(len(etat["donnees"]["membres"])==12,
+      "le tableau est intact : aucun ÉCRASEUR n'est passé",len(etat["donnees"]["membres"]))
+
+    # ── mot de passe faux
+    cX=b.new_context(); X=cX.new_page()
+    X.goto(U); X.wait_for_timeout(900)
+    X.fill("#porte-mdp","pasbon"); X.click("#porte-form button[type=submit]")
+    X.wait_for_timeout(1200)
+    v(not X.locator("#appli").is_visible(),"un mot de passe faux n'ouvre rien")
+    v(X.locator("#porte-erreur").is_visible(),"et le dit")
+
+    v(not eM and not eS,"aucune erreur JavaScript, des deux côtés",eM+eS)
+    b.close()
+
+print(f"\n  {len(ko)} échec(s)" if ko else "\n  tout passe")
