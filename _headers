@@ -38,3 +38,13 @@
 # On peut donc les garder un an sans risque de servir du périmé.
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
+
+# ── Le secrétariat de Loge ─────────────────────────────────────────
+# Le programme ne contient aucune donnée : ce que la Sœur Secrétaire y
+# saisit reste dans son navigateur. Mais une page de gestion d'atelier
+# référencée par Google invite à être essayée : on la sert sans être
+# indexée, et sans être gardée en cache, pour que la dernière version
+# parte toujours.
+/secretariat.html
+  X-Robots-Tag: noindex, nofollow, noarchive
+  Cache-Control: public, max-age=0, must-revalidate

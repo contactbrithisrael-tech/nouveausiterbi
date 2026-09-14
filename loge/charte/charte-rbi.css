@@ -1,0 +1,88 @@
+/* ═══════════════════════════════════════════════════════════════════
+   RITE BRITH ISRAËL — charte graphique
+   Couleurs, fontes et en-tête. À inclure dans tout document ou page
+   qui doit porter l'identité de l'Ordre.
+
+       <link rel="stylesheet" href="charte/charte-rbi.css">
+
+   Les couleurs et les fontes sont celles de brith-israel.org, reprises
+   sans modification : une charte qui diverge de son site n'est plus une
+   charte.
+════════════════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Cinzel:wght@400;600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap');
+
+:root {
+  /* ── L'or, couleur unique de l'Ordre ────────────────────────────
+     --rbi-or est la seule couleur d'accent. Les deux autres n'en sont
+     que des nuances, pour un survol ou un trait discret. */
+  --rbi-or:        #C9A84C;
+  --rbi-or-clair:  #E8C96A;
+  --rbi-or-sombre: #9A7535;
+
+  /* ── Les noirs, pour l'écran ─────────────────────────────────── */
+  --rbi-noir:      #080808;   /* fond de page */
+  --rbi-noir-2:    #111111;   /* cartes, encarts */
+  --rbi-noir-3:    #1A1A1A;   /* survol, séparations */
+
+  /* ── Les encres, pour le papier ──────────────────────────────── */
+  --rbi-blanc:     #F5F0E8;   /* texte sur fond noir */
+  --rbi-encre:     #14110C;   /* texte sur papier */
+  --rbi-encre-2:   #5C5346;   /* mentions secondaires */
+  --rbi-papier:    #FFFFFF;
+
+  --rbi-gris:      #8C8477;
+  --rbi-trait:     rgba(201, 168, 76, .22);
+
+  /* ── Les fontes ──────────────────────────────────────────────── */
+  --rbi-titre: 'Cinzel Decorative', Georgia, serif;  /* grands titres */
+  --rbi-sous:  'Cinzel', Georgia, serif;             /* en-têtes, offices */
+  --rbi-corps: 'EB Garamond', Georgia, serif;        /* texte courant */
+
+  --rbi-rayon: 4px;
+}
+
+/* ═══ L'EN-TÊTE ═══════════════════════════════════════════════════
+   Le sceau du Suprême Conseil à gauche, celui de l'Atelier à droite,
+   la qualité entre les deux. Un tableau, et non une grille : Word et
+   les logiciels de courrier ne savent pas faire autrement. */
+.rbi-entete { width: 100%; border: 0; border-collapse: collapse;
+              margin: 0 0 5mm; font-family: var(--rbi-corps); }
+.rbi-entete td { border: 0; padding: 0; vertical-align: top; }
+.rbi-entete .rbi-sceau { width: 24mm; }
+.rbi-entete .rbi-sceau img { width: 22mm; height: auto; display: block; }
+.rbi-entete .rbi-sceau--droite { text-align: right; }
+.rbi-entete .rbi-sceau--droite img { margin-left: auto; }
+.rbi-entete .rbi-centre { text-align: center; line-height: 1.35; }
+
+/* La formule et la devise : petites, espacées, couleur d'or sombre. */
+.rbi-formule { font-size: 8.5pt; letter-spacing: .16em;
+               color: var(--rbi-or-sombre); }
+/* Le Suprême Conseil. */
+.rbi-conseil { font-family: var(--rbi-sous); font-size: 10pt;
+               letter-spacing: .05em; margin-top: 2mm; }
+/* La qualité : capitales, très espacées, jamais en gras. */
+.rbi-qualite { font-size: 7.5pt; letter-spacing: .09em;
+               text-transform: uppercase; color: var(--rbi-encre-2); }
+/* L'Atelier. */
+.rbi-atelier { font-family: var(--rbi-sous); font-size: 10.5pt;
+               margin-top: 2.5mm; }
+.rbi-orient  { font-size: 8.5pt; font-style: italic;
+               color: var(--rbi-encre-2); }
+/* Le filet d'or qui ferme l'en-tête. */
+.rbi-filet { border: 0; border-top: .5pt solid var(--rbi-or);
+             margin: 0 0 5mm; }
+
+/* ═══ TITRES ET RUBRIQUES ════════════════════════════════════════ */
+.rbi-titre-doc { font-family: var(--rbi-sous); font-size: 15pt;
+                 font-weight: 600; text-align: center; margin: 4mm 0 7mm;
+                 letter-spacing: .02em; }
+.rbi-rubrique  { font-family: var(--rbi-sous); font-size: 10pt;
+                 letter-spacing: .06em; margin: 6mm 0 2.5mm; }
+.rbi-adage     { text-align: center; font-style: italic; margin-top: 7mm; }
+
+/* ═══ LE FILIGRANE ═══════════════════════════════════════════════
+   Derrière le texte, à 5 % d'opacité. Au-delà, il gêne la lecture. */
+.rbi-filigrane { position: fixed; top: 42%; left: 50%;
+                 transform: translate(-50%, -50%);
+                 width: 105mm; opacity: .05; z-index: -1; }
