@@ -565,7 +565,7 @@ function vueTableau(){
   const lignes = [...m].sort((x,y)=>rang(x)-rang(y) || x.nom.localeCompare(y.nom))
     .map(x=>`<tr class="cliquable" data-fiche="${x.id}" tabindex="0" role="button"
         aria-label="Ouvrir la fiche de ${ech(x.prenoms)} ${ech(x.nom)}">
-      <td><span class="nom-membre">${ech(x.prenoms)} ${ech(x.nom)}</span>
+      <td><span class="nom-membre">${ech(x.prenoms)}${x.dit?` « ${ech(x.dit)} »`:''} ${ech(x.nom)}</span>
           ${x.dignite?`<div class="qual">${ech(x.dignite)}</div>`:''}</td>
       <td>${x.degre
           ? `<span class="p p-neutre">${ech(DEGRES[x.degre])}</span>
@@ -652,7 +652,7 @@ function vueTenue(){
   const lignes = convocables().map(x=>{
     const r = rep(x.id);
     return `<tr>
-      <td><span class="nom-membre">${ech(x.prenoms)} ${ech(x.nom)}</span>
+      <td><span class="nom-membre">${ech(x.prenoms)}${x.dit?` « ${ech(x.dit)} »`:''} ${ech(x.nom)}</span>
           ${x.office?`<div class="qual">${ech(abrOffice(x.office))}</div>`:''}
           ${x.excusePermanent?`<div class="qual">✈ ${ech(x.motifExcuse||'Excusé en permanence')}</div>`:''}</td>
       <td><div class="choix" role="group">
@@ -910,8 +910,16 @@ function ressemble(mot, cible){
   const seuil = cible.length <= 4 ? 0 : cible.length <= 6 ? 1 : 2;
   return distance(mot, cible) <= seuil;
 }
+/* Un nom se compose : deux mots sans trait d'union, une particule, un
+   trait d'union. Je comparais chaque mot du relevé au nom ENTIER — un
+   nom composé ne se retrouvait donc jamais, et la banque n'en écrit
+   souvent qu'une moitié. On découpe des deux côtés : il suffit qu'un
+   mot du relevé réponde à un mot du nom. */
 function contient(texte, cible){
-  return nu(texte).split(' ').some(m => ressemble(m, nu(cible)));
+  const mots = nu(texte).split(' ').filter(Boolean);
+  const cibles = nu(cible).split(' ').filter(c => c.length > 2);
+  if (!cibles.length) return false;
+  return cibles.some(c => mots.some(m => ressemble(m, c)));
 }
 
 function rapprocher(operation, membres){
@@ -922,8 +930,12 @@ function rapprocher(operation, membres){
     if (!nomOk) continue;
     /* Le prénom est cherché mot à mot : « JEAN PIERRRE » contre
        « Jean-Pierre » se retrouve sur l'un ou l'autre morceau. */
-    const morceaux = nu(m.prenoms).split(' ').filter(x => x.length > 2);
-    const prenomOk = morceaux.length ? morceaux.some(p => contient(texte, p)) : false;
+    /* Beaucoup sont connus sous un autre prénom que celui de l'état
+       civil. La banque écrit l'un, l'Atelier connaît l'autre : les deux
+       comptent, sans quoi un versement resterait éternellement « nom
+       seul », avec une réserve que rien ne lèverait. */
+    const prenomOk = contient(texte, m.prenoms) ||
+                     (!!m.dit && contient(texte, m.dit));
     trouves.push({
       membre: m, nom: nomOk, prenom: prenomOk,
       sur: prenomOk ? 'nom et prénom' : 'nom seul',
@@ -941,16 +953,56 @@ function rapprocher(operation, membres){
 'use strict';
 /* ── Trésorerie ─────────────────────────────────────────────────── */
 function vueTresor(){
-  const app = E.membres.filter(x=>x.du>0);
-  const du = app.reduce((s,x)=>s+x.du,0), reg = app.reduce((s,x)=>s+x.regle,0);
-  const lignes = app.map(x=>`<tr>
-      <td><span class="nom-membre">${ech(x.prenoms)} ${ech(x.nom)}</span></td>
-      <td class="num">${euro(x.du)}</td><td class="num">${euro(x.regle)}</td>
-      <td class="num">${x.du-x.regle>0?`<span class="p p-al">${euro(x.du-x.regle)}</span>`:`<span class="p p-ok">Soldé</span>`}</td>
-      <td>${x.du-x.regle>0?`<div class="groupe">
+  /* Le Trésorier doit voir TOUT le tableau, exonérés compris. J'avais
+     écarté les membres sans capitation : ils disparaissaient purement
+     et simplement, et l'on ne pouvait plus vérifier que le compte y
+     est. Un membre d'honneur ad vitam figure au tableau avec la mention
+     de son exonération — c'est un fait de trésorerie, non une absence. */
+  const rang = x => x.rangProtocole || 99;
+  const tous = [...E.membres].sort((a,b)=>rang(a)-rang(b) || a.nom.localeCompare(b.nom));
+  const app = tous.filter(x => x.du > 0);
+  const du = app.reduce((s,x)=>s+(x.du||0),0), reg = app.reduce((s,x)=>s+(x.regle||0),0);
+
+  /* Sans tableau chargé, la Trésorerie n'a rien à montrer. Elle le DIT,
+     et donne le geste : l'ancien écran affichait un tableau vide sans
+     un mot, ce qui faisait croire que la capitation avait disparu. */
+  if (!E.membres.length){
+    $('#v-tresor').innerHTML = `
+      <div class="bloc"><header><div><h2>Trésorerie</h2>
+        <p class="sous">Le tableau de l’Atelier n’est pas encore dans ce
+          navigateur.</p></div></header>
+        <div class="note"><b>Chargez d’abord le tableau de la Loge.</b>
+          La Trésorerie s’appuie sur les fiches des Sœurs et des Frères : sans
+          elles, elle n’a ni nom, ni capitation, ni règlement à présenter.
+          <ul style="margin-top:9px;list-style:none;display:grid;gap:5px">
+            <li>— Demandez au Secrétariat son <b>fichier de sauvegarde</b>
+                (bouton « ⤓ Sauvegarder mes données », en bas de son écran).</li>
+            <li>— Rangez-le comme un document de l’Atelier : il porte les noms,
+                les grades et les adresses.</li>
+            <li>— Puis chargez-le ici.</li>
+          </ul>
+          <div class="groupe" style="margin-top:12px">
+            <button class="btn btn-or" id="tresor-charger">⤒ Charger le tableau de l’Atelier</button>
+          </div>
+        </div></div>
+      ${blocReleve()}`;
+    return;
+  }
+
+  const lignes = tous.map(x=>{
+    const duX = x.du || 0, regX = x.regle || 0, reste = duX - regX;
+    return `<tr>
+      <td><span class="nom-membre">${ech(x.prenoms)}${x.dit?` « ${ech(x.dit)} »`:''} ${ech(x.nom)}</span>
+          ${x.excusePermanent?`<div class="qual">✈ ${ech(x.motifExcuse||'Excusé en permanence')}</div>`:''}</td>
+      <td class="num">${duX ? euro(duX) : '<span class="qual">—</span>'}</td>
+      <td class="num">${duX ? euro(regX) : '<span class="qual">—</span>'}</td>
+      <td class="num">${!duX ? `<span class="p p-neutre">Exonéré</span>`
+        : reste>0 ? `<span class="p p-al">${euro(reste)}</span>`
+                  : `<span class="p p-ok">Soldé</span>`}</td>
+      <td>${duX && reste>0?`<div class="groupe">
         ${['sumup','helloasso','cheque'].map(m=>`<button class="btn btn-mini" data-encaisse="${x.id}" data-mode="${m}">${
           {sumup:'SumUp',helloasso:'HelloAsso',cheque:'Chèque'}[m]}</button>`).join('')}</div>`:''}</td>
-    </tr>`).join('');
+    </tr>`;}).join('');
   $('#v-tresor').innerHTML = `
     <div class="bloc"><header><div><h2>Exercice 2026-2027</h2>
       <p class="sous">Constitution et Règlement Général : 25 € par mois, majorés de
@@ -1144,6 +1196,9 @@ async function lireLeReleve(){
 document.addEventListener('click', async e => {
   const b = e.target.closest('button'); if (!b) return;
 
+  if (b.id === 'tresor-charger'){
+    document.getElementById('fichier-sauvegarde').click(); return;
+  }
   if (b.id === 'rel-lire'){ await lireLeReleve(); return; }
   if (b.id === 'rel-oublier'){
     if (!confirm("Retirer ce relevé ?\n\nLes imputations déjà faites restent acquises.")) return;
@@ -1706,7 +1761,7 @@ function fichePapier(){
   const l = (c,v) => v ? `<tr><td style="width:52mm;color:#5c5346">${c}</td><td>${ech(v)}</td></tr>` : '';
   return `${ENTETE}<h1>Fiche individuelle</h1>
     <table><tbody>
-      ${l('Nom et prénoms', x.prenoms+' '+x.nom)}
+      ${l('Nom et prénoms', x.prenoms + (x.dit ? ' « '+x.dit+' »' : '') + ' ' + x.nom)}
       ${l('Statut', STATUTS[x.statut])}
       ${l('Degré du Rite', x.degre ? COURT(x.degre) : '')}
       ${l('Qualité d’origine', x.qualite)}
@@ -1737,7 +1792,7 @@ document.addEventListener('click', e => {
   if (b.id === 'nouveau'){
     const id = Math.max(0, ...E.membres.map(m=>m.id)) + 1;
     E.membres.push({id, nom:'', prenoms:'', grade:'', dignite:'', office:null,
-      statut:'candidat', email:'', tel:'', adresse:'', codePostal:'', ville:'',
+      dit:'', statut:'candidat', email:'', tel:'', adresse:'', codePostal:'', ville:'',
       naissance:'', initiation:'', degre:null, qualite:'', du:0, regle:0});
     E.fiche = id; courante = 'fiche'; dessiner();
     setTimeout(()=>document.getElementById('m-prenoms')?.focus(), 0); return;
@@ -1767,7 +1822,7 @@ document.addEventListener('input', e => {
   garder();
   /* Ceux-là changent ce que la fiche dit d'elle-même : le bandeau des
      manques se refait, et le curseur revient où il était. */
-  if (['email','tel','adresse','ville','naissance','grade','degre',
+  if (['email','tel','adresse','ville','naissance','grade','degre','dit',
        'statut','qualite','excusePermanent'].includes(c)){
     const pos = el.selectionStart; dessiner();
     const r = document.getElementById('m-'+c);
