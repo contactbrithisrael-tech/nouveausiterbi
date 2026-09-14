@@ -1811,12 +1811,17 @@ function vueConvocation(){
         ${champ('lieuAdresse','Adresse','text')}
         ${champ('lieuCp','Code postal','text')}
         ${champ('lieuVille','Ville','text')}
-        ${champ('lieuGps','Point GPS','text',
-          'Deux nombres séparés par une virgule, relevés sur place — ' +
-          'par exemple 43.512340, 5.398760. Sur un téléphone : ouvrez le plan ' +
-          'à l’endroit du Temple, appuyez longuement dessus, et copiez les ' +
-          'coordonnées qui s’affichent. Laissé vide, la convocation porte ' +
-          'un lien vers l’adresse.')}
+        <div class="champ"><label for="f-lieuGps">Point GPS du Temple</label>
+          <input id="f-lieuGps" type="text" data-t="lieuGps"
+                 value="${ech(T.lieuGps ?? '')}"
+                 placeholder="collez ici le point, ou le lien du plan">
+          <span class="aide">Sur un téléphone : ouvrez le plan à l’endroit du
+            Temple, appuyez longuement dessus, puis <b>Partager</b> —
+            et collez ici ce que vous obtenez, lien compris. Les degrés
+            (43°32'17"N 5°17'35"E) passent aussi.</span>
+          <span class="aide" id="echo-gps"
+                style="margin-top:4px">${ech(relirePoint(T.lieuGps))}</span>
+        </div>
         ${champ('agapesTraiteur','Mention des agapes','text')}
         ${champ('adage','Adage','text')}
         ${champ('contact','Contacts','text')}
@@ -1829,6 +1834,84 @@ function vueConvocation(){
 <script>
 'use strict';
 /* ── La convocation imprimable ──────────────────────────────────── */
+/* ── LIRE UN POINT, SOUS LA FORME OÙ IL ARRIVE ────────────────────
+   Sur un téléphone, on ne relève pas deux nombres : on appuie sur
+   « Partager », et l'on obtient un LIEN. Un champ qui n'accepterait
+   que « 43.512340, 5.398760 » obligerait à recopier à la main des
+   chiffres pris dans une adresse web — et une seule faute de frappe
+   déplace le Temple d'un kilomètre.
+
+   On accepte donc les quatre formes sous lesquelles un point arrive
+   réellement :
+     43.512340, 5.398760          — les deux nombres
+     43°32'17"N 5°17'35"E         — les degrés, minutes, secondes
+     https://…/maps/@43.51,5.39…  — un lien collé, de quelque plan
+     geo:43.51,5.39               — ce que rend « partager » d'Android
+
+   Rien n'est deviné : ce qui n'est pas reconnu est REFUSÉ, et l'écran
+   le dit. Un point mal lu vaut moins que pas de point du tout. */
+const FRANCE = { lat: [41.0, 51.5], lon: [-5.5, 10.0] };
+
+function lirePointGps(brut){
+  const t = String(brut || '').trim();
+  if (!t) return null;
+
+  /* Les degrés, minutes, secondes — avec toutes les apostrophes que
+     les claviers produisent. */
+  const dms = t.match(
+    /(\d{1,3})\s*°\s*(\d{1,2})\s*['’′]\s*([\d.,]+)?\s*["”″]?\s*([NSns])\D+(\d{1,3})\s*°\s*(\d{1,2})\s*['’′]\s*([\d.,]+)?\s*["”″]?\s*([EOWeow])/);
+  if (dms){
+    const d = (deg, min, sec, sens) => {
+      const v = Number(deg) + Number(min) / 60 +
+                (sec ? Number(String(sec).replace(',', '.')) : 0) / 3600;
+      return /[SsOoWw]/.test(sens) ? -v : v;
+    };
+    return valider(d(dms[1], dms[2], dms[3], dms[4]),
+                   d(dms[5], dms[6], dms[7], dms[8]));
+  }
+
+  /* Un lien : on cherche le couple aux endroits où les plans le
+     posent, et jamais ailleurs — une adresse web est pleine de
+     nombres qui ne sont pas des coordonnées. */
+  if (/^[a-z]+:/i.test(t) || /\//.test(t)){
+    const m = t.match(/[@!]?(?:3d)?(-?\d{1,3}\.\d+)[,!](?:4d)?(-?\d{1,3}\.\d+)/) ||
+              t.match(/(?:[?&](?:q|ll|sll|daddr|destination|center)=|geo:)(-?\d{1,3}\.\d+)\s*,\s*(-?\d{1,3}\.\d+)/i);
+    if (m) return valider(Number(m[1]), Number(m[2]));
+    return null;
+  }
+
+  const paire = t.match(/^(-?\d{1,3}(?:[.,]\d+)?)\s*[,;\s]\s*(-?\d{1,3}(?:[.,]\d+)?)$/);
+  if (paire) return valider(Number(paire[1].replace(',', '.')),
+                            Number(paire[2].replace(',', '.')));
+  return null;
+
+  function valider(lat, lon){
+    if (!isFinite(lat) || !isFinite(lon)) return null;
+    if (Math.abs(lat) > 90 || Math.abs(lon) > 180) return null;
+    /* Hors de France : on n'inverse PAS de soi-même — deux nombres
+       échangés se corrigent en une seconde, un point corrigé à tort
+       envoie l'Atelier ailleurs sans que personne ne s'en doute. On
+       le signale, et l'on laisse trancher. */
+    const chezNous = lat >= FRANCE.lat[0] && lat <= FRANCE.lat[1] &&
+                     lon >= FRANCE.lon[0] && lon <= FRANCE.lon[1];
+    return { lat, lon, chezNous,
+             texte: lat.toFixed(6) + ', ' + lon.toFixed(6) };
+  }
+}
+
+/* Ce qui s'affiche sous le champ, à chaque frappe. */
+function relirePoint(brut){
+  if (!String(brut || '').trim())
+    return 'Aucun point relevé : la convocation portera un lien vers l’adresse.';
+  const o = lirePointGps(brut);
+  if (!o) return '⚠ Je ne reconnais pas de point là-dedans. Attendu : deux ' +
+    'nombres (43.512340, 5.398760), des degrés (43°32\'17"N 5°17\'35"E), ' +
+    'ou un lien de plan collé tel quel.';
+  if (!o.chezNous) return '⚠ ' + o.texte + ' — ce point ne tombe pas en France. ' +
+    'Les deux nombres sont peut-être inversés : la latitude vient en premier.';
+  return '✓ Compris : ' + o.texte + '. C’est ce que portera la convocation.';
+}
+
 /* ── OÙ SE TROUVE LE TEMPLE ────────────────────────────────────────
    Deux cas, et ils ne disent pas la même chose.
 
@@ -1840,12 +1923,14 @@ function vueConvocation(){
    adresse — c'est moins précis, et cela ne prétend pas l'être. */
 function pointDuTemple(){
   const T = E.tenue;
-  const gps = (T.lieuGps || '').trim();
+  const o = lirePointGps(T.lieuGps);
   const adresse = [T.lieuNom, T.lieuAdresse, T.lieuCp, T.lieuVille]
     .filter(Boolean).join(', ');
-  return gps
-    ? { gps, lien: 'https://www.google.com/maps/search/?api=1&query=' +
-                   encodeURIComponent(gps) }
+  /* Un point saisi mais illisible ne doit pas s'imprimer tel quel :
+     on retombe sur l'adresse, qui est vraie. */
+  return o
+    ? { gps: o.texte, lien: 'https://www.google.com/maps/search/?api=1&query=' +
+                            encodeURIComponent(o.texte) }
     : { gps: null, lien: adresse
         ? 'https://www.google.com/maps/search/?api=1&query=' +
           encodeURIComponent(adresse) : null };
@@ -1888,6 +1973,10 @@ document.addEventListener('input', e => {
     if (c === 'date') {
       const e2 = document.getElementById('echo-date');
       if (e2) e2.textContent = relireDate(el.value);
+    }
+    if (c === 'lieuGps') {
+      const e3 = document.getElementById('echo-gps');
+      if (e3) e3.textContent = relirePoint(el.value);
     }
     if (c === 'type' && TYPES[el.value]) {
       E.tenue.titre = TYPES[el.value].toUpperCase();
