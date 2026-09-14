@@ -1668,8 +1668,9 @@ function vueFiche(){
 
   <div class="forme">
     <fieldset><legend>Identité</legend><div class="rangee">
-      ${fChamp(x,'prenoms','Prénoms','text')}
-      ${fChamp(x,'nom','Nom','text')}
+      ${fChamp(x,'prenoms','Prénoms','text','Ceux de l’état civil')}
+      ${fChamp(x,'dit','Prénom usuel','text','Si on l’appelle autrement')}
+      ${fChamp(x,'nom','Nom','text','Entier, même en deux mots')}
       ${fChamp(x,'email','Adresse courriel','email','C’est par là que partent les convocations')}
       ${fChamp(x,'tel','Téléphone','tel')}
       ${fChamp(x,'naissance','Date de naissance','date')}
