@@ -10,6 +10,7 @@ from pathlib import Path
 
 import dates_fr
 import db
+import matieres as M
 import personne as P
 import questionnaire as Q
 import ressources as Rs
@@ -19,11 +20,17 @@ import seance as S
 # Sept blocs, dans l'ordre, reprenant la trame d'une synthèse de bilan de
 # compétences sans en emprunter l'identité réglementaire : ni visa des
 # articles R6313-4 et suivants, ni numéro de certification (voir config.py).
-BLOCS = ("bloc_situation", "bloc_tests_utilises", "bloc_resultats",
-         "bloc_pistes", "bloc_competences", "bloc_solutions", "bloc_references")
+BLOCS = ("bloc_situation", "bloc_tests_utilises", "bloc_scolaire",
+         "bloc_resultats", "bloc_pistes", "bloc_competences", "bloc_solutions",
+         "bloc_references")
+
+# Certains blocs ne concernent qu'une partie des publics : un adulte en
+# reconversion n'a pas de bulletin, un collégien n'a pas de Parcoursup.
+PUBLICS_DU_BLOC = {"bloc_scolaire": ("college", "lycee")}
 
 # Blocs rendus sous forme de tableau à l'export, une ligne par « | ».
 BLOCS_TABLEAU = {
+    "bloc_scolaire": ("Matière", "Moyenne", "Affinité", "Lecture"),
     "bloc_competences": ("Domaine", "Élément", "Niveau"),
     "bloc_solutions": ("Échéance", "Action à réaliser", "Moyens nécessaires"),
 }
@@ -32,6 +39,7 @@ INTITULES_COMMUNS = {
     "bloc_situation": "Situation et demande",
     "bloc_tests_utilises": "Déroulé de la séance et outils utilisés",
     "bloc_resultats": "Ce qui ressort",
+    "bloc_scolaire": "Résultats scolaires et affinités",
     "bloc_competences": "Points d'appui et éléments à développer",
     "bloc_references": "Références et ressources pour affiner",
 }
@@ -56,6 +64,12 @@ INTITULES_SOLUTIONS = {
 }
 
 
+def blocs_pour(public: str) -> tuple[str, ...]:
+    """Les blocs qui concernent ce public, dans l'ordre."""
+    return tuple(b for b in BLOCS
+                 if public in PUBLICS_DU_BLOC.get(b, (public,)))
+
+
 def intitules(public: str) -> dict[str, str]:
     return {**INTITULES_COMMUNS,
             "bloc_pistes": INTITULES_PISTES.get(public, "Pistes envisagées"),
@@ -70,6 +84,7 @@ class Rapport:
         default_factory=lambda: datetime.now().isoformat(timespec="seconds"))
     bloc_situation: str = ""
     bloc_tests_utilises: str = ""
+    bloc_scolaire: str = ""
     bloc_resultats: str = ""
     bloc_pistes: str = ""
     bloc_competences: str = ""
@@ -188,6 +203,41 @@ def composer_competences(seance_id: str, chemin: Path | str | None = None) -> st
     return "\n".join(lignes)
 
 
+def composer_scolaire(pers: P.Personne, chemin: Path | str | None = None) -> str:
+    """Bloc scolaire : tableau « matière | moyenne | affinité | lecture ».
+
+    La lecture est le croisement de la note et de l'affinité, calculé par
+    matieres.py. Le seuil de réussite est rappelé, parce que c'est une
+    convention et qu'elle doit pouvoir être discutée.
+    """
+    liste = M.lister(pers.id, chemin)
+    if not liste:
+        return ""
+    lignes = [f"Seuil de réussite retenu : {M.SEUIL_REUSSITE:g}/20."]
+    generale = M.moyenne_generale(pers.id, chemin)
+    if generale is not None:
+        lignes[0] += f" Moyenne générale des matières renseignées : {generale:g}/20."
+    for m in liste:
+        moyenne = f"{m.moyenne:g}/20" if m.moyenne is not None else "—"
+        lignes.append(f"{m.nom} | {moyenne} | {m.affinite} | {m.lecture}")
+    return "\n".join(lignes)
+
+
+# Étapes de la procédure Parcoursup, au mois près. Les dates exactes changent
+# à chaque campagne : elles ne sont pas écrites en dur, la page officielle
+# reste la seule référence.
+ETAPES_PARCOURSUP = (
+    ("Décembre à janvier", "S'informer sur les formations et leurs attendus",
+     "parcoursup.gouv.fr, onisep.fr"),
+    ("Janvier à mars", "S'inscrire et formuler ses vœux", "Parcoursup"),
+    ("Avant début avril", "Confirmer les vœux et finaliser le dossier",
+     "Parcoursup"),
+    ("À partir de début juin", "Recevoir les réponses et répondre aux "
+     "propositions d'admission", "Parcoursup"),
+    ("Juin à septembre", "Phase complémentaire, si besoin", "Parcoursup"),
+)
+
+
 def composer_plan_action(pers: P.Personne, seance_id: str,
                          chemin: Path | str | None = None) -> str:
     """Bloc 6 : tableau « échéance | action | moyens ».
@@ -198,6 +248,10 @@ def composer_plan_action(pers: P.Personne, seance_id: str,
     pour les démarches décidées en séance.
     """
     lignes = []
+    if pers.public == "lycee":
+        lignes.append("Calendrier Parcoursup : les dates exactes changent à "
+                      "chaque campagne, à vérifier sur "
+                      "parcoursup.gouv.fr/calendrier.")
     installes = Q.disponibles()
     passes = list(dict.fromkeys(r.type_test for r in
                                 RT.lister_par_seance(seance_id, chemin)))
@@ -205,6 +259,9 @@ def composer_plan_action(pers: P.Personne, seance_id: str,
         q = installes.get(cle)
         for etape in (q.get("suite", []) if q else []):
             lignes.append(f" | {etape} | {q.titre}")
+    if pers.public == "lycee":
+        for echeance, action, moyens in ETAPES_PARCOURSUP:
+            lignes.append(f"{echeance} | {action} | {moyens}")
     # Les ressources ne sont pas transformées en actions : prescrire « prendre
     # connaissance de X » à tout le monde serait inventer une démarche. Elles
     # figurent dans les références, où la personne va les chercher si besoin.
@@ -252,6 +309,7 @@ def composer(pers: P.Personne, sea: S.Seance,
     return {
         "bloc_situation": composer_situation(pers, sea),
         "bloc_tests_utilises": resume_tests(sea.id, chemin),
+        "bloc_scolaire": composer_scolaire(pers, chemin),
         "bloc_resultats": composer_resultats(sea.id, chemin),
         "bloc_pistes": composer_pistes(pers),
         "bloc_competences": composer_competences(sea.id, chemin),
@@ -281,8 +339,8 @@ def regenerer(rap: Rapport, chemin: Path | str | None = None) -> Rapport:
 
 
 _COLONNES = ("id, seance_id, date_generation, bloc_situation, bloc_tests_utilises, "
-             "bloc_resultats, bloc_pistes, bloc_competences, bloc_solutions, "
-             "bloc_references, export_docx_path")
+             "bloc_scolaire, bloc_resultats, bloc_pistes, bloc_competences, "
+             "bloc_solutions, bloc_references, export_docx_path")
 
 
 def enregistrer(r: Rapport, chemin: Path | str | None = None) -> Rapport:
@@ -293,11 +351,10 @@ def enregistrer(r: Rapport, chemin: Path | str | None = None) -> Rapport:
         if not cx.execute("SELECT 1 FROM seance WHERE id = ?", (r.seance_id,)).fetchone():
             raise ValueError("Séance introuvable : rapport non enregistré.")
         cx.execute(f"INSERT OR REPLACE INTO rapport ({_COLONNES}) "
-                   "VALUES (?,?,?,?,?,?,?,?,?,?,?)",
-                   (r.id, r.seance_id, r.date_generation, r.bloc_situation,
-                    r.bloc_tests_utilises, r.bloc_resultats, r.bloc_pistes,
-                    r.bloc_competences, r.bloc_solutions, r.bloc_references,
-                    r.export_docx_path))
+                   "VALUES (" + ",".join("?" * (len(BLOCS) + 4)) + ")",
+                   (r.id, r.seance_id, r.date_generation)
+                   + tuple(getattr(r, b) for b in BLOCS)
+                   + (r.export_docx_path,))
     return r
 
 

@@ -21,7 +21,7 @@ bibliothèque standard (`docx_minimal.py`), sans `python-docx`.
 ./lancer_tests.sh
 ```
 
-106 tests. Les tests d'interface exécutent réellement le script Streamlit
+115 tests. Les tests d'interface exécutent réellement le script Streamlit
 (`st.testing.AppTest`), sans navigateur : ils vérifient entre autres que le
 blocage RGPD apparaît bien à l'écran, et pas seulement dans le modèle.
 
@@ -91,17 +91,54 @@ suivants, ni numéro de certification. Un test l'interdit.
 |---|---|---|
 | Situation et demande | fiche + date, durée, objectif de la séance | texte |
 | Déroulé et outils utilisés | les résultats enregistrés, avec leurs dates | texte |
+| Résultats scolaires et affinités *(scolaire)* | les matières saisies, croisées | **tableau** |
 | Ce qui ressort | les synthèses produites par les grilles des outils | texte |
 | Pistes envisagées | **trame vide** : explorées / écartées et pourquoi / retenue | texte |
 | Points d'appui et éléments à développer | les cases réellement cochées | **tableau** |
 | Plan d'action | les étapes prévues par les outils + lignes libres | **tableau** |
 | Références pour affiner | la source de chaque outil + les ressources du public | texte |
 
+Le bloc scolaire n'apparaît que pour les publics collège et lycée : huit blocs
+pour un scolaire, sept pour un adulte.
+
 L'intitulé du bloc « pistes » et celui du plan d'action suivent le public :
 « Pistes d'orientation envisagées » pour un lycéen, « Plan d'action, à rythme
 tenable » pour une personne en épuisement.
 
-### Les deux tableaux
+### Notes et affinités (public scolaire)
+
+Un onglet de la fiche, visible seulement pour un collégien ou un lycéen :
+une ligne par matière, avec la **moyenne sur 20**, l'**affinité** (aime /
+neutre / n'aime pas) et l'appréciation.
+
+Ce qui rend la chose utile est le **croisement**, recalculé à l'affichage et
+jamais stocké :
+
+| | Aime | N'aime pas |
+|---|---|---|
+| **Réussie** | 🟢 appui | 🔵 résultat sans envie : n'en faire ni un projet ni un renoncement |
+| **Non réussie** | 🟠 envie sans résultat : à travailler | 🔴 fragilité |
+
+Le seuil de réussite (**12/20**) est une convention : il est écrit en un seul
+endroit, affiché dans le compte rendu, et donc discutable. Une matière sans
+moyenne garde son affinité — l'information reste utile.
+
+### Parcoursup (public lycée)
+
+Les cinq étapes de la procédure entrent dans le plan d'action, au mois près :
+s'informer, formuler ses vœux, confirmer, répondre aux propositions, phase
+complémentaire.
+
+**Aucune date n'est écrite en dur** — elles changent à chaque campagne. Le
+plan renvoie à `parcoursup.gouv.fr/calendrier`, et un test échoue si un
+numéro de jour ou une année apparaît dans les étapes.
+
+L'Onisep entre dans les ressources des publics collège et lycée : c'est le
+répertoire officiel où chercher les formations correspondant aux centres
+d'intérêt dégagés en séance. Il comble au passage le manque signalé plus
+haut — le collège avait une seule ressource, il en a trois.
+
+### Les tableaux
 
 Une ligne de texte par ligne de tableau, colonnes séparées par `|`. Le
 consultant édite du texte, l'export produit un vrai tableau Word.
@@ -197,9 +234,11 @@ psychométriques ne sont pas garanties sur cette traduction. Voir
 | `docx_minimal.py` | écriture `.docx` sans dépendance |
 | `export_docx.py` | mise en page du compte rendu |
 | `ressources.py` | catalogue des ressources externes |
+| `matieres.py` | notes, affinités et leur croisement |
 | `dates_fr.py` | affichage des dates au format français |
 | `docs/burn-out.md` | le CBI, ses garde-fous et ses limites |
 | `config.py` | identité imprimée en tête des rapports |
 | `vue_questionnaire.py` | passation, une fonction par forme |
+| `vue_matieres.py` | saisie des notes et lecture du croisement |
 | `vue_*.py` | écrans Streamlit |
 | `app.py` | point d'entrée |

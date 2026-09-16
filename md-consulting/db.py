@@ -129,7 +129,8 @@ def _migrer_blocs_du_rapport(cx: sqlite3.Connection) -> bool:
     if not existantes:
         return False
     ajoutes = False
-    for colonne in ("bloc_pistes", "bloc_competences", "bloc_references"):
+    for colonne in ("bloc_scolaire", "bloc_pistes", "bloc_competences",
+                    "bloc_references"):
         if colonne not in existantes:
             cx.execute(f"ALTER TABLE rapport ADD COLUMN {colonne} TEXT")
             ajoutes = True

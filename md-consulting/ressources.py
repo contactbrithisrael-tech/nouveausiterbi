@@ -109,6 +109,32 @@ RESSOURCES: tuple[Ressource, ...] = (
         "https://cvdesignr.com/fr/compte-france-travail — page NON vérifiée "
         "directement (accès réseau bloqué depuis l'environnement de développement)."),
 
+    # ── Orientation scolaire ──────────────────────────────────────────────
+    Ressource(
+        "Onisep", "https://www.onisep.fr",
+        "Information officielle sur les métiers et les formations. Recherche "
+        "par centre d'intérêt, par domaine, par niveau d'études ou par "
+        "secteur géographique. Fiches métiers, débouchés, formations.",
+        SERVICE_PUBLIC, ("college", "lycee", "reconversion", "handicap"),
+        "Établissement public sous tutelle des ministères de l'Éducation "
+        "nationale et de l'Enseignement supérieur. Accès entièrement gratuit. "
+        "C'est le répertoire où chercher les formations correspondant aux "
+        "centres d'intérêt dégagés en séance."),
+    Ressource(
+        "Onisep — Mon orientation en ligne",
+        "https://www.onisep.fr/mon-orientation-en-ligne",
+        "Service d'accompagnement à l'orientation, personnalisé et gratuit.",
+        SERVICE_PUBLIC, ("college", "lycee")),
+    Ressource(
+        "Parcoursup — calendrier officiel",
+        "https://www.parcoursup.gouv.fr/calendrier",
+        "Calendrier de la procédure nationale de préinscription dans "
+        "l'enseignement supérieur : information, formulation des vœux, "
+        "confirmation, phase principale d'admission, phase complémentaire.",
+        SERVICE_PUBLIC, ("lycee",),
+        "⚠ Les dates changent à chaque campagne. Cette page est la seule "
+        "référence : aucune date n'est inscrite en dur dans l'outil."),
+
     # ── Services publics ──────────────────────────────────────────────────
     Ressource(
         "Mes compétences (France Travail)", "https://mescompetences.info",

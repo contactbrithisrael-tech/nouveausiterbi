@@ -27,6 +27,19 @@ CREATE TABLE IF NOT EXISTS personne (
     date_creation             TEXT NOT NULL
 );
 
+-- Résultats scolaires et affinités. Une ligne par matière, rattachée à la
+-- personne : le croisement note × affinité est ce qui fait apparaître les
+-- appuis réels et les envies sans résultat.
+CREATE TABLE IF NOT EXISTS matiere (
+    id            TEXT PRIMARY KEY,
+    personne_id   TEXT NOT NULL REFERENCES personne(id) ON DELETE CASCADE,
+    nom           TEXT NOT NULL,
+    moyenne       REAL,          -- sur 20 ; NULL si non communiquée
+    affinite      TEXT NOT NULL, -- aime / neutre / n'aime pas
+    appreciation  TEXT,
+    ordre         INTEGER NOT NULL DEFAULT 0
+);
+
 CREATE TABLE IF NOT EXISTS seance (
     id                  TEXT PRIMARY KEY,
     personne_id         TEXT NOT NULL REFERENCES personne(id) ON DELETE CASCADE,
@@ -59,6 +72,7 @@ CREATE TABLE IF NOT EXISTS rapport (
     -- propositions concrètes, d'un plan d'action daté et de références citées.
     bloc_situation     TEXT,
     bloc_tests_utilises TEXT,
+    bloc_scolaire      TEXT,   -- lignes « matière | moyenne | affinité | lecture »
     bloc_resultats     TEXT,
     bloc_pistes        TEXT,
     bloc_competences   TEXT,   -- lignes « domaine | libellé | niveau »
@@ -67,6 +81,7 @@ CREATE TABLE IF NOT EXISTS rapport (
     export_docx_path   TEXT
 );
 
+CREATE INDEX IF NOT EXISTS idx_matiere_personne ON matiere(personne_id);
 CREATE INDEX IF NOT EXISTS idx_seance_personne  ON seance(personne_id);
 CREATE INDEX IF NOT EXISTS idx_resultat_seance  ON resultat_test(seance_id);
 CREATE INDEX IF NOT EXISTS idx_rapport_seance   ON rapport(seance_id);

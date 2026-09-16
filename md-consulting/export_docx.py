@@ -73,7 +73,7 @@ def construire(pers: P.Personne, sea: S.Seance, rap: R.Rapport) -> D.Document:
     ])
 
     titres = R.intitules(pers.public)
-    for cle in R.BLOCS:
+    for cle in R.blocs_pour(pers.public):
         d.titre(titres[cle], niveau=2)
         texte = (getattr(rap, cle) or "").strip()
         if not texte:

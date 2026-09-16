@@ -53,26 +53,124 @@ def t_questionnaire_invalide_rejete():
     raise AssertionError("identifiants en double acceptés")
 
 
+# ── Notes et affinités ─────────────────────────────────────────────────────
+def t_croisement_note_affinite():
+    import matieres as M
+    seuil = M.SEUIL_REUSSITE
+    cas = [
+        (seuil + 1, M.AIME, M.APPUI),
+        (seuil - 1, M.AIME, M.A_TRAVAILLER),
+        (seuil + 1, M.REJET, M.SANS_ENVIE),
+        (seuil - 1, M.REJET, M.FRAGILITE),
+        (None, M.AIME, M.SANS_NOTE),
+    ]
+    for moyenne, affinite, attendu in cas:
+        m = M.Matiere("p", "Matière", affinite, moyenne=moyenne)
+        assert m.lecture == attendu, f"{moyenne}/{affinite} → {m.lecture}"
+    assert M.Matiere("p", "M", M.AIME, moyenne=seuil).lecture == M.APPUI, \
+        "la note au seuil compte comme réussie"
+
+
+def t_moyenne_hors_bornes_refusee():
+    import matieres as M
+    for mauvaise in (-1, 21):
+        try:
+            M.Matiere("p", "M", M.AIME, moyenne=mauvaise).valider()
+        except ValueError:
+            continue
+        raise AssertionError(f"moyenne {mauvaise} acceptée")
+
+
+def t_matieres_liees_a_la_personne():
+    import matieres as M
+    pid = P.creer(P.Personne("Rose", "Ugo", "lycee", "lycee",
+                             consentement_parental_date="2026-09-01"), BASE).id
+    M.remplacer_tout(pid, [M.Matiere(pid, "SVT", M.AIME, moyenne=14.0),
+                           M.Matiere(pid, "Anglais", M.REJET, moyenne=7.0)], BASE)
+    assert len(M.lister(pid, BASE)) == 2
+    assert M.moyenne_generale(pid, BASE) == 10.5
+    M.remplacer_tout(pid, [M.Matiere(pid, "SVT", M.AIME, moyenne=14.0)], BASE)
+    assert len(M.lister(pid, BASE)) == 1, "la liste doit être remplacée d'un bloc"
+    P.supprimer(pid, BASE)
+    assert M.lister(pid, BASE) == [], "les matières doivent suivre la fiche"
+
+
+def t_bloc_scolaire_reprend_les_matieres_et_le_seuil():
+    import matieres as M
+    pid = P.creer(P.Personne("Bleu", "Zoé", "lycee", "lycee",
+                             consentement_parental_date="2026-09-01"), BASE).id
+    sid = S.creer(S.Seance(pid), BASE).id
+    M.remplacer_tout(pid, [M.Matiere(pid, "SVT", M.AIME, moyenne=15.0)], BASE)
+    texte = R.composer_scolaire(P.lire(pid, BASE), BASE)
+    assert f"{M.SEUIL_REUSSITE:g}/20" in texte, "le seuil doit être rappelé"
+    assert "SVT | 15/20 | aime | " + M.APPUI in texte
+    rap = R.preparer(sid, BASE)
+    assert "SVT" in rap.bloc_scolaire
+
+
+def t_bloc_scolaire_vide_sans_matiere():
+    pid = P.creer(P.Personne("Gris", "Tom", "college", "college",
+                             consentement_parental_date="2026-09-01"), BASE).id
+    assert R.composer_scolaire(P.lire(pid, BASE), BASE) == ""
+
+
+def t_parcoursup_pour_les_lyceens_seulement():
+    for public, attendu in (("lycee", True), ("college", False),
+                            ("reconversion", False)):
+        pid = P.creer(P.Personne("Noir", public.capitalize(), 
+                                 "lycee" if public == "lycee" else
+                                 "college" if public == "college" else "adulte",
+                                 public,
+                                 consentement_parental_date="2026-09-01"), BASE).id
+        sid = S.creer(S.Seance(pid), BASE).id
+        texte = R.composer_plan_action(P.lire(pid, BASE), sid, BASE)
+        present = "Parcoursup" in texte
+        assert present is attendu, f"{public} : Parcoursup {present}"
+
+
+def t_aucune_date_parcoursup_en_dur():
+    """Les dates changent à chaque campagne : seuls les mois sont écrits."""
+    import re
+    for echeance, action, moyens in R.ETAPES_PARCOURSUP:
+        assert not re.search(r"\b\d{1,2}\s", echeance), f"date en dur : {echeance}"
+        assert not re.search(r"\b20\d\d\b", echeance + action), f"année : {echeance}"
+    texte = " ".join(e for e, a, m in R.ETAPES_PARCOURSUP)
+    assert "janvier" in texte and "juin" in texte
+
+
 # ── Module 4 ───────────────────────────────────────────────────────────────
-def t_la_trame_a_sept_blocs():
-    assert R.BLOCS == ("bloc_situation", "bloc_tests_utilises", "bloc_resultats",
-                       "bloc_pistes", "bloc_competences", "bloc_solutions",
-                       "bloc_references")
+def t_la_trame_a_huit_blocs():
+    assert R.BLOCS == ("bloc_situation", "bloc_tests_utilises", "bloc_scolaire",
+                       "bloc_resultats", "bloc_pistes", "bloc_competences",
+                       "bloc_solutions", "bloc_references")
     for pub in P.PUBLICS:
         assert set(R.intitules(pub)) == set(R.BLOCS), f"intitulés incomplets : {pub}"
 
 
-def t_deux_blocs_sont_des_tableaux():
-    assert set(R.BLOCS_TABLEAU) == {"bloc_competences", "bloc_solutions"}
-    for cle, entetes in R.BLOCS_TABLEAU.items():
-        assert len(entetes) == 3, f"{cle} : {len(entetes)} colonnes"
+def t_le_bloc_scolaire_ne_concerne_que_les_scolaires():
+    for pub in ("college", "lycee"):
+        assert "bloc_scolaire" in R.blocs_pour(pub), pub
+        assert len(R.blocs_pour(pub)) == 8
+    for pub in ("reconversion", "vae", "handicap", "burnout"):
+        assert "bloc_scolaire" not in R.blocs_pour(pub), pub
+        assert len(R.blocs_pour(pub)) == 7
 
 
-def t_les_quatre_blocs_sont_assembles_seuls():
+def t_trois_blocs_sont_des_tableaux():
+    assert set(R.BLOCS_TABLEAU) == {"bloc_scolaire", "bloc_competences",
+                                    "bloc_solutions"}
+    assert len(R.BLOCS_TABLEAU["bloc_scolaire"]) == 4
+    assert len(R.BLOCS_TABLEAU["bloc_competences"]) == 3
+    assert len(R.BLOCS_TABLEAU["bloc_solutions"]) == 3
+
+
+def t_les_blocs_du_public_sont_assembles_seuls():
     RT.creer(RT.ResultatTest(SID, "assessfirst_externe",
                              synthese_texte="Profil coordinateur"), BASE)
     rap = R.preparer(SID, BASE)
-    assert rap.blocs_vides == [], f"blocs encore vides : {rap.blocs_vides}"
+    pers = P.lire(PID, BASE)
+    restants = [b for b in rap.blocs_vides if b in R.blocs_pour(pers.public)]
+    assert restants == [], f"blocs encore vides : {restants}"
     assert "AssessFirst" in rap.bloc_tests_utilises
     assert "Profil coordinateur" in rap.bloc_resultats
 

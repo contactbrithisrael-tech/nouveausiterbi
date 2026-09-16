@@ -151,6 +151,25 @@ def t_cbi_ne_peut_pas_etre_enregistre():
         "un résultat a été écrit en base"
 
 
+def t_onglet_notes_pour_les_scolaires_seulement():
+    """Un adulte n'a pas de bulletin : l'onglet ne doit pas exister pour lui."""
+    from datetime import date, timedelta
+    naissance = (date.today() - timedelta(days=16 * 366)).isoformat()
+    lyceen = P.creer(P.Personne("Roux", "Ana", "lycee", "lycee",
+                                date_naissance=naissance,
+                                consentement_parental_date=date.today().isoformat()),
+                     db.CHEMIN_BASE)
+    adulte = P.creer(P.Personne("Fort", "Léo", "adulte", "reconversion"),
+                     db.CHEMIN_BASE)
+    at = _lancer(personne_id=lyceen.id)
+    assert not at.exception, at.exception
+    assert any("Notes et affinités" in t.label for t in at.tabs), \
+        [t.label for t in at.tabs]
+    at = _lancer(personne_id=adulte.id)
+    assert not at.exception, at.exception
+    assert not any("Notes" in t.label for t in at.tabs), [t.label for t in at.tabs]
+
+
 def t_ecran_ressources_sans_exception():
     at = AppTest.from_file(APP, default_timeout=30).run()
     at.radio[0].set_value("Ressources")

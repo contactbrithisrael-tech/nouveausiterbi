@@ -22,6 +22,8 @@ AIDES = {
                         "savoirs et savoir-faire dépendent du métier visé.",
     "bloc_solutions": "Une ligne par action, colonnes séparées par « | ». "
                       "Les échéances se fixent avec la personne.",
+    "bloc_scolaire": "Assemblé depuis les matières saisies sur la fiche. "
+                     "La lecture croise la moyenne et l'affinité.",
     "bloc_references": "Assemblé depuis les sources des outils passés et les "
                        "ressources du public, avec leur statut d'accès.",
 }
@@ -42,7 +44,7 @@ def ecran(s: S.Seance, pers: P.Personne) -> None:
 
     with st.form("rapport"):
         valeurs = {}
-        for cle in R.BLOCS:
+        for cle in R.blocs_pour(pers.public):
             entetes = R.BLOCS_TABLEAU.get(cle)
             libelle = titres[cle]
             if entetes:
@@ -57,7 +59,7 @@ def ecran(s: S.Seance, pers: P.Personne) -> None:
             st.success("Compte rendu enregistré.")
             st.rerun()
 
-    vides = rap.blocs_vides
+    vides = [b for b in rap.blocs_vides if b in R.blocs_pour(pers.public)]
     if vides:
         st.warning("Blocs encore vides : "
                    + ", ".join(titres[c] for c in vides))

@@ -32,7 +32,7 @@ def liste_seances(pers: P.Personne) -> None:
         c1, c2, c3 = st.columns([3, 3, 2])
         c1.write(f"**{dates_fr.jour(s.date)}**" + (f" — {s.heure_debut[:5]}" if s.heure_debut else ""))
         c2.caption(s.objectif_texte or "objectif non renseigné")
-        if c3.button("Ouvrir", key=f"sea_{s.id}", use_container_width=True):
+        if c3.button("Ouvrir", key=f"sea_{s.id}", width="stretch"):
             st.session_state["seance_id"] = s.id
             st.rerun()
 

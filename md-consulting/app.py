@@ -11,6 +11,7 @@ import dates_fr
 import db
 import personne as P
 import seance as S
+import vue_matieres
 import vue_personne
 import vue_rapport
 import vue_ressources
@@ -33,7 +34,7 @@ with st.sidebar:
     page = st.radio("Écran", ["Personnes", "Ressources"], label_visibility="collapsed")
     if page == "Personnes":
         st.header("Personnes")
-        if st.button("➕ Nouvelle fiche", use_container_width=True):
+        if st.button("➕ Nouvelle fiche", width="stretch"):
             aller(page_personne="creation", personne_id=None, seance_id=None)
         recherche = st.text_input("Rechercher", placeholder="nom, prénom ou courriel")
         cles = ["(tous)"] + list(P.PUBLICS)
@@ -75,12 +76,17 @@ if personne_id:
         aller(personne_id=None)
     if st.button("← Retour à la liste"):
         aller(personne_id=None)
-    onglet_fiche, onglet_seances = st.tabs(["Fiche", "Séances"])
-    with onglet_fiche:
+    scolaire = pers.public in ("college", "lycee")
+    noms = ["Fiche"] + (["Notes et affinités"] if scolaire else []) + ["Séances"]
+    onglets = st.tabs(noms)
+    with onglets[0]:
         vue_personne.formulaire(pers)
         with st.expander("Droit à l'effacement"):
             vue_personne.bloc_suppression(pers)
-    with onglet_seances:
+    if scolaire:
+        with onglets[1]:
+            vue_matieres.ecran(pers)
+    with onglets[-1]:
         vue_seance.liste_seances(pers)
     st.stop()
 
@@ -104,6 +110,6 @@ for p in fiches:
                    if p.consentement_ok else "⛔ consentement parental manquant")
     if not p.fiche_complete:
         c3.caption(f"⚠ fiche incomplète ({len(p.champs_manquants)} champ(s))")
-    if c4.button("Ouvrir", key=f"open_{p.id}", use_container_width=True):
+    if c4.button("Ouvrir", key=f"open_{p.id}", width="stretch"):
         aller(personne_id=p.id, page_personne=None, seance_id=None)
     st.divider()
