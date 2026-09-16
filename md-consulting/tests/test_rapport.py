@@ -61,12 +61,115 @@ def t_les_quatre_blocs_existent():
         assert set(R.intitules(pub)) == set(R.BLOCS), f"intitulés incomplets : {pub}"
 
 
-def t_bloc_outils_prerempli_depuis_la_base():
+def t_les_quatre_blocs_sont_assembles_seuls():
     RT.creer(RT.ResultatTest(SID, "assessfirst_externe",
                              synthese_texte="Profil coordinateur"), BASE)
     rap = R.preparer(SID, BASE)
+    assert rap.blocs_vides == [], f"blocs encore vides : {rap.blocs_vides}"
     assert "AssessFirst" in rap.bloc_tests_utilises
-    assert "bloc_situation" in rap.blocs_vides, "les autres blocs ne sont pas générés"
+    assert "Profil coordinateur" in rap.bloc_resultats
+
+
+def t_situation_reprend_la_fiche_et_l_objectif():
+    pers = P.lire(PID, BASE)
+    sea = S.lire(SID, BASE)
+    sea.objectif_texte = "Clarifier deux pistes."
+    S.modifier(sea, BASE)
+    texte = R.composer_situation(pers, S.lire(SID, BASE))
+    assert pers.nom.upper() in texte and P.PUBLICS[pers.public] in texte
+    assert "Clarifier deux pistes." in texte
+    assert "90 minutes" in texte
+
+
+def t_solutions_reprennent_demarches_et_ressources():
+    import questionnaire as Q
+    import ressources as Rs
+    RT.creer(RT.ResultatTest(SID, "points_forts",
+                             synthese_texte="Points forts — 2 retenus"), BASE)
+    pers = P.lire(PID, BASE)
+    texte = R.composer_solutions(pers, SID, BASE)
+    suite = Q.disponibles()["points_forts"].get("suite", [])[0]
+    assert suite in texte, "les démarches prévues par l'outil manquent"
+    noms = [r.nom for r in Rs.pour_public(pers.public)]
+    assert all(n in texte for n in noms), "des ressources du public manquent"
+
+
+def t_le_compte_rendu_ne_reprend_pas_la_mise_en_garde_du_consultant():
+    """MISES_EN_GARDE s'adresse au consultant : ce texte n'a rien à faire
+    dans un document remis à la personne."""
+    import ressources as Rs
+    pid = P.creer(P.Personne("Blanc", "Eve", "adulte", "burnout"), BASE).id
+    sid = S.creer(S.Seance(pid), BASE).id
+    rap = R.preparer(sid, BASE)
+    entier = " ".join(getattr(rap, b) for b in R.BLOCS)
+    garde = Rs.MISES_EN_GARDE["burnout"].replace("**", "")
+    assert garde not in entier, "la mise en garde du consultant est dans le document"
+    assert "demande expresse du consultant" not in entier
+    attendu = Rs.ORIENTATIONS_BENEFICIAIRE["burnout"]
+    assert attendu in rap.bloc_solutions, "l'orientation de la personne manque"
+
+
+def t_un_outil_donnee_de_sante_n_apparait_jamais():
+    """Rien n'est enregistré du CBI : il ne peut donc rien apporter au rapport."""
+    import questionnaire as Q
+    pid = P.creer(P.Personne("Noir", "Luc", "adulte", "burnout"), BASE).id
+    sid = S.creer(S.Seance(pid), BASE).id
+    rap = R.preparer(sid, BASE)
+    entier = " ".join(getattr(rap, b) for b in R.BLOCS)
+    titre = Q.disponibles()["cbi_epuisement"].titre
+    assert titre not in entier, "le CBI apparaît dans le compte rendu"
+
+
+def t_un_seul_compte_rendu_par_seance():
+    """Deux versions pour une même séance laissaient la lecture choisir au
+    hasard. La base l'interdit maintenant."""
+    pid = P.creer(P.Personne("Gris", "Iris", "adulte", "vae"), BASE).id
+    sid = S.creer(S.Seance(pid), BASE).id
+    premier = R.preparer(sid, BASE)
+    premier.bloc_situation = "Première version."
+    R.enregistrer(premier, BASE)
+    second = R.preparer(sid, BASE)          # identifiant différent
+    second.bloc_situation = "Seconde version."
+    R.enregistrer(second, BASE)
+    with db.connexion(BASE) as cx:
+        total = cx.execute("SELECT COUNT(*) FROM rapport WHERE seance_id = ?",
+                           (sid,)).fetchone()[0]
+    assert total == 1, f"{total} comptes rendus pour une séance"
+    assert R.lire_par_seance(sid, BASE).bloc_situation == "Seconde version."
+
+
+def t_migration_ne_garde_que_le_dernier_compte_rendu():
+    import sqlite3, tempfile as tf
+    ancien = tf.mktemp(suffix=".db")
+    cx = sqlite3.connect(ancien)
+    cx.executescript("""
+        CREATE TABLE seance (id TEXT PRIMARY KEY, personne_id TEXT, date TEXT);
+        CREATE TABLE rapport (id TEXT PRIMARY KEY, seance_id TEXT NOT NULL,
+          date_generation TEXT NOT NULL, bloc_situation TEXT,
+          bloc_tests_utilises TEXT, bloc_resultats TEXT, bloc_solutions TEXT,
+          export_docx_path TEXT);
+        INSERT INTO seance VALUES ('s1','p1','2026-09-16');
+        INSERT INTO rapport VALUES ('r1','s1','2026-09-16T10:00:00','vieux',
+          NULL,NULL,NULL,NULL);
+        INSERT INTO rapport VALUES ('r2','s1','2026-09-16T11:00:00','recent',
+          NULL,NULL,NULL,NULL);""")
+    cx.commit(); cx.close()
+    db.initialiser(ancien)
+    with db.connexion(ancien) as cx:
+        lignes = cx.execute("SELECT bloc_situation FROM rapport").fetchall()
+    assert [l[0] for l in lignes] == ["recent"], lignes
+    os.remove(ancien)
+
+
+def t_reassemblage_ecrase_les_retouches():
+    rap = R.preparer(SID, BASE)
+    rap.bloc_situation = "Texte écrit à la main."
+    R.enregistrer(rap, BASE)
+    assert R.lire_par_seance(SID, BASE).bloc_situation == "Texte écrit à la main."
+    R.enregistrer(R.regenerer(rap, BASE), BASE)
+    relu = R.lire_par_seance(SID, BASE)
+    assert "Texte écrit à la main." not in relu.bloc_situation
+    assert P.lire(PID, BASE).nom.upper() in relu.bloc_situation
 
 
 def t_rapport_sans_seance_refuse():

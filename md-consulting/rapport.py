@@ -11,6 +11,8 @@ from pathlib import Path
 import dates_fr
 import db
 import personne as P
+import questionnaire as Q
+import ressources as Rs
 import resultat_test as RT
 import seance as S
 
@@ -74,12 +76,107 @@ def resume_tests(seance_id: str, chemin: Path | str | None = None) -> str:
     return "\n".join(lignes)
 
 
+def composer_situation(pers: P.Personne, sea: S.Seance) -> str:
+    """Bloc 1, assemblé depuis la fiche et la séance. Que des faits saisis."""
+    lignes = [f"Personne reçue : {pers.nom_affiche}"
+              + (f", {pers.age} ans" if pers.age is not None else "")
+              + f" — {P.PUBLICS[pers.public]}."]
+    if pers.rqth:
+        lignes.append("Reconnaissance de la qualité de travailleur handicapé (RQTH).")
+    if pers.situation:
+        lignes.append(f"Situation : {pers.situation}.")
+    lignes.append(f"Séance du {dates_fr.jour(sea.date)}, "
+                  f"durée prévue {sea.chrono_max_minutes} minutes.")
+    if sea.objectif_texte:
+        lignes.append(f"Objectif annoncé : {sea.objectif_texte}")
+    if pers.notes_libres:
+        lignes.append(f"Notes de séance : {pers.notes_libres}")
+    return "\n".join(lignes)
+
+
+def composer_resultats(seance_id: str, chemin: Path | str | None = None) -> str:
+    """Bloc 3 : les synthèses des outils passés, mises bout à bout.
+
+    Aucune interprétation ajoutée : ce qui apparaît ici a été produit par les
+    grilles des outils eux-mêmes. Les outils marqués « donnée de santé » n'y
+    figurent pas — rien n'en a été enregistré, il n'y a rien à reprendre.
+    """
+    resultats = RT.lister_par_seance(seance_id, chemin)
+    if not resultats:
+        return ""
+    blocs = []
+    for r in resultats:
+        if not (r.synthese_texte or "").strip():
+            continue
+        blocs.append(f"{RT.libelle(r.type_test)}\n{r.synthese_texte.strip()}")
+    return "\n\n".join(blocs)
+
+
+def composer_solutions(pers: P.Personne, seance_id: str,
+                       chemin: Path | str | None = None) -> str:
+    """Bloc 4 : démarches issues des outils passés, puis ressources du public.
+
+    Rien n'est inventé : les démarches sont celles que les outils prévoient
+    eux-mêmes après la passation, et les ressources sont celles du catalogue,
+    avec leur statut d'accès.
+    """
+    lignes = []
+    installes = Q.disponibles()
+    passes = [r.type_test for r in RT.lister_par_seance(seance_id, chemin)]
+    suites = []
+    for cle in dict.fromkeys(passes):
+        q = installes.get(cle)
+        for etape in (q.get("suite", []) if q else []):
+            if etape not in suites:
+                suites.append(etape)
+    if suites:
+        lignes.append("À faire à la suite des outils passés :")
+        lignes += [f"- {e}" for e in suites]
+        lignes.append("")
+
+    ressources = Rs.pour_public(pers.public)
+    if ressources:
+        lignes.append("Ressources à consulter :")
+        for r in ressources:
+            mention = f"- {r.nom} — {r.url} ({r.acces})"
+            lignes.append(mention)
+    # Le texte repris ici s'adresse à la personne reçue, pas au consultant :
+    # la mise en garde professionnelle reste à l'écran, hors du document.
+    orientation = Rs.ORIENTATIONS_BENEFICIAIRE.get(pers.public)
+    if orientation:
+        lignes += ["", orientation]
+    return "\n".join(lignes)
+
+
+def composer(pers: P.Personne, sea: S.Seance,
+             chemin: Path | str | None = None) -> dict[str, str]:
+    """Les quatre blocs, assemblés depuis la base. Tous modifiables ensuite."""
+    return {
+        "bloc_situation": composer_situation(pers, sea),
+        "bloc_tests_utilises": resume_tests(sea.id, chemin),
+        "bloc_resultats": composer_resultats(sea.id, chemin),
+        "bloc_solutions": composer_solutions(pers, sea.id, chemin),
+    }
+
+
 def preparer(seance_id: str, chemin: Path | str | None = None) -> Rapport:
-    """Brouillon : le bloc des outils est pré-rempli, le reste attend le texte."""
-    if S.lire(seance_id, chemin) is None:
+    """Compte rendu assemblé automatiquement, prêt à être relu et corrigé."""
+    sea = S.lire(seance_id, chemin)
+    if sea is None:
         raise ValueError("Séance introuvable.")
-    return Rapport(seance_id=seance_id,
-                   bloc_tests_utilises=resume_tests(seance_id, chemin))
+    pers = P.lire(sea.personne_id, chemin)
+    if pers is None:
+        raise ValueError("Personne introuvable.")
+    return Rapport(seance_id=seance_id, **composer(pers, sea, chemin))
+
+
+def regenerer(rap: Rapport, chemin: Path | str | None = None) -> Rapport:
+    """Réécrit les quatre blocs depuis la base, en écrasant les retouches."""
+    sea = S.lire(rap.seance_id, chemin)
+    pers = P.lire(sea.personne_id, chemin)
+    for cle, texte in composer(pers, sea, chemin).items():
+        setattr(rap, cle, texte)
+    return rap
 
 
 _COLONNES = ("id, seance_id, date_generation, bloc_situation, bloc_tests_utilises, "
@@ -87,7 +184,8 @@ _COLONNES = ("id, seance_id, date_generation, bloc_situation, bloc_tests_utilise
 
 
 def enregistrer(r: Rapport, chemin: Path | str | None = None) -> Rapport:
-    """Insère ou met à jour — un rapport par séance suffit en pratique."""
+    """Insère ou remplace. Un seul compte rendu par séance : la contrainte
+    d'unicité fait que le précédent est écarté, quel que soit son identifiant."""
     r.valider()
     with db.connexion(chemin) as cx:
         if not cx.execute("SELECT 1 FROM seance WHERE id = ?", (r.seance_id,)).fetchone():
@@ -101,8 +199,8 @@ def enregistrer(r: Rapport, chemin: Path | str | None = None) -> Rapport:
 
 def lire_par_seance(seance_id: str, chemin: Path | str | None = None) -> Rapport | None:
     with db.connexion(chemin) as cx:
-        l = cx.execute(f"SELECT {_COLONNES} FROM rapport WHERE seance_id = ? "
-                       "ORDER BY date_generation DESC", (seance_id,)).fetchone()
+        l = cx.execute(f"SELECT {_COLONNES} FROM rapport WHERE seance_id = ?",
+                       (seance_id,)).fetchone()
     if not l:
         return None
     return Rapport(id=l["id"], seance_id=l["seance_id"],

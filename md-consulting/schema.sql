@@ -50,7 +50,9 @@ CREATE TABLE IF NOT EXISTS resultat_test (
 
 CREATE TABLE IF NOT EXISTS rapport (
     id                 TEXT PRIMARY KEY,
-    seance_id          TEXT NOT NULL REFERENCES seance(id) ON DELETE CASCADE,
+    -- Un seul compte rendu par séance : sans cette contrainte, deux versions
+    -- pouvaient coexister et la lecture choisissait l'une au hasard.
+    seance_id          TEXT NOT NULL UNIQUE REFERENCES seance(id) ON DELETE CASCADE,
     date_generation    TEXT NOT NULL,
     bloc_situation     TEXT,
     bloc_tests_utilises TEXT,

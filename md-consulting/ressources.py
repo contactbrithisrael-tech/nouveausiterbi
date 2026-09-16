@@ -35,6 +35,25 @@ MISES_EN_GARDE = {
 }
 
 
+# Texte destiné à la PERSONNE REÇUE, repris dans le compte rendu qu'elle
+# emporte. À distinguer de MISES_EN_GARDE, qui s'adresse au consultant et
+# n'a rien à faire dans un document remis.
+ORIENTATIONS_BENEFICIAIRE = {
+    "burnout": (
+        "L'épuisement professionnel relève de la santé au travail. Les "
+        "interlocuteurs sont le médecin du travail, le médecin traitant et le "
+        "psychologue. Le dispositif « Mon soutien psy » de l'Assurance Maladie "
+        "permet de consulter un psychologue sans prescription préalable. "
+        "Ce compte rendu restitue une séance de conseil : il ne constitue pas "
+        "un avis médical."
+    ),
+    "handicap": (
+        "Cap emploi et l'Agefiph accompagnent l'accès et le maintien dans "
+        "l'emploi des personnes en situation de handicap."
+    ),
+}
+
+
 @dataclass(frozen=True)
 class Ressource:
     nom: str

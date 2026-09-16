@@ -21,7 +21,7 @@ bibliothèque standard (`docx_minimal.py`), sans `python-docx`.
 ./lancer_tests.sh
 ```
 
-94 tests. Les tests d'interface exécutent réellement le script Streamlit
+101 tests. Les tests d'interface exécutent réellement le script Streamlit
 (`st.testing.AppTest`), sans navigateur : ils vérifient entre autres que le
 blocage RGPD apparaît bien à l'écran, et pas seulement dans le modèle.
 
@@ -81,59 +81,46 @@ la page ne remet pas le compteur à zéro. Trois états — en cours, vigilance
 (10 minutes avant le plafond), dépassement. Plafond réglable, 90 minutes par
 défaut.
 
-## Compte rendu (module 4)
+## Compte rendu (module 4) — assemblé automatiquement
 
 Quatre blocs pour tous les publics ; seul l'intitulé du dernier change
 (« Pistes d'orientation » pour un lycéen, « Démarches VAE » pour une VAE…).
 
-**Un seul bloc est rempli par l'outil** : la liste des outils utilisés, reprise
-de la base. Les trois autres sont rédigés par le consultant. Un compte rendu
-remis à quelqu'un n'est pas un texte généré.
+**Les quatre blocs s'écrivent seuls** à l'ouverture de l'écran, depuis ce qui
+est déjà en base — rien n'est inventé :
+
+| Bloc | Assemblé depuis |
+|---|---|
+| Situation | fiche (nom, âge, public, RQTH, situation, notes) + date, durée et objectif de la séance |
+| Outils utilisés | les résultats enregistrés, avec leurs dates |
+| Ce qui ressort | les synthèses produites par les grilles des outils passés |
+| Pistes et démarches | les étapes prévues par les outils eux-mêmes, puis les ressources du public avec leur statut d'accès |
+
+Le bouton **« Tout réassembler depuis la base »** refait les quatre blocs et
+écrase les retouches. Chaque bloc reste modifiable : ce sont les mots du
+consultant qui sont remis à la personne.
+
+Deux règles tenues par des tests :
+
+- **Un outil marqué « donnée de santé » n'apparaît jamais.** Rien n'en est
+  enregistré, il n'y a donc rien à reprendre — le CBI ne remonte pas dans le
+  compte rendu.
+- **La mise en garde destinée au consultant n'entre pas dans le document.**
+  Le texte remis à la personne vient de `ORIENTATIONS_BENEFICIAIRE`, distinct
+  de `MISES_EN_GARDE` qui reste à l'écran.
+
+**L'export reste manuel**, et le restera : la contrainte RGPD du projet dit
+« aucun export ou envoi automatique de données ». Le contenu s'assemble seul,
+le fichier ne sort que sur un clic.
+
+Un seul compte rendu par séance, garanti par la base : deux versions
+pouvaient coexister et la lecture en choisissait une au hasard. Les bases
+existantes sont migrées au démarrage, en ne gardant que la plus récente.
 
 `config.py` porte l'identité imprimée en tête. Les champs sont **vides** :
 le document de référence fourni portait les mentions de LinkOm Consultants
 (Qualiopi, SIRET, DIRECCTE), qui n'ont pas été recopiées. Un test vérifie
 qu'aucune mention réglementaire n'apparaît dans la configuration.
-
-## Module Investigation (module 3)
-
-Douze outils installés, 447 items :
-
-| Outil | Forme | Items |
-|---|---|---|
-| Questionnaire Projet de vie | 25 questions en 10 sections | 25 |
-| Les freins au travail | liste à cocher | 26 |
-| Les motivations au travail | choisir 10 sur 35, grille 5 profils | 35 |
-| Mes valeurs | liste à cocher avec définitions | 48 |
-| Points forts | liste à cocher | 64 |
-| Points de vigilance | liste à cocher | 33 |
-| Bilan personnel 360° | 68 items × 6 évaluateurs | 68 |
-| Grille 360° version scolaire | 68 items × 7 évaluateurs | 68 |
-| Enquête métier | questions ouvertes | 11 |
-| Prédisposition à la création d'entreprise | échelle, score /80 | 20 |
-| Orientation formateur | choix forcé, 2 axes, 5 familles | 30 |
-| Copenhagen Burnout Inventory | 3 sous-échelles, moyennes /100 | 19 |
-
-Le moteur ne contient aucun contenu : chaque outil est un fichier JSON dans
-`questionnaires/`. En ajouter un ne demande ni code ni migration de base.
-Les effectifs et les grilles sont vérifiés par des tests — la grille des
-motivations doit couvrir les 35 items une fois chacun, la clé du test
-formateur ses 30 items, sinon le chargement est refusé.
-
-Le module 360° signale les **écarts de perception** entre évaluateurs.
-
-**Chaque outil est rattaché à des publics** et l'écran de séance ne propose
-que ceux qui conviennent à la personne reçue : 4 outils pour un collégien,
-8 pour un lycéen, 10 pour un adulte en reconversion. Le Bilan 360° existe en
-deux versions, scolaire (colonnes Parents, Extrascolaire) et adulte
-(Responsable, Collègue).
-
-Un énoncé peut être **écarté pour une personne mineure** — l'item
-« Amour : affection envers les autres, intimité sexuelle » du questionnaire
-Valeurs l'est d'office, et l'écran dit au consultant ce qui a été retiré.
-Aucun énoncé n'est réécrit : ce qui gêne est écarté ou signalé.
-
-Détail du format et points à trancher : `docs/questionnaires.md`.
 
 ## Burn-out : le CBI, jamais enregistré
 

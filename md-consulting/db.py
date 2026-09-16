@@ -86,6 +86,27 @@ def _migrer_publics_libres(cx: sqlite3.Connection) -> bool:
     return True
 
 
+def _migrer_un_rapport_par_seance(cx: sqlite3.Connection) -> bool:
+    """Ajoute l'unicité du compte rendu par séance, en ne gardant que le
+    plus récent lorsque plusieurs coexistaient."""
+    ligne = cx.execute("SELECT sql FROM sqlite_master WHERE type='table' "
+                       "AND name='rapport'").fetchone()
+    if not ligne or "seance_id          TEXT NOT NULL UNIQUE" in (ligne["sql"] or ""):
+        return False
+    cx.execute("PRAGMA foreign_keys = OFF")
+    cx.execute("ALTER TABLE rapport RENAME TO rapport_ancien")
+    cx.executescript(CHEMIN_SCHEMA.read_text(encoding="utf-8"))
+    cx.execute("""
+        INSERT INTO rapport SELECT * FROM rapport_ancien WHERE id IN (
+            SELECT id FROM rapport_ancien r WHERE r.date_generation = (
+                SELECT MAX(date_generation) FROM rapport_ancien
+                WHERE seance_id = r.seance_id)
+            GROUP BY r.seance_id)""")
+    cx.execute("DROP TABLE rapport_ancien")
+    cx.execute("PRAGMA foreign_keys = ON")
+    return True
+
+
 def initialiser(chemin: Path | str | None = None) -> None:
     """Crée les tables si besoin, puis applique les migrations. Idempotent."""
     with connexion(chemin) as cx:
@@ -93,3 +114,4 @@ def initialiser(chemin: Path | str | None = None) -> None:
         _migrer_fiche_complete(cx)
         _migrer_publics_libres(cx)
         _migrer_types_de_test_libres(cx)
+        _migrer_un_rapport_par_seance(cx)

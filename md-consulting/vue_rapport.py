@@ -11,21 +11,26 @@ import rapport as R
 import seance as S
 
 AIDES = {
-    "bloc_situation": "Pourquoi la personne est venue, d'où elle part.",
-    "bloc_tests_utilises": "Pré-rempli depuis les outils enregistrés. Modifiable.",
-    "bloc_resultats": "Synthèse qualitative. Jamais des scores bruts seuls.",
-    "bloc_solutions": "Pistes concrètes et prochaines démarches, datées si possible.",
+    "bloc_situation": "Assemblé depuis la fiche et l'objectif de la séance.",
+    "bloc_tests_utilises": "Assemblé depuis les outils enregistrés.",
+    "bloc_resultats": "Assemblé depuis les synthèses des outils passés. "
+                      "Les outils non enregistrés (donnée de santé) n'y figurent pas.",
+    "bloc_solutions": "Assemblé depuis les démarches prévues par les outils et "
+                      "les ressources du public. À compléter de vos pistes.",
 }
 
 
 def ecran(s: S.Seance, pers: P.Personne) -> None:
     st.subheader("Compte rendu de séance")
-    rap = R.lire_par_seance(s.id) or R.preparer(s.id)
+    existant = R.lire_par_seance(s.id)
+    rap = existant or R.enregistrer(R.preparer(s.id))
     titres = R.intitules(pers.public)
 
-    if st.button("↻ Recalculer le bloc « outils utilisés »"):
-        rap.bloc_tests_utilises = R.resume_tests(s.id)
-        R.enregistrer(rap)
+    st.caption("Les quatre blocs sont assemblés depuis la fiche, la séance et "
+               "les outils passés. Relisez-les et corrigez : ce sont vos mots "
+               "qui sont remis à la personne.")
+    if st.button("↻ Tout réassembler depuis la base"):
+        R.enregistrer(R.regenerer(rap))
         st.rerun()
 
     with st.form("rapport"):
