@@ -130,6 +130,22 @@ def t_adulte_sans_consentement_passe():
     assert not P.lire(p.id, BASE).consentement_requis
 
 
+def t_seuil_verrouille_a_dix_huit_ans():
+    """Décision de Mickael : consentement parental obligatoire pour tout mineur.
+    Ce test existe pour que le seuil ne redescende pas sans qu'on s'en aperçoive."""
+    assert P.SEUIL_CONSENTEMENT_PARENTAL == 18
+
+
+def t_consentement_exige_a_dix_sept_ans():
+    p = P.Personne("Fort", "Noé", "lycee", "lycee", date_naissance=_ne_le(17))
+    assert p.consentement_requis, "un jeune de 17 ans doit exiger le consentement"
+
+
+def t_pas_de_consentement_a_dix_huit_ans():
+    p = P.Personne("Fort", "Zoé", "adulte", "reconversion", date_naissance=_ne_le(18))
+    assert not p.consentement_requis
+
+
 # ── Complétude ─────────────────────────────────────────────────────────────
 def t_fiche_complete_detectee():
     p = _adulte("Noir", "Paul")

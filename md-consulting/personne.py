@@ -25,8 +25,9 @@ PUBLICS = {
 }
 
 # Âge en dessous duquel le consentement parental est exigé avant toute
-# création de fiche. 18 = tout mineur, choix protecteur. Le brief évoquait
-# « moins de 15 ans » : mettre 15 ici suffit à revenir à cette règle.
+# création de fiche. Arbitrage de Mickael Darmon : obligatoire pour tout
+# mineur, donc 18 — et non les 15 ans du brief initial. Un test verrouille
+# cette valeur : la changer casse la suite, ce qui est voulu.
 SEUIL_CONSENTEMENT_PARENTAL = 18
 
 # Repli quand la date de naissance n'est pas renseignée : l'âge exact est alors
