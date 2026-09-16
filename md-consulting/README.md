@@ -12,62 +12,96 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
+Une seule dépendance : Streamlit. L'export `.docx` est écrit avec la
+bibliothèque standard (`docx_minimal.py`), sans `python-docx`.
+
 ## Tests
 
 ```bash
-python3 tests/test_personne.py
+./lancer_tests.sh
 ```
-Aucune dépendance externe requise pour les tests (sqlite3 de la bibliothèque standard).
+
+42 tests. Les tests d'interface exécutent réellement le script Streamlit
+(`st.testing.AppTest`), sans navigateur : ils vérifient entre autres que le
+blocage RGPD apparaît bien à l'écran, et pas seulement dans le modèle.
 
 ## État d'avancement
 
 | Module | Objet | État |
 |---|---|---|
 | 1 | Modèle de données + CRUD Personne (RGPD) | fait |
-| 2 | Séance + chronomètre 90 min | à venir |
-| 3 | Intégration module Investigation | à venir |
-| 4 | Rapport 4 blocs + export .docx | à venir |
-| 5 | Page de liens externes par public | données prêtes (`ressources.py`), interface à venir |
+| 2 | Séance + chronomètre | fait |
+| 3 | Module Investigation | moteur fait, **contenu manquant** |
+| 4 | Rapport 4 blocs + export `.docx` | fait |
+| 5 | Ressources externes par public | fait |
 
-## Règles RGPD implémentées (Module 1)
+## Règles RGPD implémentées
 
-- Identifiant technique **UUID** ; le nom complet est un champ séparé, facultatif,
-  jamais utilisé comme clé.
-- **Blocage d'enregistrement** d'un mineur sans date de consentement parental —
-  à la création *et* à la modification (impossible de retirer un consentement).
-- **Droit à l'effacement** : suppression d'une fiche en une confirmation,
-  avec destruction en cascade des séances, résultats de tests et rapports liés
-  (`ON DELETE CASCADE`, `PRAGMA foreign_keys = ON`).
-- Le fichier `.db`, les exports `.docx` et le dossier `exports/` sont exclus de Git
-  par `.gitignore`.
+- Identifiant technique **UUID** ; le nom complet est un champ séparé,
+  facultatif, jamais utilisé comme clé — pas même dans le nom du fichier
+  exporté, qui porte le pseudonyme.
+- **Blocage d'enregistrement** d'un mineur sans date de consentement parental,
+  à la création comme à la modification.
+- **Droit à l'effacement** : suppression en une confirmation, avec destruction
+  en cascade des séances, résultats et rapports (`ON DELETE CASCADE`).
+- Un test passé à l'extérieur n'est stocké que sous forme de **synthèse
+  rédigée** : l'outil ne recopie pas les résultats bruts d'un prestataire tiers.
+- `.db`, `exports/` et `.docx` sont exclus de Git. Le dépôt étant publié,
+  `/md-consulting/*` est en outre renvoyé vers la page d'erreur par
+  `_redirects` : Cloudflare ne sert pas le code source.
 
-## Ressources externes (`ressources.py`)
+## Chronomètre (module 2)
 
-Catalogue de données, sans interface. Chaque entrée porte un **statut d'accès**
-(`libre`, `compte requis`, `freemium`, `service public`) : aucun outil n'est
-présenté comme gratuit sans que ce soit établi. Les tests CentralTest sont
-exclus par un test automatique.
+L'instant de départ est relu **en base**, pas en mémoire de session : recharger
+la page ne remet pas le compteur à zéro. Trois états — en cours, vigilance
+(10 minutes avant le plafond), dépassement. Plafond réglable, 90 minutes par
+défaut.
 
-CVDesignR y figure en **freemium** : socle gratuit réel (création de CV +
-export PDF), options payantes au-delà. Tarifs non établis, et la page
-« compte France Travail » n'a pas pu être vérifiée directement.
+## Compte rendu (module 4)
 
-## Points en attente de décision
+Quatre blocs pour tous les publics ; seul l'intitulé du dernier change
+(« Pistes d'orientation » pour un lycéen, « Démarches VAE » pour une VAE…).
 
-`CONSENTEMENT_PARENTAL_REQUIS` (dans `personne.py`) est réglé sur **tout mineur**
-(collège *et* lycée). Le brief mentionnait « moins de 15 ans », seuil que la tranche
-« collège » (11-15 ans) chevauche. Modifier une seule ligne pour revenir à la lettre
-du brief.
+**Un seul bloc est rempli par l'outil** : la liste des outils utilisés, reprise
+de la base. Les trois autres sont rédigés par le consultant. Un compte rendu
+remis à quelqu'un n'est pas un texte généré.
 
-Le public **collège** ne compte qu'une seule ressource : la liste actuelle
-s'adresse presque entièrement à des lycéens et à des adultes. À compléter ou à
-assumer comme telle.
+`config.py` porte l'identité imprimée en tête. Les champs sont **vides** :
+le document de référence fourni portait les mentions de LinkOm Consultants
+(Qualiopi, SIRET, DIRECCTE), qui n'ont pas été recopiées. Un test vérifie
+qu'aucune mention réglementaire n'apparaît dans la configuration.
+
+## Ce qui manque encore — décisions ou fichiers attendus
+
+1. **Contenu du module Investigation.** `investigation_data.js` et
+   `investigation_prototype.html` n'ont jamais été fournis. Les 35 motivations,
+   la grille de profils, les valeurs, le Projet de vie, les Freins et le Bilan
+   360° **n'ont pas été reconstitués**. Le moteur les affichera dès qu'ils
+   seront déposés au format décrit dans `docs/questionnaires.md`.
+2. **Mentions légales.** `config.py` attend le nom du consultant et, le cas
+   échéant, les coordonnées à imprimer. Rien n'a été inventé.
+3. **Dépôt séparé.** Ce projet vit dans le dépôt du site Rite Brith Israël,
+   qui est publié sur Internet. La règle `_redirects` limite les dégâts ;
+   elle ne remplace pas un dépôt dédié.
+4. **Seuil du consentement parental.** Réglé sur *tout mineur* (collège et
+   lycée). Le brief écrivait « moins de 15 ans », seuil que la tranche collège
+   (11-15) chevauche. Une ligne à changer dans `personne.py`.
+5. **Public collège.** Une seule ressource externe le concerne.
 
 ## Fichiers
 
-- `schema.sql` — modèle de données complet (personne, seance, resultat_test, rapport)
-- `db.py` — connexion SQLite, activation des clés étrangères, initialisation
-- `personne.py` — modèle, règles de validation RGPD, CRUD
-- `vue_personne.py` — formulaire de fiche et bloc de suppression
-- `ressources.py` — catalogue des ressources externes par public
-- `app.py` — point d'entrée Streamlit
+| Fichier | Rôle |
+|---|---|
+| `schema.sql` | modèle de données complet |
+| `db.py` | connexion SQLite, clés étrangères, initialisation |
+| `personne.py` | modèle, validation RGPD, CRUD |
+| `seance.py` | modèle, chronomètre, CRUD |
+| `resultat_test.py` | résultats de tests rattachés à une séance |
+| `questionnaire.py` | moteur générique de questionnaires (contenu externe) |
+| `rapport.py` | compte rendu en quatre blocs |
+| `docx_minimal.py` | écriture `.docx` sans dépendance |
+| `export_docx.py` | mise en page du compte rendu |
+| `ressources.py` | catalogue des ressources externes |
+| `config.py` | identité imprimée en tête des rapports |
+| `vue_*.py` | écrans Streamlit |
+| `app.py` | point d'entrée |

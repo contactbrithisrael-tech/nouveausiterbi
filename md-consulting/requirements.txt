@@ -1,2 +1,4 @@
+# Seule dépendance : l'interface.
+# L'export .docx est écrit avec la bibliothèque standard (voir docx_minimal.py),
+# ce qui évite d'installer python-docx pour produire quatre blocs de texte.
 streamlit>=1.36
-python-docx>=1.1

@@ -30,3 +30,10 @@
 # /membres                  /espace-membres.html        301
 # /galerie                  /galerie.html               301
 # /traites                  /traites.html               301
+
+# ── Outil interne MD Consulting ───────────────────────────────────────
+# Le dossier /md-consulting contient une application locale (Python), pas
+# des pages de ce site. Sans cette règle, Cloudflare servirait son code
+# source à qui en devine l'adresse. On renvoie donc vers la page d'erreur.
+/md-consulting              /404.html                   301
+/md-consulting/*            /404.html                   301
