@@ -49,8 +49,29 @@ def _migrer_fiche_complete(cx: sqlite3.Connection) -> bool:
     return True
 
 
+def _migrer_types_de_test_libres(cx: sqlite3.Connection) -> bool:
+    """Retire la liste figée de types de test (ancienne contrainte CHECK).
+
+    Les outils d'investigation sont désormais des fichiers ; en ajouter un ne
+    doit pas demander de migrer la base.
+    """
+    ligne = cx.execute("SELECT sql FROM sqlite_master WHERE type='table' "
+                       "AND name='resultat_test'").fetchone()
+    if not ligne or "CHECK (type_test IN" not in (ligne["sql"] or ""):
+        return False
+    cx.execute("PRAGMA foreign_keys = OFF")
+    cx.execute("ALTER TABLE resultat_test RENAME TO resultat_test_ancien")
+    cx.executescript(CHEMIN_SCHEMA.read_text(encoding="utf-8"))
+    cx.execute("INSERT INTO resultat_test SELECT id, seance_id, type_test, "
+               "reponses_json, synthese_texte, date_saisie FROM resultat_test_ancien")
+    cx.execute("DROP TABLE resultat_test_ancien")
+    cx.execute("PRAGMA foreign_keys = ON")
+    return True
+
+
 def initialiser(chemin: Path | str | None = None) -> None:
     """Crée les tables si besoin, puis applique les migrations. Idempotent."""
     with connexion(chemin) as cx:
         cx.executescript(CHEMIN_SCHEMA.read_text(encoding="utf-8"))
         _migrer_fiche_complete(cx)
+        _migrer_types_de_test_libres(cx)

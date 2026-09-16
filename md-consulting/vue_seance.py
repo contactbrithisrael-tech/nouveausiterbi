@@ -10,6 +10,7 @@ import personne as P
 import questionnaire as Q
 import resultat_test as RT
 import seance as S
+import vue_questionnaire
 
 
 def _rafraichissant(fonction):
@@ -76,7 +77,7 @@ def outils(s: S.Seance) -> None:
     st.subheader("Outils utilisés")
     for r in RT.lister_par_seance(s.id):
         c1, c2 = st.columns([5, 1])
-        c1.markdown(f"**{RT.TYPES.get(r.type_test, r.type_test)}** — "
+        c1.markdown(f"**{RT.libelle(r.type_test)}** — "
                     f"{dates_fr.jour(r.date_saisie)}")
         if r.synthese_texte:
             c1.caption(r.synthese_texte)
@@ -85,25 +86,57 @@ def outils(s: S.Seance) -> None:
             st.rerun()
 
     dispo = Q.disponibles()
-    manquants = [c for c in RT.TYPES_INVESTIGATION if c not in dispo]
-    if manquants:
-        st.info("Module Investigation : aucun questionnaire n'est installé "
-                f"({', '.join(RT.TYPES_INVESTIGATION[c] for c in manquants)}). "
-                "Déposez les fichiers dans `questionnaires/` — voir "
-                "`docs/questionnaires.md`.")
+    if not dispo:
+        st.info("Module Investigation : aucun questionnaire installé. Déposez "
+                "les fichiers dans `questionnaires/` — voir `docs/questionnaires.md`.")
 
-    with st.form("ajout_outil", clear_on_submit=True):
-        cles = list(RT.TYPES_EXTERNES) + list(dispo)
-        choix = st.selectbox("Ajouter un outil", cles,
-                             format_func=lambda k: RT.TYPES.get(k, k))
-        synthese = st.text_area(
-            "Synthèse qualitative (pas de scores bruts)", height=100,
-            help="Pour un test passé à l'extérieur, seule la synthèse est conservée.")
-        if st.form_submit_button("Ajouter"):
-            try:
-                RT.creer(RT.ResultatTest(s.id, choix,
-                                         synthese_texte=synthese.strip() or None))
-            except ValueError as exc:
-                st.error(str(exc))
-            else:
+    en_cours = st.session_state.get("questionnaire_en_cours")
+    if en_cours and en_cours in dispo:
+        _passation(s, dispo[en_cours])
+        return
+
+    c1, c2 = st.columns([3, 2])
+    with c1:
+        if dispo:
+            cle = st.selectbox("Passer un outil d'investigation", list(dispo),
+                               format_func=RT.libelle, key="choix_questionnaire")
+            if st.button("Ouvrir le questionnaire", type="primary"):
+                st.session_state["questionnaire_en_cours"] = cle
                 st.rerun()
+    with c2:
+        with st.form("ajout_externe", clear_on_submit=True):
+            st.markdown("**Test passé à l'extérieur**")
+            choix = st.selectbox("Outil", list(RT.TYPES_EXTERNES),
+                                 format_func=RT.libelle)
+            synthese = st.text_area(
+                "Synthèse qualitative (pas de scores bruts)", height=100,
+                help="Seule la synthèse est conservée : l'outil ne recopie pas "
+                     "les résultats bruts d'un prestataire tiers.")
+            if st.form_submit_button("Enregistrer"):
+                try:
+                    RT.creer(RT.ResultatTest(s.id, choix,
+                                             synthese_texte=synthese.strip() or None))
+                except ValueError as exc:
+                    st.error(str(exc))
+                else:
+                    st.rerun()
+
+
+def _passation(s: S.Seance, q) -> None:
+    """Passation en cours : le questionnaire occupe l'écran."""
+    if st.button("← Abandonner sans enregistrer"):
+        st.session_state.pop("questionnaire_en_cours", None)
+        st.rerun()
+    reponses, synthese = vue_questionnaire.passer(q)
+    st.divider()
+    if synthese:
+        st.text_area("Synthèse enregistrée dans le compte rendu", synthese,
+                     height=140, disabled=True)
+    if st.button("Enregistrer ce questionnaire", type="primary",
+                 disabled=not synthese):
+        RT.creer(RT.ResultatTest(s.id, q.cle, reponses=reponses,
+                                 synthese_texte=synthese))
+        for cle in [k for k in st.session_state if k.startswith(f"{q.cle}_")]:
+            st.session_state.pop(cle, None)
+        st.session_state.pop("questionnaire_en_cours", None)
+        st.rerun()

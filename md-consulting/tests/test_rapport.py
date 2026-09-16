@@ -41,28 +41,11 @@ def t_reponses_json_aller_retour():
     assert relu.reponses == {"v1": 4, "v2": 2}
 
 
-def t_aucun_questionnaire_livre():
-    """Le contenu Investigation n'a pas été fourni : rien n'est inventé."""
-    assert Q.disponibles() == {}
-
-
-def t_questionnaire_valide_et_totalise():
-    d = Path(tempfile.mkdtemp())
-    (d / "essai.json").write_text(json.dumps({
-        "cle": "essai", "titre": "Essai",
-        "items": [{"id": "a", "texte": "A", "categorie": "X"},
-                  {"id": "b", "texte": "B", "categorie": "X"},
-                  {"id": "c", "texte": "C", "categorie": "Y"}],
-        "echelle": {"min": 1, "max": 5}}, ensure_ascii=False), encoding="utf-8")
-    q = Q.disponibles(d)["essai"]
-    assert q.categories == ["X", "Y"]
-    assert Q.totaux_par_categorie(q, {"a": 3, "b": 4, "c": 5}) == {"X": 7, "Y": 5}
-
-
 def t_questionnaire_invalide_rejete():
     d = Path(tempfile.mkdtemp())
-    (d / "ko.json").write_text('{"cle":"k","titre":"K","items":[{"id":"a","texte":"A"},'
-                               '{"id":"a","texte":"B"}]}', encoding="utf-8")
+    (d / "ko.json").write_text(
+        '{"cle":"k","titre":"K","forme":"checklist","items":'
+        '[{"id":"a","texte":"A"},{"id":"a","texte":"B"}]}', encoding="utf-8")
     try:
         Q.disponibles(d)
     except Q.QuestionnaireInvalide:

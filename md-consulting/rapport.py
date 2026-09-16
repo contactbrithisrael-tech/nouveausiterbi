@@ -68,7 +68,7 @@ def resume_tests(seance_id: str, chemin: Path | str | None = None) -> str:
         return "Aucun outil enregistré pour cette séance."
     lignes = []
     for r in resultats:
-        lignes.append(f"{RT.TYPES.get(r.type_test, r.type_test)} — "
+        lignes.append(f"{RT.libelle(r.type_test)} — "
                       f"{dates_fr.jour(r.date_saisie)}")
     return "\n".join(lignes)
 

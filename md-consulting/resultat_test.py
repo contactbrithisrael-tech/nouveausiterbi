@@ -8,15 +8,7 @@ from datetime import datetime
 from pathlib import Path
 
 import db
-
-# Types issus du module Investigation MD Consulting (contenu fourni par Mickael)
-TYPES_INVESTIGATION = {
-    "projet_de_vie": "Projet de vie",
-    "freins": "Freins",
-    "motivations_35": "Motivations (35 items)",
-    "valeurs": "Valeurs",
-    "bilan_360": "Bilan de compétences 360°",
-}
+import questionnaire as Q
 
 # Tests passés à l'extérieur : on ne stocke qu'une synthèse saisie à la main
 TYPES_EXTERNES = {
@@ -25,7 +17,19 @@ TYPES_EXTERNES = {
     "assessfirst_externe": "AssessFirst (test externe)",
 }
 
-TYPES = {**TYPES_INVESTIGATION, **TYPES_EXTERNES}
+
+def types_investigation() -> dict[str, str]:
+    """Outils d'investigation réellement installés dans questionnaires/.
+    La liste vient des fichiers, jamais d'une liste figée dans le code."""
+    return {cle: q.titre for cle, q in Q.disponibles().items()}
+
+
+def types() -> dict[str, str]:
+    return {**types_investigation(), **TYPES_EXTERNES}
+
+
+def libelle(cle: str) -> str:
+    return types().get(cle, cle)
 
 
 @dataclass
@@ -39,8 +43,10 @@ class ResultatTest:
         default_factory=lambda: datetime.now().isoformat(timespec="seconds"))
 
     def valider(self) -> None:
-        if self.type_test not in TYPES:
-            raise ValueError(f"Type de test inconnu : {self.type_test!r}")
+        if self.type_test not in types():
+            raise ValueError(
+                f"Type de test inconnu : {self.type_test!r}. Les outils "
+                "d'investigation sont les fichiers présents dans questionnaires/.")
         if not self.seance_id:
             raise ValueError("Un résultat doit être rattaché à une séance.")
         if self.type_test in TYPES_EXTERNES and not (self.synthese_texte or "").strip():

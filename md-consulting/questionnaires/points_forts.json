@@ -1,0 +1,268 @@
+{
+  "cle": "points_forts",
+  "titre": "Points forts",
+  "forme": "checklist",
+  "consigne": "Je coche tous les points qui me correspondent :",
+  "source": "Outils BDC MD Consulting — Phase Investigation (Points forts et points de vigilance).",
+  "suite": [
+    "Je reporte ci-dessous les 5 principaux points forts."
+  ],
+  "items": [
+    {
+      "id": "f01",
+      "texte": "Je suis adaptable / souple"
+    },
+    {
+      "id": "f02",
+      "texte": "Je suis à l'écoute"
+    },
+    {
+      "id": "f03",
+      "texte": "Je suis ambitieux(se)"
+    },
+    {
+      "id": "f04",
+      "texte": "Je suis animateur(trice)"
+    },
+    {
+      "id": "f05",
+      "texte": "Je suis autonome"
+    },
+    {
+      "id": "f06",
+      "texte": "J'ai du bon sens"
+    },
+    {
+      "id": "f07",
+      "texte": "Je suis assidu(e)"
+    },
+    {
+      "id": "f08",
+      "texte": "Je suis calme"
+    },
+    {
+      "id": "f09",
+      "texte": "Je suis consciencieux(se)"
+    },
+    {
+      "id": "f10",
+      "texte": "Je suis conscient(e) de la qualité"
+    },
+    {
+      "id": "f11",
+      "texte": "Je suis coopératif(ve)"
+    },
+    {
+      "id": "f12",
+      "texte": "Je suis courageux(se)"
+    },
+    {
+      "id": "f13",
+      "texte": "Je suis créatif(ve)"
+    },
+    {
+      "id": "f14",
+      "texte": "Je suis débrouillard(e)"
+    },
+    {
+      "id": "f15",
+      "texte": "Je décide rapidement"
+    },
+    {
+      "id": "f16",
+      "texte": "Je suis dévoué(e)"
+    },
+    {
+      "id": "f17",
+      "texte": "Je suis digne de confiance"
+    },
+    {
+      "id": "f18",
+      "texte": "Je suis direct(e)"
+    },
+    {
+      "id": "f19",
+      "texte": "Je suis discret(e)"
+    },
+    {
+      "id": "f20",
+      "texte": "Je suis dynamique"
+    },
+    {
+      "id": "f21",
+      "texte": "Je suis économe"
+    },
+    {
+      "id": "f22",
+      "texte": "J'emploie mon temps efficacement"
+    },
+    {
+      "id": "f23",
+      "texte": "Je suis énergique / motivé(e)"
+    },
+    {
+      "id": "f24",
+      "texte": "Je suis enthousiaste"
+    },
+    {
+      "id": "f25",
+      "texte": "Je suis équilibré(e) / stable"
+    },
+    {
+      "id": "f26",
+      "texte": "Je suis exigeant(e)"
+    },
+    {
+      "id": "f27",
+      "texte": "Je m'exprime bien"
+    },
+    {
+      "id": "f28",
+      "texte": "Je suis franc(che)"
+    },
+    {
+      "id": "f29",
+      "texte": "Je suis gai(e)"
+    },
+    {
+      "id": "f30",
+      "texte": "Je suis honnête"
+    },
+    {
+      "id": "f31",
+      "texte": "Je suis imaginatif(ve)"
+    },
+    {
+      "id": "f32",
+      "texte": "Je suis innovateur(trice)"
+    },
+    {
+      "id": "f33",
+      "texte": "Je suis loyal(e)"
+    },
+    {
+      "id": "f34",
+      "texte": "Je suis méthodique / organisé(e)"
+    },
+    {
+      "id": "f35",
+      "texte": "Je suis observateur(trice)"
+    },
+    {
+      "id": "f36",
+      "texte": "Je suis ordonné(e)"
+    },
+    {
+      "id": "f37",
+      "texte": "Je suis ouvert(e) aux autres"
+    },
+    {
+      "id": "f38",
+      "texte": "Je suis patient(e)"
+    },
+    {
+      "id": "f39",
+      "texte": "Je suis persévérant(e) / tenace"
+    },
+    {
+      "id": "f40",
+      "texte": "Je suis plein(e) de confiance"
+    },
+    {
+      "id": "f41",
+      "texte": "Je suis positif(ve)"
+    },
+    {
+      "id": "f42",
+      "texte": "Je suis précis(e)"
+    },
+    {
+      "id": "f43",
+      "texte": "Je prends des initiatives"
+    },
+    {
+      "id": "f44",
+      "texte": "Je suis professionnel(le)"
+    },
+    {
+      "id": "f45",
+      "texte": "Je suis prudent(e)"
+    },
+    {
+      "id": "f46",
+      "texte": "Je suis rapide dans l'action"
+    },
+    {
+      "id": "f47",
+      "texte": "Je suis réceptif(ve)"
+    },
+    {
+      "id": "f48",
+      "texte": "Je rédige bien"
+    },
+    {
+      "id": "f49",
+      "texte": "Je suis réfléchi(e)"
+    },
+    {
+      "id": "f50",
+      "texte": "Je suis réservé(e)"
+    },
+    {
+      "id": "f51",
+      "texte": "Je suis résistant(e)"
+    },
+    {
+      "id": "f52",
+      "texte": "Je résous des conflits"
+    },
+    {
+      "id": "f53",
+      "texte": "Je suis responsable"
+    },
+    {
+      "id": "f54",
+      "texte": "J'ai le sens de l'urgence"
+    },
+    {
+      "id": "f55",
+      "texte": "J'ai le sens pratique"
+    },
+    {
+      "id": "f56",
+      "texte": "J'ai le sens des chiffres"
+    },
+    {
+      "id": "f57",
+      "texte": "Je suis sérieux(se)"
+    },
+    {
+      "id": "f58",
+      "texte": "Je suis sociable"
+    },
+    {
+      "id": "f59",
+      "texte": "Je suis soigné(e) / bien habillé(e)"
+    },
+    {
+      "id": "f60",
+      "texte": "Je tiens les autres au courant"
+    },
+    {
+      "id": "f61",
+      "texte": "Je travaille bien en équipe"
+    },
+    {
+      "id": "f62",
+      "texte": "Je travaille bien sous tension"
+    },
+    {
+      "id": "f63",
+      "texte": "Je suis travailleur(se)"
+    },
+    {
+      "id": "f64",
+      "texte": "Je vais jusqu'au bout des choses"
+    }
+  ]
+}

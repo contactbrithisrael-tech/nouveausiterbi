@@ -66,6 +66,20 @@ def t_ecran_fiche_et_seance():
     assert "Séance" in textes and "Compte rendu" in textes, textes
 
 
+def t_chaque_questionnaire_s_affiche_sans_exception():
+    """Onze formulaires, sept formes d'affichage : chacun doit se rendre."""
+    import questionnaire as Q
+    pid = P.creer(P.Personne("Passation", "Test", "adulte", "reconversion"),
+                  db.CHEMIN_BASE).id
+    sid = S.creer(S.Seance(pid), db.CHEMIN_BASE).id
+    echecs = []
+    for cle in Q.disponibles():
+        at = _lancer(seance_id=sid, questionnaire_en_cours=cle)
+        if at.exception:
+            echecs.append(f"{cle} : {at.exception}")
+    assert not echecs, "\n".join(echecs)
+
+
 def t_ecran_ressources_sans_exception():
     at = AppTest.from_file(APP, default_timeout=30).run()
     at.radio[0].set_value("Ressources")

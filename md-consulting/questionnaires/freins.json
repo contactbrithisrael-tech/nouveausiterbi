@@ -1,0 +1,113 @@
+{
+  "cle": "freins",
+  "titre": "Les freins au travail",
+  "forme": "checklist",
+  "consigne": "Ce qui me freine le plus, c'est le fait de :",
+  "source": "Outils BDC MD Consulting — Phase Investigation.",
+  "items": [
+    {
+      "id": "f01",
+      "texte": "Changer de région"
+    },
+    {
+      "id": "f02",
+      "texte": "Devoir faire des déplacements"
+    },
+    {
+      "id": "f03",
+      "texte": "Ne pas avoir de véhicule"
+    },
+    {
+      "id": "f04",
+      "texte": "Ne pas avoir de permis de conduire"
+    },
+    {
+      "id": "f05",
+      "texte": "Ne pas savoir ce que je veux faire"
+    },
+    {
+      "id": "f06",
+      "texte": "Ne pas trouver d'emploi qui me plaise"
+    },
+    {
+      "id": "f07",
+      "texte": "Devoir faire des démarches"
+    },
+    {
+      "id": "f08",
+      "texte": "Devoir téléphoner"
+    },
+    {
+      "id": "f09",
+      "texte": "Devoir rédiger des lettres"
+    },
+    {
+      "id": "f10",
+      "texte": "Ne pas avoir le temps de prospecter"
+    },
+    {
+      "id": "f11",
+      "texte": "Avoir à m'occuper des enfants"
+    },
+    {
+      "id": "f12",
+      "texte": "Etre trop jeune"
+    },
+    {
+      "id": "f13",
+      "texte": "Etre trop âgé"
+    },
+    {
+      "id": "f14",
+      "texte": "Ne pas avoir le diplôme requis"
+    },
+    {
+      "id": "f15",
+      "texte": "Ne pas avoir la qualification nécessaire"
+    },
+    {
+      "id": "f16",
+      "texte": "Etre une femme pour une profession « masculine »"
+    },
+    {
+      "id": "f17",
+      "texte": "Etre un homme pour une profession « féminine »"
+    },
+    {
+      "id": "f18",
+      "texte": "Avoir des ennuis de santé"
+    },
+    {
+      "id": "f19",
+      "texte": "Ne pas avoir de problème d'argent dans l'immédiat"
+    },
+    {
+      "id": "f20",
+      "texte": "Etre au chômage depuis longtemps"
+    },
+    {
+      "id": "f21",
+      "texte": "Ne pas avoir d'expérience dans le domaine souhaité"
+    },
+    {
+      "id": "f22",
+      "texte": "Ne pas en parler autour de moi"
+    },
+    {
+      "id": "f23",
+      "texte": "Rester chez moi et attendre"
+    },
+    {
+      "id": "f24",
+      "texte": "Ne pas avoir de relation dans la profession"
+    },
+    {
+      "id": "f25",
+      "texte": "Avoir de mauvais rapports avec mes anciens employeurs"
+    },
+    {
+      "id": "f26",
+      "texte": "Autres"
+    }
+  ]
+}

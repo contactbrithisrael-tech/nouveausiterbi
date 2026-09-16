@@ -1,0 +1,213 @@
+{
+  "cle": "motivations_35",
+  "titre": "Les motivations au travail",
+  "forme": "selection_n",
+  "consigne": "Vous trouverez ci-dessous une liste de 35 motifs de satisfaction décrits comme importants sur un groupe de salariés. Sélectionnez-en 10 qui vous paraissent, à vous, particulièrement importants et signifiants en l'état actuel des choses.",
+  "source": "Outils BDC MD Consulting — Phase Investigation (Motivations, valeurs, qualités).",
+  "note": "⚠ À TRANCHER : le document contient deux versions de cette même liste. La première (« LES MOTIVATIONS AU TRAVAIL ») demande d'en sélectionner 10 ; la seconde (« Les motivations professionnelles ») demande d'en entourer 7. C'est la version à 10 qui est reprise ici. La grille d'interprétation est identique dans les deux versions.",
+  "nb_a_selectionner": 10,
+  "items": [
+    {
+      "id": "1",
+      "texte": "Avoir un supérieur compétent et efficace"
+    },
+    {
+      "id": "2",
+      "texte": "Participation fréquente à des réunions"
+    },
+    {
+      "id": "3",
+      "texte": "Liberté de prendre des risques"
+    },
+    {
+      "id": "4",
+      "texte": "Définition rigoureuse des postes et des fonctions"
+    },
+    {
+      "id": "5",
+      "texte": "Sécurité de l'emploi"
+    },
+    {
+      "id": "6",
+      "texte": "Prestige de l'entreprise"
+    },
+    {
+      "id": "7",
+      "texte": "Choix possible d'une date de vacances"
+    },
+    {
+      "id": "8",
+      "texte": "Compagnons de travail sympathiques"
+    },
+    {
+      "id": "9",
+      "texte": "Possibilité de mettre en pratique ses propres idées"
+    },
+    {
+      "id": "10",
+      "texte": "Possibilité d'avancement et de promotion"
+    },
+    {
+      "id": "11",
+      "texte": "Plan de carrière défini"
+    },
+    {
+      "id": "12",
+      "texte": "Bonne intégration dans son groupe de travail"
+    },
+    {
+      "id": "13",
+      "texte": "Entreprise près du domicile"
+    },
+    {
+      "id": "14",
+      "texte": "Considération habituellement portée au travail de qualité"
+    },
+    {
+      "id": "15",
+      "texte": "Liberté dans le travail"
+    },
+    {
+      "id": "16",
+      "texte": "Position et statut dans l'entreprise"
+    },
+    {
+      "id": "17",
+      "texte": "Communications encouragées entre les individus"
+    },
+    {
+      "id": "18",
+      "texte": "Cadre et environnement agréables"
+    },
+    {
+      "id": "19",
+      "texte": "Entreprise sérieuse et solide"
+    },
+    {
+      "id": "20",
+      "texte": "Salaire élevé"
+    },
+    {
+      "id": "21",
+      "texte": "Possibilités réelles de formation et de développement personnel"
+    },
+    {
+      "id": "22",
+      "texte": "Bien connaître les règlements et les sanctions éventuelles"
+    },
+    {
+      "id": "23",
+      "texte": "Respect des individus considérés comme des personnes"
+    },
+    {
+      "id": "24",
+      "texte": "Horaires compatibles avec la vie de famille"
+    },
+    {
+      "id": "25",
+      "texte": "Exercer d'importantes responsabilités"
+    },
+    {
+      "id": "26",
+      "texte": "Avantages « économiques » (aides financières, avances, réductions)"
+    },
+    {
+      "id": "27",
+      "texte": "Contrôle du travail efficace de la part de l'encadrement"
+    },
+    {
+      "id": "28",
+      "texte": "Pouvoir se tenir au courant de la vie de l'entreprise"
+    },
+    {
+      "id": "29",
+      "texte": "Etre convaincu de l'utilité et de l'importance de son travail"
+    },
+    {
+      "id": "30",
+      "texte": "Etre publiquement complimenté par son chef"
+    },
+    {
+      "id": "31",
+      "texte": "Longues périodes de vacances (congés, repos, loisirs…)"
+    },
+    {
+      "id": "32",
+      "texte": "S'épanouir dans un travail stimulant et intéressant"
+    },
+    {
+      "id": "33",
+      "texte": "Avantages sociaux particuliers (retraite, pension, assurance…)"
+    },
+    {
+      "id": "34",
+      "texte": "Accord complet dans les objectifs et la politique de l'entreprise"
+    },
+    {
+      "id": "35",
+      "texte": "Possibilités de choisir ses heures de travail"
+    }
+  ],
+  "profils": {
+    "Profil 5": {
+      "items": [
+        "3",
+        "9",
+        "15",
+        "21",
+        "25",
+        "32",
+        "34"
+      ],
+      "description": "Je veux me réaliser = ambition - autonomie - expression - réalisation - accomplissement."
+    },
+    "Profil 4": {
+      "items": [
+        "6",
+        "10",
+        "14",
+        "16",
+        "20",
+        "29",
+        "30"
+      ],
+      "description": "Je veux être reconnu(e) - dépendance par rapport à une désapprobation mais aussi : bon moyen pour progresser."
+    },
+    "Profil 3": {
+      "items": [
+        "1",
+        "8",
+        "12",
+        "17",
+        "23",
+        "28",
+        "2"
+      ],
+      "description": "Besoin de communiquer, de rencontrer d'autres personnes. Sentiment d'appartenir à un groupe constitué. Curiosité pour les autres et pour l'entreprise."
+    },
+    "Profil 2": {
+      "items": [
+        "5",
+        "11",
+        "19",
+        "22",
+        "27",
+        "33",
+        "4"
+      ],
+      "description": "Besoin de sécurité (morale). Élimination de l'incertitude - maintien d'un cadre."
+    },
+    "Profil 1": {
+      "items": [
+        "7",
+        "13",
+        "18",
+        "24",
+        "26",
+        "31",
+        "35"
+      ],
+      "description": "J'ai besoin d'argent pour vivre - physique. Pas beaucoup d'intérêt pour le travail à faire. On demande plus à l'entreprise que l'on est prêt à lui apporter."
+    }
+  }
+}

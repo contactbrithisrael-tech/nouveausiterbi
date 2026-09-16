@@ -21,7 +21,7 @@ bibliothèque standard (`docx_minimal.py`), sans `python-docx`.
 ./lancer_tests.sh
 ```
 
-62 tests. Les tests d'interface exécutent réellement le script Streamlit
+74 tests. Les tests d'interface exécutent réellement le script Streamlit
 (`st.testing.AppTest`), sans navigateur : ils vérifient entre autres que le
 blocage RGPD apparaît bien à l'écran, et pas seulement dans le modèle.
 
@@ -31,7 +31,7 @@ blocage RGPD apparaît bien à l'écran, et pas seulement dans le modèle.
 |---|---|---|
 | 1 | Modèle de données + CRUD Personne (RGPD) | fait |
 | 2 | Séance + chronomètre | fait |
-| 3 | Module Investigation | moteur fait, **contenu manquant** |
+| 3 | Module Investigation | fait — 11 outils, 428 items |
 | 4 | Rapport 4 blocs + export `.docx` | fait |
 | 5 | Ressources externes par public | fait |
 
@@ -91,14 +91,37 @@ le document de référence fourni portait les mentions de LinkOm Consultants
 (Qualiopi, SIRET, DIRECCTE), qui n'ont pas été recopiées. Un test vérifie
 qu'aucune mention réglementaire n'apparaît dans la configuration.
 
+## Module Investigation (module 3)
+
+Onze outils installés, 428 items, transcrits des documents MD Consulting :
+
+| Outil | Forme | Items |
+|---|---|---|
+| Questionnaire Projet de vie | 25 questions en 10 sections | 25 |
+| Les freins au travail | liste à cocher | 26 |
+| Les motivations au travail | choisir 10 sur 35, grille 5 profils | 35 |
+| Mes valeurs | liste à cocher avec définitions | 48 |
+| Points forts | liste à cocher | 64 |
+| Points de vigilance | liste à cocher | 33 |
+| Bilan personnel 360° | 68 items × 6 évaluateurs | 68 |
+| Grille 360° version scolaire | 68 items × 7 évaluateurs | 68 |
+| Enquête métier | questions ouvertes | 11 |
+| Prédisposition à la création d'entreprise | échelle, score /80 | 20 |
+| Orientation formateur | choix forcé, 2 axes, 5 familles | 30 |
+
+Le moteur ne contient aucun contenu : chaque outil est un fichier JSON dans
+`questionnaires/`. En ajouter un ne demande ni code ni migration de base.
+Les effectifs et les grilles sont vérifiés par des tests — la grille des
+motivations doit couvrir les 35 items une fois chacun, la clé du test
+formateur ses 30 items, sinon le chargement est refusé.
+
+Le module 360° signale les **écarts de perception** entre évaluateurs.
+
+Détail du format et points à trancher : `docs/questionnaires.md`.
+
 ## Ce qui manque encore — décisions ou fichiers attendus
 
-1. **Contenu du module Investigation.** `investigation_data.js` et
-   `investigation_prototype.html` n'ont jamais été fournis. Les 35 motivations,
-   la grille de profils, les valeurs, le Projet de vie, les Freins et le Bilan
-   360° **n'ont pas été reconstitués**. Le moteur les affichera dès qu'ils
-   seront déposés au format décrit dans `docs/questionnaires.md`.
-2. **Mentions légales.** `config.py` attend le nom du consultant et, le cas
+1. **Mentions légales.** `config.py` attend le nom du consultant et, le cas
    échéant, les coordonnées à imprimer. Rien n'a été inventé.
 3. **Déménagement du dépôt — en attente d'une action manuelle.** Ce projet
    vit encore dans le dépôt du site Rite Brith Israël, qui est publié.
@@ -115,12 +138,14 @@ qu'aucune mention réglementaire n'apparaît dans la configuration.
 | `personne.py` | modèle, validation RGPD, CRUD |
 | `seance.py` | modèle, chronomètre, CRUD |
 | `resultat_test.py` | résultats de tests rattachés à une séance |
-| `questionnaire.py` | moteur générique de questionnaires (contenu externe) |
+| `questionnaire.py` | moteur de questionnaires (7 formes) et calculs |
+| `questionnaires/*.json` | les onze outils d'investigation |
 | `rapport.py` | compte rendu en quatre blocs |
 | `docx_minimal.py` | écriture `.docx` sans dépendance |
 | `export_docx.py` | mise en page du compte rendu |
 | `ressources.py` | catalogue des ressources externes |
 | `dates_fr.py` | affichage des dates au format français |
 | `config.py` | identité imprimée en tête des rapports |
+| `vue_questionnaire.py` | passation, une fonction par forme |
 | `vue_*.py` | écrans Streamlit |
 | `app.py` | point d'entrée |

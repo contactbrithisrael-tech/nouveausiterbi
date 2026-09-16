@@ -37,9 +37,10 @@ CREATE TABLE IF NOT EXISTS seance (
 CREATE TABLE IF NOT EXISTS resultat_test (
     id             TEXT PRIMARY KEY,
     seance_id      TEXT NOT NULL REFERENCES seance(id) ON DELETE CASCADE,
-    type_test      TEXT NOT NULL CHECK (type_test IN (
-                       'projet_de_vie','freins','motivations_35','valeurs','bilan_360',
-                       'riasec_externe','big_five_externe','assessfirst_externe')),
+    -- Pas de liste figée : les outils d'investigation sont des fichiers
+    -- déposés dans questionnaires/. Ajouter un outil ne doit pas obliger à
+    -- migrer la base. La validation se fait dans resultat_test.py.
+    type_test      TEXT NOT NULL,
     reponses_json  TEXT,
     synthese_texte TEXT,
     date_saisie    TEXT NOT NULL

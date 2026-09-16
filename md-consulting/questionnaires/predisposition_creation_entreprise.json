@@ -1,0 +1,182 @@
+{
+  "cle": "predisposition_creation_entreprise",
+  "titre": "Test de prédisposition à la création d'entreprise",
+  "forme": "likert",
+  "consigne": "Répondez à chaque affirmation en fonction de ce que vous ressentez ou vivez aujourd'hui, sans chercher à donner la « bonne » réponse. Soyez sincère : le test est là pour vous.",
+  "source": "MD Consulting / LINKOM CONSULTANTS — Test de prédisposition à la création d'entreprise ®.",
+  "note": "⚠ INCOMPLET DANS LE DOCUMENT SOURCE : la colonne « Items liés » de la fiche d'analyse est vide. Le rattachement des 20 affirmations aux 6 thématiques n'est donc pas défini. Les moyennes par thématique resteront non calculées tant que ces listes ne seront pas renseignées — elles ne sont pas devinées. Le score global, lui, est complet.",
+  "echelle": [
+    {
+      "libelle": "Tout à fait vrai",
+      "points": 4
+    },
+    {
+      "libelle": "Plutôt vrai",
+      "points": 3
+    },
+    {
+      "libelle": "Plutôt faux",
+      "points": 2
+    },
+    {
+      "libelle": "Pas du tout vrai",
+      "points": 1
+    }
+  ],
+  "items": [
+    {
+      "id": "1",
+      "texte": "Je suis prêt(e) à faire des sacrifices personnels pour concrétiser un projet qui me tient à cœur."
+    },
+    {
+      "id": "2",
+      "texte": "Je préfère être autonome plutôt que d'exécuter des consignes données par un supérieur."
+    },
+    {
+      "id": "3",
+      "texte": "J'ai une idée claire du type d'activité que je veux lancer."
+    },
+    {
+      "id": "4",
+      "texte": "Je suis capable de prendre une décision même quand j'ai peu d'informations."
+    },
+    {
+      "id": "5",
+      "texte": "Je sais gérer un budget et anticiper les dépenses et les recettes."
+    },
+    {
+      "id": "6",
+      "texte": "Je sais facilement présenter un projet de manière convaincante."
+    },
+    {
+      "id": "7",
+      "texte": "Je suis très motivé(e) par l'idée de construire quelque chose qui m'appartient."
+    },
+    {
+      "id": "8",
+      "texte": "Je me débrouille bien face aux imprévus ou quand les choses ne se passent pas comme prévu."
+    },
+    {
+      "id": "9",
+      "texte": "J'ai déjà réfléchi à mon offre, ma cible et la manière de me faire connaître."
+    },
+    {
+      "id": "10",
+      "texte": "Je me sens à l'aise pour parler à des inconnus, créer du lien, développer un réseau."
+    },
+    {
+      "id": "11",
+      "texte": "J'ai une capacité naturelle à structurer et organiser mon travail."
+    },
+    {
+      "id": "12",
+      "texte": "Je peux rester motivé(e) sans cadre imposé ou hiérarchie."
+    },
+    {
+      "id": "13",
+      "texte": "Je suis à l'aise avec l'idée de ne pas avoir de revenus fixes au départ."
+    },
+    {
+      "id": "14",
+      "texte": "Je sais me fixer des objectifs concrets et atteignables."
+    },
+    {
+      "id": "15",
+      "texte": "Je suis curieux(se) des démarches administratives et juridiques liées à la création."
+    },
+    {
+      "id": "16",
+      "texte": "Je connais déjà des entrepreneurs ou j'ai un entourage qui pourrait me conseiller."
+    },
+    {
+      "id": "17",
+      "texte": "Je supporte plutôt bien l'incertitude et les périodes d'instabilité."
+    },
+    {
+      "id": "18",
+      "texte": "J'aime apprendre par moi-même et me former sur de nouveaux sujets."
+    },
+    {
+      "id": "19",
+      "texte": "Je sais ce qui me donne de l'élan et ce qui peut me décourager."
+    },
+    {
+      "id": "20",
+      "texte": "J'ai envie de laisser une trace ou d'avoir un impact à travers mon activité."
+    }
+  ],
+  "interpretation": [
+    {
+      "min": 65,
+      "max": 80,
+      "texte": "Forte appétence entrepreneuriale. Le profil présente des bases solides. À challenger sur le réalisme du projet et les compétences techniques précises."
+    },
+    {
+      "min": 50,
+      "max": 64,
+      "texte": "Potentiel à confirmer. Le projet peut être viable avec un bon accompagnement et quelques axes de renforcement."
+    },
+    {
+      "min": 35,
+      "max": 49,
+      "texte": "Des doutes à lever. Un travail approfondi en amont est nécessaire."
+    },
+    {
+      "min": 0,
+      "max": 34,
+      "texte": "Projet prématuré. Recentrer le travail d'orientation."
+    }
+  ],
+  "thematiques": [
+    {
+      "nom": "Motivation et sens",
+      "lecture": "Motivation profonde, engagement",
+      "axe_de_travail": "Clarifier le pourquoi du projet entrepreneurial.",
+      "items": []
+    },
+    {
+      "nom": "Autonomie et responsabilité",
+      "lecture": "Capacité à décider, assumer, s'autogérer",
+      "axe_de_travail": "Développer la posture d'indépendant et la prise de décision.",
+      "items": []
+    },
+    {
+      "nom": "Vision et planification",
+      "lecture": "Projection, organisation, clarté des objectifs",
+      "axe_de_travail": "Structurer l'idée et l'ancrer dans le réel.",
+      "items": []
+    },
+    {
+      "nom": "Résilience et prise de risque",
+      "lecture": "Gestion de l'incertitude, tolérance à l'échec",
+      "axe_de_travail": "Travailler la confiance face à l'instabilité.",
+      "items": []
+    },
+    {
+      "nom": "Connaissances et gestion",
+      "lecture": "Culture entrepreneuriale, gestion de base",
+      "axe_de_travail": "Se former aux bases de la gestion d'activité.",
+      "items": []
+    },
+    {
+      "nom": "Communication et réseau",
+      "lecture": "Aisance relationnelle, capacité à mobiliser son réseau",
+      "axe_de_travail": "Développer son aisance relationnelle et activer son réseau.",
+      "items": []
+    }
+  ],
+  "seuils_thematiques": [
+    {
+      "min": 3.5,
+      "texte": "Point fort"
+    },
+    {
+      "min": 2.5,
+      "texte": "Zone à développer"
+    },
+    {
+      "min": 0,
+      "texte": "Axe d'amélioration prioritaire"
+    }
+  ]
+}
