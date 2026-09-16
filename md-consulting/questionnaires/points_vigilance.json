@@ -141,5 +141,14 @@
       "id": "v33",
       "texte": "Je suis têtu(e)"
     }
-  ]
+  ],
+  "publics": [
+    "college",
+    "lycee",
+    "reconversion",
+    "vae",
+    "handicap",
+    "burnout"
+  ],
+  "note_publics": "Formulations « Je suis… », lisibles à tout âge."
 }

@@ -76,9 +76,13 @@ def _valider_items(items, origine, champ_texte="texte"):
     return ids
 
 
-def valider(brut: dict, origine: str) -> Questionnaire:
+def valider(brut: dict, origine: str, publics_connus=None) -> Questionnaire:
     for champ in ("cle", "titre", "forme"):
         _exige(champ in brut, f"{origine} : champ « {champ} » manquant.")
+    if publics_connus is not None and "publics" in brut:
+        inconnus = set(brut["publics"]) - set(publics_connus)
+        _exige(not inconnus, f"{origine} : public(s) inconnu(s) {sorted(inconnus)}.")
+        _exige(brut["publics"], f"{origine} : « publics » ne peut pas être vide.")
     forme = brut["forme"]
     _exige(forme in FORMES, f"{origine} : forme inconnue « {forme} ».")
 
@@ -138,13 +142,19 @@ def valider(brut: dict, origine: str) -> Questionnaire:
 
 
 # ── Chargement ─────────────────────────────────────────────────────────────
+def _publics_connus():
+    """Importé tardivement : personne.py ne doit pas dépendre du moteur."""
+    import personne
+    return personne.PUBLICS
+
+
 def charger(chemin: Path | str) -> Questionnaire:
     chemin = Path(chemin)
     try:
         brut = json.loads(chemin.read_text(encoding="utf-8"))
     except json.JSONDecodeError as exc:
         raise QuestionnaireInvalide(f"{chemin.name} : JSON illisible — {exc}") from exc
-    return valider(brut, chemin.name)
+    return valider(brut, chemin.name, _publics_connus())
 
 
 def disponibles(dossier: Path | str | None = None) -> dict[str, Questionnaire]:
@@ -197,3 +207,29 @@ def score_ab(q: Questionnaire, reponses: dict[str, str]) -> dict:
             if reponses.get(item_id) == attendu:
                 scores[axe["nom"]] += 1
     return scores
+
+
+# ── Ciblage par public ─────────────────────────────────────────────────────
+def convient_a(q: Questionnaire, public: str) -> bool:
+    """Un outil sans champ « publics » convient à tous : l'absence de ciblage
+    n'interdit rien, elle se voit simplement dans la liste."""
+    cibles = q.get("publics")
+    return public in cibles if cibles else True
+
+
+def pour_public(public: str, dossier=None) -> dict[str, Questionnaire]:
+    return {c: q for c, q in disponibles(dossier).items() if convient_a(q, public)}
+
+
+def items_pour(q: Questionnaire, est_mineur: bool) -> list[dict]:
+    """Items réellement soumis. Certains énoncés sont écartés pour un mineur ;
+    la liste est dans le fichier, pas dans le code."""
+    ecartes = set(q.get("items_ecartes_si_mineur", [])) if est_mineur else set()
+    return [it for it in q.items if it["id"] not in ecartes]
+
+
+def items_ecartes(q: Questionnaire, est_mineur: bool) -> list[dict]:
+    if not est_mineur:
+        return []
+    ecartes = set(q.get("items_ecartes_si_mineur", []))
+    return [it for it in q.items if it["id"] in ecartes]

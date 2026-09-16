@@ -98,7 +98,8 @@
     {
       "id": "v18",
       "texte": "Religion",
-      "definition": "spiritualité, vénération et culte"
+      "definition": "spiritualité, vénération et culte",
+      "sensible": "Conviction religieuse : donnée sensible au sens de l'article 9 du RGPD si elle est enregistrée."
     },
     {
       "id": "v19",
@@ -250,5 +251,17 @@
       "texte": "Jouir d'une grande popularité",
       "definition": ""
     }
+  ],
+  "publics": [
+    "college",
+    "lycee",
+    "reconversion",
+    "vae",
+    "handicap",
+    "burnout"
+  ],
+  "note_publics": "Le document tutoie (« Sélectionne ce qui est important pour toi dans la vie ») : il est écrit pour être utilisable avec des jeunes. L'item « Amour — affection envers les autres, intimité sexuelle » (v05) est écarté d'office pour une personne mineure : cet énoncé n'a pas à être soumis à un collégien dans un entretien de conseil. Retirer v05 de items_ecartes_si_mineur pour revenir au document.",
+  "items_ecartes_si_mineur": [
+    "v05"
   ]
 }

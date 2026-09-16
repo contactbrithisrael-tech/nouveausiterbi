@@ -14,7 +14,9 @@ CREATE TABLE IF NOT EXISTS personne (
     courriel                  TEXT,
     adresse                   TEXT,
     tranche_age               TEXT NOT NULL CHECK (tranche_age IN ('college','lycee','adulte')),
-    public                    TEXT NOT NULL CHECK (public IN ('college','lycee','reconversion','vae','handicap')),
+    -- Pas de liste figée : les publics reçus évoluent (burn-out ajouté après
+    -- coup). La validation se fait dans personne.py.
+    public                    TEXT NOT NULL,
     situation                 TEXT,                      -- classe et établissement, ou situation professionnelle
     rqth                      INTEGER NOT NULL DEFAULT 0,
     representant_legal        TEXT,                      -- nom du parent ou tuteur

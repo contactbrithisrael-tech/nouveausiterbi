@@ -72,6 +72,65 @@ Utilisée par *enquete_metier*.
 Les effectifs sont **vérifiés par un test** (`tests/test_questionnaires.py`) :
 une transcription tronquée fait échouer la suite.
 
+## Ciblage par public
+
+Chaque outil déclare les publics auxquels il convient (`publics`) et **justifie
+ce choix** (`note_publics`). L'écran de séance ne propose que les outils
+rattachés au public de la personne reçue, et dit combien ont été écartés.
+
+| Outil | Collège | Lycée | Reconv. | VAE | Handicap | Burn-out |
+|---|:-:|:-:|:-:|:-:|:-:|:-:|
+| valeurs | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| points_forts | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| points_vigilance | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| bilan_360_scolaire | ✓ | ✓ | | | | |
+| bilan_360 | | | ✓ | ✓ | ✓ | ✓ |
+| projet_de_vie | | ✓ | ✓ | ✓ | ✓ | ✓ |
+| freins | | ✓ | ✓ | ✓ | ✓ | ✓ |
+| motivations_35 | | ✓ | ✓ | ✓ | ✓ | ✓ |
+| enquete_metier | | ✓ | ✓ | ✓ | ✓ | ✓ |
+| predisposition_creation_entreprise | | | ✓ | ✓ | | |
+| orientation_formateur | | | ✓ | ✓ | | |
+
+**Ces rattachements sont des propositions**, chacune modifiable en une ligne
+dans le fichier de l'outil. Les raisons retenues :
+
+- Le questionnaire *Valeurs* tutoie (« Sélectionne ce qui est important pour
+  toi dans la vie ») : il est écrit pour être utilisable avec des jeunes.
+  C'est le seul du lot dans ce cas.
+- *Bilan 360°* existe en deux versions dans le document : celle aux colonnes
+  Parents et Extrascolaire va aux scolaires, celle aux colonnes Responsable
+  et Collègue aux adultes.
+- *Freins*, *Motivations*, *Projet de vie* parlent de vie salariée — permis de
+  conduire, chômage de longue durée, CDI, statut de fonctionnaire, salaire.
+  Écartés du collège.
+- *Prédisposition à la création d'entreprise* est écarté du burn-out :
+  mesurer une appétence entrepreneuriale pendant un épuisement professionnel
+  demande l'arbitrage du consultant, pas un réglage par défaut.
+
+## Ce qui est écarté pour une personne mineure
+
+Un item peut être retiré d'un questionnaire quand la personne est mineure,
+via `items_ecartes_si_mineur`. Un seul l'est aujourd'hui :
+
+> **Valeurs, item v05 — « Amour : affection envers les autres, intimité
+> sexuelle ».** Cet énoncé n'a pas à être soumis à un collégien dans un
+> entretien de conseil. Il est écarté d'office pour toute personne mineure ;
+> l'écran indique au consultant ce qui a été retiré. Retirer `v05` de la liste
+> pour revenir au document.
+
+Un item peut aussi porter un champ `sensible`, affiché en avertissement :
+
+> **Valeurs, item v18 — « Religion : spiritualité, vénération et culte ».**
+> Une conviction religieuse cochée et enregistrée est une donnée sensible au
+> sens de l'article 9 du RGPD. L'item est conservé — c'est une valeur
+> légitime en bilan — mais l'écran le signale.
+
+**Aucun énoncé n'a été réécrit.** Adapter la formulation d'un item revient à
+le reformuler, ce que la règle du projet interdit et qui, pour un instrument
+soumis à des mineurs, ne relève pas d'un choix technique. Les items qui
+gênent sont écartés ou signalés, jamais réécrits.
+
 ## Provenance
 
 Tout ce contenu est transcrit des documents MD Consulting fournis :

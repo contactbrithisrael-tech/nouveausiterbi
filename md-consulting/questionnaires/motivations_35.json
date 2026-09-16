@@ -209,5 +209,13 @@
       ],
       "description": "J'ai besoin d'argent pour vivre - physique. Pas beaucoup d'intérêt pour le travail à faire. On demande plus à l'entreprise que l'on est prêt à lui apporter."
     }
-  }
+  },
+  "publics": [
+    "lycee",
+    "reconversion",
+    "vae",
+    "handicap",
+    "burnout"
+  ],
+  "note_publics": "⚠ La consigne dit « décrits comme importants sur un groupe de salariés » : l'outil parle de vie salariée. À employer avec prudence au lycée, pas au collège."
 }

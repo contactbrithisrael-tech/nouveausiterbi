@@ -56,7 +56,7 @@ if seance_id:
         aller(seance_id=None, personne_id=s.personne_id)
     vue_seance.entete_seance(s, pers)
     st.divider()
-    vue_seance.outils(s)
+    vue_seance.outils(s, pers)
     st.divider()
     vue_rapport.ecran(s, pers)
     st.stop()

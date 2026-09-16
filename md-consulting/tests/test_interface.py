@@ -67,17 +67,60 @@ def t_ecran_fiche_et_seance():
 
 
 def t_chaque_questionnaire_s_affiche_sans_exception():
-    """Onze formulaires, sept formes d'affichage : chacun doit se rendre."""
+    """Onze formulaires, sept formes d'affichage : chacun doit se rendre.
+    Chaque outil est ouvert avec une personne du public qu'il vise — sinon le
+    filtrage l'écarterait et le test ne prouverait rien."""
     import questionnaire as Q
-    pid = P.creer(P.Personne("Passation", "Test", "adulte", "reconversion"),
-                  db.CHEMIN_BASE).id
-    sid = S.creer(S.Seance(pid), db.CHEMIN_BASE).id
-    echecs = []
-    for cle in Q.disponibles():
-        at = _lancer(seance_id=sid, questionnaire_en_cours=cle)
+    from datetime import date, timedelta
+    seances = {}
+    for public in P.PUBLICS:
+        naissance = None
+        if public in ("college", "lycee"):
+            age = 13 if public == "college" else 16
+            naissance = (date.today() - timedelta(days=age * 366)).isoformat()
+        pers = P.creer(P.Personne("Passation", public.capitalize(),
+                                  "college" if public == "college"
+                                  else "lycee" if public == "lycee" else "adulte",
+                                  public, date_naissance=naissance,
+                                  consentement_parental_date=date.today().isoformat()
+                                  if naissance else None), db.CHEMIN_BASE)
+        seances[public] = S.creer(S.Seance(pers.id), db.CHEMIN_BASE).id
+
+    echecs, ouverts = [], 0
+    for cle, q in Q.disponibles().items():
+        public = q.publics[0]
+        at = _lancer(seance_id=seances[public], questionnaire_en_cours=cle)
         if at.exception:
-            echecs.append(f"{cle} : {at.exception}")
+            echecs.append(f"{cle} ({public}) : {at.exception}")
+            continue
+        titres = " ".join(m.value for m in at.subheader)
+        if q.titre not in titres:
+            echecs.append(f"{cle} ({public}) : le titre ne s'affiche pas — {titres}")
+        else:
+            ouverts += 1
     assert not echecs, "\n".join(echecs)
+    assert ouverts == 11, f"{ouverts} questionnaires ouverts sur 11"
+
+
+def t_item_intime_non_soumis_a_un_college_dans_l_interface():
+    """Vérifié à l'écran, pas seulement dans le modèle."""
+    from datetime import date, timedelta
+    import questionnaire as Q
+    naissance = (date.today() - timedelta(days=13 * 366)).isoformat()
+    pers = P.creer(P.Personne("Tissot", "Rémi", "college", "college",
+                              date_naissance=naissance,
+                              consentement_parental_date=date.today().isoformat()),
+                   db.CHEMIN_BASE)
+    sid = S.creer(S.Seance(pers.id), db.CHEMIN_BASE).id
+    at = _lancer(seance_id=sid, questionnaire_en_cours="valeurs")
+    assert not at.exception, at.exception
+    libelles = [c.label for c in at.checkbox]
+    assert not any(l.startswith("Amour") for l in libelles), \
+        "l'item « Amour — intimité sexuelle » est proposé à un collégien"
+    assert any(l.startswith("Ambition") for l in libelles), \
+        "les autres valeurs devraient rester proposées"
+    assert any("mineure" in m.value for m in at.info), \
+        "l'écran devrait dire ce qui a été écarté"
 
 
 def t_ecran_ressources_sans_exception():

@@ -24,15 +24,15 @@ def _coches(items, prefixe, avec_definition=False) -> list[str]:
     return retenus
 
 
-def checklist(q: Q.Questionnaire) -> tuple[dict, str]:
-    retenus = _coches(q.items, q.cle, avec_definition=True)
-    textes = [it["texte"] for it in q.items if it["id"] in retenus]
+def checklist(q: Q.Questionnaire, items: list[dict]) -> tuple[dict, str]:
+    retenus = _coches(items, q.cle, avec_definition=True)
+    textes = [it["texte"] for it in items if it["id"] in retenus]
     synthese = (f"{q.titre} — {len(textes)} élément(s) retenu(s) : "
                 + " ; ".join(textes)) if textes else ""
     return {"coches": retenus}, synthese
 
 
-def choix_groupes(q: Q.Questionnaire) -> tuple[dict, str]:
+def choix_groupes(q: Q.Questionnaire, items: list[dict]) -> tuple[dict, str]:
     reponses, lignes = {}, []
     for section in q.sections:
         st.markdown(f"**{section['titre']}**")
@@ -45,9 +45,9 @@ def choix_groupes(q: Q.Questionnaire) -> tuple[dict, str]:
     return reponses, "\n".join(lignes)
 
 
-def selection_n(q: Q.Questionnaire) -> tuple[dict, str]:
+def selection_n(q: Q.Questionnaire, items: list[dict]) -> tuple[dict, str]:
     n = q.nb_a_selectionner
-    libelles = {it["texte"]: it["id"] for it in q.items}
+    libelles = {it["texte"]: it["id"] for it in items}
     choisis = st.multiselect(f"Sélectionnez-en {n}", list(libelles),
                              key=f"{q.cle}_sel")
     if len(choisis) != n:
@@ -64,16 +64,16 @@ def selection_n(q: Q.Questionnaire) -> tuple[dict, str]:
     return {"choisis": ids, "profils": dict(comptes)}, "\n".join(lignes) if ids else ""
 
 
-def likert(q: Q.Questionnaire) -> tuple[dict, str]:
+def likert(q: Q.Questionnaire, items: list[dict]) -> tuple[dict, str]:
     niveaux = [n["libelle"] for n in q.echelle]
     reponses = {}
-    for it in q.items:
+    for it in items:
         reponses[it["id"]] = st.radio(f"{it['id']}. {it['texte']}", niveaux,
                                       horizontal=True, index=None,
                                       key=f"{q.cle}_{it['id']}")
     donnees = {k: v for k, v in reponses.items() if v}
-    if len(donnees) < len(q.items):
-        st.caption(f"{len(donnees)} / {len(q.items)} réponse(s).")
+    if len(donnees) < len(items):
+        st.caption(f"{len(donnees)} / {len(items)} réponse(s).")
         return {"reponses": donnees}, ""
     score = Q.score_likert(q, donnees)
     st.success(f"Score : {score['total']} / {score['maximum']}")
@@ -87,16 +87,16 @@ def likert(q: Q.Questionnaire) -> tuple[dict, str]:
     return {"reponses": donnees, "score": score}, "\n".join(l for l in lignes if l)
 
 
-def ab(q: Q.Questionnaire) -> tuple[dict, str]:
+def ab(q: Q.Questionnaire, items: list[dict]) -> tuple[dict, str]:
     reponses = {}
-    for it in q.items:
+    for it in items:
         choix = st.radio(f"**{it['id']}.**", ["A", "B"], horizontal=True, index=None,
                          key=f"{q.cle}_{it['id']}",
                          captions=[it["a"], it["b"]])
         if choix:
             reponses[it["id"]] = choix
-    if len(reponses) < len(q.items):
-        st.caption(f"{len(reponses)} / {len(q.items)} réponse(s).")
+    if len(reponses) < len(items):
+        st.caption(f"{len(reponses)} / {len(items)} réponse(s).")
         return {"reponses": reponses}, ""
     scores = Q.score_ab(q, reponses)
     lignes = []
@@ -111,7 +111,7 @@ def ab(q: Q.Questionnaire) -> tuple[dict, str]:
     return {"reponses": reponses, "scores": scores}, "\n".join(lignes)
 
 
-def matrice_360(q: Q.Questionnaire) -> tuple[dict, str]:
+def matrice_360(q: Q.Questionnaire, items: list[dict]) -> tuple[dict, str]:
     evaluateur = st.selectbox("Colonne à renseigner", q.evaluateurs,
                               key=f"{q.cle}_qui")
     memoire = st.session_state.setdefault(f"{q.cle}_donnees", {})
@@ -141,7 +141,7 @@ def matrice_360(q: Q.Questionnaire) -> tuple[dict, str]:
     return {"par_evaluateur": memoire}, "\n".join([entete] + lignes)
 
 
-def questions_ouvertes(q: Q.Questionnaire) -> tuple[dict, str]:
+def questions_ouvertes(q: Q.Questionnaire, items: list[dict]) -> tuple[dict, str]:
     if q.get("exemple_accroche"):
         st.caption(q.exemple_accroche)
     entete = {}
@@ -150,7 +150,7 @@ def questions_ouvertes(q: Q.Questionnaire) -> tuple[dict, str]:
         for colonne, champ in zip(colonnes, q.entete):
             entete[champ] = colonne.text_input(champ, key=f"{q.cle}_{champ}")
     reponses, lignes = {}, []
-    for it in q.items:
+    for it in items:
         texte = st.text_area(it["texte"], height=90, key=f"{q.cle}_{it['id']}")
         if texte.strip():
             reponses[it["id"]] = texte.strip()
@@ -167,8 +167,10 @@ AFFICHAGES = {
 }
 
 
-def passer(q: Q.Questionnaire) -> tuple[dict, str]:
-    """Affiche le questionnaire et renvoie (réponses brutes, synthèse)."""
+def passer(q: Q.Questionnaire, est_mineur: bool = False) -> tuple[dict, str]:
+    """Affiche le questionnaire et renvoie (réponses brutes, synthèse).
+    Les énoncés écartés pour un mineur ne sont pas soumis, et l'écran dit
+    lesquels : le consultant doit savoir ce que la personne n'a pas vu."""
     st.subheader(q.titre)
     if q.get("introduction"):
         st.caption(q.introduction)
@@ -176,7 +178,14 @@ def passer(q: Q.Questionnaire) -> tuple[dict, str]:
         st.markdown(f"*{q.consigne}*")
     if q.get("note"):
         st.warning(q.note)
-    reponses, synthese = AFFICHAGES[q.forme](q)
+    ecartes = Q.items_ecartes(q, est_mineur)
+    if ecartes:
+        st.info("Écarté pour une personne mineure : "
+                + ", ".join(f"« {it['texte']} »" for it in ecartes) + ".")
+    for it in Q.items_pour(q, est_mineur):
+        if it.get("sensible"):
+            st.warning(f"« {it['texte']} » — {it['sensible']}")
+    reponses, synthese = AFFICHAGES[q.forme](q, Q.items_pour(q, est_mineur))
     for etape in q.get("suite", []):
         st.caption(f"À faire ensuite : {etape}")
     return reponses, synthese

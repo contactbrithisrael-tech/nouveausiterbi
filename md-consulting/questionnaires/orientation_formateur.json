@@ -216,5 +216,10 @@
     "Famille 4": "Le formateur adopte une position de compromis et considère que les désirs de l'apprenant sont incompatibles avec les structures ; il estime devoir exercer une contrainte sur ceux-ci pour que le travail soit fait, mais il abandonne certaines stratégies si elles ne fonctionnent pas.",
     "Famille 5": "Le formateur estime l'apprenant capable d'apprentissage et cherche à repérer ses besoins. Il construit les objectifs et les méthodes à partir des besoins repérés. Il n'y a pas d'incompatibilité entre l'attention aux personnes et une démarche pédagogique étudiée."
   },
-  "avertissement": "Ce résultat est « caricatural » ; une même personne peut changer de « famille » selon les contextes ; il permet de placer en conscience l'apprenant, le formateur ou le contenu au centre de son action selon les besoins de la situation."
+  "avertissement": "Ce résultat est « caricatural » ; une même personne peut changer de « famille » selon les contextes ; il permet de placer en conscience l'apprenant, le formateur ou le contenu au centre de son action selon les besoins de la situation.",
+  "publics": [
+    "reconversion",
+    "vae"
+  ],
+  "note_publics": "Auto-évaluation d'une posture de formateur : suppose ce projet de métier."
 }

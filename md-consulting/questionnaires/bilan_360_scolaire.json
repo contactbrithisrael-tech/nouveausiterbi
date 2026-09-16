@@ -304,5 +304,10 @@
   ],
   "suite": [
     "Qu'est-ce que je constate ?"
-  ]
+  ],
+  "publics": [
+    "college",
+    "lycee"
+  ],
+  "note_publics": "Colonnes Parents et Extrascolaire : cette version est faite pour un scolaire."
 }

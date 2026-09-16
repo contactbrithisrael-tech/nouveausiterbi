@@ -30,6 +30,7 @@ INTITULES_SOLUTIONS = {
     "reconversion": "Pistes professionnelles et démarches à engager",
     "vae": "Démarches VAE à engager",
     "handicap": "Pistes et appuis mobilisables",
+    "burnout": "Appuis mobilisables et prochaines étapes, à rythme tenable",
 }
 
 

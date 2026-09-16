@@ -121,6 +121,74 @@ def t_projet_de_vie_va_de_a_a_y():
             assert len(question["choix"]) >= 2, f"{question['id']} : trop peu de choix"
 
 
+# ── Ciblage par public ─────────────────────────────────────────────────────
+def t_chaque_outil_declare_ses_publics():
+    import personne as P
+    for cle, q in INSTALLES.items():
+        cibles = q.get("publics")
+        assert cibles, f"{cle} : aucun public déclaré"
+        inconnus = set(cibles) - set(P.PUBLICS)
+        assert not inconnus, f"{cle} : public(s) inconnu(s) {sorted(inconnus)}"
+        assert q.get("note_publics"), f"{cle} : ciblage non justifié"
+
+
+def t_chaque_public_a_au_moins_un_outil():
+    import personne as P
+    vides = [k for k in P.PUBLICS if not Q.pour_public(k)]
+    assert not vides, f"public(s) sans aucun outil : {vides}"
+
+
+def t_le_360_scolaire_va_aux_scolaires_et_l_autre_aux_adultes():
+    assert set(INSTALLES["bilan_360_scolaire"].publics) == {"college", "lycee"}
+    adultes = set(INSTALLES["bilan_360"].publics)
+    assert "college" not in adultes and "lycee" not in adultes
+
+
+def t_outils_de_vie_salariee_hors_college():
+    """Un collégien n'a pas à passer un outil qui parle de CDI ou de chômage."""
+    for cle in ("motivations_35", "freins", "projet_de_vie",
+                "predisposition_creation_entreprise", "orientation_formateur"):
+        assert "college" not in INSTALLES[cle].publics, f"{cle} proposé au collège"
+
+
+def t_creation_entreprise_hors_mineurs_et_burnout():
+    cibles = set(INSTALLES["predisposition_creation_entreprise"].publics)
+    assert cibles == {"reconversion", "vae"}, cibles
+
+
+def t_item_intime_ecarte_pour_un_mineur():
+    """« intimité sexuelle » n'a pas à être soumis à un collégien."""
+    q = INSTALLES["valeurs"]
+    adulte = {i["id"] for i in Q.items_pour(q, est_mineur=False)}
+    mineur = {i["id"] for i in Q.items_pour(q, est_mineur=True)}
+    assert adulte - mineur == {"v05"}, adulte - mineur
+    ecarte = Q.items_ecartes(q, est_mineur=True)
+    assert len(ecarte) == 1 and "sexuel" in ecarte[0]["definition"]
+    assert Q.items_ecartes(q, est_mineur=False) == []
+
+
+def t_donnee_sensible_signalee():
+    """La conviction religieuse relève de l'article 9 du RGPD."""
+    q = INSTALLES["valeurs"]
+    sensibles = [i for i in q.items if i.get("sensible")]
+    assert sensibles, "aucun item sensible signalé"
+    assert any("article 9" in i["sensible"] for i in sensibles)
+
+
+def t_public_inconnu_refuse_au_chargement():
+    import json, tempfile
+    d = Path(tempfile.mkdtemp())
+    (d / "ko.json").write_text(json.dumps({
+        "cle": "k", "titre": "K", "forme": "checklist", "publics": ["martiens"],
+        "items": [{"id": "a", "texte": "A"}]}, ensure_ascii=False), encoding="utf-8")
+    try:
+        Q.disponibles(d)
+    except Q.QuestionnaireInvalide as exc:
+        assert "martiens" in str(exc)
+        return
+    raise AssertionError("public inconnu accepté")
+
+
 def t_les_types_de_test_suivent_les_fichiers():
     """Ajouter un questionnaire doit suffire à le rendre enregistrable."""
     types = RT.types()

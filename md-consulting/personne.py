@@ -22,6 +22,7 @@ PUBLICS = {
     "reconversion": "Adulte en reconversion",
     "vae": "Adulte en démarche VAE",
     "handicap": "Personne en situation de handicap",
+    "burnout": "Personne en situation d'épuisement professionnel",
 }
 
 # Âge en dessous duquel le consentement parental est exigé avant toute

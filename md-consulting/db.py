@@ -69,9 +69,27 @@ def _migrer_types_de_test_libres(cx: sqlite3.Connection) -> bool:
     return True
 
 
+def _migrer_publics_libres(cx: sqlite3.Connection) -> bool:
+    """Retire la liste figée de publics (ancienne contrainte CHECK)."""
+    ligne = cx.execute("SELECT sql FROM sqlite_master WHERE type='table' "
+                       "AND name='personne'").fetchone()
+    if not ligne or "CHECK (public IN" not in (ligne["sql"] or ""):
+        return False
+    colonnes_actuelles = ", ".join(colonnes(cx, "personne"))
+    cx.execute("PRAGMA foreign_keys = OFF")
+    cx.execute("ALTER TABLE personne RENAME TO personne_ancienne")
+    cx.executescript(CHEMIN_SCHEMA.read_text(encoding="utf-8"))
+    cx.execute(f"INSERT INTO personne ({colonnes_actuelles}) "
+               f"SELECT {colonnes_actuelles} FROM personne_ancienne")
+    cx.execute("DROP TABLE personne_ancienne")
+    cx.execute("PRAGMA foreign_keys = ON")
+    return True
+
+
 def initialiser(chemin: Path | str | None = None) -> None:
     """Crée les tables si besoin, puis applique les migrations. Idempotent."""
     with connexion(chemin) as cx:
         cx.executescript(CHEMIN_SCHEMA.read_text(encoding="utf-8"))
         _migrer_fiche_complete(cx)
+        _migrer_publics_libres(cx)
         _migrer_types_de_test_libres(cx)

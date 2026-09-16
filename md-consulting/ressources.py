@@ -35,7 +35,7 @@ RESSOURCES: tuple[Ressource, ...] = (
         "Test RIASEC (Holland)", "https://dividendes.ch/test-holland",
         "Questionnaire d'intérêts professionnels. Version IIP RIASEC Markers "
         "(Armstrong, Rounds & Liao, 2008), domaine public.",
-        LIBRE, ("college", "lycee", "reconversion", "handicap"),
+        LIBRE, ("college", "lycee", "reconversion", "handicap", "burnout"),
         "Référence de l'instrument fournie par le brief MD Consulting."),
     Ressource(
         "RIASEC — Open Psychometrics", "https://openpsychometrics.org/tests/RIASEC",
@@ -48,11 +48,11 @@ RESSOURCES: tuple[Ressource, ...] = (
         "Big Five — IPIP", "https://ipiptest.com",
         "Inventaire de personnalité issu de l'International Personality Item "
         "Pool (Goldberg, Oregon Research Institute), libre de droits.",
-        LIBRE, ("lycee", "reconversion", "handicap")),
+        LIBRE, ("lycee", "reconversion", "handicap", "burnout")),
     Ressource(
         "IPIP-NEO-120 en français", "https://adnpersonnalite.com",
         "Version française de l'inventaire IPIP-NEO-120.",
-        LIBRE, ("lycee", "reconversion", "handicap")),
+        LIBRE, ("lycee", "reconversion", "handicap", "burnout")),
     Ressource(
         "AssessFirst", "https://assessfirst.com",
         "Évaluation motivations / personnalité / raisonnement. Société privée, "
@@ -67,7 +67,7 @@ RESSOURCES: tuple[Ressource, ...] = (
         "Création de CV en ligne, export PDF, modèles à mettre en page soi-même. "
         "Éditeur français. Connexion possible avec un compte France Travail pour "
         "importer le profil de compétences.",
-        FREEMIUM, ("lycee", "reconversion", "vae", "handicap"),
+        FREEMIUM, ("lycee", "reconversion", "vae", "handicap", "burnout"),
         "⚠ Socle gratuit réel (création + export PDF), mais options payantes "
         "(modèles avancés, relecture, évaluation de compétences). Tarifs non "
         "établis. Page compte France Travail : "
@@ -79,12 +79,12 @@ RESSOURCES: tuple[Ressource, ...] = (
         "Mes compétences (France Travail)", "https://mescompetences.info",
         "Profil de compétences France Travail. Lien saisi manuellement dans la "
         "fiche de la personne.",
-        SERVICE_PUBLIC, ("reconversion", "vae", "handicap"),
+        SERVICE_PUBLIC, ("reconversion", "vae", "handicap", "burnout"),
         "Aucune intégration technique : renvoi manuel uniquement."),
     Ressource(
         "VAE — portail officiel", "https://vae.gouv.fr",
         "Information et dépôt de dossier de validation des acquis de l'expérience.",
-        SERVICE_PUBLIC, ("vae", "reconversion")),
+        SERVICE_PUBLIC, ("vae", "reconversion", "burnout")),
     Ressource(
         "Cap emploi", "https://capemploi.info",
         "Accompagnement vers l'emploi des personnes en situation de handicap.",
@@ -94,6 +94,14 @@ RESSOURCES: tuple[Ressource, ...] = (
         "Aides et dispositifs pour l'emploi des personnes handicapées.",
         SERVICE_PUBLIC, ("handicap",)),
 )
+
+
+# ⚠ MANQUE POUR LE PUBLIC BURN-OUT : aucune ressource spécifique à
+# l'épuisement professionnel n'est listée. Les entrées ci-dessus sont des
+# outils génériques de reconversion. Le service de prévention et de santé au
+# travail, le médecin du travail et les dispositifs de maintien dans l'emploi
+# relèvent de ce public — aucune adresse n'est écrite ici faute de l'avoir
+# vérifiée. À compléter par Mickael.
 
 
 def pour_public(cle_public: str) -> list[Ressource]:

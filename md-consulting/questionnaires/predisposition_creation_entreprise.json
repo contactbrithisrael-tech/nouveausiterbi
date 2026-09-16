@@ -178,5 +178,10 @@
       "min": 0,
       "texte": "Axe d'amélioration prioritaire"
     }
-  ]
+  ],
+  "publics": [
+    "reconversion",
+    "vae"
+  ],
+  "note_publics": "⚠ BURN-OUT ÉCARTÉ : évaluer une appétence entrepreneuriale pendant un épuisement professionnel demande un arbitrage du consultant, pas un défaut."
 }

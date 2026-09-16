@@ -21,7 +21,7 @@ bibliothèque standard (`docx_minimal.py`), sans `python-docx`.
 ./lancer_tests.sh
 ```
 
-74 tests. Les tests d'interface exécutent réellement le script Streamlit
+83 tests. Les tests d'interface exécutent réellement le script Streamlit
 (`st.testing.AppTest`), sans navigateur : ils vérifient entre autres que le
 blocage RGPD apparaît bien à l'écran, et pas seulement dans le modèle.
 
@@ -53,6 +53,10 @@ blocage RGPD apparaît bien à l'écran, et pas seulement dans le modèle.
   `_redirects` : Cloudflare ne sert pas le code source.
 
 ## Fiche de renseignement (module 1)
+
+Six publics : collège, lycée, reconversion, VAE, handicap, épuisement
+professionnel. Ni les publics ni les types de test ne sont figés dans la base :
+les contraintes correspondantes sont migrées au démarrage.
 
 Fiche complète, pas de pseudonyme : nom, prénom, date de naissance, téléphone,
 courriel, adresse, situation (classe et établissement, ou situation
@@ -117,11 +121,28 @@ formateur ses 30 items, sinon le chargement est refusé.
 
 Le module 360° signale les **écarts de perception** entre évaluateurs.
 
+**Chaque outil est rattaché à des publics** et l'écran de séance ne propose
+que ceux qui conviennent à la personne reçue : 4 outils pour un collégien,
+8 pour un lycéen, 10 pour un adulte en reconversion. Le Bilan 360° existe en
+deux versions, scolaire (colonnes Parents, Extrascolaire) et adulte
+(Responsable, Collègue).
+
+Un énoncé peut être **écarté pour une personne mineure** — l'item
+« Amour : affection envers les autres, intimité sexuelle » du questionnaire
+Valeurs l'est d'office, et l'écran dit au consultant ce qui a été retiré.
+Aucun énoncé n'est réécrit : ce qui gêne est écarté ou signalé.
+
 Détail du format et points à trancher : `docs/questionnaires.md`.
 
 ## Ce qui manque encore — décisions ou fichiers attendus
 
-1. **Mentions légales.** `config.py` attend le nom du consultant et, le cas
+1. **Ressources pour le burn-out.** Le public « épuisement professionnel »
+   a été ajouté, mais aucune ressource externe ne lui est propre : les six
+   qui lui sont rattachées sont des outils génériques de reconversion. Le
+   service de santé au travail et les dispositifs de maintien dans l'emploi
+   relèvent de ce public — aucune adresse n'a été écrite faute de l'avoir
+   vérifiée.
+2. **Mentions légales.** `config.py` attend le nom du consultant et, le cas
    échéant, les coordonnées à imprimer. Rien n'a été inventé.
 3. **Déménagement du dépôt — en attente d'une action manuelle.** Ce projet
    vit encore dans le dépôt du site Rite Brith Israël, qui est publié.

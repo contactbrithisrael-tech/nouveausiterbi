@@ -304,5 +304,12 @@
   "suite": [
     "Parmi les qualités personnelles et relationnelles pour lesquelles vous avez mis une croix dans la colonne +, sélectionnez celles qui vous caractérisent le plus. Recopiez-les et illustrez-les par un exemple issu de vos expériences professionnelles (ou expliquez ce que vous entendez par telle qualité).",
     "Parmi les qualités pour lesquelles vous avez mis une croix dans la colonne -, recopiez-les et réfléchissez par quelle(s) qualité(s) vous les compenser ou comment vous pourriez les améliorer (définition d'axes de progrès)."
-  ]
+  ],
+  "publics": [
+    "reconversion",
+    "vae",
+    "handicap",
+    "burnout"
+  ],
+  "note_publics": "Colonnes Responsable et Collègue : suppose une expérience de travail."
 }

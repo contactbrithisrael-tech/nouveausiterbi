@@ -73,7 +73,7 @@ def entete_seance(s: S.Seance, pers: P.Personne) -> None:
             st.rerun()
 
 
-def outils(s: S.Seance) -> None:
+def outils(s: S.Seance, pers: P.Personne) -> None:
     st.subheader("Outils utilisés")
     for r in RT.lister_par_seance(s.id):
         c1, c2 = st.columns([5, 1])
@@ -85,14 +85,18 @@ def outils(s: S.Seance) -> None:
             RT.supprimer(r.id)
             st.rerun()
 
-    dispo = Q.disponibles()
+    dispo = Q.pour_public(pers.public)
+    hors_cible = len(Q.disponibles()) - len(dispo)
     if not dispo:
-        st.info("Module Investigation : aucun questionnaire installé. Déposez "
-                "les fichiers dans `questionnaires/` — voir `docs/questionnaires.md`.")
+        st.info("Aucun outil d'investigation n'est rattaché à ce public. Voir "
+                "`docs/questionnaires.md` pour le ciblage.")
+    elif hors_cible:
+        st.caption(f"{len(dispo)} outil(s) adapté(s) à « {P.PUBLICS[pers.public]} » "
+                   f"— {hors_cible} autre(s) écarté(s) pour ce public.")
 
     en_cours = st.session_state.get("questionnaire_en_cours")
     if en_cours and en_cours in dispo:
-        _passation(s, dispo[en_cours])
+        _passation(s, dispo[en_cours], pers)
         return
 
     c1, c2 = st.columns([3, 2])
@@ -122,12 +126,14 @@ def outils(s: S.Seance) -> None:
                     st.rerun()
 
 
-def _passation(s: S.Seance, q) -> None:
+def _passation(s: S.Seance, q, pers: P.Personne) -> None:
     """Passation en cours : le questionnaire occupe l'écran."""
     if st.button("← Abandonner sans enregistrer"):
         st.session_state.pop("questionnaire_en_cours", None)
         st.rerun()
-    reponses, synthese = vue_questionnaire.passer(q)
+    if q.get("note_publics"):
+        st.caption(q.note_publics)
+    reponses, synthese = vue_questionnaire.passer(q, pers.is_mineur)
     st.divider()
     if synthese:
         st.text_area("Synthèse enregistrée dans le compte rendu", synthese,

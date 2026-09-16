@@ -264,5 +264,14 @@
       "id": "f64",
       "texte": "Je vais jusqu'au bout des choses"
     }
-  ]
+  ],
+  "publics": [
+    "college",
+    "lycee",
+    "reconversion",
+    "vae",
+    "handicap",
+    "burnout"
+  ],
+  "note_publics": "Formulations « Je suis… », lisibles à tout âge."
 }
