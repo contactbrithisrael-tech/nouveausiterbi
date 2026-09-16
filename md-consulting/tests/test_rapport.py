@@ -14,7 +14,7 @@ def setup():
     global BASE, PID, SID
     BASE = tempfile.mktemp(suffix=".db")
     db.initialiser(BASE)
-    PID = P.creer(P.Personne("J.L.", "adulte", "reconversion"), BASE).id
+    PID = P.creer(P.Personne("Lerat", "Jean", "adulte", "reconversion"), BASE).id
     SID = S.creer(S.Seance(PID, date="2026-09-16"), BASE).id
 
 
@@ -114,10 +114,10 @@ def t_docx_produit_et_valide():
         assert "Cap emploi" in xml and "Ouvrir un dossier VAE" in xml
 
 
-def t_nom_de_fichier_sans_nom_complet():
-    pers = P.Personne("K.M.", "adulte", "vae", nom_complet="Jean Dupont")
+def t_nom_de_fichier_lisible():
+    pers = P.Personne("Dupont", "Jean", "adulte", "vae")
     nom = X.nom_fichier(pers, S.Seance(pers.id, date="2026-09-16"))
-    assert "Dupont" not in nom and "Jean" not in nom and "K-M" in nom
+    assert nom == "2026-09-16_Dupont-Jean_compte-rendu.docx", nom
 
 
 def t_aucune_mention_reglementaire_inventee():

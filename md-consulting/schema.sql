@@ -7,10 +7,18 @@
 
 CREATE TABLE IF NOT EXISTS personne (
     id                        TEXT PRIMARY KEY,          -- UUID, clé utilisée partout
-    pseudonyme                TEXT NOT NULL,             -- initiales ou pseudo, affiché par défaut
-    nom_complet               TEXT,                      -- optionnel, champ séparé
+    nom                       TEXT NOT NULL,
+    prenom                    TEXT NOT NULL,
+    date_naissance            TEXT,                      -- ISO 8601 ; donne l'âge exact
+    telephone                 TEXT,
+    courriel                  TEXT,
+    adresse                   TEXT,
     tranche_age               TEXT NOT NULL CHECK (tranche_age IN ('college','lycee','adulte')),
     public                    TEXT NOT NULL CHECK (public IN ('college','lycee','reconversion','vae','handicap')),
+    situation                 TEXT,                      -- classe et établissement, ou situation professionnelle
+    rqth                      INTEGER NOT NULL DEFAULT 0,
+    representant_legal        TEXT,                      -- nom du parent ou tuteur
+    representant_contact      TEXT,
     consentement_parental_date TEXT,                     -- ISO 8601 ; NULL = pas de consentement enregistré
     lien_mescompetences       TEXT,
     notes_libres              TEXT,

@@ -17,7 +17,40 @@ def connexion(chemin: Path | str | None = None) -> sqlite3.Connection:
     return cx
 
 
+def colonnes(cx: sqlite3.Connection, table: str) -> list[str]:
+    return [l["name"] for l in cx.execute(f"PRAGMA table_info({table})")]
+
+
+def _migrer_fiche_complete(cx: sqlite3.Connection) -> bool:
+    """Passe de l'ancienne fiche (pseudonyme) à la fiche complète (nom, prénom).
+
+    Les données existantes sont conservées : l'ancien nom complet, ou à défaut
+    le pseudonyme, atterrit dans « nom ». Le prénom reste vide — il sera signalé
+    comme manquant plutôt que deviné en coupant une chaîne en deux.
+    """
+    existantes = colonnes(cx, "personne")
+    if not existantes or "pseudonyme" not in existantes or "nom" in existantes:
+        return False
+    cx.execute("PRAGMA foreign_keys = OFF")
+    cx.execute("ALTER TABLE personne RENAME TO personne_ancienne")
+    cx.executescript(CHEMIN_SCHEMA.read_text(encoding="utf-8"))
+    cx.execute("""
+        INSERT INTO personne (id, nom, prenom, tranche_age, public,
+                              consentement_parental_date, lien_mescompetences,
+                              notes_libres, date_creation)
+        SELECT id,
+               CASE WHEN IFNULL(TRIM(nom_complet), '') <> '' THEN nom_complet
+                    ELSE pseudonyme END,
+               '', tranche_age, public, consentement_parental_date,
+               lien_mescompetences, notes_libres, date_creation
+        FROM personne_ancienne""")
+    cx.execute("DROP TABLE personne_ancienne")
+    cx.execute("PRAGMA foreign_keys = ON")
+    return True
+
+
 def initialiser(chemin: Path | str | None = None) -> None:
-    """Crée les tables si elles n'existent pas. Idempotent."""
+    """Crée les tables si besoin, puis applique les migrations. Idempotent."""
     with connexion(chemin) as cx:
         cx.executescript(CHEMIN_SCHEMA.read_text(encoding="utf-8"))
+        _migrer_fiche_complete(cx)

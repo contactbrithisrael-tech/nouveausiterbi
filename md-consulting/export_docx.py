@@ -15,9 +15,8 @@ DOSSIER_EXPORT = Path(__file__).resolve().parent / "exports"
 
 
 def nom_fichier(pers: P.Personne, sea: S.Seance) -> str:
-    """Le nom du fichier porte le pseudonyme, jamais le nom complet :
-    une liste de répertoire ne doit rien révéler."""
-    base = re.sub(r"[^A-Za-z0-9_-]+", "-", pers.pseudonyme).strip("-") or "fiche"
+    base = re.sub(r"[^A-Za-z0-9_-]+", "-",
+                  f"{pers.nom}-{pers.prenom}").strip("-") or "fiche"
     return f"{sea.date}_{base}_compte-rendu.docx"
 
 
@@ -32,7 +31,11 @@ def construire(pers: P.Personne, sea: S.Seance, rap: R.Rapport) -> D.Document:
     d.paragraphe()
 
     d.tableau(["", ""], [
-        ["Personne reçue", pers.nom_complet or pers.pseudonyme],
+        ["Personne reçue", pers.nom_affiche],
+        ["Date de naissance", dates_fr.jour(pers.date_naissance)
+         + (f" ({pers.age} ans)" if pers.age is not None else "")],
+        ["Coordonnées", " · ".join(x for x in (pers.telephone, pers.courriel) if x) or "—"],
+        ["Situation", pers.situation or "—"],
         ["Public", P.PUBLICS.get(pers.public, pers.public)],
         ["Date de la séance", dates_fr.jour(sea.date)],
         ["Durée prévue", f"{sea.chrono_max_minutes} minutes"],

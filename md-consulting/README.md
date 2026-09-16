@@ -21,7 +21,7 @@ bibliothèque standard (`docx_minimal.py`), sans `python-docx`.
 ./lancer_tests.sh
 ```
 
-46 tests. Les tests d'interface exécutent réellement le script Streamlit
+59 tests. Les tests d'interface exécutent réellement le script Streamlit
 (`st.testing.AppTest`), sans navigateur : ils vérifient entre autres que le
 blocage RGPD apparaît bien à l'écran, et pas seulement dans le modèle.
 
@@ -37,11 +37,12 @@ blocage RGPD apparaît bien à l'écran, et pas seulement dans le modèle.
 
 ## Règles RGPD implémentées
 
-- Identifiant technique **UUID** ; le nom complet est un champ séparé,
-  facultatif, jamais utilisé comme clé — pas même dans le nom du fichier
-  exporté, qui porte le pseudonyme.
+- Identifiant technique **UUID**, clé partout. Le nom et le prénom sont des
+  données de la fiche, jamais des identifiants.
 - **Blocage d'enregistrement** d'un mineur sans date de consentement parental,
-  à la création comme à la modification.
+  à la création comme à la modification. Quand la date de naissance est
+  renseignée, l'âge exact prime sur la tranche déclarée : une tranche mal
+  saisie ne fait pas passer un mineur pour un adulte.
 - **Droit à l'effacement** : suppression en une confirmation, avec destruction
   en cascade des séances, résultats et rapports (`ON DELETE CASCADE`).
 - Un test passé à l'extérieur n'est stocké que sous forme de **synthèse
@@ -49,6 +50,24 @@ blocage RGPD apparaît bien à l'écran, et pas seulement dans le modèle.
 - `.db`, `exports/` et `.docx` sont exclus de Git. Le dépôt étant publié,
   `/md-consulting/*` est en outre renvoyé vers la page d'erreur par
   `_redirects` : Cloudflare ne sert pas le code source.
+
+## Fiche de renseignement (module 1)
+
+Fiche complète, pas de pseudonyme : nom, prénom, date de naissance, téléphone,
+courriel, adresse, situation (classe et établissement, ou situation
+professionnelle), RQTH, représentant légal et son contact, consentement
+parental, lien mescompetences.info, notes libres.
+
+La date de naissance donne l'**âge exact**, en déduit la tranche et décide
+seule du consentement parental (`SEUIL_CONSENTEMENT_PARENTAL`, 18 par défaut).
+
+Une fiche incomplète s'enregistre quand même : l'outil liste ce qui manque
+plutôt que de bloquer. Seul le consentement parental bloque.
+
+Une base créée avec l'ancienne fiche (pseudonyme) est **migrée
+automatiquement** au démarrage : l'ancien nom complet devient le nom, le
+prénom reste vide et est signalé comme manquant — il n'est pas deviné en
+coupant une chaîne en deux.
 
 ## Chronomètre (module 2)
 
@@ -83,9 +102,10 @@ qu'aucune mention réglementaire n'apparaît dans la configuration.
 3. **Dépôt séparé.** Ce projet vit dans le dépôt du site Rite Brith Israël,
    qui est publié sur Internet. La règle `_redirects` limite les dégâts ;
    elle ne remplace pas un dépôt dédié.
-4. **Seuil du consentement parental.** Réglé sur *tout mineur* (collège et
-   lycée). Le brief écrivait « moins de 15 ans », seuil que la tranche collège
-   (11-15) chevauche. Une ligne à changer dans `personne.py`.
+4. **Seuil du consentement parental.** Réglé sur *tout mineur* (18 ans).
+   Le brief écrivait « moins de 15 ans » : la date de naissance permet
+   désormais d'appliquer ce seuil exactement — remplacer 18 par 15 dans
+   `personne.py` suffit.
 5. **Public collège.** Une seule ressource externe le concerne.
 
 ## Fichiers

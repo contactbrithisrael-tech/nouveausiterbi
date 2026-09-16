@@ -39,7 +39,8 @@ def t_formulaire_creation_sans_exception():
 
 def t_interface_bloque_un_mineur_sans_consentement():
     at = _lancer(page_personne="creation")
-    at.text_input[0].set_value("A.B.")            # pseudonyme
+    at.text_input[0].set_value("Martin")          # nom
+    at.text_input[1].set_value("Léa")             # prénom
     at.selectbox[0].set_value("college")          # tranche d'âge
     at.selectbox[1].set_value("college")          # public
     at = at.run()
@@ -50,12 +51,12 @@ def t_interface_bloque_un_mineur_sans_consentement():
     assert not at.exception, at.exception
     assert at.error, "aucune erreur affichée pour un mineur sans consentement"
     assert "bloqué" in at.error[0].value.lower(), at.error[0].value
-    ecrites = [x.pseudonyme for x in P.lister(chemin=db.CHEMIN_BASE)]
-    assert "A.B." not in ecrites, "la fiche du mineur a été écrite malgré le blocage"
+    ecrites = [x.nom for x in P.lister(chemin=db.CHEMIN_BASE)]
+    assert "Martin" not in ecrites, "la fiche du mineur a été écrite malgré le blocage"
 
 
 def t_ecran_fiche_et_seance():
-    pid = P.creer(P.Personne("C.D.", "adulte", "reconversion"), db.CHEMIN_BASE).id
+    pid = P.creer(P.Personne("Dupont", "Jean", "adulte", "reconversion"), db.CHEMIN_BASE).id
     at = _lancer(personne_id=pid)
     assert not at.exception, at.exception
     sid = S.creer(S.Seance(pid), db.CHEMIN_BASE).id

@@ -15,7 +15,7 @@ def setup():
     global BASE, PID
     BASE = tempfile.mktemp(suffix=".db")
     db.initialiser(BASE)
-    PID = P.creer(P.Personne("A.B.", "adulte", "reconversion"), BASE).id
+    PID = P.creer(P.Personne("Dupont", "Jean", "adulte", "reconversion"), BASE).id
 
 
 def _demarree() -> S.Seance:
@@ -81,7 +81,7 @@ def t_duree_max_nulle_refusee():
 
 
 def t_suppression_personne_emporte_les_seances():
-    pid = P.creer(P.Personne("C.D.", "adulte", "vae"), BASE).id
+    pid = P.creer(P.Personne("Martin", "Léa", "adulte", "vae"), BASE).id
     S.creer(S.Seance(pid), BASE)
     assert len(S.lister_par_personne(pid, BASE)) == 1
     P.supprimer(pid, BASE)

@@ -54,7 +54,7 @@ def chronometre(s: S.Seance) -> None:
 
 
 def entete_seance(s: S.Seance, pers: P.Personne) -> None:
-    st.subheader(f"Séance du {dates_fr.jour(s.date)} — {pers.pseudonyme}")
+    st.subheader(f"Séance du {dates_fr.jour(s.date)} — {pers.nom_affiche}")
     chronometre(s)
     if not s.heure_debut and st.button("Démarrer le chronomètre"):
         s.demarrer()

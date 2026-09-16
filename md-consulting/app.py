@@ -35,7 +35,7 @@ with st.sidebar:
         st.header("Personnes")
         if st.button("➕ Nouvelle fiche", use_container_width=True):
             aller(page_personne="creation", personne_id=None, seance_id=None)
-        recherche = st.text_input("Rechercher", placeholder="pseudonyme ou nom")
+        recherche = st.text_input("Rechercher", placeholder="nom, prénom ou courriel")
         cles = ["(tous)"] + list(P.PUBLICS)
         filtre = st.selectbox("Public", cles,
                               format_func=lambda k: P.PUBLICS.get(k, "Tous les publics"))
@@ -92,15 +92,18 @@ if not fiches:
     st.info("Aucune fiche. Créez-en une depuis la barre latérale.")
 for p in fiches:
     c1, c2, c3, c4 = st.columns([3, 2, 3, 2])
-    c1.markdown(f"**{p.pseudonyme}**"
-                + (f"  \n<small>{p.nom_complet}</small>" if p.nom_complet else ""),
+    detail = P.PUBLICS[p.public]
+    c1.markdown(f"**{p.nom_affiche}**"
+                + (f"  \n<small>{p.situation}</small>" if p.situation else ""),
                 unsafe_allow_html=True)
-    c2.write(P.TRANCHES_AGE[p.tranche_age])
-    c3.write(P.PUBLICS[p.public])
+    c2.write(f"{p.age} ans" if p.age is not None else P.TRANCHES_AGE[p.tranche_age])
+    c3.write(detail + (" · RQTH" if p.rqth else ""))
     if p.consentement_requis:
         c3.caption("✅ consentement parental du "
                    f"{dates_fr.jour(p.consentement_parental_date)}"
                    if p.consentement_ok else "⛔ consentement parental manquant")
+    if not p.fiche_complete:
+        c3.caption(f"⚠ fiche incomplète ({len(p.champs_manquants)} champ(s))")
     if c4.button("Ouvrir", key=f"open_{p.id}", use_container_width=True):
         aller(personne_id=p.id, page_personne=None, seance_id=None)
     st.divider()
