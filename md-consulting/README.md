@@ -27,7 +27,7 @@ Aucune dépendance externe requise pour les tests (sqlite3 de la bibliothèque s
 | 2 | Séance + chronomètre 90 min | à venir |
 | 3 | Intégration module Investigation | à venir |
 | 4 | Rapport 4 blocs + export .docx | à venir |
-| 5 | Page de liens externes par public | à venir |
+| 5 | Page de liens externes par public | données prêtes (`ressources.py`), interface à venir |
 
 ## Règles RGPD implémentées (Module 1)
 
@@ -41,12 +41,27 @@ Aucune dépendance externe requise pour les tests (sqlite3 de la bibliothèque s
 - Le fichier `.db`, les exports `.docx` et le dossier `exports/` sont exclus de Git
   par `.gitignore`.
 
-## Point en attente de décision
+## Ressources externes (`ressources.py`)
+
+Catalogue de données, sans interface. Chaque entrée porte un **statut d'accès**
+(`libre`, `compte requis`, `freemium`, `service public`) : aucun outil n'est
+présenté comme gratuit sans que ce soit établi. Les tests CentralTest sont
+exclus par un test automatique.
+
+CVDesignR y figure en **freemium** : socle gratuit réel (création de CV +
+export PDF), options payantes au-delà. Tarifs non établis, et la page
+« compte France Travail » n'a pas pu être vérifiée directement.
+
+## Points en attente de décision
 
 `CONSENTEMENT_PARENTAL_REQUIS` (dans `personne.py`) est réglé sur **tout mineur**
 (collège *et* lycée). Le brief mentionnait « moins de 15 ans », seuil que la tranche
 « collège » (11-15 ans) chevauche. Modifier une seule ligne pour revenir à la lettre
 du brief.
+
+Le public **collège** ne compte qu'une seule ressource : la liste actuelle
+s'adresse presque entièrement à des lycéens et à des adultes. À compléter ou à
+assumer comme telle.
 
 ## Fichiers
 
@@ -54,4 +69,5 @@ du brief.
 - `db.py` — connexion SQLite, activation des clés étrangères, initialisation
 - `personne.py` — modèle, règles de validation RGPD, CRUD
 - `vue_personne.py` — formulaire de fiche et bloc de suppression
+- `ressources.py` — catalogue des ressources externes par public
 - `app.py` — point d'entrée Streamlit
