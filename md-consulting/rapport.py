@@ -16,29 +16,50 @@ import ressources as Rs
 import resultat_test as RT
 import seance as S
 
-# Les quatre blocs, dans l'ordre. Les intitulés du 4e bloc changent de nom
-# selon le public : le gabarit reste le même, la question posée diffère.
-BLOCS = ("bloc_situation", "bloc_tests_utilises", "bloc_resultats", "bloc_solutions")
+# Sept blocs, dans l'ordre, reprenant la trame d'une synthèse de bilan de
+# compétences sans en emprunter l'identité réglementaire : ni visa des
+# articles R6313-4 et suivants, ni numéro de certification (voir config.py).
+BLOCS = ("bloc_situation", "bloc_tests_utilises", "bloc_resultats",
+         "bloc_pistes", "bloc_competences", "bloc_solutions", "bloc_references")
+
+# Blocs rendus sous forme de tableau à l'export, une ligne par « | ».
+BLOCS_TABLEAU = {
+    "bloc_competences": ("Domaine", "Élément", "Niveau"),
+    "bloc_solutions": ("Échéance", "Action à réaliser", "Moyens nécessaires"),
+}
 
 INTITULES_COMMUNS = {
-    "bloc_situation": "Situation",
-    "bloc_tests_utilises": "Outils utilisés",
+    "bloc_situation": "Situation et demande",
+    "bloc_tests_utilises": "Déroulé de la séance et outils utilisés",
     "bloc_resultats": "Ce qui ressort",
+    "bloc_competences": "Points d'appui et éléments à développer",
+    "bloc_references": "Références et ressources pour affiner",
+}
+
+# Le bloc « pistes » porte le vocabulaire du public reçu.
+INTITULES_PISTES = {
+    "college": "Pistes évoquées",
+    "lycee": "Pistes d'orientation envisagées",
+    "reconversion": "Pistes professionnelles envisagées",
+    "vae": "Certification et pistes envisagées",
+    "handicap": "Pistes envisagées et appuis",
+    "burnout": "Pistes évoquées, sans engagement de calendrier",
 }
 
 INTITULES_SOLUTIONS = {
-    "college": "Pistes et prochaines étapes",
-    "lycee": "Pistes d'orientation et démarches à engager",
-    "reconversion": "Pistes professionnelles et démarches à engager",
-    "vae": "Démarches VAE à engager",
-    "handicap": "Pistes et appuis mobilisables",
-    "burnout": "Appuis mobilisables et prochaines étapes, à rythme tenable",
+    "college": "Plan d'action",
+    "lycee": "Plan d'action",
+    "reconversion": "Plan d'action",
+    "vae": "Plan d'action — démarches VAE",
+    "handicap": "Plan d'action",
+    "burnout": "Plan d'action, à rythme tenable",
 }
 
 
 def intitules(public: str) -> dict[str, str]:
     return {**INTITULES_COMMUNS,
-            "bloc_solutions": INTITULES_SOLUTIONS.get(public, "Pistes et démarches")}
+            "bloc_pistes": INTITULES_PISTES.get(public, "Pistes envisagées"),
+            "bloc_solutions": INTITULES_SOLUTIONS.get(public, "Plan d'action")}
 
 
 @dataclass
@@ -50,7 +71,10 @@ class Rapport:
     bloc_situation: str = ""
     bloc_tests_utilises: str = ""
     bloc_resultats: str = ""
+    bloc_pistes: str = ""
+    bloc_competences: str = ""
     bloc_solutions: str = ""
+    bloc_references: str = ""
     export_docx_path: str | None = None
 
     @property
@@ -112,36 +136,110 @@ def composer_resultats(seance_id: str, chemin: Path | str | None = None) -> str:
     return "\n\n".join(blocs)
 
 
-def composer_solutions(pers: P.Personne, seance_id: str,
-                       chemin: Path | str | None = None) -> str:
-    """Bloc 4 : démarches issues des outils passés, puis ressources du public.
+def composer_pistes(pers: P.Personne) -> str:
+    """Bloc 4 : la trame du bilan, vide.
 
-    Rien n'est inventé : les démarches sont celles que les outils prévoient
-    eux-mêmes après la passation, et les ressources sont celles du catalogue,
-    avec leur statut d'accès.
+    Les trois questions viennent de la synthèse de référence : pistes
+    explorées, écartées et pourquoi, retenues. Nommer un métier à la place du
+    consultant serait inventer un conseil à partir de cases cochées : les
+    lignes restent à remplir.
+    """
+    return "\n".join([
+        "Pistes explorées pendant la séance :",
+        "- ",
+        "",
+        "Pistes écartées, et pourquoi :",
+        "- ",
+        "",
+        f"{'Piste retenue' if pers.public != 'college' else 'Direction retenue'} "
+        "à ce stade :",
+        "- ",
+    ])
+
+
+NIVEAUX_COMPETENCES = ("acquis", "à renforcer", "à développer")
+DOMAINES_COMPETENCES = ("Savoirs", "Savoir-faire", "Savoir-être")
+
+
+def composer_competences(seance_id: str, chemin: Path | str | None = None) -> str:
+    """Bloc 5 : tableau « domaine | élément | niveau ».
+
+    Les savoir-être remontent des cases réellement cochées : ce que la
+    personne a retenu dans « Points forts » est acquis, ce qu'elle a retenu
+    dans « Points de vigilance » est à développer. Les savoirs et
+    savoir-faire dépendent du métier visé : leurs lignes restent vides.
     """
     lignes = []
     installes = Q.disponibles()
-    passes = [r.type_test for r in RT.lister_par_seance(seance_id, chemin)]
-    suites = []
-    for cle in dict.fromkeys(passes):
+    for r in RT.lister_par_seance(seance_id, chemin):
+        q = installes.get(r.type_test)
+        coches = (r.reponses or {}).get("coches") if isinstance(r.reponses, dict) else None
+        if not q or not coches:
+            continue
+        niveau = {"points_forts": "acquis",
+                  "points_vigilance": "à développer"}.get(r.type_test)
+        if not niveau:
+            continue
+        for it in q.items:
+            if it["id"] in coches:
+                lignes.append(f"Savoir-être | {it['texte']} | {niveau}")
+    for domaine in ("Savoirs", "Savoir-faire"):
+        lignes.append(f"{domaine} |  | ")
+    return "\n".join(lignes)
+
+
+def composer_plan_action(pers: P.Personne, seance_id: str,
+                         chemin: Path | str | None = None) -> str:
+    """Bloc 6 : tableau « échéance | action | moyens ».
+
+    Les actions sont celles que les outils passés prévoient eux-mêmes après
+    la passation ; les échéances restent vides, elles se fixent avec la
+    personne et non depuis une base de données. Les lignes libres sont là
+    pour les démarches décidées en séance.
+    """
+    lignes = []
+    installes = Q.disponibles()
+    passes = list(dict.fromkeys(r.type_test for r in
+                                RT.lister_par_seance(seance_id, chemin)))
+    for cle in passes:
         q = installes.get(cle)
         for etape in (q.get("suite", []) if q else []):
-            if etape not in suites:
-                suites.append(etape)
-    if suites:
-        lignes.append("À faire à la suite des outils passés :")
-        lignes += [f"- {e}" for e in suites]
-        lignes.append("")
+            lignes.append(f" | {etape} | {q.titre}")
+    # Les ressources ne sont pas transformées en actions : prescrire « prendre
+    # connaissance de X » à tout le monde serait inventer une démarche. Elles
+    # figurent dans les références, où la personne va les chercher si besoin.
+    lignes += [" |  | "] * 4
+    return "\n".join(lignes)
 
+
+def composer_references(pers: P.Personne, seance_id: str,
+                        chemin: Path | str | None = None) -> str:
+    """Bloc 7 : d'où viennent les outils, et où aller pour approfondir.
+
+    Chaque outil passé cite sa source — c'est un champ obligatoire à l'usage
+    des fichiers de questionnaires. S'y ajoutent les ressources du public
+    avec leur statut d'accès, pour que personne ne découvre un paiement en
+    cliquant.
+    """
+    lignes = []
+    installes = Q.disponibles()
+    passes = list(dict.fromkeys(r.type_test for r in
+                                RT.lister_par_seance(seance_id, chemin)))
+    sources = []
+    for cle in passes:
+        q = installes.get(cle)
+        if q and q.get("source"):
+            sources.append(f"- {q.titre} : {q.source}")
+    if sources:
+        lignes.append("Outils utilisés pendant la séance :")
+        lignes += sources
+        lignes.append("")
     ressources = Rs.pour_public(pers.public)
     if ressources:
-        lignes.append("Ressources à consulter :")
+        lignes.append("Ressources à consulter pour approfondir :")
         for r in ressources:
-            mention = f"- {r.nom} — {r.url} ({r.acces})"
-            lignes.append(mention)
-    # Le texte repris ici s'adresse à la personne reçue, pas au consultant :
-    # la mise en garde professionnelle reste à l'écran, hors du document.
+            lignes.append(f"- {r.nom} ({r.acces}) — {r.url}")
+            lignes.append(f"  {r.description}")
     orientation = Rs.ORIENTATIONS_BENEFICIAIRE.get(pers.public)
     if orientation:
         lignes += ["", orientation]
@@ -155,7 +253,10 @@ def composer(pers: P.Personne, sea: S.Seance,
         "bloc_situation": composer_situation(pers, sea),
         "bloc_tests_utilises": resume_tests(sea.id, chemin),
         "bloc_resultats": composer_resultats(sea.id, chemin),
-        "bloc_solutions": composer_solutions(pers, sea.id, chemin),
+        "bloc_pistes": composer_pistes(pers),
+        "bloc_competences": composer_competences(sea.id, chemin),
+        "bloc_solutions": composer_plan_action(pers, sea.id, chemin),
+        "bloc_references": composer_references(pers, sea.id, chemin),
     }
 
 
@@ -180,7 +281,8 @@ def regenerer(rap: Rapport, chemin: Path | str | None = None) -> Rapport:
 
 
 _COLONNES = ("id, seance_id, date_generation, bloc_situation, bloc_tests_utilises, "
-             "bloc_resultats, bloc_solutions, export_docx_path")
+             "bloc_resultats, bloc_pistes, bloc_competences, bloc_solutions, "
+             "bloc_references, export_docx_path")
 
 
 def enregistrer(r: Rapport, chemin: Path | str | None = None) -> Rapport:
@@ -190,9 +292,11 @@ def enregistrer(r: Rapport, chemin: Path | str | None = None) -> Rapport:
     with db.connexion(chemin) as cx:
         if not cx.execute("SELECT 1 FROM seance WHERE id = ?", (r.seance_id,)).fetchone():
             raise ValueError("Séance introuvable : rapport non enregistré.")
-        cx.execute(f"INSERT OR REPLACE INTO rapport ({_COLONNES}) VALUES (?,?,?,?,?,?,?,?)",
+        cx.execute(f"INSERT OR REPLACE INTO rapport ({_COLONNES}) "
+                   "VALUES (?,?,?,?,?,?,?,?,?,?,?)",
                    (r.id, r.seance_id, r.date_generation, r.bloc_situation,
-                    r.bloc_tests_utilises, r.bloc_resultats, r.bloc_solutions,
+                    r.bloc_tests_utilises, r.bloc_resultats, r.bloc_pistes,
+                    r.bloc_competences, r.bloc_solutions, r.bloc_references,
                     r.export_docx_path))
     return r
 
@@ -205,8 +309,5 @@ def lire_par_seance(seance_id: str, chemin: Path | str | None = None) -> Rapport
         return None
     return Rapport(id=l["id"], seance_id=l["seance_id"],
                    date_generation=l["date_generation"],
-                   bloc_situation=l["bloc_situation"] or "",
-                   bloc_tests_utilises=l["bloc_tests_utilises"] or "",
-                   bloc_resultats=l["bloc_resultats"] or "",
-                   bloc_solutions=l["bloc_solutions"] or "",
-                   export_docx_path=l["export_docx_path"])
+                   export_docx_path=l["export_docx_path"],
+                   **{b: l[b] or "" for b in BLOCS})

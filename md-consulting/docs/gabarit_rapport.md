@@ -45,7 +45,13 @@ date de début et date de fin du bilan.
 - B. Conclusion
 - Signatures : le consultant, le bénéficiaire
 
-## 2. Correspondance avec les 4 blocs du brief
+## 2. État : la trame est implémentée
+
+Le compte rendu produit par l'outil suit désormais cette ossature, en sept
+blocs, sans en emprunter l'identité réglementaire. Voir la section
+« Compte rendu » du README pour le détail de ce qui s'assemble seul.
+
+## 3. Correspondance d'origine avec les 4 blocs du brief
 
 | Bloc du brief | Provenance dans la structure de référence |
 |---|---|
@@ -59,7 +65,7 @@ le **tableau de compétences** à trois niveaux d'acquisition et le **tableau
 de plan d'action** daté avec les moyens nécessaires — ce dernier remplit
 exactement la fonction « pistes concrètes + prochaines démarches » du brief.
 
-## 3. Points à trancher avant d'écrire le Module 4
+## 4. Points tranchés
 
 1. **Sous quelle entité ?** Le document de référence est émis par *LinkOm
    Consultants*, avec numéro Qualiopi, SIRET et DIRECCTE. Le présent outil

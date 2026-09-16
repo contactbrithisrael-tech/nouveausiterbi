@@ -54,11 +54,18 @@ def t_questionnaire_invalide_rejete():
 
 
 # ── Module 4 ───────────────────────────────────────────────────────────────
-def t_les_quatre_blocs_existent():
-    assert R.BLOCS == ("bloc_situation", "bloc_tests_utilises",
-                       "bloc_resultats", "bloc_solutions")
+def t_la_trame_a_sept_blocs():
+    assert R.BLOCS == ("bloc_situation", "bloc_tests_utilises", "bloc_resultats",
+                       "bloc_pistes", "bloc_competences", "bloc_solutions",
+                       "bloc_references")
     for pub in P.PUBLICS:
         assert set(R.intitules(pub)) == set(R.BLOCS), f"intitulés incomplets : {pub}"
+
+
+def t_deux_blocs_sont_des_tableaux():
+    assert set(R.BLOCS_TABLEAU) == {"bloc_competences", "bloc_solutions"}
+    for cle, entetes in R.BLOCS_TABLEAU.items():
+        assert len(entetes) == 3, f"{cle} : {len(entetes)} colonnes"
 
 
 def t_les_quatre_blocs_sont_assembles_seuls():
@@ -81,17 +88,65 @@ def t_situation_reprend_la_fiche_et_l_objectif():
     assert "90 minutes" in texte
 
 
-def t_solutions_reprennent_demarches_et_ressources():
+def t_plan_action_reprend_les_demarches_des_outils():
     import questionnaire as Q
-    import ressources as Rs
-    RT.creer(RT.ResultatTest(SID, "points_forts",
-                             synthese_texte="Points forts — 2 retenus"), BASE)
+    RT.creer(RT.ResultatTest(SID, "points_forts", reponses={"coches": ["f01"]},
+                             synthese_texte="Points forts — 1 retenu"), BASE)
     pers = P.lire(PID, BASE)
-    texte = R.composer_solutions(pers, SID, BASE)
+    texte = R.composer_plan_action(pers, SID, BASE)
     suite = Q.disponibles()["points_forts"].get("suite", [])[0]
     assert suite in texte, "les démarches prévues par l'outil manquent"
-    noms = [r.nom for r in Rs.pour_public(pers.public)]
-    assert all(n in texte for n in noms), "des ressources du public manquent"
+    for ligne in texte.splitlines():
+        assert ligne.count("|") == 2, f"ligne mal formée : {ligne!r}"
+    assert texte.splitlines()[0].split("|")[0].strip() == "", \
+        "l'échéance ne doit pas être décidée par l'outil"
+
+
+def t_plan_action_ne_prescrit_pas_les_ressources():
+    """Prescrire « prendre connaissance de X » à tout le monde serait
+    inventer une démarche."""
+    import ressources as Rs
+    pers = P.lire(PID, BASE)
+    texte = R.composer_plan_action(pers, SID, BASE)
+    for r in Rs.pour_public(pers.public):
+        assert r.url not in texte, f"{r.nom} prescrit dans le plan d'action"
+
+
+def t_competences_viennent_des_cases_cochees():
+    import questionnaire as Q
+    pid = P.creer(P.Personne("Vert", "Luc", "adulte", "reconversion"), BASE).id
+    sid = S.creer(S.Seance(pid), BASE).id
+    q = Q.disponibles()["points_forts"]
+    coche = q.items[0]["id"]
+    RT.creer(RT.ResultatTest(sid, "points_forts", reponses={"coches": [coche]},
+                             synthese_texte="un point fort"), BASE)
+    qv = Q.disponibles()["points_vigilance"]
+    RT.creer(RT.ResultatTest(sid, "points_vigilance",
+                             reponses={"coches": [qv.items[0]["id"]]},
+                             synthese_texte="un point de vigilance"), BASE)
+    texte = R.composer_competences(sid, BASE)
+    assert f"Savoir-être | {q.items[0]['texte']} | acquis" in texte
+    assert f"Savoir-être | {qv.items[0]['texte']} | à développer" in texte
+    assert "Savoirs |" in texte and "Savoir-faire |" in texte
+
+
+def t_references_citent_les_sources_des_outils():
+    import questionnaire as Q
+    import ressources as Rs
+    pers = P.lire(PID, BASE)
+    texte = R.composer_references(pers, SID, BASE)
+    assert Q.disponibles()["points_forts"].source in texte, "source non citée"
+    for r in Rs.pour_public(pers.public):
+        assert r.url in texte, f"{r.nom} absent des références"
+        assert r.acces in texte
+
+
+def t_pistes_restent_a_remplir():
+    """La trame est là, le contenu non : c'est au consultant de nommer."""
+    texte = R.composer_pistes(P.lire(PID, BASE))
+    assert "Pistes explorées" in texte and "écartées" in texte
+    assert "retenue" in texte.lower()
+    assert texte.count("- ") == 3, "les lignes doivent rester vides"
 
 
 def t_le_compte_rendu_ne_reprend_pas_la_mise_en_garde_du_consultant():
@@ -106,7 +161,7 @@ def t_le_compte_rendu_ne_reprend_pas_la_mise_en_garde_du_consultant():
     assert garde not in entier, "la mise en garde du consultant est dans le document"
     assert "demande expresse du consultant" not in entier
     attendu = Rs.ORIENTATIONS_BENEFICIAIRE["burnout"]
-    assert attendu in rap.bloc_solutions, "l'orientation de la personne manque"
+    assert attendu in rap.bloc_references, "l'orientation de la personne manque"
 
 
 def t_un_outil_donnee_de_sante_n_apparait_jamais():

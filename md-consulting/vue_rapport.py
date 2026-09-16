@@ -15,8 +15,15 @@ AIDES = {
     "bloc_tests_utilises": "Assemblé depuis les outils enregistrés.",
     "bloc_resultats": "Assemblé depuis les synthèses des outils passés. "
                       "Les outils non enregistrés (donnée de santé) n'y figurent pas.",
-    "bloc_solutions": "Assemblé depuis les démarches prévues par les outils et "
-                      "les ressources du public. À compléter de vos pistes.",
+    "bloc_pistes": "Trame vide : nommer un métier à la place du consultant "
+                   "serait inventer un conseil depuis des cases cochées.",
+    "bloc_competences": "Une ligne par élément, colonnes séparées par « | ». "
+                        "Les savoir-être viennent des cases cochées ; les "
+                        "savoirs et savoir-faire dépendent du métier visé.",
+    "bloc_solutions": "Une ligne par action, colonnes séparées par « | ». "
+                      "Les échéances se fixent avec la personne.",
+    "bloc_references": "Assemblé depuis les sources des outils passés et les "
+                       "ressources du public, avec leur statut d'accès.",
 }
 
 
@@ -36,8 +43,13 @@ def ecran(s: S.Seance, pers: P.Personne) -> None:
     with st.form("rapport"):
         valeurs = {}
         for cle in R.BLOCS:
-            valeurs[cle] = st.text_area(titres[cle], value=getattr(rap, cle),
-                                        height=160, help=AIDES[cle])
+            entetes = R.BLOCS_TABLEAU.get(cle)
+            libelle = titres[cle]
+            if entetes:
+                libelle += "  —  " + " | ".join(entetes)
+            valeurs[cle] = st.text_area(libelle, value=getattr(rap, cle),
+                                        height=200 if entetes else 160,
+                                        help=AIDES[cle])
         if st.form_submit_button("Enregistrer le compte rendu", type="primary"):
             for cle, v in valeurs.items():
                 setattr(rap, cle, v)

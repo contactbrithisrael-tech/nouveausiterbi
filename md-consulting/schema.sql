@@ -54,10 +54,16 @@ CREATE TABLE IF NOT EXISTS rapport (
     -- pouvaient coexister et la lecture choisissait l'une au hasard.
     seance_id          TEXT NOT NULL UNIQUE REFERENCES seance(id) ON DELETE CASCADE,
     date_generation    TEXT NOT NULL,
+    -- Sept blocs, reprenant la trame d'une synthèse de bilan sans en emprunter
+    -- l'identité réglementaire. Les trois derniers sont nés du besoin de
+    -- propositions concrètes, d'un plan d'action daté et de références citées.
     bloc_situation     TEXT,
     bloc_tests_utilises TEXT,
     bloc_resultats     TEXT,
-    bloc_solutions     TEXT,
+    bloc_pistes        TEXT,
+    bloc_competences   TEXT,   -- lignes « domaine | libellé | niveau »
+    bloc_solutions     TEXT,   -- lignes « échéance | action | moyens »
+    bloc_references    TEXT,
     export_docx_path   TEXT
 );
 

@@ -20,6 +20,36 @@ def nom_fichier(pers: P.Personne, sea: S.Seance) -> str:
     return f"{sea.date}_{base}_compte-rendu.docx"
 
 
+def _paragraphes(d: D.Document, texte: str) -> None:
+    for ligne in texte.splitlines():
+        ligne = ligne.strip()
+        if not ligne:
+            d.paragraphe()
+        elif ligne.startswith(("-", "•", "*")):
+            d.puces([ligne.lstrip("-•* ").strip()])
+        else:
+            d.paragraphe(ligne)
+
+
+def _tableau(d: D.Document, entetes: tuple[str, ...], texte: str) -> None:
+    """Une ligne de texte par ligne de tableau, colonnes séparées par « | ».
+    Une ligne sans séparateur reste un paragraphe : le consultant peut
+    écrire une remarque au milieu du tableau sans tout casser."""
+    lignes, avant = [], []
+    for brute in texte.splitlines():
+        if "|" in brute:
+            cellules = [c.strip() for c in brute.split("|")]
+            cellules = (cellules + [""] * len(entetes))[:len(entetes)]
+            if any(cellules):
+                lignes.append(cellules)
+        elif brute.strip() and not lignes:
+            avant.append(brute.strip())
+    for ligne in avant:
+        d.paragraphe(ligne)
+    if lignes:
+        d.tableau(list(entetes), lignes)
+
+
 def construire(pers: P.Personne, sea: S.Seance, rap: R.Rapport) -> D.Document:
     d = D.Document()
     for ligne in config.lignes_entete():
@@ -48,15 +78,10 @@ def construire(pers: P.Personne, sea: S.Seance, rap: R.Rapport) -> D.Document:
         texte = (getattr(rap, cle) or "").strip()
         if not texte:
             d.paragraphe("—", couleur="999999")
-            continue
-        for ligne in texte.splitlines():
-            ligne = ligne.strip()
-            if not ligne:
-                d.paragraphe()
-            elif ligne.startswith(("-", "•", "*")):
-                d.puces([ligne.lstrip("-•* ").strip()])
-            else:
-                d.paragraphe(ligne)
+        elif cle in R.BLOCS_TABLEAU:
+            _tableau(d, R.BLOCS_TABLEAU[cle], texte)
+        else:
+            _paragraphes(d, texte)
 
     d.paragraphe()
     d.paragraphe(config.AVERTISSEMENT, taille=9, couleur="666666")

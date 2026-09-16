@@ -21,7 +21,7 @@ bibliothèque standard (`docx_minimal.py`), sans `python-docx`.
 ./lancer_tests.sh
 ```
 
-101 tests. Les tests d'interface exécutent réellement le script Streamlit
+106 tests. Les tests d'interface exécutent réellement le script Streamlit
 (`st.testing.AppTest`), sans navigateur : ils vérifient entre autres que le
 blocage RGPD apparaît bien à l'écran, et pas seulement dans le modèle.
 
@@ -81,46 +81,72 @@ la page ne remet pas le compteur à zéro. Trois états — en cours, vigilance
 (10 minutes avant le plafond), dépassement. Plafond réglable, 90 minutes par
 défaut.
 
-## Compte rendu (module 4) — assemblé automatiquement
+## Compte rendu (module 4) — trame de bilan, assemblée automatiquement
 
-Quatre blocs pour tous les publics ; seul l'intitulé du dernier change
-(« Pistes d'orientation » pour un lycéen, « Démarches VAE » pour une VAE…).
+Sept blocs, reprenant la trame d'une synthèse de bilan de compétences **sans
+en emprunter l'identité réglementaire** : ni visa des articles R6313-4 et
+suivants, ni numéro de certification. Un test l'interdit.
 
-**Les quatre blocs s'écrivent seuls** à l'ouverture de l'écran, depuis ce qui
-est déjà en base — rien n'est inventé :
+| Bloc | Assemblé depuis | Rendu |
+|---|---|---|
+| Situation et demande | fiche + date, durée, objectif de la séance | texte |
+| Déroulé et outils utilisés | les résultats enregistrés, avec leurs dates | texte |
+| Ce qui ressort | les synthèses produites par les grilles des outils | texte |
+| Pistes envisagées | **trame vide** : explorées / écartées et pourquoi / retenue | texte |
+| Points d'appui et éléments à développer | les cases réellement cochées | **tableau** |
+| Plan d'action | les étapes prévues par les outils + lignes libres | **tableau** |
+| Références pour affiner | la source de chaque outil + les ressources du public | texte |
 
-| Bloc | Assemblé depuis |
-|---|---|
-| Situation | fiche (nom, âge, public, RQTH, situation, notes) + date, durée et objectif de la séance |
-| Outils utilisés | les résultats enregistrés, avec leurs dates |
-| Ce qui ressort | les synthèses produites par les grilles des outils passés |
-| Pistes et démarches | les étapes prévues par les outils eux-mêmes, puis les ressources du public avec leur statut d'accès |
+L'intitulé du bloc « pistes » et celui du plan d'action suivent le public :
+« Pistes d'orientation envisagées » pour un lycéen, « Plan d'action, à rythme
+tenable » pour une personne en épuisement.
 
-Le bouton **« Tout réassembler depuis la base »** refait les quatre blocs et
+### Les deux tableaux
+
+Une ligne de texte par ligne de tableau, colonnes séparées par `|`. Le
+consultant édite du texte, l'export produit un vrai tableau Word.
+
+- **Points d'appui** : `Savoir-être | Je suis autonome | acquis`. Les
+  savoir-être remontent des cases cochées — ce qui a été retenu dans « Points
+  forts » est *acquis*, dans « Points de vigilance » *à développer*. Les
+  lignes Savoirs et Savoir-faire restent vides : elles dépendent du métier
+  visé.
+- **Plan d'action** : `Échéance | Action | Moyens`. Les actions sont celles
+  que les outils prévoient eux-mêmes après la passation. **Les échéances
+  restent vides** — elles se fixent avec la personne, pas depuis une base.
+
+### Ce que l'outil ne remplit pas, et pourquoi
+
+Le bloc **Pistes** arrive vide. Nommer un métier à partir de cases cochées
+serait inventer un conseil : c'est la seule chose que l'outil ne fera pas à
+la place du consultant. Il pose les trois questions du bilan — explorées,
+écartées et pourquoi, retenue — et laisse répondre.
+
+De même, le plan d'action ne prescrit pas les ressources. « Prendre
+connaissance de X » imposé à tout le monde serait une démarche inventée ;
+les ressources figurent dans les références, où la personne va les chercher.
+Un test vérifie qu'aucune URL de ressource n'atterrit dans le plan d'action.
+
+### Le reste
+
+Le bouton **« Tout réassembler depuis la base »** refait les sept blocs et
 écrase les retouches. Chaque bloc reste modifiable : ce sont les mots du
-consultant qui sont remis à la personne.
+consultant qui sont remis.
 
-Deux règles tenues par des tests :
+- **Un outil marqué « donnée de santé » n'apparaît jamais** : rien n'en est
+  enregistré, le CBI ne remonte pas.
+- **La mise en garde destinée au consultant n'entre pas dans le document** :
+  le texte remis vient de `ORIENTATIONS_BENEFICIAIRE`.
+- **L'export reste manuel** — la contrainte du projet dit « aucun export ou
+  envoi automatique ». Le contenu s'assemble seul, le fichier sort sur un clic.
 
-- **Un outil marqué « donnée de santé » n'apparaît jamais.** Rien n'en est
-  enregistré, il n'y a donc rien à reprendre — le CBI ne remonte pas dans le
-  compte rendu.
-- **La mise en garde destinée au consultant n'entre pas dans le document.**
-  Le texte remis à la personne vient de `ORIENTATIONS_BENEFICIAIRE`, distinct
-  de `MISES_EN_GARDE` qui reste à l'écran.
-
-**L'export reste manuel**, et le restera : la contrainte RGPD du projet dit
-« aucun export ou envoi automatique de données ». Le contenu s'assemble seul,
-le fichier ne sort que sur un clic.
-
-Un seul compte rendu par séance, garanti par la base : deux versions
-pouvaient coexister et la lecture en choisissait une au hasard. Les bases
-existantes sont migrées au démarrage, en ne gardant que la plus récente.
+Un seul compte rendu par séance, garanti par la base. Les bases existantes
+sont migrées au démarrage : contrainte d'unicité posée, blocs manquants
+ajoutés, rien n'est perdu.
 
 `config.py` porte l'identité imprimée en tête. Les champs sont **vides** :
-le document de référence fourni portait les mentions de LinkOm Consultants
-(Qualiopi, SIRET, DIRECCTE), qui n'ont pas été recopiées. Un test vérifie
-qu'aucune mention réglementaire n'apparaît dans la configuration.
+le document de référence portait les mentions de LinkOm Consultants
+(Qualiopi, SIRET, DIRECCTE), qui n'ont pas été recopiées.
 
 ## Burn-out : le CBI, jamais enregistré
 
