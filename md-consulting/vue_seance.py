@@ -5,6 +5,7 @@ from datetime import date as _date, datetime
 
 import streamlit as st
 
+import dates_fr
 import personne as P
 import questionnaire as Q
 import resultat_test as RT
@@ -27,7 +28,7 @@ def liste_seances(pers: P.Personne) -> None:
         st.rerun()
     for s in S.lister_par_personne(pers.id):
         c1, c2, c3 = st.columns([3, 3, 2])
-        c1.write(f"**{s.date}**" + (f" — {s.heure_debut[:5]}" if s.heure_debut else ""))
+        c1.write(f"**{dates_fr.jour(s.date)}**" + (f" — {s.heure_debut[:5]}" if s.heure_debut else ""))
         c2.caption(s.objectif_texte or "objectif non renseigné")
         if c3.button("Ouvrir", key=f"sea_{s.id}", use_container_width=True):
             st.session_state["seance_id"] = s.id
@@ -53,7 +54,7 @@ def chronometre(s: S.Seance) -> None:
 
 
 def entete_seance(s: S.Seance, pers: P.Personne) -> None:
-    st.subheader(f"Séance du {s.date} — {pers.pseudonyme}")
+    st.subheader(f"Séance du {dates_fr.jour(s.date)} — {pers.pseudonyme}")
     chronometre(s)
     if not s.heure_debut and st.button("Démarrer le chronomètre"):
         s.demarrer()
@@ -76,7 +77,7 @@ def outils(s: S.Seance) -> None:
     for r in RT.lister_par_seance(s.id):
         c1, c2 = st.columns([5, 1])
         c1.markdown(f"**{RT.TYPES.get(r.type_test, r.type_test)}** — "
-                    f"{r.date_saisie[:10]}")
+                    f"{dates_fr.jour(r.date_saisie)}")
         if r.synthese_texte:
             c1.caption(r.synthese_texte)
         if c2.button("Retirer", key=f"del_{r.id}"):

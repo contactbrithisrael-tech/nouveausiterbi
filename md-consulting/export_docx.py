@@ -2,23 +2,16 @@
 from __future__ import annotations
 
 import re
-from datetime import datetime
 from pathlib import Path
 
 import config
+import dates_fr
 import docx_minimal as D
 import personne as P
 import rapport as R
 import seance as S
 
 DOSSIER_EXPORT = Path(__file__).resolve().parent / "exports"
-
-
-def _jour(iso: str) -> str:
-    try:
-        return datetime.fromisoformat(iso).strftime("%d/%m/%Y")
-    except ValueError:
-        return iso
 
 
 def nom_fichier(pers: P.Personne, sea: S.Seance) -> str:
@@ -41,7 +34,7 @@ def construire(pers: P.Personne, sea: S.Seance, rap: R.Rapport) -> D.Document:
     d.tableau(["", ""], [
         ["Personne reçue", pers.nom_complet or pers.pseudonyme],
         ["Public", P.PUBLICS.get(pers.public, pers.public)],
-        ["Date de la séance", _jour(sea.date)],
+        ["Date de la séance", dates_fr.jour(sea.date)],
         ["Durée prévue", f"{sea.chrono_max_minutes} minutes"],
         ["Objectif de la séance", sea.objectif_texte or "—"],
     ])
@@ -66,7 +59,7 @@ def construire(pers: P.Personne, sea: S.Seance, rap: R.Rapport) -> D.Document:
     d.paragraphe(config.AVERTISSEMENT, taille=9, couleur="666666")
     if config.ORGANISATION["mentions_pied"]:
         d.paragraphe(config.ORGANISATION["mentions_pied"], taille=8, couleur="999999")
-    d.paragraphe(f"Document établi le {_jour(rap.date_generation)}.",
+    d.paragraphe(f"Document établi le {dates_fr.jour(rap.date_generation)}.",
                  taille=9, couleur="666666")
     return d
 

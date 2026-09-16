@@ -8,6 +8,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 
+import dates_fr
 import db
 import personne as P
 import resultat_test as RT
@@ -67,12 +68,8 @@ def resume_tests(seance_id: str, chemin: Path | str | None = None) -> str:
         return "Aucun outil enregistré pour cette séance."
     lignes = []
     for r in resultats:
-        jour = r.date_saisie[:10]
-        try:
-            jour = datetime.fromisoformat(r.date_saisie).strftime("%d/%m/%Y")
-        except ValueError:
-            pass
-        lignes.append(f"{RT.TYPES.get(r.type_test, r.type_test)} — {jour}")
+        lignes.append(f"{RT.TYPES.get(r.type_test, r.type_test)} — "
+                      f"{dates_fr.jour(r.date_saisie)}")
     return "\n".join(lignes)
 
 

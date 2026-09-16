@@ -7,6 +7,7 @@ from __future__ import annotations
 import streamlit as st
 
 import config
+import dates_fr
 import db
 import personne as P
 import seance as S
@@ -97,7 +98,8 @@ for p in fiches:
     c2.write(P.TRANCHES_AGE[p.tranche_age])
     c3.write(P.PUBLICS[p.public])
     if p.consentement_requis:
-        c3.caption(f"✅ consentement parental du {p.consentement_parental_date}"
+        c3.caption("✅ consentement parental du "
+                   f"{dates_fr.jour(p.consentement_parental_date)}"
                    if p.consentement_ok else "⛔ consentement parental manquant")
     if c4.button("Ouvrir", key=f"open_{p.id}", use_container_width=True):
         aller(personne_id=p.id, page_personne=None, seance_id=None)

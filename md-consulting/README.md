@@ -21,7 +21,7 @@ bibliothèque standard (`docx_minimal.py`), sans `python-docx`.
 ./lancer_tests.sh
 ```
 
-42 tests. Les tests d'interface exécutent réellement le script Streamlit
+46 tests. Les tests d'interface exécutent réellement le script Streamlit
 (`st.testing.AppTest`), sans navigateur : ils vérifient entre autres que le
 blocage RGPD apparaît bien à l'écran, et pas seulement dans le modèle.
 
@@ -102,6 +102,7 @@ qu'aucune mention réglementaire n'apparaît dans la configuration.
 | `docx_minimal.py` | écriture `.docx` sans dépendance |
 | `export_docx.py` | mise en page du compte rendu |
 | `ressources.py` | catalogue des ressources externes |
+| `dates_fr.py` | affichage des dates au format français |
 | `config.py` | identité imprimée en tête des rapports |
 | `vue_*.py` | écrans Streamlit |
 | `app.py` | point d'entrée |
