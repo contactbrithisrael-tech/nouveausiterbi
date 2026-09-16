@@ -21,7 +21,7 @@ bibliothèque standard (`docx_minimal.py`), sans `python-docx`.
 ./lancer_tests.sh
 ```
 
-59 tests. Les tests d'interface exécutent réellement le script Streamlit
+62 tests. Les tests d'interface exécutent réellement le script Streamlit
 (`st.testing.AppTest`), sans navigateur : ils vérifient entre autres que le
 blocage RGPD apparaît bien à l'écran, et pas seulement dans le modèle.
 
@@ -40,7 +40,8 @@ blocage RGPD apparaît bien à l'écran, et pas seulement dans le modèle.
 - Identifiant technique **UUID**, clé partout. Le nom et le prénom sont des
   données de la fiche, jamais des identifiants.
 - **Blocage d'enregistrement** d'un mineur sans date de consentement parental,
-  à la création comme à la modification. Quand la date de naissance est
+  à la création comme à la modification. Le seuil est **18 ans** : tout mineur,
+  et un test verrouille cette valeur. Quand la date de naissance est
   renseignée, l'âge exact prime sur la tranche déclarée : une tranche mal
   saisie ne fait pas passer un mineur pour un adulte.
 - **Droit à l'effacement** : suppression en une confirmation, avec destruction
@@ -59,7 +60,7 @@ professionnelle), RQTH, représentant légal et son contact, consentement
 parental, lien mescompetences.info, notes libres.
 
 La date de naissance donne l'**âge exact**, en déduit la tranche et décide
-seule du consentement parental (`SEUIL_CONSENTEMENT_PARENTAL`, 18 par défaut).
+seule du consentement parental. Seuil : **18 ans**, verrouillé par un test.
 
 Une fiche incomplète s'enregistre quand même : l'outil liste ce qui manque
 plutôt que de bloquer. Seul le consentement parental bloque.
@@ -99,14 +100,11 @@ qu'aucune mention réglementaire n'apparaît dans la configuration.
    seront déposés au format décrit dans `docs/questionnaires.md`.
 2. **Mentions légales.** `config.py` attend le nom du consultant et, le cas
    échéant, les coordonnées à imprimer. Rien n'a été inventé.
-3. **Dépôt séparé.** Ce projet vit dans le dépôt du site Rite Brith Israël,
-   qui est publié sur Internet. La règle `_redirects` limite les dégâts ;
-   elle ne remplace pas un dépôt dédié.
-4. **Seuil du consentement parental.** Réglé sur *tout mineur* (18 ans).
-   Le brief écrivait « moins de 15 ans » : la date de naissance permet
-   désormais d'appliquer ce seuil exactement — remplacer 18 par 15 dans
-   `personne.py` suffit.
-5. **Public collège.** Une seule ressource externe le concerne.
+3. **Déménagement du dépôt — en attente d'une action manuelle.** Ce projet
+   vit encore dans le dépôt du site Rite Brith Israël, qui est publié.
+   Le paquet Git est prêt et vérifié : voir `docs/depot-separe.md`. La
+   création du dépôt ne peut pas être automatisée depuis ici.
+4. **Public collège.** Une seule ressource externe le concerne.
 
 ## Fichiers
 
