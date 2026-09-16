@@ -1,0 +1,155 @@
+{
+  "cle": "cbi_epuisement",
+  "titre": "Copenhagen Burnout Inventory (CBI)",
+  "forme": "likert",
+  "donnee_de_sante": true,
+  "score_global": false,
+  "publics": [
+    "burnout"
+  ],
+  "note_publics": "Ajouté à la demande explicite de Mickael Darmon, qui en assume l'usage. Rattaché au seul public « épuisement professionnel » ; élargir la liste ici si nécessaire.",
+  "consigne": "Répondez selon ce que vous vivez en ce moment. Il n'y a pas de bonne réponse.",
+  "source": "Copenhagen Burnout Inventory — Kristensen, Borritz, Villadsen & Christensen, « The Copenhagen Burnout Inventory : a new tool for the assessment of burnout », Work & Stress, 2005. Instrument du domaine public.",
+  "note": "⚠ DONNÉE DE SANTÉ — RIEN N'EST ENREGISTRÉ. Les réponses, les moyennes, et le fait même d'avoir passé cet outil ne sont écrits nulle part : ils s'affichent pendant la séance et disparaissent avec elle. ⚠ AUCUN SEUIL — les auteurs n'ont pas établi de seuil diagnostique individuel. Une moyenne élevée n'est pas un diagnostic de burn-out. Cet instrument est une échelle de mesure conçue pour la recherche. ⚠ TRADUCTION NON VALIDÉE — la version française ci-dessous est une traduction de travail des items anglais, pas une version psychométriquement validée en français. Les propriétés de l'instrument ne sont pas garanties sur cette traduction. ⚠ NUMÉROTATION — le rattachement des items aux trois sous-échelles est établi (6 / 7 / 6). L'ordre à l'intérieur de la sous-échelle liée au travail vient de deux sources concordantes, non de la publication d'origine consultée directement : il n'affecte pas le calcul, qui ne dépend que de la sous-échelle.",
+  "echelle": [
+    {
+      "libelle": "Toujours",
+      "points": 100
+    },
+    {
+      "libelle": "Souvent",
+      "points": 75
+    },
+    {
+      "libelle": "Parfois",
+      "points": 50
+    },
+    {
+      "libelle": "Rarement",
+      "points": 25
+    },
+    {
+      "libelle": "Jamais / presque jamais",
+      "points": 0
+    }
+  ],
+  "items": [
+    {
+      "id": "p1",
+      "texte": "À quelle fréquence vous sentez-vous fatigué(e) ?"
+    },
+    {
+      "id": "p2",
+      "texte": "À quelle fréquence êtes-vous physiquement épuisé(e) ?"
+    },
+    {
+      "id": "p3",
+      "texte": "À quelle fréquence êtes-vous émotionnellement épuisé(e) ?"
+    },
+    {
+      "id": "p4",
+      "texte": "À quelle fréquence pensez-vous : « je n'en peux plus » ?"
+    },
+    {
+      "id": "p5",
+      "texte": "À quelle fréquence vous sentez-vous à bout ?"
+    },
+    {
+      "id": "p6",
+      "texte": "À quelle fréquence vous sentez-vous faible et vulnérable aux maladies ?"
+    },
+    {
+      "id": "t1",
+      "texte": "Vous sentez-vous à bout à la fin de la journée de travail ?"
+    },
+    {
+      "id": "t2",
+      "texte": "Êtes-vous épuisé(e) le matin à l'idée d'une nouvelle journée de travail ?"
+    },
+    {
+      "id": "t3",
+      "texte": "Avez-vous le sentiment que chaque heure de travail est fatigante pour vous ?"
+    },
+    {
+      "id": "t4",
+      "texte": "Avez-vous assez d'énergie pour votre famille et vos amis pendant votre temps libre ?",
+      "inverse": true,
+      "note": "Item inversé : une énergie conservée compte comme un épuisement absent."
+    },
+    {
+      "id": "t5",
+      "texte": "Votre travail est-il épuisant sur le plan émotionnel ?"
+    },
+    {
+      "id": "t6",
+      "texte": "Votre travail vous frustre-t-il ?"
+    },
+    {
+      "id": "t7",
+      "texte": "Vous sentez-vous épuisé(e) à cause de votre travail ?"
+    },
+    {
+      "id": "u1",
+      "texte": "Trouvez-vous difficile de travailler avec les personnes que vous accompagnez ?"
+    },
+    {
+      "id": "u2",
+      "texte": "Travailler avec elles épuise-t-il votre énergie ?"
+    },
+    {
+      "id": "u3",
+      "texte": "Trouvez-vous frustrant de travailler avec elles ?"
+    },
+    {
+      "id": "u4",
+      "texte": "Avez-vous le sentiment de donner plus que ce que vous recevez en retour ?"
+    },
+    {
+      "id": "u5",
+      "texte": "Êtes-vous fatigué(e) de travailler avec elles ?"
+    },
+    {
+      "id": "u6",
+      "texte": "Vous demandez-vous parfois combien de temps vous pourrez continuer ?"
+    }
+  ],
+  "thematiques": [
+    {
+      "nom": "Épuisement personnel",
+      "lecture": "Fatigue et épuisement, toutes causes confondues.",
+      "items": [
+        "p1",
+        "p2",
+        "p3",
+        "p4",
+        "p5",
+        "p6"
+      ]
+    },
+    {
+      "nom": "Épuisement lié au travail",
+      "lecture": "Part de l'épuisement que la personne attribue à son travail.",
+      "items": [
+        "t1",
+        "t2",
+        "t3",
+        "t4",
+        "t5",
+        "t6",
+        "t7"
+      ]
+    },
+    {
+      "nom": "Épuisement lié aux personnes accompagnées",
+      "lecture": "Épuisement lié à la relation d'aide ou au contact avec le public.",
+      "items": [
+        "u1",
+        "u2",
+        "u3",
+        "u4",
+        "u5",
+        "u6"
+      ]
+    }
+  ]
+}

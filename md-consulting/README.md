@@ -21,7 +21,7 @@ bibliothèque standard (`docx_minimal.py`), sans `python-docx`.
 ./lancer_tests.sh
 ```
 
-87 tests. Les tests d'interface exécutent réellement le script Streamlit
+94 tests. Les tests d'interface exécutent réellement le script Streamlit
 (`st.testing.AppTest`), sans navigateur : ils vérifient entre autres que le
 blocage RGPD apparaît bien à l'écran, et pas seulement dans le modèle.
 
@@ -31,7 +31,7 @@ blocage RGPD apparaît bien à l'écran, et pas seulement dans le modèle.
 |---|---|---|
 | 1 | Modèle de données + CRUD Personne (RGPD) | fait |
 | 2 | Séance + chronomètre | fait |
-| 3 | Module Investigation | fait — 11 outils, 428 items |
+| 3 | Module Investigation | fait — 12 outils, 447 items |
 | 4 | Rapport 4 blocs + export `.docx` | fait |
 | 5 | Ressources externes par public | fait |
 
@@ -97,7 +97,7 @@ qu'aucune mention réglementaire n'apparaît dans la configuration.
 
 ## Module Investigation (module 3)
 
-Onze outils installés, 428 items, transcrits des documents MD Consulting :
+Douze outils installés, 447 items :
 
 | Outil | Forme | Items |
 |---|---|---|
@@ -112,6 +112,7 @@ Onze outils installés, 428 items, transcrits des documents MD Consulting :
 | Enquête métier | questions ouvertes | 11 |
 | Prédisposition à la création d'entreprise | échelle, score /80 | 20 |
 | Orientation formateur | choix forcé, 2 axes, 5 familles | 30 |
+| Copenhagen Burnout Inventory | 3 sous-échelles, moyennes /100 | 19 |
 
 Le moteur ne contient aucun contenu : chaque outil est un fichier JSON dans
 `questionnaires/`. En ajouter un ne demande ni code ni migration de base.
@@ -134,21 +135,29 @@ Aucun énoncé n'est réécrit : ce qui gêne est écarté ou signalé.
 
 Détail du format et points à trancher : `docs/questionnaires.md`.
 
-## Burn-out : l'outil ne dépiste pas
+## Burn-out : le CBI, jamais enregistré
 
-Aucun instrument de mesure de l'épuisement professionnel n'est intégré, et
-c'est un choix. Un score d'épuisement est une donnée de santé (article 9 du
-RGPD), le burn-out n'est pas une maladie au sens des classifications
-médicales, et l'instrument de référence — le MBI — est sous licence payante.
-Faire passer une échelle et annoncer un résultat ne relève pas d'une
-permanence de conseil en orientation.
+Le **Copenhagen Burnout Inventory** (domaine public, 19 items, trois
+sous-échelles) est intégré à la demande expresse de Mickael Darmon, maintenue
+après lecture des réserves. Il en assume l'usage.
 
-Ce que l'outil fait à la place : il **avertit** (mise en garde affichée dès
-que la fiche porte ce public) et il **oriente** (INRS pour la référence,
-Mon soutien psy pour la voie de soin sans prescription préalable). Un test
-échoue si un questionnaire d'épuisement entre un jour dans le dossier.
+Trois garde-fous, tenus par le code et non par la bonne volonté :
 
-Détail et état des lieux des instruments : `docs/burn-out.md`.
+- **Rien n'est enregistré.** L'outil porte `donnee_de_sante: true` et n'a pas
+  de bouton d'enregistrement : ni les réponses, ni les moyennes, ni le fait de
+  l'avoir passé n'atteignent la base. Un score d'épuisement est une donnée de
+  santé (article 9). Ce qui doit figurer au compte rendu se rédige à la main.
+- **Aucun seuil.** Les auteurs n'en ont pas établi : le fichier ne contient ni
+  tranche d'interprétation ni score global. Trois moyennes sur 100, rien
+  d'autre. Une moyenne élevée n'est pas un diagnostic.
+- **La mise en garde reste affichée** dès que la fiche porte ce public : voie
+  de soin, absence de seuil, non-enregistrement.
+
+Le MBI reste exclu — licence payante — et un test le vérifie.
+
+⚠ **La traduction française n'est pas validée** : les propriétés
+psychométriques ne sont pas garanties sur cette traduction. Voir
+`docs/burn-out.md` pour ce qui n'a pas pu être vérifié.
 
 ## Ce qui manque encore — décisions ou fichiers attendus
 
@@ -176,7 +185,7 @@ Détail et état des lieux des instruments : `docs/burn-out.md`.
 | `export_docx.py` | mise en page du compte rendu |
 | `ressources.py` | catalogue des ressources externes |
 | `dates_fr.py` | affichage des dates au format français |
-| `docs/burn-out.md` | pourquoi aucun dépistage n'est intégré |
+| `docs/burn-out.md` | le CBI, ses garde-fous et ses limites |
 | `config.py` | identité imprimée en tête des rapports |
 | `vue_questionnaire.py` | passation, une fonction par forme |
 | `vue_*.py` | écrans Streamlit |

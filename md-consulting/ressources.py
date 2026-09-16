@@ -23,13 +23,14 @@ SERVICE_PUBLIC = "service public"
 # employé fait plus de mal que de bien.
 MISES_EN_GARDE = {
     "burnout": (
-        "**Cet outil ne dépiste pas le burn-out et n'a pas à le faire.** "
-        "L'épuisement professionnel relève de la santé au travail : médecin du "
-        "travail, médecin traitant, psychologue. Dans les classifications "
+        "**L'épuisement professionnel relève de la santé au travail** : médecin "
+        "du travail, médecin traitant, psychologue. Dans les classifications "
         "médicales internationales, le burn-out n'est pas une maladie mais un "
         "phénomène lié au travail — aucun questionnaire ne le diagnostique. "
-        "Le rôle de la permanence est d'orienter vers ces professionnels, pas "
-        "de remettre un score. Aucun score d'épuisement n'est enregistré ici."
+        "Le CBI figure parmi les outils à la demande expresse du consultant : "
+        "c'est une échelle de mesure sans seuil individuel, son résultat "
+        "s'affiche en séance et **n'est jamais enregistré**. Une moyenne élevée "
+        "n'est pas un diagnostic et n'exonère pas d'orienter."
     ),
 }
 
@@ -134,11 +135,11 @@ RESSOURCES: tuple[Ressource, ...] = (
 
 
 # ── Sur les instruments de mesure du burn-out ──────────────────────────────
-# Aucun n'est intégré à cet outil, et c'est délibéré : un score d'épuisement
-# est une donnée de santé (article 9 du RGPD), et le remettre à une personne
-# ne relève pas d'une permanence de conseil en orientation.
+# Le CBI est intégré depuis que Mickael Darmon l'a demandé après avoir lu les
+# réserves ci-dessous, et il en assume l'usage. Il est marqué comme donnée de
+# santé : son résultat ne quitte pas l'écran de séance.
 #
-# Pour mémoire, l'état des lieux vérifié :
+# L'état des lieux vérifié :
 #   · MBI (Maslach Burnout Inventory) — instrument de référence, sous licence
 #     payante exclusive (Mind Garden), facturé à l'administration. Le
 #     reproduire ici serait une contrefaçon, et la règle du projet exclut déjà

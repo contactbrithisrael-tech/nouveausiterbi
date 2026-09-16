@@ -43,22 +43,23 @@ def t_ressources_verifiees_pour_le_burn_out():
 
 
 def t_mise_en_garde_burn_out():
-    """Un écran burn-out doit dire que l'outil ne dépiste pas."""
+    """L'écran doit rappeler la voie de soin, l'absence de seuil et le
+    non-enregistrement — les trois choses qu'un score fait oublier."""
     garde = R.MISES_EN_GARDE.get("burnout", "")
     assert garde, "aucune mise en garde pour ce public"
-    for attendu in ("ne dépiste pas", "médecin du travail", "aucun score"):
-        assert attendu in garde.lower() or attendu in garde, f"manque : {attendu}"
+    for attendu in ("médecin du travail", "aucun questionnaire ne le diagnostique",
+                    "jamais enregistré", "n'est pas un diagnostic"):
+        assert attendu in garde, f"manque : {attendu}"
 
 
-def t_aucun_instrument_de_burn_out_dans_les_questionnaires():
-    """Un score d'épuisement est une donnée de santé : il n'entre pas ici."""
+def t_aucun_instrument_sous_licence_payante():
+    """Le MBI est sous licence : il ne doit jamais entrer dans les outils."""
     import questionnaire as Q
-    interdits = ("burnout", "burn-out", "maslach", "mbi", "epuisement",
-                 "épuisement", "copenhagen")
+    interdits = ("maslach", "mbi", "mind garden")
     for cle, q in Q.disponibles().items():
         blob = (cle + " " + q.titre + " " + str(q.get("source", ""))).lower()
         for mot in interdits:
-            assert mot not in blob, f"{cle} : instrument d'épuisement détecté ({mot})"
+            assert mot not in blob, f"{cle} : instrument sous licence ({mot})"
 
 
 def t_freemium_porte_un_avertissement():

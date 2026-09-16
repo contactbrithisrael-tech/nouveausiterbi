@@ -67,7 +67,7 @@ def t_ecran_fiche_et_seance():
 
 
 def t_chaque_questionnaire_s_affiche_sans_exception():
-    """Onze formulaires, sept formes d'affichage : chacun doit se rendre.
+    """Douze formulaires, sept formes d'affichage : chacun doit se rendre.
     Chaque outil est ouvert avec une personne du public qu'il vise — sinon le
     filtrage l'écarterait et le test ne prouverait rien."""
     import questionnaire as Q
@@ -99,7 +99,7 @@ def t_chaque_questionnaire_s_affiche_sans_exception():
         else:
             ouverts += 1
     assert not echecs, "\n".join(echecs)
-    assert ouverts == 11, f"{ouverts} questionnaires ouverts sur 11"
+    assert ouverts == 12, f"{ouverts} questionnaires ouverts sur 12"
 
 
 def t_item_intime_non_soumis_a_un_college_dans_l_interface():
@@ -130,8 +130,25 @@ def t_mise_en_garde_burn_out_visible_a_l_ecran():
     at = _lancer(seance_id=sid)
     assert not at.exception, at.exception
     avertissements = " ".join(m.value for m in at.warning)
-    assert "ne dépiste pas le burn-out" in avertissements, avertissements
-    assert "médecin du travail" in avertissements
+    assert "médecin du travail" in avertissements, avertissements
+    assert "jamais enregistré" in avertissements
+
+
+def t_cbi_ne_peut_pas_etre_enregistre():
+    """Le bouton d'enregistrement ne doit pas exister pour cet outil, et la
+    base doit rester vide après l'avoir ouvert."""
+    import resultat_test as RT
+    pers = P.creer(P.Personne("Noir", "Luc", "adulte", "burnout"), db.CHEMIN_BASE)
+    sid = S.creer(S.Seance(pers.id), db.CHEMIN_BASE).id
+    at = _lancer(seance_id=sid, questionnaire_en_cours="cbi_epuisement")
+    assert not at.exception, at.exception
+    boutons = [b.label for b in at.button]
+    assert not any("Enregistrer ce questionnaire" in b for b in boutons), boutons
+    assert any("sans rien conserver" in b for b in boutons), boutons
+    erreurs = " ".join(m.value for m in at.error)
+    assert "Rien de ceci n'est enregistré" in erreurs, erreurs
+    assert RT.lister_par_seance(sid, db.CHEMIN_BASE) == [], \
+        "un résultat a été écrit en base"
 
 
 def t_ecran_ressources_sans_exception():

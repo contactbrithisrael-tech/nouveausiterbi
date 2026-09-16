@@ -179,21 +179,34 @@ def profils_par_selection(q: Questionnaire, choisis: list[str]) -> list[tuple[st
 
 
 def score_likert(q: Questionnaire, reponses: dict[str, str]) -> dict:
-    """Score total et moyenne par thématique. Les thématiques ne sont calculées
-    que si le document précise quels items s'y rattachent."""
+    """Score total et moyennes par thématique.
+
+    Un item portant « inverse » est retourné sur l'échelle (une énergie
+    conservée compte comme un épuisement absent). Les thématiques ne sont
+    calculées que si le document précise quels items s'y rattachent. La
+    lecture n'est donnée que si le document fournit des tranches : aucun
+    seuil n'est inventé.
+    """
     points = {n["libelle"]: n["points"] for n in q.echelle}
-    total = sum(points.get(v, 0) for v in reponses.values())
-    maxi = len(q.items) * max(points.values())
-    resultat = {"total": total, "maximum": maxi, "thematiques": {}}
+    bornes = (min(points.values()), max(points.values()))
+    inverses = {it["id"] for it in q.items if it.get("inverse")}
+
+    def note(item_id, valeur):
+        p = points.get(valeur, 0)
+        return bornes[0] + bornes[1] - p if item_id in inverses else p
+
+    notes = {i: note(i, v) for i, v in reponses.items()}
+    resultat = {"thematiques": {}}
+    if q.get("score_global", True):
+        resultat["total"] = sum(notes.values())
+        resultat["maximum"] = len(q.items) * bornes[1]
     for t in q.get("thematiques", []):
-        lies = t.get("items") or []
-        if not lies:
-            continue
-        notes = [points.get(reponses[i], 0) for i in lies if i in reponses]
-        if notes:
-            resultat["thematiques"][t["nom"]] = round(sum(notes) / len(notes), 2)
+        lies = [i for i in (t.get("items") or []) if i in notes]
+        if lies:
+            resultat["thematiques"][t["nom"]] = round(
+                sum(notes[i] for i in lies) / len(lies), 1)
     for tranche in q.get("interpretation", []):
-        if tranche["min"] <= total <= tranche["max"]:
+        if tranche["min"] <= resultat.get("total", -1) <= tranche["max"]:
             resultat["lecture"] = tranche["texte"]
             break
     return resultat
@@ -233,3 +246,15 @@ def items_ecartes(q: Questionnaire, est_mineur: bool) -> list[dict]:
         return []
     ecartes = set(q.get("items_ecartes_si_mineur", []))
     return [it for it in q.items if it["id"] in ecartes]
+
+
+# ── Données de santé ───────────────────────────────────────────────────────
+def est_donnee_de_sante(q: Questionnaire) -> bool:
+    """Un outil marqué « donnee_de_sante » n'est jamais écrit en base.
+
+    Son résultat s'affiche pendant la séance et disparaît avec elle. Ni les
+    réponses, ni le score, ni le fait même de l'avoir passé ne sont
+    enregistrés : un score d'épuisement relève de l'article 9 du RGPD, et
+    la trace d'un dépistage en dit déjà long.
+    """
+    return bool(q.get("donnee_de_sante"))

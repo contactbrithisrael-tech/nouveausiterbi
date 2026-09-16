@@ -27,6 +27,7 @@ ATTENDUS = {
     "enquete_metier": ("questions_ouvertes", 11),
     "predisposition_creation_entreprise": ("likert", 20),
     "orientation_formateur": ("ab", 30),
+    "cbi_epuisement": ("likert", 19),
 }
 
 
@@ -119,6 +120,55 @@ def t_projet_de_vie_va_de_a_a_y():
     for s in q.sections:
         for question in s["questions"]:
             assert len(question["choix"]) >= 2, f"{question['id']} : trop peu de choix"
+
+
+# ── CBI : donnée de santé, jamais enregistrée ──────────────────────────────
+def t_cbi_trois_sous_echelles_de_six_sept_six():
+    q = INSTALLES["cbi_epuisement"]
+    tailles = [len(t["items"]) for t in q.thematiques]
+    assert tailles == [6, 7, 6], tailles
+    couverts = sorted(i for t in q.thematiques for i in t["items"])
+    assert couverts == sorted(i["id"] for i in q.items), "sous-échelles incomplètes"
+
+
+def t_cbi_echelle_de_zero_a_cent_par_pas_de_vingt_cinq():
+    q = INSTALLES["cbi_epuisement"]
+    points = sorted(n["points"] for n in q.echelle)
+    assert points == [0, 25, 50, 75, 100], points
+
+
+def t_cbi_item_inverse():
+    """« Avez-vous assez d'énergie… » compte à l'envers des autres."""
+    q = INSTALLES["cbi_epuisement"]
+    inverses = [i for i in q.items if i.get("inverse")]
+    assert len(inverses) == 1, f"{len(inverses)} items inversés"
+    assert "énergie" in inverses[0]["texte"]
+    haut = {i["id"]: "Toujours" for i in q.items}
+    travail = [t for t in q.thematiques if "travail" in t["nom"]][0]["nom"]
+    # sept items à 100 dont un inversé à 0 → 600/7 = 85,7
+    assert Q.score_likert(q, haut)["thematiques"][travail] == 85.7
+
+
+def t_cbi_aucun_score_global_ni_seuil():
+    """Les auteurs n'ont pas établi de seuil individuel : on n'en invente pas."""
+    q = INSTALLES["cbi_epuisement"]
+    assert q.get("score_global") is False
+    assert not q.get("interpretation"), "un seuil a été ajouté"
+    resultat = Q.score_likert(q, {i["id"]: "Parfois" for i in q.items})
+    assert "total" not in resultat and "lecture" not in resultat
+
+
+def t_cbi_marque_comme_donnee_de_sante():
+    assert Q.est_donnee_de_sante(INSTALLES["cbi_epuisement"])
+    for cle, q in INSTALLES.items():
+        if cle != "cbi_epuisement":
+            assert not Q.est_donnee_de_sante(q), f"{cle} marqué donnée de santé"
+
+
+def t_cbi_porte_ses_trois_reserves():
+    note = INSTALLES["cbi_epuisement"].get("note", "")
+    for attendu in ("RIEN N'EST ENREGISTRÉ", "AUCUN SEUIL", "TRADUCTION NON VALIDÉE"):
+        assert attendu in note, f"réserve absente : {attendu}"
 
 
 # ── Ciblage par public ─────────────────────────────────────────────────────

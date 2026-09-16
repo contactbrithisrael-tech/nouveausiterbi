@@ -32,9 +32,12 @@ chacun : une grille tronquée est refusée au chargement. Utilisée par
 ### `likert`
 Affirmations notées sur une échelle. `echelle: [{libelle, points}]`,
 `interpretation: [{min, max, texte}]` pour le score global, et
-`thematiques: [{nom, lecture, axe_de_travail, items: [...]}]`.
+`thematiques: [{nom, lecture, items: [...]}]` pour les moyennes.
 Une thématique dont `items` est vide n'est pas calculée — elle n'est pas
-devinée. Utilisée par *predisposition_creation_entreprise*.
+devinée. Sans `interpretation`, aucune lecture n'est donnée : un seuil ne
+s'invente pas. `score_global: false` supprime le total au profit des seules
+moyennes, et un item portant `inverse: true` est retourné sur l'échelle.
+Utilisée par *predisposition_creation_entreprise* et *cbi_epuisement*.
 
 ### `ab`
 Choix forcé entre deux propositions. `items: [{id, a, b}]` et
@@ -68,6 +71,7 @@ Utilisée par *enquete_metier*.
 | `enquete_metier` | questions_ouvertes | 11 |
 | `predisposition_creation_entreprise` | likert | 20, score /80 |
 | `orientation_formateur` | ab | 30, 2 axes, 5 familles |
+| `cbi_epuisement` | likert | 19, 3 sous-échelles /100, **non enregistré** |
 
 Les effectifs sont **vérifiés par un test** (`tests/test_questionnaires.py`) :
 une transcription tronquée fait échouer la suite.
@@ -91,6 +95,7 @@ rattachés au public de la personne reçue, et dit combien ont été écartés.
 | enquete_metier | | ✓ | ✓ | ✓ | ✓ | ✓ |
 | predisposition_creation_entreprise | | | ✓ | ✓ | | |
 | orientation_formateur | | | ✓ | ✓ | | |
+| cbi_epuisement | | | | | | ✓ |
 
 **Ces rattachements sont des propositions**, chacune modifiable en une ligne
 dans le fichier de l'outil. Les raisons retenues :
@@ -107,6 +112,17 @@ dans le fichier de l'outil. Les raisons retenues :
 - *Prédisposition à la création d'entreprise* est écarté du burn-out :
   mesurer une appétence entrepreneuriale pendant un épuisement professionnel
   demande l'arbitrage du consultant, pas un réglage par défaut.
+
+## Données de santé : jamais enregistrées
+
+Un outil portant `donnee_de_sante: true` s'affiche mais **ne s'enregistre
+pas** : l'écran de passation n'a pas de bouton d'enregistrement, et ni les
+réponses, ni le score, ni le fait de l'avoir passé n'atteignent la base. Seul
+`cbi_epuisement` porte cette marque, et deux tests le vérifient — l'un que la
+base reste vide après ouverture, l'autre qu'aucun autre outil ne la porte par
+accident.
+
+Voir `docs/burn-out.md` pour la décision, ses garde-fous et ses limites.
 
 ## Ce qui est écarté pour une personne mineure
 

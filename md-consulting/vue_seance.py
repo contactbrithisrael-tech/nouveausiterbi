@@ -139,6 +139,21 @@ def _passation(s: S.Seance, q, pers: P.Personne) -> None:
         st.caption(q.note_publics)
     reponses, synthese = vue_questionnaire.passer(q, pers.is_mineur)
     st.divider()
+
+    if Q.est_donnee_de_sante(q):
+        st.error("**Rien de ceci n'est enregistré.** Ni les réponses, ni les "
+                 "moyennes, ni le fait d'avoir passé cet outil. L'affichage "
+                 "disparaît en quittant cet écran. Ce qui doit figurer au "
+                 "compte rendu est à rédiger à la main, sous votre "
+                 "responsabilité.")
+        if synthese:
+            st.text_area("Résultat, à lire en séance", synthese, height=200,
+                         disabled=True)
+        if st.button("Fermer sans rien conserver"):
+            _oublier(q)
+            st.rerun()
+        return
+
     if synthese:
         st.text_area("Synthèse enregistrée dans le compte rendu", synthese,
                      height=140, disabled=True)
@@ -146,7 +161,12 @@ def _passation(s: S.Seance, q, pers: P.Personne) -> None:
                  disabled=not synthese):
         RT.creer(RT.ResultatTest(s.id, q.cle, reponses=reponses,
                                  synthese_texte=synthese))
-        for cle in [k for k in st.session_state if k.startswith(f"{q.cle}_")]:
-            st.session_state.pop(cle, None)
-        st.session_state.pop("questionnaire_en_cours", None)
+        _oublier(q)
         st.rerun()
+
+
+def _oublier(q) -> None:
+    """Vide les réponses de la session : rien ne doit survivre à l'écran."""
+    for cle in [k for k in st.session_state if k.startswith(f"{q.cle}_")]:
+        st.session_state.pop(cle, None)
+    st.session_state.pop("questionnaire_en_cours", None)
