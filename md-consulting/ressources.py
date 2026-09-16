@@ -19,6 +19,21 @@ FREEMIUM = "freemium"            # socle gratuit utilisable + options payantes
 SERVICE_PUBLIC = "service public"
 
 
+# Avertissement affiché avant la liste, pour les publics où un lien mal
+# employé fait plus de mal que de bien.
+MISES_EN_GARDE = {
+    "burnout": (
+        "**Cet outil ne dépiste pas le burn-out et n'a pas à le faire.** "
+        "L'épuisement professionnel relève de la santé au travail : médecin du "
+        "travail, médecin traitant, psychologue. Dans les classifications "
+        "médicales internationales, le burn-out n'est pas une maladie mais un "
+        "phénomène lié au travail — aucun questionnaire ne le diagnostique. "
+        "Le rôle de la permanence est d'orienter vers ces professionnels, pas "
+        "de remettre un score. Aucun score d'épuisement n'est enregistré ici."
+    ),
+}
+
+
 @dataclass(frozen=True)
 class Ressource:
     nom: str
@@ -85,6 +100,28 @@ RESSOURCES: tuple[Ressource, ...] = (
         "VAE — portail officiel", "https://vae.gouv.fr",
         "Information et dépôt de dossier de validation des acquis de l'expérience.",
         SERVICE_PUBLIC, ("vae", "reconversion", "burnout")),
+    # ── Épuisement professionnel ───────────────────────────────────────────
+    Ressource(
+        "INRS — Épuisement professionnel (burnout)",
+        "https://www.inrs.fr/risques/epuisement-burnout/ce-qu-il-faut-retenir.html",
+        "Référence française sur le syndrome d'épuisement professionnel : "
+        "définition, facteurs de risque, cadre de prévention. Institut national "
+        "de recherche et de sécurité.",
+        SERVICE_PUBLIC, ("burnout", "handicap", "reconversion"),
+        "L'INRS rappelle que le burn-out n'est pas classé comme une maladie "
+        "dans les classifications médicales internationales, mais parmi les "
+        "problèmes liés au travail. Il n'y a donc rien à « dépister » ici."),
+    Ressource(
+        "Mon soutien psy (Assurance Maladie)",
+        "https://www.ameli.fr/assure/remboursements/rembourse/"
+        "remboursement-seance-psychologue-mon-soutien-psy",
+        "Séances chez un psychologue partiellement remboursées, sans "
+        "prescription médicale préalable. Annuaire des psychologues "
+        "partenaires sur ameli.fr.",
+        SERVICE_PUBLIC, ("burnout", "handicap", "reconversion", "lycee"),
+        "La voie la plus directe à indiquer à une personne en souffrance "
+        "psychique : elle prend rendez-vous elle-même. Conditions et nombre de "
+        "séances à vérifier sur ameli.fr, ils évoluent."),
     Ressource(
         "Cap emploi", "https://capemploi.info",
         "Accompagnement vers l'emploi des personnes en situation de handicap.",
@@ -96,12 +133,25 @@ RESSOURCES: tuple[Ressource, ...] = (
 )
 
 
-# ⚠ MANQUE POUR LE PUBLIC BURN-OUT : aucune ressource spécifique à
-# l'épuisement professionnel n'est listée. Les entrées ci-dessus sont des
-# outils génériques de reconversion. Le service de prévention et de santé au
-# travail, le médecin du travail et les dispositifs de maintien dans l'emploi
-# relèvent de ce public — aucune adresse n'est écrite ici faute de l'avoir
-# vérifiée. À compléter par Mickael.
+# ── Sur les instruments de mesure du burn-out ──────────────────────────────
+# Aucun n'est intégré à cet outil, et c'est délibéré : un score d'épuisement
+# est une donnée de santé (article 9 du RGPD), et le remettre à une personne
+# ne relève pas d'une permanence de conseil en orientation.
+#
+# Pour mémoire, l'état des lieux vérifié :
+#   · MBI (Maslach Burnout Inventory) — instrument de référence, sous licence
+#     payante exclusive (Mind Garden), facturé à l'administration. Le
+#     reproduire ici serait une contrefaçon, et la règle du projet exclut déjà
+#     les instruments payants.
+#   · CBI (Copenhagen Burnout Inventory) — domaine public, 19 items, trois
+#     sous-échelles (épuisement personnel, lié au travail, lié aux usagers).
+#     Publication d'origine : Kristensen, Borritz, Villadsen & Christensen,
+#     « The Copenhagen Burnout Inventory », Work & Stress, 2005. Aucune
+#     adresse de diffusion n'est écrite ici : celles trouvées n'ont pas pu
+#     être vérifiées depuis l'environnement de développement. À récupérer
+#     depuis la publication d'origine.
+#   · Aucun de ces instruments ne pose de diagnostic individuel. Ce sont des
+#     échelles de mesure, conçues pour la recherche et l'épidémiologie.
 
 
 def pour_public(cle_public: str) -> list[Ressource]:

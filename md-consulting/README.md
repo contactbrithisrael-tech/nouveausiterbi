@@ -21,7 +21,7 @@ bibliothèque standard (`docx_minimal.py`), sans `python-docx`.
 ./lancer_tests.sh
 ```
 
-83 tests. Les tests d'interface exécutent réellement le script Streamlit
+87 tests. Les tests d'interface exécutent réellement le script Streamlit
 (`st.testing.AppTest`), sans navigateur : ils vérifient entre autres que le
 blocage RGPD apparaît bien à l'écran, et pas seulement dans le modèle.
 
@@ -134,21 +134,31 @@ Aucun énoncé n'est réécrit : ce qui gêne est écarté ou signalé.
 
 Détail du format et points à trancher : `docs/questionnaires.md`.
 
+## Burn-out : l'outil ne dépiste pas
+
+Aucun instrument de mesure de l'épuisement professionnel n'est intégré, et
+c'est un choix. Un score d'épuisement est une donnée de santé (article 9 du
+RGPD), le burn-out n'est pas une maladie au sens des classifications
+médicales, et l'instrument de référence — le MBI — est sous licence payante.
+Faire passer une échelle et annoncer un résultat ne relève pas d'une
+permanence de conseil en orientation.
+
+Ce que l'outil fait à la place : il **avertit** (mise en garde affichée dès
+que la fiche porte ce public) et il **oriente** (INRS pour la référence,
+Mon soutien psy pour la voie de soin sans prescription préalable). Un test
+échoue si un questionnaire d'épuisement entre un jour dans le dossier.
+
+Détail et état des lieux des instruments : `docs/burn-out.md`.
+
 ## Ce qui manque encore — décisions ou fichiers attendus
 
-1. **Ressources pour le burn-out.** Le public « épuisement professionnel »
-   a été ajouté, mais aucune ressource externe ne lui est propre : les six
-   qui lui sont rattachées sont des outils génériques de reconversion. Le
-   service de santé au travail et les dispositifs de maintien dans l'emploi
-   relèvent de ce public — aucune adresse n'a été écrite faute de l'avoir
-   vérifiée.
-2. **Mentions légales.** `config.py` attend le nom du consultant et, le cas
+1. **Mentions légales.** `config.py` attend le nom du consultant et, le cas
    échéant, les coordonnées à imprimer. Rien n'a été inventé.
-3. **Déménagement du dépôt — en attente d'une action manuelle.** Ce projet
+2. **Déménagement du dépôt — en attente d'une action manuelle.** Ce projet
    vit encore dans le dépôt du site Rite Brith Israël, qui est publié.
    Le paquet Git est prêt et vérifié : voir `docs/depot-separe.md`. La
    création du dépôt ne peut pas être automatisée depuis ici.
-4. **Public collège.** Une seule ressource externe le concerne.
+3. **Public collège.** Une seule ressource externe le concerne.
 
 ## Fichiers
 
@@ -166,6 +176,7 @@ Détail du format et points à trancher : `docs/questionnaires.md`.
 | `export_docx.py` | mise en page du compte rendu |
 | `ressources.py` | catalogue des ressources externes |
 | `dates_fr.py` | affichage des dates au format français |
+| `docs/burn-out.md` | pourquoi aucun dépistage n'est intégré |
 | `config.py` | identité imprimée en tête des rapports |
 | `vue_questionnaire.py` | passation, une fonction par forme |
 | `vue_*.py` | écrans Streamlit |

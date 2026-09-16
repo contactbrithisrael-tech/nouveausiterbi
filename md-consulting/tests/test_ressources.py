@@ -35,6 +35,32 @@ def t_aucun_produit_sous_licence_payante():
             assert mot not in blob, f"{r.nom} : produit exclu détecté ({mot})"
 
 
+def t_ressources_verifiees_pour_le_burn_out():
+    """Ce public doit avoir la voie de soin, pas seulement des outils génériques."""
+    noms = " ".join(r.nom for r in R.pour_public("burnout"))
+    assert "INRS" in noms, "la référence officielle manque"
+    assert "Mon soutien psy" in noms, "la voie de soin manque"
+
+
+def t_mise_en_garde_burn_out():
+    """Un écran burn-out doit dire que l'outil ne dépiste pas."""
+    garde = R.MISES_EN_GARDE.get("burnout", "")
+    assert garde, "aucune mise en garde pour ce public"
+    for attendu in ("ne dépiste pas", "médecin du travail", "aucun score"):
+        assert attendu in garde.lower() or attendu in garde, f"manque : {attendu}"
+
+
+def t_aucun_instrument_de_burn_out_dans_les_questionnaires():
+    """Un score d'épuisement est une donnée de santé : il n'entre pas ici."""
+    import questionnaire as Q
+    interdits = ("burnout", "burn-out", "maslach", "mbi", "epuisement",
+                 "épuisement", "copenhagen")
+    for cle, q in Q.disponibles().items():
+        blob = (cle + " " + q.titre + " " + str(q.get("source", ""))).lower()
+        for mot in interdits:
+            assert mot not in blob, f"{cle} : instrument d'épuisement détecté ({mot})"
+
+
 def t_freemium_porte_un_avertissement():
     """Un outil non entièrement gratuit ne peut pas être listé sans mention."""
     for r in R.RESSOURCES:

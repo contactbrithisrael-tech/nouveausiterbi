@@ -8,6 +8,7 @@ import streamlit as st
 import dates_fr
 import personne as P
 import questionnaire as Q
+import ressources as Rs
 import resultat_test as RT
 import seance as S
 import vue_questionnaire
@@ -56,6 +57,9 @@ def chronometre(s: S.Seance) -> None:
 
 def entete_seance(s: S.Seance, pers: P.Personne) -> None:
     st.subheader(f"Séance du {dates_fr.jour(s.date)} — {pers.nom_affiche}")
+    garde = Rs.MISES_EN_GARDE.get(pers.public)
+    if garde:
+        st.warning(garde)
     chronometre(s)
     if not s.heure_debut and st.button("Démarrer le chronomètre"):
         s.demarrer()

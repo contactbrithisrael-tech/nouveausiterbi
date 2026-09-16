@@ -123,6 +123,17 @@ def t_item_intime_non_soumis_a_un_college_dans_l_interface():
         "l'écran devrait dire ce qui a été écarté"
 
 
+def t_mise_en_garde_burn_out_visible_a_l_ecran():
+    """La personne en épuisement : l'écran doit dire que l'outil ne dépiste pas."""
+    pers = P.creer(P.Personne("Blanc", "Eve", "adulte", "burnout"), db.CHEMIN_BASE)
+    sid = S.creer(S.Seance(pers.id), db.CHEMIN_BASE).id
+    at = _lancer(seance_id=sid)
+    assert not at.exception, at.exception
+    avertissements = " ".join(m.value for m in at.warning)
+    assert "ne dépiste pas le burn-out" in avertissements, avertissements
+    assert "médecin du travail" in avertissements
+
+
 def t_ecran_ressources_sans_exception():
     at = AppTest.from_file(APP, default_timeout=30).run()
     at.radio[0].set_value("Ressources")

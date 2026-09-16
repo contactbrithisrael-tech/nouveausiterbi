@@ -19,6 +19,10 @@ def ecran(public_defaut: str | None = None) -> None:
     public = st.selectbox("Public", cles, index=index,
                           format_func=lambda k: P.PUBLICS[k])
 
+    garde = Rs.MISES_EN_GARDE.get(public)
+    if garde:
+        st.warning(garde)
+
     liste = Rs.pour_public(public)
     if not liste:
         st.info("Aucune ressource pour ce public.")
