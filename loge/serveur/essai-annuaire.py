@@ -64,7 +64,8 @@ with sync_playwright() as p:
     # ══ 3. MARTINE OUVRE SON ÉCRAN ══════════════════════════════════
     cM = b.new_context(); M = cM.new_page()
     eM = []; M.on("pageerror", lambda e: eM.append(str(e)))
-    M.on("dialog", lambda d: d.accept())
+    dialogues = []
+    M.on("dialog", lambda d: (dialogues.append(d.message), d.accept()))
     M.goto(U); M.wait_for_timeout(900)
     M.fill("#porte-mdp", CLE); M.click("#porte-form button[type=submit]")
     M.wait_for_timeout(2500)
@@ -134,6 +135,71 @@ with sync_playwright() as p:
     v("mechant" not in garde and "versee" not in garde and "loge_id" not in garde,
       "ET SEULS LES CHAMPS ATTENDUS SONT GARDÉS : un formulaire ne décide "
       "pas de ce que porte la base", garde)
+
+    # == 7. UN VISITEUR S'ENREGISTRE AVEC CINQ CHAMPS ================
+    # Nom, prenom, grade, courriel, Loge. Tout le reste est facultatif
+    # et doit le DIRE : sans quoi l'on cherche ce qu'on n'a pas.
+    M.click("#t-visiteurs"); M.wait_for_timeout(500)
+    M.click("#vis-nouveau"); M.wait_for_timeout(600)
+    for champ, val in [("prenom", "Chimon"), ("nom", "EDOUT"),
+                       ("grade", "Compagnon"),
+                       ("email", "chimon.edout@exemple.test"),
+                       ("loge", "L SECONDE n02")]:
+        M.fill("#v-" + champ, val); M.wait_for_timeout(100)
+    M.wait_for_timeout(900)
+    neuf = M.evaluate("E.visiteurs.find(v=>v.email==='chimon.edout@exemple.test')")
+    v(neuf is not None, "LE VISITEUR EST ENREGISTRE AVEC CES CINQ CHAMPS SEULS", neuf)
+    v(M.locator("#v-visiteurs .note").count() == 0,
+      "et rien ne lui reproche ce qu'il n'a pas rempli")
+
+    # les champs facultatifs le disent, les cinq autres non
+    for cle, facultatif in [("prenom", False), ("nom", False), ("grade", False),
+                            ("email", False), ("loge", False),
+                            ("orient", True), ("obedience", True), ("rite", True),
+                            ("tel", True), ("invitePar", True), ("tuilePar", True)]:
+        lab = M.evaluate(
+            "() => { const c = document.querySelector('label[for=\"v-" + cle + "\"]');"
+            " return c ? c.textContent : null; }")
+        dit = lab is not None and "facultatif" in lab
+        v(dit == facultatif,
+          "le champ " + cle + (" est marque facultatif" if facultatif
+                               else " ne l'est pas : il fait partie des cinq"), lab)
+
+    # == 8. MARQUER VENU SE FAIT D'UN CLIC, DEPUIS LA LISTE ==========
+    M.click("#vis-retour"); M.wait_for_timeout(600)
+    v(M.locator("button[data-attendu]").count() >= 1,
+      "chaque ligne du carnet porte son bouton de presence",
+      M.locator("button[data-attendu]").count())
+
+    # le refus dit quoi faire, au lieu de dire non
+    M.evaluate("() => { E.visiteurs.forEach(v => v.presentTenue = false); dessiner(); }")
+    M.wait_for_timeout(400)
+    dialogues.clear()
+    M.click("#vis-enregistrer"); M.wait_for_timeout(800)
+    dlg = list(dialogues)
+    v(bool(dlg) and "Cette tenue" in dlg[0],
+      "LE REFUS DIT OU CLIQUER, il ne dit plus seulement non", dlg)
+    v(bool(dlg) and "est VENU" in dlg[0],
+      "et ce que ce registre note vraiment", dlg)
+
+    # un clic, et la visite se porte au registre
+    idv = M.evaluate("E.visiteurs[0].id")
+    M.click('button[data-attendu="' + str(idv) + '"]'); M.wait_for_timeout(700)
+    lu = "E.visiteurs.find(v=>v.id===" + str(idv) + ")"
+    v(M.evaluate(lu + ".presentTenue") is True,
+      "UN CLIC SUFFIT A LE MARQUER VENU", M.evaluate(lu + ".presentTenue"))
+    v(M.locator("#vis-enregistrer").count() == 1,
+      "ET LA FICHE NE S'OUVRE PAS : un bouton dans une ligne cliquable "
+      "faisait deux choses a la fois")
+    dialogues.clear()
+    M.click("#vis-enregistrer"); M.wait_for_timeout(900)
+    dlg2 = list(dialogues)
+    v(bool(dlg2) and "visite(s) enregistree(s)".replace("ee", "ée") in dlg2[0],
+      "et la visite se porte alors au registre", dlg2)
+    v(M.evaluate("(" + lu + ".visites||[]).length") >= 1,
+      "le registre la porte", M.evaluate(lu + ".visites"))
+    v(M.evaluate(lu + ".presentTenue") is False,
+      "et la marque retombe : la tenue est passee")
 
     v(not eF and not eM, "aucune erreur JavaScript, des deux côtés", eF + eM)
     b.close()
