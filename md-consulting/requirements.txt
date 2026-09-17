@@ -1,6 +1,0 @@
-# Seule dépendance : l'interface.
-# L'export .docx est écrit avec la bibliothèque standard (voir docx_minimal.py),
-# ce qui évite d'installer python-docx pour produire quatre blocs de texte.
-# Version réellement testée ici. `width="stretch"` remplace
-# `use_container_width`, retiré des versions récentes.
-streamlit>=1.64
