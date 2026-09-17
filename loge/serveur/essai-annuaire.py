@@ -143,27 +143,46 @@ with sync_playwright() as p:
     M.click("#vis-nouveau"); M.wait_for_timeout(600)
     for champ, val in [("prenom", "Chimon"), ("nom", "EDOUT"),
                        ("grade", "Compagnon"),
-                       ("email", "chimon.edout@exemple.test"),
-                       ("loge", "L SECONDE n02")]:
+                       ("email", "chimon.edout@exemple.test")]:
         M.fill("#v-" + champ, val); M.wait_for_timeout(100)
     M.wait_for_timeout(900)
     neuf = M.evaluate("E.visiteurs.find(v=>v.email==='chimon.edout@exemple.test')")
-    v(neuf is not None, "LE VISITEUR EST ENREGISTRE AVEC CES CINQ CHAMPS SEULS", neuf)
-    v(M.locator("#v-visiteurs .note").count() == 0,
-      "et rien ne lui reproche ce qu'il n'a pas rempli")
+    v(neuf is not None,
+      "LE VISITEUR EST ENREGISTRE AVEC QUATRE CHAMPS, SANS SA LOGE", neuf)
+    # il y a bien une note au bas de la fiche, mais elle explique ce
+    # qu'est un visiteur — elle ne reclame rien.
+    notes = M.inner_text("#v-visiteurs")
+    v("Il manque" not in notes,
+      "et rien ne lui reproche ce qu'il n'a pas rempli",
+      [x for x in notes.split("\n") if "Il manque" in x])
+    v("pas exig" in M.inner_text("#v-visiteurs .sous"),
+      "le sous-titre dit que la Loge n'est pas exigee",
+      M.inner_text("#v-visiteurs .sous"))
+
+    # la note ne parait que si l'un des QUATRE manque, et elle ne
+    # refuse rien : elle dit que la fiche est deja enregistree.
+    M.fill("#v-grade", ""); M.wait_for_timeout(900)
+    note = M.inner_text("#v-visiteurs .note") if M.locator("#v-visiteurs .note").count() else ""
+    v("son grade" in note, "sans le grade, la note le dit", note[:160])
+    v("Loge" not in note, "et ne reclame plus la Loge", note[:160])
+    v("enregistr" in note and "empêche" in note,
+      "en rappelant que la fiche EST enregistree, et que rien n'empeche de l'inscrire",
+      note[:200])
+    M.fill("#v-grade", "Compagnon"); M.wait_for_timeout(900)
 
     # les champs facultatifs le disent, les cinq autres non
     for cle, facultatif in [("prenom", False), ("nom", False), ("grade", False),
-                            ("email", False), ("loge", False),
-                            ("orient", True), ("obedience", True), ("rite", True),
-                            ("tel", True), ("invitePar", True), ("tuilePar", True)]:
+                            ("email", False),
+                            ("loge", True), ("orient", True), ("obedience", True),
+                            ("rite", True), ("tel", True), ("invitePar", True),
+                            ("tuilePar", True)]:
         lab = M.evaluate(
             "() => { const c = document.querySelector('label[for=\"v-" + cle + "\"]');"
             " return c ? c.textContent : null; }")
         dit = lab is not None and "facultatif" in lab
         v(dit == facultatif,
           "le champ " + cle + (" est marque facultatif" if facultatif
-                               else " ne l'est pas : il fait partie des cinq"), lab)
+                               else " ne l'est pas : il fait partie des quatre"), lab)
 
     # == 8. MARQUER VENU SE FAIT D'UN CLIC, DEPUIS LA LISTE ==========
     M.click("#vis-retour"); M.wait_for_timeout(600)

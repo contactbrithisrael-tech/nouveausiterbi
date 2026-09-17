@@ -2806,8 +2806,22 @@ setInterval(majPied, 60000);
    pas. Un visiteur se reçoit avec cinq renseignements — nom, prénom,
    grade, courriel, Loge. L'Orient, l'obédience, le rite, le
    téléphone, qui l'a invité, qui l'a tuilé : tout cela se complète
-   plus tard, ou jamais, et c'est dit. */
-const VIS_ATTENDUS = ['prenom','nom','grade','email','loge'];
+   plus tard, ou jamais, et c'est dit.
+
+   QUATRE, et la Loge n'en fait pas partie : un Frère se présente
+   parfois sans qu'on sache encore de quel Atelier il vient, et ce
+   n'est pas une raison pour ne pas l'inscrire. Elle se complète
+   ensuite, comme le reste.
+
+   Cette liste est LE SEUL ENDROIT où ces quatre champs sont nommes :
+   l'étiquette du champ et la note de la fiche s'en servent toutes
+   deux. Deux listes auraient fini par se contredire — l'une réclamant
+   ce que l'autre disait facultatif. */
+const VIS_ATTENDUS = ['prenom', 'nom', 'grade', 'email'];
+
+const VIS_NOMS = { prenom: 'son prénom', nom: 'son nom',
+                   grade: 'son grade, pour le tuilage',
+                   email: 'son adresse courriel' };
 
 function vChamp(v,cle,label,type,aide){
   const facultatif = !VIS_ATTENDUS.includes(cle);
@@ -2888,24 +2902,28 @@ function listeVisiteurs(){
 }
 
 function ficheVisiteur(v){
-  const manque = [];
-  if (!v.nom || !v.prenom) manque.push('son nom et son prénom');
-  if (!v.grade) manque.push('son grade, pour le tuilage');
-  if (!v.loge) manque.push('sa Loge d’origine');
+  /* Ce qui manque se lit dans la même liste que ce qui est marque
+     facultatif : impossible de réclamer ici ce qui est déclaré
+     facultatif là-bas. */
+  const manque = VIS_ATTENDUS.filter(c => !v[c]).map(c => VIS_NOMS[c]);
   return `
   <div class="bloc"><header><div>
     <button class="btn btn-mini" id="vis-retour" style="margin-bottom:9px">‹ Tous les visiteurs</button>
     <h2>${ech((v.prenom+' '+v.nom).trim()) || 'Nouveau visiteur'}</h2>
     <p class="sous">${v.loge ? ech(v.loge) + (v.obedience ? ' — ' + ech(v.obedience) : '')
-                             : 'Loge et obédience à renseigner.'}</p>
+                             : 'Sa Loge n’est pas renseignée — ce n’est pas exigé.'}</p>
   </div><div class="groupe">
     <button class="btn" id="vis-annuaire">Coller depuis l’annuaire</button>
     <button class="btn" id="imp-visiteur">Imprimer la fiche</button>
     <button class="btn" id="vis-suppr">Retirer</button>
   </div></header>
 
-  ${manque.length?`<div class="note" style="margin-bottom:20px"><b>Il manque ${manque.join(', ')}.</b>
-    Sans le grade et la Loge, le tuilage n’est pas possible.</div>`:''}
+  ${manque.length?`<div class="note" style="margin-bottom:20px"><b>Il manque ${
+    manque.length > 1
+      ? manque.slice(0, -1).join(', ') + ' et ' + manque.at(-1)
+      : manque[0]}.</b>
+    Rien ne vous empêche de l’inscrire ainsi : sa fiche est déjà enregistrée.
+    ${!v.grade ? 'Mais sans son grade, il ne peut pas être tuilé.' : ''}</div>`:''}
 
   <div class="forme">
     <fieldset><legend>Qui</legend><div class="rangee">
@@ -3016,7 +3034,14 @@ document.addEventListener('input', e => {
   const c = el.dataset.v;
   v[c] = (c === 'presentTenue') ? (el.value === '1') : el.value;
   garder();
-  if (['nom','prenom','grade','loge','obedience','presentTenue'].includes(c)){
+  /* Ces champs-là changent ce qui est AFFICHÉ autour d'eux — le titre
+     de la fiche, le sous-titre, la note de ce qui manque. On redessine
+     donc, en remettant le curseur où il était.
+
+     Le courriel y manquait : on le tapait, et la note continuait de
+     réclamer « son adresse courriel » sous les yeux de qui venait de
+     l'écrire. Un reproche périmé se lit comme un reproche. */
+  if ([...VIS_ATTENDUS, 'loge', 'obedience', 'presentTenue'].includes(c)){
     const pos = el.selectionStart; dessiner();
     const r = document.getElementById('v-'+c);
     if (r){ r.focus(); try{ r.setSelectionRange(pos,pos); }catch(err){} }
