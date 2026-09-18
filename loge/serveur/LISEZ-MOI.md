@@ -38,6 +38,7 @@ RBI_PORT=8790 node loge/serveur/faux-serveur.mjs &
 RBI_PORT=8791 RBI_SANS_COMPTES=1 node loge/serveur/faux-serveur.mjs &
 RBI_PORT=8792 node loge/serveur/faux-serveur.mjs &
 RBI_PORT=8793 node loge/serveur/faux-serveur.mjs &
+RBI_PORT=8794 node loge/serveur/faux-serveur.mjs &
 
 RBI_URL=http://127.0.0.1:8787/ python3 loge/serveur/essai-documents.py
 RBI_URL=http://127.0.0.1:8789/ python3 loge/serveur/essai-partage.py
@@ -47,6 +48,7 @@ RBI_URL_AVEC=http://127.0.0.1:8790/ RBI_URL_SANS=http://127.0.0.1:8791/ \
   python3 loge/serveur/essai-mdp.py
 RBI_URL=http://127.0.0.1:8792/ python3 loge/serveur/essai-annuaire.py
 RBI_URL=http://127.0.0.1:8793/ python3 loge/serveur/essai-carnet.py
+RBI_URL=http://127.0.0.1:8794/ python3 loge/serveur/essai-envois.py
 ```
 
 **Chaque suite veut un serveur neuf.** La base est en mémoire : une
@@ -84,6 +86,11 @@ le monde.
   de la Loge. Les réserves de lecture suivent la fiche, une adresse
   illisible n'est pas inscrite comme une adresse, le même carnet versé
   deux fois n'ajoute personne, et ce qu'une main a corrigé l'emporte.
+- **`essai-envois.py`** — la convocation part-elle à TOUS ? Les Amis
+  entrent dans « tout le monde », l'écran annonce la composition, et
+  surtout : le lien `mailto:` est MESURÉ. Au-delà du seuil prudent on
+  prévient et l'on met les adresses au presse-papier, au lieu de
+  laisser la messagerie couper la liste en silence.
 - **`essai-documents.py`** — la qualité et le contreseing du Souverain
   Grand Commandeur sur chaque document, la feuille des Visiteurs sur sa
   page, le point du Temple sur la convocation.

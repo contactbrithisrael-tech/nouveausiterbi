@@ -874,8 +874,9 @@ function vueTenue(){
    ordinaire, et il n'y a pas de raison d'en faire deux. Les deux autres
    restent pour les cas où l'on ne convoque qu'un côté. */
 function blocEnvois(){
-  const mem = destinatairesMembres(), vis = destinatairesVisiteurs();
-  const tous = sansDoublon(mem.concat(vis)).length;
+  const mem = destinatairesMembres(), vis = destinatairesVisiteurs(),
+        ami = destinatairesAmis();
+  const tous = sansDoublon(mem.concat(vis).concat(ami)).length;
   const jour = id => E.envoyes[id];
   const jourV = id => (E.envoyesVisiteurs || {})[id];
   const sansAdresse = convocables().filter(m => !m.email).length
@@ -897,7 +898,16 @@ function blocEnvois(){
           >Les colonnes seules${mem.length?` (${mem.length})`:''}</button>
         <button class="btn" id="mail-visiteurs"${vis.length?'':' disabled'}
           >Les visiteurs seuls${vis.length?` (${vis.length})`:''}</button>
-      </div></header>
+        <button class="btn" id="copier-adresses"${tous?'':' disabled'}
+          title="Pour les coller vous-même en copie cachée"
+          >⧉ Copier les ${tous} adresses</button>
+      </div>
+      <p class="sous" style="margin-top:10px">Le bouton d'or écrit à
+        <b>${mem.length} membre${mem.length>1?'s':''}</b>,
+        <b>${vis.length} visiteur${vis.length>1?'s':''}</b> et
+        <b>${ami.length} Ami${ami.length>1?'s':''} de la Loge</b>
+        — ${tous} adresse${tous>1?'s':''} après retrait des doublons.</p>
+      </header>
       <div class="enveloppe"><table class="tab" id="t-envois"><thead><tr>
         <th>Sœur ou Frère</th><th>Adresse</th><th>Courriel</th></tr></thead>
         <tbody>${convocables().map(m=>`<tr>
@@ -2420,13 +2430,78 @@ function sansDoublon(liste){
 /* Copie cachée, toujours : les destinataires ne se voient pas entre eux,
    et un visiteur d'une autre obédience n'a pas à lire le tableau de nos
    Sœurs et Frères. */
+/* ── CE QU'UN LIEN « mailto: » PEUT PORTER ──────────────────────────
+   Tout part par un lien mailto : le programme n'envoie rien lui-même,
+   il ouvre le logiciel de courrier avec le message déjà écrit. Or ce
+   lien a une longueur, et elle n'est pas infinie — les systèmes
+   coupent au-delà d'un certain point, SANS RIEN DIRE. Un message
+   tronqué, c'est une convocation partie à la moitié des colonnes sans
+   que personne ne s'en aperçoive.
+
+   La convocation elle-même pèse déjà près de 2 400 caractères une
+   fois encodée ; chaque adresse en ajoute environ trente-cinq. À
+   quatre-vingts destinataires, le lien approche les 4 800.
+
+   ON NE DEVINE PAS LA LIMITE DU LOGICIEL DE QUELQU'UN D'AUTRE. On
+   mesure le lien, et au-delà d'un seuil prudent on prévient et l'on
+   propose le chemin sûr : les adresses dans le presse-papier, le
+   message ouvert sans elles, et un collage dans la case « Cci ».
+   Mieux vaut un geste de plus qu'un envoi amputé en silence. */
+const LIEN_PRUDENT = 2000;
+
+function lienCourriel(dest, sujet, corps){
+  return 'mailto:' + encodeURIComponent(COURRIEL_LOGE) +
+    (dest.length ? '?bcc=' + encodeURIComponent(dest.join(',')) + '&' : '?') +
+    'subject=' + encodeURIComponent(sujet) +
+    '&body=' + encodeURIComponent(corps);
+}
+
+/* Rend true si les adresses sont dans le presse-papier. */
+async function copierAdresses(l){
+  const texte = l.join(', ');
+  try {
+    await navigator.clipboard.writeText(texte);
+    return true;
+  } catch (e) {
+    /* Sans presse-papier — un vieux navigateur, une page non sécurisée —
+       on les met à l'écran plutôt que de faire comme si. */
+    prompt('Copiez ces adresses (Ctrl+C ou Cmd+C), puis collez-les en ' +
+           'copie cachée dans votre messagerie :', texte);
+    return false;
+  }
+}
+
 function envoiGroupe(dest, sujet, corps){
   const l = sansDoublon(dest);
   if (!l.length) return 0;
-  window.location.href = 'mailto:' + encodeURIComponent(COURRIEL_LOGE) +
-    '?bcc=' + encodeURIComponent(l.join(',')) +
-    '&subject=' + encodeURIComponent(sujet) +
-    '&body=' + encodeURIComponent(corps);
+
+  const lien = lienCourriel(l, sujet, corps);
+  if (lien.length <= LIEN_PRUDENT){
+    window.location.href = lien;
+    return l.length;
+  }
+
+  /* Trop long pour être porté d'un seul tenant. */
+  const court = lienCourriel([], sujet, corps);
+  const ok = confirm(
+    `${l.length} destinataires : le message est trop long pour être ouvert ` +
+    `d'un seul tenant (${lien.length} caractères, au-delà de ce que les ` +
+    `messageries acceptent sûrement).\n\n` +
+    `Certaines couperaient la liste SANS RIEN DIRE, et une partie des Sœurs ` +
+    `et Frères ne recevrait rien.\n\n` +
+    `• OK : je copie les ${l.length} adresses dans le presse-papier et ` +
+    `j'ouvre le message sans elles. Vous les collez dans la case ` +
+    `« Cci » (copie cachée), et vous envoyez.\n` +
+    `• Annuler : je n'envoie rien.`);
+  if (!ok) return 0;
+
+  copierAdresses(l).then(copie => {
+    window.location.href = court;
+    if (copie) setTimeout(() => alert(
+      `Les ${l.length} adresses sont dans le presse-papier.\n\n` +
+      `Dans votre messagerie : ouvrez la case « Cci » (ou « Bcc »), ` +
+      `collez, et envoyez.`), 900);
+  });
   return l.length;
 }
 </script>
@@ -2456,16 +2531,36 @@ document.addEventListener('click', e => {
     garder(); setTimeout(dessiner, 600); return;
   }
   /* Un seul geste pour les colonnes et pour les visiteurs. */
+  if (b.id === 'copier-adresses'){
+    const l = sansDoublon(destinatairesMembres()
+      .concat(destinatairesVisiteurs()).concat(destinatairesAmis()));
+    if (!l.length){ alert("Aucune adresse courriel n'est renseignée."); return; }
+    copierAdresses(l).then(ok => { if (ok) alert(
+      `Les ${l.length} adresses sont dans le presse-papier, séparées par des ` +
+      `virgules.\n\nCollez-les dans la case « Cci » de votre messagerie.`); });
+    return;
+  }
   if (b.id === 'mail-tous' || b.id === 'mail-membres' || b.id === 'mail-visiteurs'){
     const mem = b.id !== 'mail-visiteurs' ? destinatairesMembres() : [];
     const vis = b.id !== 'mail-membres'   ? destinatairesVisiteurs() : [];
-    if (!mem.length && !vis.length){
+    /* « Tout le monde » comprend les Amis de la Loge. Leur nombre est
+       annoncé sur l'écran et redit ici : on ne met pas
+       quatre-vingt-dix personnes en copie sans que ce soit vu. */
+    const ami = b.id === 'mail-tous' ? destinatairesAmis() : [];
+    if (ami.length && !confirm(
+      `Convoquer ${sansDoublon(mem.concat(vis).concat(ami)).length} personnes ?\n\n` +
+      `• ${mem.length} membre(s) des colonnes\n` +
+      `• ${vis.length} visiteur(s)\n` +
+      `• ${ami.length} Ami(s) de la Loge\n\n` +
+      `L'ordre du jour porte le degré des travaux. Tous le liront.`)) return;
+    if (!mem.length && !vis.length && !ami.length){
       alert("Aucune adresse courriel n'est renseignée.\n\n" +
             "Ouvrez les fiches et saisissez-les : sans adresse, personne ne peut " +
             "être convoqué."); return;
     }
-    const n = envoiGroupe(mem.concat(vis),
+    const n = envoiGroupe(mem.concat(vis).concat(ami),
       'Convocation — Tenue du ' + dateLongue(E.tenue.date), convocationTexte());
+    if (!n) return;
     const jour = new Date().toLocaleDateString('fr-FR');
     if (mem.length) convocables().filter(m => m.email).forEach(m => E.envoyes[m.id] = jour);
     if (vis.length) (E.visiteurs || []).filter(v => v.email)
