@@ -354,6 +354,7 @@ details.replie summary:hover{color:var(--encre)}
   <button role="tab" id="t-tableau" aria-selected="false">Tableau de la Loge</button>
   <button role="tab" id="t-visiteurs" aria-selected="false">Visiteurs</button>
   <button role="tab" id="t-amies" aria-selected="false">Loges amies</button>
+  <button role="tab" id="t-amis" aria-selected="false">Amis de la Loge</button>
   <button role="tab" id="t-convoc" aria-selected="false">Convocation</button>
   <button role="tab" id="t-tenue" aria-selected="false">Réponses &amp; documents</button>
   <button role="tab" id="t-tresor" aria-selected="false">Trésorerie</button>
@@ -372,6 +373,7 @@ details.replie summary:hover{color:var(--encre)}
   <section id="v-fiche" hidden></section>
   <section id="v-visiteurs" hidden></section>
   <section id="v-amies" hidden></section>
+  <section id="v-amis" hidden></section>
   <section id="v-convoc" hidden></section>
   <section id="v-tenue" hidden></section>
   <section id="v-tresor" hidden></section>
@@ -437,6 +439,13 @@ function neuf(){ return {
   membres:[],
   presences:{}, agapes:{}, envoyes:{}, convoquee:false, journal:[], visiteurs:[],
   amies:[], invitationsRecues:[],
+  /* LES AMIS DE LA LOGE. Ni membres, ni visiteurs : des personnes à
+     qui l'Atelier écrit. Elles n'ont ni grade, ni Loge, ni Orient —
+     seulement un nom et une adresse. Les ranger parmi les visiteurs
+     aurait fait entrer au carnet des Visiteurs quatre-vingt-dix
+     personnes qui ne sont jamais venues en tenue, et sur la feuille
+     d'émargement des lignes que personne ne signerait. */
+  amis:[],
   tenue:{
     date:'2026-09-07', heureConv:'17:30', heureOuv:'19:30',
     type:'obligation', titre:"TENUE D'OBLIGATION", degre:1,
@@ -1566,7 +1575,7 @@ function corpsPlanche(){
    résolues ici : vueConvocation est déclarée dans un bloc <script>
    ultérieur, et la nommer directement ferait échouer tout celui-ci. */
 const VUES = {aide:()=>vueAide(), tableau:()=>vueTableau(), fiche:()=>vueFiche(),
-              visiteurs:()=>vueVisiteurs(), amies:()=>vueAmies(),
+              visiteurs:()=>vueVisiteurs(), amies:()=>vueAmies(), amis:()=>vueAmis(),
               convoc:()=>vueConvocation(),
               tenue:()=>vueTenue(), tresor:()=>vueTresor()};
 /* L'onglet en cours est retenu : après un rechargement — ou une
@@ -1574,7 +1583,7 @@ const VUES = {aide:()=>vueAide(), tableau:()=>vueTableau(), fiche:()=>vueFiche()
    non le point de départ. */
 /* À la toute première ouverture, c'est le mode d'emploi qui s'affiche.
    Ensuite, l'écran quitté la fois d'avant. */
-let courante = (E.onglet && ['aide','tableau','fiche','visiteurs','amies','convoc','tenue','tresor'].includes(E.onglet))
+let courante = (E.onglet && ['aide','tableau','fiche','visiteurs','amies','amis','convoc','tenue','tresor'].includes(E.onglet))
              ? E.onglet : 'aide';
 
 /* Le rôle décide de ce qui s'ouvre. Cacher un onglet ne suffit pas :
@@ -2862,6 +2871,88 @@ function vChamp(v,cle,label,type,aide){
 }
 const visiteursDeLaTenue = () => E.visiteurs.filter(v => v.presentTenue);
 
+/* ═══════════════════════════════════════════════════════════════════
+   LES AMIS DE LA LOGE
+
+   Ce sont des personnes à qui l'Atelier écrit, et rien de plus : ni
+   membres, ni visiteurs. Leur fiche ne demande donc qu'un nom et une
+   adresse — leur imposer un grade et une Loge reviendrait à réclamer
+   ce qu'ils n'ont pas à donner.
+
+   Ils NE reçoivent PAS la convocation avec les colonnes. Un ordre du
+   jour porte le degré des travaux et le nom de qui sera initié : cela
+   ne se met pas dans quatre-vingt-dix boîtes aux lettres par
+   distraction. Leur envoi est un bouton à part, et un geste exprès.
+═══════════════════════════════════════════════════════════════════ */
+function aChamp(x, cle, label, type, aide){
+  return `<div class="champ"><label for="f-ami-${cle}">${label}</label>
+    <input id="f-ami-${cle}" type="${type}" data-ami="${cle}" value="${ech(x[cle] ?? '')}">
+    ${aide?`<span class="aide">${aide}</span>`:''}</div>`;
+}
+
+function vueAmis(){
+  const l = E.amis || [];
+  const avec = l.filter(a => a.email).length;
+  const ouvert = E.amiOuvert ? l.find(a => a.id === E.amiOuvert) : null;
+
+  if (ouvert){
+    $('#v-amis').innerHTML = `
+    <div class="bloc"><header><div>
+      <button class="btn btn-mini" id="ami-retour" style="margin-bottom:9px">‹ Tous les Amis</button>
+      <h2>${ech((ouvert.prenom + ' ' + ouvert.nom).trim()) || 'Nouvel Ami'}</h2>
+      <p class="sous">Un Ami de la Loge n'est ni membre ni visiteur : sa fiche ne
+        garde que de quoi lui écrire.</p>
+    </div><div class="groupe">
+      <button class="btn" id="ami-suppr">Retirer</button>
+    </div></header>
+    <div class="forme"><fieldset><legend>Pour lui écrire</legend><div class="rangee">
+      ${aChamp(ouvert,'prenom','Prénom','text')}
+      ${aChamp(ouvert,'nom','Nom','text')}
+      ${aChamp(ouvert,'email','Adresse courriel','email')}
+      ${aChamp(ouvert,'tel','Téléphone — facultatif','tel')}
+    </div>
+    <div class="champ" style="grid-column:1/-1">
+      <label for="f-ami-notes">Note — facultatif</label>
+      <textarea id="f-ami-notes" data-ami="notes" rows="2"
+        style="resize:vertical">${ech(ouvert.notes ?? '')}</textarea>
+    </div></fieldset></div></div>`;
+    return;
+  }
+
+  $('#v-amis').innerHTML = `
+  <div class="bloc"><header><div>
+    <h2>Amis de la Loge</h2>
+    <p class="sous">Les personnes à qui l'Atelier écrit sans qu'elles soient de ses
+      colonnes ni reçues en tenue. <b>Elles ne reçoivent pas la convocation avec les
+      colonnes</b> : leur envoi est un geste à part, ci-dessous.</p>
+  </div><div class="groupe">
+    <button class="btn btn-or" id="ami-nouveau">＋ Nouvel Ami</button>
+    ${avec?`<button class="btn" id="mail-amis">✉ Écrire aux ${avec} Amis</button>`:''}
+  </div></header>
+  ${l.length ? `<div class="tuiles">
+      <div class="tuile souligne"><div class="n">${l.length}</div><div class="l">Amis enregistrés</div></div>
+      <div class="tuile"><div class="n">${avec}</div><div class="l">avec une adresse</div></div>
+      <div class="tuile"><div class="n">${l.length - avec}</div><div class="l">sans adresse — injoignables</div></div>
+    </div>
+    <div class="enveloppe"><table class="tab">
+      <thead><tr><th>Nom</th><th>Adresse courriel</th><th>Téléphone</th><th>Note</th></tr></thead>
+      <tbody>${l.map(a=>`<tr class="cliquable" data-ami-ligne="${a.id}" tabindex="0" role="button"
+          aria-label="Ouvrir la fiche de ${ech(a.prenom)} ${ech(a.nom)}">
+        <td><span class="nom-membre">${ech(a.prenom)} ${ech(a.nom)}</span></td>
+        <td>${a.email?`<span class="qual">${ech(a.email)}</span>`
+                     :`<span class="p p-att">pas d'adresse</span>`}</td>
+        <td><span class="qual">${ech(a.tel||'')}</span></td>
+        <td>${a.notes?`<span class="qual">⚠ ${ech(a.notes)}</span>`:''}</td>
+      </tr>`).join('')}</tbody></table></div>`
+    : `<div class="note"><b>Aucun Ami enregistré.</b> Cliquez sur
+        « ＋ Nouvel Ami », ou chargez un carnet de contacts par
+        « ↑ Charger une sauvegarde ».</div>`}
+  </div>`;
+}
+
+const destinatairesAmis = () =>
+  (E.amis || []).filter(a => a.email).map(a => a.email.trim());
+
 function vueVisiteurs(){
   const ouvert = E.visiteurOuvert ? E.visiteurs.find(v => v.id === E.visiteurOuvert) : null;
   $('#v-visiteurs').innerHTML = ouvert ? ficheVisiteur(ouvert) : listeVisiteurs();
@@ -3062,7 +3153,20 @@ document.addEventListener('keydown', e => {
   }
 });
 document.addEventListener('input', e => {
-  const el = e.target; if (!el.dataset.v) return;
+  const el = e.target;
+  if (el.dataset.ami){
+    const a = (E.amis || []).find(x => x.id === E.amiOuvert); if (!a) return;
+    a[el.dataset.ami] = el.value; garder();
+    /* Le nom s'affiche en titre de la fiche : on redessine, en
+       remettant le curseur où il était. */
+    if (['prenom','nom'].includes(el.dataset.ami)){
+      const pos = el.selectionStart; dessiner();
+      const r = document.getElementById('f-ami-' + el.dataset.ami);
+      if (r){ r.focus(); try { r.setSelectionRange(pos, pos); } catch (err) {} }
+    }
+    return;
+  }
+  if (!el.dataset.v) return;
   const v = E.visiteurs.find(x => x.id === E.visiteurOuvert); if (!v) return;
   const c = el.dataset.v;
   v[c] = (c === 'presentTenue') ? (el.value === '1') : el.value;
@@ -3224,6 +3328,42 @@ function lireAnnuaire(texte){ return lireSelon(texte, CHAMPS_ANNUAIRE); }
 document.addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
 
+  /* ── Les Amis de la Loge ─────────────────────────────────────── */
+  const ligneAmi = e.target.closest('tr[data-ami-ligne]');
+  if (ligneAmi && !e.target.closest('button')){
+    E.amiOuvert = +ligneAmi.dataset.amiLigne; courante = 'amis'; dessiner(); return;
+  }
+  if (b.id === 'ami-nouveau'){
+    E.amis = E.amis || [];
+    const id = Math.max(0, ...E.amis.map(a => a.id)) + 1;
+    E.amis.push({ id, prenom:'', nom:'', email:'', tel:'', notes:'' });
+    E.amiOuvert = id; courante = 'amis'; garder(); dessiner();
+    setTimeout(() => document.getElementById('f-ami-prenom')?.focus(), 0); return;
+  }
+  if (b.id === 'ami-retour'){ E.amiOuvert = null; dessiner(); return; }
+  if (b.id === 'ami-suppr'){
+    const a = (E.amis || []).find(x => x.id === E.amiOuvert); if (!a) return;
+    if (!confirm(`Retirer ${(a.prenom + ' ' + a.nom).trim() || 'cet Ami'} du carnet ?`)) return;
+    E.amis = E.amis.filter(x => x.id !== E.amiOuvert);
+    E.amiOuvert = null; garder(); dessiner(); return;
+  }
+  /* L'envoi aux Amis est SÉPARÉ de la convocation, et il le dit. Un
+     ordre du jour porte le degré des travaux et le nom de qui sera
+     initié : cela ne part pas dans quatre-vingt-dix boîtes aux lettres
+     parce qu'on a cliqué sur le bouton d'à côté. */
+  if (b.id === 'mail-amis'){
+    const dest = destinatairesAmis();
+    if (!dest.length){ alert("Aucun Ami n'a d'adresse courriel."); return; }
+    const sujet = prompt(
+      "Objet du courriel aux " + dest.length + " Amis de la Loge :",
+      "Nouvelles de la R∴L∴ Bereshit n°00");
+    if (sujet === null) return;
+    envoiGroupe(dest, sujet,
+      "Mes Sœurs, mes Frères,\n\n\n\nFraternellement,\n" +
+      "Pour la R∴L∴ Bereshit n°00 — " + COURRIEL_LOGE);
+    return;
+  }
+
   if (b.dataset.attendu !== undefined){
     const v = E.visiteurs.find(x => x.id === +b.dataset.attendu);
     if (v){ v.presentTenue = !v.presentTenue; garder(); dessiner(); }
@@ -3379,6 +3519,7 @@ async function sauvegarder(){
 function chargerCarnet(paquet){
   const vis = Array.isArray(paquet.visiteurs) ? paquet.visiteurs : [];
   const ami = Array.isArray(paquet.amies) ? paquet.amies : [];
+  const per = Array.isArray(paquet.amis) ? paquet.amis : [];
   const meme = (a, b) => !!a && !!b &&
     String(a).trim().toLowerCase() === String(b).trim().toLowerCase();
 
@@ -3420,7 +3561,36 @@ function chargerCarnet(paquet){
     }, a, { id: Math.max(0, ...E.amies.map(x => x.id)) + 1 }));
     na++;
   }
-  return { nv, cv, na, ca };
+  let np = 0, cp = 0;
+  E.amis = E.amis || [];
+  for (const a of per){
+    const dej = E.amis.find(x => meme(x.email, a.email)) ||
+                (!a.email ? E.amis.find(x =>
+                   meme(x.nom, a.nom) && meme(x.prenom, a.prenom)) : null);
+    if (dej){
+      let touche = false;
+      for (const [k, val] of Object.entries(a))
+        if (val && !dej[k]){ dej[k] = val; touche = true; }
+      if (touche) cp++;
+      continue;
+    }
+    const id = Math.max(0, ...E.amis.map(x => x.id)) + 1;
+    E.amis.push(Object.assign(
+      { id, prenom:'', nom:'', email:'', tel:'', notes:'' }, a, { id }));
+    np++;
+  }
+
+  /* Un carnet peut porter des RÉGLAGES de l'Atelier — la mention du bas
+     de la convocation, par exemple. Ils vont dans le registre, jamais
+     dans le programme : un numéro de téléphone n'a rien à faire dans un
+     fichier servi en clair sur le site. */
+  let reglages = 0;
+  if (paquet.reglages && typeof paquet.reglages === 'object'){
+    for (const [k, val] of Object.entries(paquet.reglages))
+      if (typeof val === 'string' && k in E.tenue){ E.tenue[k] = val; reglages++; }
+  }
+
+  return { nv, cv, na, ca, np, cp, reglages };
 }
 
 function restaurer(fichier){
@@ -3432,10 +3602,11 @@ function restaurer(fichier){
 
     /* Un carnet de contacts : il s'AJOUTE, et l'on dit quoi avant. */
     if (paquet && paquet._format === 'carnet-loge-rbi'){
-      const nv = (paquet.visiteurs || []).length, na = (paquet.amies || []).length;
+      const nv = (paquet.visiteurs || []).length, na = (paquet.amies || []).length,
+            np = (paquet.amis || []).length;
       if (!confirm(
         `Ajouter ce carnet à ce qui est déjà enregistré ?\n\n` +
-        `${nv} visiteur(s) et ${na} Loge(s) amie(s).\n` +
+        `${nv} visiteur(s), ${na} Loge(s) amie(s), ${np} Ami(s) de la Loge.\n` +
         (paquet._origine ? `Origine : ${paquet._origine}\n` : '') +
         `\nRIEN NE SERA EFFACÉ. Ceux qui sont déjà au carnet seront ` +
         `complétés de ce qui leur manque, jamais remplacés.`)) return;
@@ -3444,7 +3615,9 @@ function restaurer(fichier){
       garder(); dessiner();
       alert(`Carnet versé.\n\n` +
         `Visiteurs : ${b.nv} ajouté(s), ${b.cv} complété(s).\n` +
-        `Loges amies : ${b.na} ajoutée(s), ${b.ca} complétée(s).` +
+        `Loges amies : ${b.na} ajoutée(s), ${b.ca} complétée(s).\n` +
+        `Amis de la Loge : ${b.np} ajouté(s), ${b.cp} complété(s).` +
+        (b.reglages ? `\n\nLa mention du bas de la convocation a été mise à jour.` : '') +
         (paquet._reserves ? `\n\n${paquet._reserves}` : ''));
       return;
     }
@@ -3910,7 +4083,7 @@ function annoncerConflit(corps, entete){
     secretariat: {
       empreinte: 'de1663174e975618bd025f7e5be803a238cc6c0fc6201586cdb34ee3a6339079',
       libelle: 'Secrétariat',
-      onglets: ['aide','tableau','visiteurs','amies','convoc','tenue'],
+      onglets: ['aide','tableau','visiteurs','amies','amis','convoc','tenue'],
       depart: 'aide'
     },
     tresorerie: {

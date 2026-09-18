@@ -48,6 +48,13 @@ CARNET = {
         {"nom": "L EXEMPLE", "notes": "Relevee au tableur."},
         {"nom": "L SECONDE", "notes": "Relevee au tableur."},
     ],
+    "amis": [
+        {"nom": "RAHAMIM", "prenom": "Tikva", "email": "tikva@exemple.test",
+         "tel": "06 00 00 00 44"},
+        {"nom": "SHALOM", "prenom": "Ora", "email": "", "tel": "",
+         "notes": "Aucune adresse courriel dans le document : injoignable."},
+    ],
+    "reglages": {"motFin": "Mention d'epreuve, avec un numero au 06 00 00 00 00."},
 }
 
 with sync_playwright() as b0:
@@ -97,6 +104,20 @@ with sync_playwright() as b0:
       pg.evaluate("E.visiteurs.length"))
     v(pg.evaluate("E.amies.length") >= 2, "et les deux Loges amies",
       pg.evaluate("E.amies.length"))
+    v(pg.evaluate("(E.amis||[]).length") == 2,
+      "ET LES DEUX AMIS DE LA LOGE : ni membres, ni visiteurs",
+      pg.evaluate("(E.amis||[]).length"))
+    v(pg.evaluate("E.visiteurs.some(v=>v.nom==='RAHAMIM')") is False,
+      "un Ami n'entre PAS au carnet des visiteurs : il n'est jamais venu en tenue")
+
+    # == LES REGLAGES VONT AU REGISTRE, PAS AU PROGRAMME ============
+    v("06 00 00 00 00" in pg.evaluate("E.tenue.motFin"),
+      "LE CARNET PEUT PORTER LA MENTION DU BAS DE CONVOCATION, "
+      "numero compris — elle vit dans le registre",
+      pg.evaluate("E.tenue.motFin"))
+    v("06 00 00 00 00" not in pg.evaluate("document.documentElement.outerHTML")
+      .replace(pg.evaluate("E.tenue.motFin"), ""),
+      "et ce numero n'est nulle part dans le programme lui-meme")
 
     bilan = dialogues[-1] if dialogues else ''
     v("3 ajout" in bilan.replace("\u00e9",""), 
