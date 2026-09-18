@@ -18,6 +18,19 @@ db.exec(fs.readFileSync(RACINE + 'loge/serveur/002-annuaire.sql', 'utf8'));
 db.exec(fs.readFileSync(RACINE + 'loge/serveur/003-envois.sql', 'utf8'));
 db.exec(fs.readFileSync(RACINE + 'loge/serveur/004-reponses.sql', 'utf8'));
 
+/* RBI_JETONS_MUETS reproduit la panne la plus traître de la chaîne :
+   l'écriture des jetons de réponse ÉCHOUE SANS RIEN DIRE. L'INSERT
+   rend la main comme s'il avait posé la ligne, le courriel part avec
+   un lien que rien ne connaît, et cent personnes tombent sur « ce
+   lien ne mène nulle part » en croyant que c'est leur messagerie.
+   Le déclencheur ci-dessous avale les insertions exactement comme le
+   ferait une base où 004-reponses.sql n'aurait jamais été joué en
+   entier. */
+if (process.env.RBI_JETONS_MUETS){
+  db.exec(`CREATE TRIGGER reponses_muettes BEFORE INSERT ON reponses
+           BEGIN SELECT RAISE(IGNORE); END;`);
+}
+
 /* RBI_SANS_COMPTES reproduit la panne du premier soir : le serveur
    répond, la base est en place, mais la table des utilisateurs est
    vide — et le serveur refuse alors TOUT LE MONDE. C'est le cas que

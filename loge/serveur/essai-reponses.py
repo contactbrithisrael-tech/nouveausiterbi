@@ -266,6 +266,32 @@ with sync_playwright() as pw:
     v(pg.evaluate("E.agapesVisiteurs[E.visiteurs.find(x=>x.nom==='TSEDEK').id]") is False,
       "UNE CORRECTION DE LA SECRETAIRE N'EST PAS ECRASEE au releve suivant")
 
+    # == 5. DEUX PANNES, DEUX TEXTES ================================
+    # « Peut-etre coupe par votre messagerie » servait pour les deux :
+    # un lien tronque, que la personne peut reparer, et un lien entier
+    # que le registre ne connait pas, qu'elle ne peut pas reparer. On
+    # l'envoyait chercher un lien qui n'aurait pas mieux marche.
+    pc = b.new_context().new_page()
+    pc.goto(U + "reponse.html?j=abc123"); pc.wait_for_timeout(1300)
+    v("coup" in pc.inner_text("#perdu-titre").lower(),
+      "UN LIEN TRONQUE EST ANNONCE COMME TRONQUE", pc.inner_text("#perdu-titre"))
+    v("6 caract" in pc.inner_text("#perdu-code"),
+      "et l'on dit ce qu'il en manque", pc.inner_text("#perdu-code"))
+    pc.close()
+
+    pi = b.new_context().new_page()
+    pi.goto(U + "reponse.html?j=" + "f" * 64); pi.wait_for_timeout(1300)
+    v("reconnu" in pi.inner_text("#perdu-titre").lower(),
+      "UN LIEN ENTIER QUE LE REGISTRE IGNORE EST ANNONCE AUTREMENT",
+      pi.inner_text("#perdu-titre"))
+    v("de votre fait" in pi.inner_text("#perdu-quoi"),
+      "et l'on ne renvoie pas la personne reparer ce qui n'est pas d'elle",
+      pi.inner_text("#perdu-quoi")[:120])
+    v("@" not in pi.inner_text("#perdu-code") and "404" in pi.inner_text("#perdu-code"),
+      "le code donne la cause sans rien livrer du registre",
+      pi.inner_text("#perdu-code"))
+    pi.close()
+
     v(not errs, "aucune erreur JavaScript", errs)
     b.close()
 

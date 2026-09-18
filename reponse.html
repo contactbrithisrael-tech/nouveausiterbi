@@ -82,12 +82,16 @@ a.btn{text-decoration:none;display:block}
 
   <div id="charge" class="charge">Un instant…</div>
 
+  <!-- Deux pannes différentes, deux textes différents. « Peut-être
+       coupé par votre messagerie » était une DEVINETTE : on la servait
+       aussi bien à un lien tronqué qu'à un lien entier que le registre
+       ne connaît pas. Le premier, la personne peut le réparer ; le
+       second, non — et le dire aide la Secrétaire à comprendre. -->
   <div id="perdu" class="carte" hidden>
-    <h1>Ce lien ne mène nulle part</h1>
-    <p class="sous" style="margin:12px 0 0">Il a peut-être été coupé en deux par
-      votre messagerie. Ouvrez le courriel de la convocation et touchez le lien
-      entier, ou répondez simplement à ce courriel : votre réponse sera
-      enregistrée à la main.</p>
+    <h1 id="perdu-titre">Ce lien ne mène nulle part</h1>
+    <p class="sous" id="perdu-quoi" style="margin:12px 0 0"></p>
+    <p class="sous" id="perdu-code" style="margin:16px 0 0;font-size:12px;
+       color:var(--encre-3);opacity:.8"></p>
   </div>
 
   <div id="tout" hidden>
@@ -183,12 +187,43 @@ function dire(texte, mal){
   z.hidden = !texte;
 }
 
+function perdu(titre, quoi, code){
+  $('#charge').hidden = true;
+  $('#perdu-titre').textContent = titre;
+  $('#perdu-quoi').textContent = quoi;
+  $('#perdu-code').textContent = code;
+  $('#perdu').hidden = false;
+}
+
 async function ouvrir(){
-  if (!/^[a-f0-9]{64}$/.test(JETON)){ $('#charge').hidden = true; $('#perdu').hidden = false; return; }
+  /* Le lien est-il ENTIER ? On le sait sans rien demander à personne :
+     un jeton fait soixante-quatre caractères, de 0 à f. Ce qui n'a pas
+     cette forme a été coupé, recollé, ou tapé à la main. */
+  if (!/^[a-f0-9]{64}$/.test(JETON)){
+    perdu('Ce lien a été coupé',
+      'Il manque une partie de l’adresse : votre messagerie l’a sans doute ' +
+      'coupée en deux. Ouvrez le courriel de la convocation et touchez le ' +
+      'lien entier, ou répondez simplement à ce courriel : votre réponse ' +
+      'sera enregistrée à la main.',
+      'lien incomplet — ' + JETON.length + ' caractères sur 64');
+    return;
+  }
   let r;
   try { r = await fetch('/api/reponse?j=' + encodeURIComponent(JETON)); }
   catch (e){ $('#charge').textContent = 'Pas de réseau. Réessayez dans un instant.'; return; }
-  if (!r.ok){ $('#charge').hidden = true; $('#perdu').hidden = false; return; }
+  /* Le lien est entier, et le registre ne le connaît pas. Ce n'est
+     alors pas à la personne de réparer quoi que ce soit : on le dit,
+     plutôt que de l'envoyer chercher un lien qui ne marchera pas
+     davantage. */
+  if (!r.ok){
+    perdu('Ce lien n’est pas reconnu',
+      'L’adresse est complète, mais notre registre ne la connaît pas. ' +
+      'Ce n’est pas de votre fait — il n’y a rien à réessayer. Répondez ' +
+      'simplement à ce courriel : votre réponse sera enregistrée à la main, ' +
+      'et le Secrétariat sera prévenu.',
+      'lien entier, inconnu du registre (' + r.status + ')');
+    return;
+  }
   const d = await r.json();
 
   $('#nom').textContent = d.nom || 'Vous';

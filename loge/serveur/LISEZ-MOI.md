@@ -51,6 +51,8 @@ RBI_PORT=8798 RBI_COURRIEL=1 node loge/serveur/faux-serveur.mjs &
 RBI_PORT=8799 RBI_COURRIEL=1 node loge/serveur/faux-serveur.mjs &
 RBI_PORT=8800 node loge/serveur/faux-serveur.mjs &
 RBI_PORT=8801 node loge/serveur/faux-serveur.mjs &
+RBI_PORT=8802 RBI_COURRIEL=1 RBI_JETONS_MUETS=1 \
+  node loge/serveur/faux-serveur.mjs &   # l'ecriture des jetons echoue en silence
 
 RBI_URL=http://127.0.0.1:8787/ python3 loge/serveur/essai-documents.py
 RBI_URL=http://127.0.0.1:8789/ python3 loge/serveur/essai-partage.py
