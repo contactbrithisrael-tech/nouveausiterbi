@@ -24,6 +24,29 @@ import { json } from './_commun.js';
 
 const REPONSES = ['present', 'excuse'];
 
+/* ── LE LIEN OÙ L'ON RÈGLE SA PART ─────────────────────────────────
+   Il est utile à l'instant précis où quelqu'un vient de dire qu'il
+   reste à table — pas trois écrans plus loin, pas dans un courriel
+   qu'il faudra retrouver.
+
+   On le tire du registre de l'Atelier, et on ne rend QUE lui. Le
+   registre porte le Tableau, les adresses, les présences : rien de
+   cela ne doit sortir par cette route, qui s'ouvre sans compte. Une
+   adresse web publique, et rien d'autre. */
+async function lienDePaiement(context, jeton){
+  try {
+    const r = await context.env.DB.prepare(
+      'SELECT donnees FROM etat WHERE loge_id = ' +
+      '(SELECT loge_id FROM reponses WHERE jeton = ?)').bind(jeton).first();
+    if (!r) return null;
+    const lien = JSON.parse(r.donnees)?.tenue?.agapesPaiement;
+    if (typeof lien !== 'string') return null;
+    /* Seulement une adresse web en clair : ni « javascript: », ni
+       « data: », qui feraient de ce bouton autre chose qu'un lien. */
+    return /^https:\/\/[^\s"'<>]+$/.test(lien.trim()) ? lien.trim() : null;
+  } catch (e) { return null; }
+}
+
 /* On répond peu, et lentement : ce qui sort d'ici ne doit pas servir à
    deviner un jeton. Une réponse identique pour un jeton faux et pour un
    jeton périmé n'apprend rien à qui essaie au hasard. */
@@ -57,6 +80,7 @@ export async function onRequestGet(context){
     nom: r.nom || '', tenue: r.tenue, qualite: r.qui_type,
     reponse: r.reponse || null,
     agapes: r.agapes === null || r.agapes === undefined ? null : !!r.agapes,
+    paiement: await lienDePaiement(context, j),
     loge: loge ? { nom: loge.nom, numero: loge.numero, orient: loge.orient } : null
   });
 }
@@ -86,5 +110,6 @@ export async function onRequestPost(context){
 
   const r = await ligne(context, j);
   return json({ enregistre: true, nom: r.nom || '', tenue: r.tenue,
-                reponse: r.reponse, agapes: !!r.agapes });
+                reponse: r.reponse, agapes: !!r.agapes,
+                paiement: await lienDePaiement(context, j) });
 }
