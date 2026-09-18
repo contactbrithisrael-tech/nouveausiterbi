@@ -59,9 +59,21 @@ MESURE = """() => {
   return sortie;
 }"""
 
+# L'ECRAN DE L'APPLICATION EST SOMBRE, LE PAPIER EST BLANC.
+#
+# On mesure donc dans LES DEUX THEMES. La premiere version de cette
+# epreuve ne mesurait qu'en clair, et laissait passer le pire defaut
+# du programme : sans doctype, le navigateur tourne en mode quirks, ou
+# les TABLEAUX N'HERITENT PAS de la couleur de leur parent. L'en-tete
+# et l'ordre du jour, qui sont des tableaux, s'ecrivaient en ivoire sur
+# blanc pour qui regardait en mode sombre — 1,2 pour 1. On a longtemps
+# cru a des couleurs trop pales ; c'etait une ligne manquante.
+THEME = os.environ.get("RBI_THEME", "light")
+
 with sync_playwright() as pw:
     b = pw.chromium.launch(executable_path="/opt/pw-browsers/chromium")
-    pg = b.new_context(viewport={"width": 1280, "height": 1000}).new_page()
+    pg = b.new_context(viewport={"width": 1280, "height": 1000},
+                       color_scheme=THEME).new_page()
     errs = []
     pg.on("pageerror", lambda e: errs.append(str(e)))
     dlg = []
@@ -76,6 +88,15 @@ with sync_playwright() as pw:
     # == 1. L'ENCRE ==================================================
     pg.click("#t-convoc"); pg.wait_for_timeout(700)
     pg.click("#imp-convoc"); pg.wait_for_timeout(900)
+    v(pg.evaluate("document.compatMode") == "CSS1Compat",
+      "LE PROGRAMME EST EN MODE STANDARD, non en mode quirks : sans quoi "
+      "les tableaux des documents prennent la couleur du body",
+      pg.evaluate("document.compatMode"))
+    v(pg.evaluate("getComputedStyle(document.querySelector('.papier table')).color")
+      == "rgb(20, 17, 12)",
+      "et les tableaux du papier portent l'encre du papier, non celle de l'ecran",
+      pg.evaluate("getComputedStyle(document.querySelector('.papier table')).color"))
+
     mesures = pg.evaluate(MESURE)
     v(len(mesures) >= 15, "la convocation porte bien du texte a mesurer", len(mesures))
     pales = [m for m in mesures if m["ratio"] < 7]
@@ -181,4 +202,4 @@ with sync_playwright() as pw:
     v(not errs, "aucune erreur JavaScript", errs)
     b.close()
 
-print(f"\n  {len(ko)} echec(s)" if ko else "\n  tout passe")
+print(f"\n  [{THEME}] {len(ko)} echec(s)" if ko else f"\n  [{THEME}] tout passe")

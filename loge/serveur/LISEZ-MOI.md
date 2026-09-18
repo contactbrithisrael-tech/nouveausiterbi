@@ -63,10 +63,16 @@ RBI_URL=http://127.0.0.1:8793/ python3 loge/serveur/essai-carnet.py
 RBI_URL=http://127.0.0.1:8794/ python3 loge/serveur/essai-envois.py
 python3 loge/serveur/essai-poste.py
 RBI_URL=http://127.0.0.1:8798/ python3 loge/serveur/essai-reponses.py
-RBI_URL=http://127.0.0.1:8799/ python3 loge/serveur/essai-pdf.py
+RBI_URL=http://127.0.0.1:8799/ RBI_THEME=light python3 loge/serveur/essai-pdf.py
+RBI_URL=http://127.0.0.1:8799/ RBI_THEME=dark  python3 loge/serveur/essai-pdf.py
 RBI_URL=http://127.0.0.1:8800/ python3 loge/serveur/essai-tuilage.py
 RBI_URL=http://127.0.0.1:8801/ python3 loge/serveur/essai-odj.py
 ```
+
+`essai-pdf` se joue DEUX FOIS, en clair et en sombre. L'application est
+sombre, les documents s'impriment sur papier blanc : un défaut de
+couleur peut n'exister que dans l'un des deux thèmes, et c'est ainsi
+qu'on a laissé passer des tableaux écrits en ivoire sur blanc.
 
 Chaque épreuve veut un serveur NEUF : `essai-mdp` change un mot de
 passe, `essai-annuaire` consomme les fiches en attente. Les rejouer
