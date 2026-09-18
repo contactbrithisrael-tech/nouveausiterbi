@@ -15,6 +15,7 @@ const PORT = Number(process.env.RBI_PORT || 8787);
 const db = new DatabaseSync(':memory:');
 db.exec(fs.readFileSync(RACINE + 'loge/serveur/001-socle-en-ligne.sql', 'utf8'));
 db.exec(fs.readFileSync(RACINE + 'loge/serveur/002-annuaire.sql', 'utf8'));
+db.exec(fs.readFileSync(RACINE + 'loge/serveur/003-envois.sql', 'utf8'));
 
 /* RBI_SANS_COMPTES reproduit la panne du premier soir : le serveur
    répond, la base est en place, mais la table des utilisateurs est
@@ -35,6 +36,29 @@ db.exec(`INSERT INTO utilisateurs (loge_id, courriel, nom, charge, mdp_hash, mdp
 (1,'tresorerie@epreuve.test','Frère Trésorier d’épreuve','tresorerie','b031d6c36d967c5c76b0976d2b0884e5a92ab94aa45219a7e944e58ebccd311f','32c92cf1e3e315596c33adab03b97b8b');`);
 }
 
+/* ── UN FAUX SERVICE DE COURRIER ───────────────────────────────────
+   On n'écrit à personne pendant une épreuve. Les appels vers Brevo et
+   Resend sont interceptés ici, et l'on garde ce qui LEUR AURAIT ÉTÉ
+   remis : c'est cela qu'on vérifie — la liste, le sujet, le corps.
+
+   RBI_COURRIEL_ECHEC=1 leur fait répondre une erreur, pour éprouver ce
+   que le programme fait quand le service refuse. */
+const vraiFetch = globalThis.fetch;
+globalThis.__courriels = [];
+globalThis.fetch = async (url, options) => {
+  const u = String(url);
+  if (u.includes('api.brevo.com') || u.includes('api.resend.com')){
+    let corps = null;
+    try { corps = JSON.parse(options && options.body); } catch (e) {}
+    globalThis.__courriels.push({ service: u.includes('brevo') ? 'brevo' : 'resend',
+                                  corps });
+    if (process.env.RBI_COURRIEL_ECHEC)
+      return new Response('{"message":"cle refusee"}', { status: 401 });
+    return new Response('{"messageId":"epreuve"}', { status: 201 });
+  }
+  return vraiFetch(url, options);
+};
+
 const DB = { prepare(sql){ return {
   _a: [], bind(...a){ this._a = a; return this; },
   async first(){ return db.prepare(sql).get(...this._a) ?? null; },
@@ -47,6 +71,7 @@ const F = {
   porte:  await import(RACINE + 'functions/api/porte.js'),
   mdp:    await import(RACINE + 'functions/api/mdp.js'),
   annuaire: await import(RACINE + 'functions/api/annuaire.js'),
+  envoyer:  await import(RACINE + 'functions/api/envoyer.js'),
   sortir: await import(RACINE + 'functions/api/sortir.js'),
   etat:   await import(RACINE + 'functions/api/etat.js'),
 };
@@ -63,7 +88,17 @@ createServer(async (req, res) => {
     res.writeHead(200, {'content-type':'text/html; charset=utf-8'});
     return res.end(fs.readFileSync(RACINE + 'espace-membres.html'));
   }
-  const m = u.pathname.match(/^\/api\/(entrer|sortir|etat|porte|mdp|annuaire)$/);
+  /* Ce que le faux service a reçu — pour l'épreuve seulement. */
+  if (u.pathname === '/__courriels'){
+    res.writeHead(200, {'content-type':'application/json'});
+    return res.end(JSON.stringify(globalThis.__courriels));
+  }
+  if (u.pathname === '/__courriels/vider'){
+    globalThis.__courriels = [];
+    res.writeHead(200, {'content-type':'application/json'});
+    return res.end('[]');
+  }
+  const m = u.pathname.match(/^\/api\/(entrer|sortir|etat|porte|mdp|annuaire|envoyer)$/);
   if (!m){ res.writeHead(404); return res.end('non'); }
 
   const corps = await new Promise(ok => { let d=''; req.on('data',c=>d+=c); req.on('end',()=>ok(d)); });
@@ -72,12 +107,21 @@ createServer(async (req, res) => {
     headers: { cookie: req.headers.cookie || '', 'content-type': 'application/json' },
     body: ['GET','HEAD'].includes(req.method) ? undefined : (corps || undefined)
   });
+  /* Un faux service de courrier, pour éprouver l'envoi sans écrire à
+     personne. RBI_COURRIEL=1 le branche ; sinon la fonction se
+     comporte comme sur un site non configuré. */
+  const env = { DB };
+  if (process.env.RBI_COURRIEL){
+    env.BREVO_CLE = 'cle-d-epreuve';
+    env.COURRIEL_EXPEDITEUR = 'epreuve@exemple.test';
+    env.COURRIEL_NOM = 'Atelier d’épreuve';
+  }
   const mod = F[m[1]];
   const fn = req.method === 'GET' ? mod.onRequestGet
            : req.method === 'PUT' ? mod.onRequestPut : mod.onRequestPost;
   if (!fn){ res.writeHead(405); return res.end(); }
   try {
-    const r = await fn({ env: { DB }, request: requete });
+    const r = await fn({ env, request: requete });
     const h = {}; r.headers.forEach((v,k) => h[k] = v);
     if (h['set-cookie']) h['set-cookie'] = h['set-cookie'].replace('; Secure','');
     res.writeHead(r.status, h);
