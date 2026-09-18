@@ -1,3 +1,13 @@
+<!doctype html>
+<!-- SANS CETTE LIGNE, le navigateur tourne en « mode quirks » — une
+     compatibilité héritée des années 1990 où les TABLEAUX N'HÉRITENT
+     PAS de la couleur de leur parent : ils prennent celle du body.
+
+     L'application est sombre, les documents s'impriment sur papier
+     blanc. L'en-tête et l'ordre du jour, qui sont des tableaux,
+     s'écrivaient donc en ivoire sur blanc — 1,2 pour 1, illisible —
+     pour qui regarde en mode sombre. On a longtemps cru à un choix de
+     couleurs trop pâle ; c'était une ligne manquante. -->
 <meta charset="utf-8">
 <title>Bêta Bereshit</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -167,7 +177,11 @@ tr.cliquable{cursor:pointer}
 .papier .ent .c{font-family:var(--titre);font-size:10pt;margin-top:1.5mm}
 .papier .ent .a{font-family:var(--titre);font-size:10.5pt;margin-top:2mm}
 .papier .ent .o{font-size:8.5pt;font-style:italic;color:#3b3427}
-.papier table{width:100%;border-collapse:collapse;margin-top:4mm}
+/* La couleur est RÉPÉTÉE sur les tableaux, et ce n'est pas une
+   redondance : si le doctype venait à disparaître d'une copie de ce
+   fichier, l'en-tête redeviendrait invisible en mode sombre sans que
+   rien ne le signale. Deux lignes valent mieux qu'un défaut muet. */
+.papier table{width:100%;border-collapse:collapse;margin-top:4mm;color:#14110c}
 .papier th{text-align:left;font-family:var(--sans);font-size:8pt;
            letter-spacing:.06em;text-transform:uppercase;color:#3b3427;
            border-bottom:.6pt solid #8c7b33;padding:2mm 1mm}
@@ -907,7 +921,29 @@ function minutesDe(h){
   return heures * 60 + min;
 }
 
-/* Rend le nombre de lignes déplacées — zéro si rien ne bougeait. */
+/* CE QU'ON LIT EST RANGÉ, CE QU'ON SAISIT NE BOUGE PAS.
+
+   Les documents — l'écran de la Tenue, la convocation, le courriel —
+   affichent l'ordre du jour rangé par l'heure. Le formulaire, lui,
+   garde l'ordre de saisie : sans quoi la ligne partirait ailleurs
+   pendant qu'on tape son horaire.
+
+   Cette fonction ne touche donc PAS au registre. Elle rend une copie
+   rangée ; « Ranger par l'heure » reste là pour qui veut aussi mettre
+   le formulaire en ordre. */
+function odjRange(){
+  const l = (E.odj || []).slice();
+  const rangs = [], horodatees = [];
+  l.forEach((o, i) => {
+    if (minutesDe(o.h) !== null){ rangs.push(i); horodatees.push(o); }
+  });
+  horodatees.sort((a, b) => minutesDe(a.h) - minutesDe(b.h));
+  rangs.forEach((rang, k) => { l[rang] = horodatees[k]; });
+  return l;
+}
+
+/* Range le registre lui-même. Rend le nombre de lignes déplacées —
+   zéro si rien ne bougeait. */
 function rangerOdj(){
   const rangs = [], horodatees = [];
   (E.odj || []).forEach((o, i) => {
@@ -959,7 +995,7 @@ function vueTenue(){
       <div class="tuile"><div class="n">${auxAgapesTous()}</div><div class="l">Aux agapes · ${euro(auxAgapesTous()*(E.tenue.agapesPrix||0))}</div></div>
     </div></div>
     <div class="bloc"><header><div><h2>Ordre du jour</h2></div></header>
-      <ul class="odj">${E.odj.map(o=>`<li><span class="h">${o.h||'—'}</span><span>${ech(o.t)}</span></li>`).join('')}</ul>
+      <ul class="odj">${odjRange().map(o=>`<li><span class="h">${o.h||'—'}</span><span>${ech(o.t)}</span></li>`).join('')}</ul>
     </div>
     <div class="bloc"><header><div><h2>Réponses</h2>
       <p class="sous">Chaque convocation porte un lien propre à son destinataire :
@@ -1621,7 +1657,12 @@ function emargement(){
    d'installation. Les Visiteurs annoncés y sont pré-inscrits ; s'ils
    sont plus nombreux, le tableau s'allonge de lui-même — et c'est
    alors la seule raison légitime de passer à une page de plus. */
-const LIGNES_VISITEURS = 16;
+/* Treize, et non seize : le doctype a fait passer le programme du mode
+   quirks au mode standard, où la même feuille occupe un peu plus de
+   hauteur. Seize lignes débordaient sur une troisième page — et une
+   troisième page qui ne porte que quatre traits est une feuille
+   perdue à chaque tenue. Mesuré : treize tient, quatorze déborde. */
+const LIGNES_VISITEURS = 13;
 
 function emargementVisiteurs(){
   const vus = visiteursDeLaTenue();
@@ -1955,9 +1996,11 @@ function vueConvocation(){
     <p class="aide" id="echo-date" style="margin-top:9px">${relireDate(T.date)}</p></fieldset>
 
     <fieldset><legend>2. Ordre du jour</legend>
-      <p class="aide" style="margin:0 0 11px">Les lignes s'impriment dans l'ordre
-        où elles sont ici. Une ligne ajoutée après coup se retrouve en bas —
-        « Ranger par l'heure » les remet dans l'ordre du temps.</p>
+      <p class="aide" style="margin:0 0 11px"><b>La convocation range d'elle-même
+        les lignes par l'heure</b> — celles qui n'en ont pas gardent leur rang.
+        Ici, elles restent dans l'ordre où vous les saisissez, pour qu'aucune
+        ne parte sous vos doigts pendant que vous tapez. « Ranger par l'heure »
+        met aussi cette liste en ordre, si vous préférez la voir rangée.</p>
       <div style="display:grid;gap:9px">${E.odj.map((o,i)=>`
         <div class="pt-odj">
           <input type="time" data-odj="${i}" data-k="h" value="${ech(o.h||'')}" aria-label="Heure du point ${i+1}">
@@ -2133,7 +2176,7 @@ function convocation(){
          ? 'Point GPS ' + ech(o.gps) + ' — ' : ''}<a href="${ech(o.lien)}"
          >ouvrir dans un plan</a></span>`; })()}</p>
   <div class="rub" style="text-align:center;margin-top:3.5mm">Ordre du jour</div>
-  <table class="serre"><tbody>${E.odj.filter(o=>o.t.trim()).map(o=>
+  <table class="serre"><tbody>${odjRange().filter(o=>o.t.trim()).map(o=>
     `<tr><td style="width:22mm;color:#5a4d22;font-size:10pt">${ech(o.h||'')}</td>
      <td>${ech(o.t)}</td></tr>`).join('')}</tbody></table>
   ${T.agapesOui?`<p style="margin-top:4mm"><b>Agapes rituelles.</b> ${ech(T.agapesTraiteur)} —
@@ -2406,7 +2449,7 @@ const COURRIEL_LOGE = 'contact.brith.israel@gmail.com';
 const STYLE_DOC = `<style>
 body{font-family:Garamond,Georgia,serif;font-size:12pt;line-height:1.5;color:#14110c}
 h1{font-size:15pt;text-align:center;margin:0 0 12pt}
-table{width:100%;border-collapse:collapse;margin-top:8pt}
+table{width:100%;border-collapse:collapse;margin-top:8pt;color:#14110c}
 td,th{padding:5pt 3pt;border-bottom:1px dotted #8f8676;text-align:left;font-size:11pt}
 th{font-size:9pt;text-transform:uppercase;letter-spacing:.06em;color:#3b3427;
    border-bottom:1px solid #8c7b33}
@@ -2541,7 +2584,7 @@ function convocationTexte(){
     if (o.gps) l.push("Point GPS : " + o.gps);
     if (o.lien) l.push(o.lien); }
   l.push(""); l.push("ORDRE DU JOUR");
-  E.odj.filter(o=>o.t.trim()).forEach(o => l.push("  " + (o.h ? o.h + "  " : "") + o.t));
+  odjRange().filter(o=>o.t.trim()).forEach(o => l.push("  " + (o.h ? o.h + "  " : "") + o.t));
   if (T.agapesOui){
     l.push("");
     l.push("AGAPES RITUELLES — triangle de " + T.agapesPrix + " €.");

@@ -61,7 +61,21 @@ with sync_playwright() as pw:
         got = pg.evaluate("(h) => minutesDe(h)", h)
         v(got == att, f"« {h or '(vide)'} » se lit {att}", got)
 
-    # == 2. LE RANGEMENT =============================================
+    # == 2. LES DOCUMENTS SE RANGENT SANS QU'ON DEMANDE RIEN ========
+    lu = pg.evaluate("() => odjRange().map(o => (o.h || '—') + ' ' + o.t)")
+    brut = pg.evaluate("() => E.odj.map(o => (o.h || '—') + ' ' + o.t)")
+    v(lu[0].startswith("19:15"),
+      "LA LECTURE EST RANGEE D'ELLE-MEME, sans qu'on ait rien demande", lu[0])
+    v(brut[0].startswith("19:30"),
+      "MAIS LE REGISTRE N'A PAS BOUGE : la saisie reste ou on l'a mise", brut[0])
+
+    pg.click("#imp-convoc"); pg.wait_for_timeout(900)
+    t0 = pg.inner_text(".papier")
+    v(0 <= t0.find("Accueil sur les parvis") < t0.find("Ouverture"),
+      "et la convocation sort dans l'ordre du temps sans un geste")
+    pg.click("#fermer"); pg.wait_for_timeout(300)
+
+    # == 3. LE BOUTON RANGE AUSSI LE REGISTRE ========================
     bouge = pg.evaluate("() => rangerOdj()")
     v(bouge > 0, "le rangement deplace bien quelque chose", bouge)
     apres = pg.evaluate("() => E.odj.map(o => (o.h || '—') + ' ' + o.t)")
@@ -85,7 +99,7 @@ with sync_playwright() as pw:
       sorted(o["t"] for o in DESORDRE),
       "et ce sont bien les memes points")
 
-    # == 3. LE DOCUMENT SUIT =========================================
+    # == 4. LE DOCUMENT SUIT =========================================
     pg.click("#imp-convoc"); pg.wait_for_timeout(900)
     t = pg.inner_text(".papier")
     i_accueil, i_ouv = t.find("Accueil sur les parvis"), t.find("Ouverture")
@@ -97,7 +111,7 @@ with sync_playwright() as pw:
     v(txt.find("Accueil sur les parvis") < txt.find("Ouverture"),
       "et le courriel aussi")
 
-    # == 4. RANGER DEUX FOIS NE CHANGE RIEN ==========================
+    # == 5. RANGER DEUX FOIS NE CHANGE RIEN ==========================
     dlg.clear()
     encore = pg.evaluate("() => rangerOdj()")
     v(encore == 0, "un second rangement ne deplace plus rien", encore)
@@ -106,7 +120,7 @@ with sync_playwright() as pw:
     v(any("deja range" in d.replace("é", "e").replace("à", "a") for d in dlg),
       "et le bouton le dit au lieu de faire semblant", dlg)
 
-    # == 5. UN ORDRE DU JOUR SANS AUCUNE HEURE ======================
+    # == 6. UN ORDRE DU JOUR SANS AUCUNE HEURE ======================
     pg.evaluate("""() => { E.odj = [{h:'',t:'Un'},{h:'',t:'Deux'}];
       garder(); dessiner(); }""")
     pg.wait_for_timeout(500)

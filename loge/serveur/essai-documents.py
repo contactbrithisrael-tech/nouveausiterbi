@@ -150,14 +150,27 @@ with sync_playwright() as p:
       "l'en-tête de l'Atelier y est repris : c'est une feuille à part",
       h.count("A∴L∴G∴D∴G∴A∴D∴L∴U∴"))
     apres = h.split('class="saut"')[1]
-    lignes = apres.count("<tr>") - 1          # moins la ligne d'en-tête
-    v(lignes >= 16, f"elle offre au moins seize lignes (elle en offre {lignes})", lignes)
+    # On compte DANS LE CORPS DU TABLEAU. « apres » porte aussi l'en-tete
+    # de l'Atelier, qui est lui-meme un tableau : retrancher une seule
+    # ligne en laissait passer deux, et le compte etait faux depuis le
+    # debut. Il passait tant que le nombre etait large.
+    # LE DERNIER tbody, non le premier : le navigateur en insere un dans
+    # le tableau de l'en-tete aussi, et c'est celui-la qu'on attrapait.
+    corps = apres.split("<tbody>")[-1].split("</tbody>")[0]
+    lignes = corps.count("<tr>")
+    # Treize, mesure prise : le doctype a fait passer le programme en mode
+    # standard, ou la meme feuille occupe un peu plus de hauteur. Au-dela
+    # de treize, l'emargement deborde sur une TROISIEME page qui ne porte
+    # que quelques traits — une feuille perdue a chaque tenue. Le nombre
+    # de lignes se plie a la page, non l'inverse.
+    v(lignes >= 13, f"elle offre au moins treize lignes (elle en offre {lignes})", lignes)
     for col in ["Nom et prénom", "Grade", "Loge, Orient, Obédience", "Tuilé par", "Signature"]:
         v(col in apres, f"colonne « {col} »")
     v("après avoir été tuilé" in apres,
       "et elle rappelle que nul ne signe sans avoir été tuilé")
-    v(apres.count('class="sig"') >= 16,
-      "chaque ligne porte son trait de signature", apres.count('class="sig"'))
+    v(corps.count('class="sig"') == lignes,
+      "chaque ligne porte son trait de signature — autant de traits que de "
+      "lignes, quel que soit leur nombre", (corps.count('class="sig"'), lignes))
 
     # ── CE QUI TOMBE SUR LE PAPIER ──────────────────────────────────
     # Une convocation en deux feuillets, c'est douze envois dont le
