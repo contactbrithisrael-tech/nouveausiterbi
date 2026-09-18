@@ -48,6 +48,7 @@ RBI_PORT=8796 node loge/serveur/faux-serveur.mjs &
 RBI_PORT=8797 RBI_COURRIEL=1 RBI_COURRIEL_ECHEC=1 \
   node loge/serveur/faux-serveur.mjs &
 RBI_PORT=8798 RBI_COURRIEL=1 node loge/serveur/faux-serveur.mjs &
+RBI_PORT=8799 RBI_COURRIEL=1 node loge/serveur/faux-serveur.mjs &
 
 RBI_URL=http://127.0.0.1:8787/ python3 loge/serveur/essai-documents.py
 RBI_URL=http://127.0.0.1:8789/ python3 loge/serveur/essai-partage.py
@@ -60,7 +61,12 @@ RBI_URL=http://127.0.0.1:8793/ python3 loge/serveur/essai-carnet.py
 RBI_URL=http://127.0.0.1:8794/ python3 loge/serveur/essai-envois.py
 python3 loge/serveur/essai-poste.py
 RBI_URL=http://127.0.0.1:8798/ python3 loge/serveur/essai-reponses.py
+RBI_URL=http://127.0.0.1:8799/ python3 loge/serveur/essai-pdf.py
 ```
+
+Chaque épreuve veut un serveur NEUF : `essai-mdp` change un mot de
+passe, `essai-annuaire` consomme les fiches en attente. Les rejouer
+deux fois sur la même instance les fait échouer à bon droit.
 
 **Chaque suite veut un serveur neuf.** La base est en mémoire : une
 suite qui change un mot de passe ou écrit le registre laisse le serveur

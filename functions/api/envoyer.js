@@ -26,6 +26,43 @@ const SUJET_MAX = 300;
 const CORPS_MAX = 40000;
 const DESTINATAIRES_MAX = 500;
 
+/* ── LA PIÈCE JOINTE ───────────────────────────────────────────────
+   La convocation part en texte dans le corps du message ; la voici
+   aussi en PDF, telle qu'elle s'imprime, avec les sceaux et l'en-tête.
+   C'est ce qu'on transfère, ce qu'on archive, ce qu'on affiche.
+
+   ► ON N'ACCEPTE QU'UN PDF, et on le VÉRIFIE au lieu de croire le nom
+     du fichier. Un octet de base64 qui ne commence pas par « %PDF- »
+     est refusé : cette route écrit au nom de la Loge à cent personnes,
+     elle ne servira pas à leur remettre autre chose.
+
+   ► UN SEUL FICHIER, et quatre mégaoctets au plus. Multiplié par cent
+     destinataires, le service refuse au-delà — et une convocation qui
+     pèse plus lourd n'est pas une convocation. */
+const PIECE_MAX = 4 * 1024 * 1024;
+
+function pieceJointe(brut){
+  if (!brut || typeof brut !== 'object') return { ok: true, piece: null };
+  const nom = propre(brut.nom).replace(/[\\/:*?"<>|\u0000-\u001f]/g, ' ')
+                              .replace(/\s+/g, ' ').trim().slice(0, 120);
+  const b64 = String(brut.contenu || '').replace(/^data:[^,]*,/, '').trim();
+  if (!nom || !b64) return { ok: false, erreur: 'piece_incomplete' };
+  if (!/\.pdf$/i.test(nom)) return { ok: false, erreur: 'piece_pas_un_pdf' };
+  if (!/^[A-Za-z0-9+/=\s]+$/.test(b64)) return { ok: false, erreur: 'piece_illisible' };
+
+  let tete;
+  try { tete = atob(b64.replace(/\s+/g, '').slice(0, 12)); }
+  catch (e) { return { ok: false, erreur: 'piece_illisible' }; }
+  if (tete.slice(0, 5) !== '%PDF-') return { ok: false, erreur: 'piece_pas_un_pdf' };
+
+  /* Le poids réel, et non celui du base64 qui l'enfle d'un tiers. */
+  const octets = Math.floor(b64.replace(/\s+/g, '').length * 3 / 4);
+  if (octets > PIECE_MAX)
+    return { ok: false, erreur: 'piece_trop_lourde', octets };
+
+  return { ok: true, piece: { nom, contenu: b64.replace(/\s+/g, ''), octets } };
+}
+
 const GROUPES = ['tous', 'membres', 'visiteurs', 'amis'];
 
 const propre = a => String(a || '').trim();
@@ -166,8 +203,11 @@ export async function onRequestPost(context){
       'Votre réponse est comptée aussitôt ; le traiteur en dépend.'
     : corps;
 
+  const jointe = pieceJointe(corpsRequete?.piece);
+  if (!jointe.ok) return json({ erreur: jointe.erreur, octets: jointe.octets }, 413);
+
   const liste = gens.map(g => g.email);
-  const sortie = await remettre(context.env, sujet, corpsPour, gens);
+  const sortie = await remettre(context.env, sujet, corpsPour, gens, jointe.piece);
   if (!sortie.configure)
     return json({ configure: false, pourquoi: sortie.pourquoi || 'aucune_cle' });
 
@@ -193,6 +233,7 @@ export async function onRequestPost(context){
 
   return json({ configure: true, service: sortie.service,
                 demandes: liste.length, parties,
+                piece: jointe.piece ? jointe.piece.nom : null,
                 refusees: refusees.map(x => ({ adresse: x.adresse, detail: x.detail })) });
 }
 
