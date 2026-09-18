@@ -10,10 +10,12 @@ Cloudflare Pages, dans `functions/api/`, qui écrivent dans une base D1.
 | `etat.js`   | lit et écrit le registre partagé de l'Atelier |
 | `porte.js`  | dit si le serveur a de quoi reconnaître quelqu'un |
 | `mdp.js`    | change le mot de passe de qui est connecté |
+| `envoyer.js` | remet la convocation par un service de courrier, et en rend compte |
+| `_courriel.js` | les deux services possibles — Brevo, Resend |
 | `annuaire.js` | reçoit les fiches du formulaire, et les rend à la Secrétaire |
 
 `001-socle-en-ligne.sql` est le schéma à passer dans la console D1,
-puis `002-annuaire.sql`. Les comptes s'ajoutent à la main, un `INSERT`
+puis `002-annuaire.sql` et `003-envois.sql`. Les comptes s'ajoutent à la main, un `INSERT`
 par Officier.
 
 ## Rejouer les épreuves
@@ -39,6 +41,10 @@ RBI_PORT=8791 RBI_SANS_COMPTES=1 node loge/serveur/faux-serveur.mjs &
 RBI_PORT=8792 node loge/serveur/faux-serveur.mjs &
 RBI_PORT=8793 node loge/serveur/faux-serveur.mjs &
 RBI_PORT=8794 node loge/serveur/faux-serveur.mjs &
+RBI_PORT=8795 RBI_COURRIEL=1 node loge/serveur/faux-serveur.mjs &
+RBI_PORT=8796 node loge/serveur/faux-serveur.mjs &
+RBI_PORT=8797 RBI_COURRIEL=1 RBI_COURRIEL_ECHEC=1 \
+  node loge/serveur/faux-serveur.mjs &
 
 RBI_URL=http://127.0.0.1:8787/ python3 loge/serveur/essai-documents.py
 RBI_URL=http://127.0.0.1:8789/ python3 loge/serveur/essai-partage.py
@@ -49,6 +55,7 @@ RBI_URL_AVEC=http://127.0.0.1:8790/ RBI_URL_SANS=http://127.0.0.1:8791/ \
 RBI_URL=http://127.0.0.1:8792/ python3 loge/serveur/essai-annuaire.py
 RBI_URL=http://127.0.0.1:8793/ python3 loge/serveur/essai-carnet.py
 RBI_URL=http://127.0.0.1:8794/ python3 loge/serveur/essai-envois.py
+python3 loge/serveur/essai-poste.py
 ```
 
 **Chaque suite veut un serveur neuf.** La base est en mémoire : une
@@ -91,6 +98,12 @@ le monde.
   surtout : le lien `mailto:` est MESURÉ. Au-delà du seuil prudent on
   prévient et l'on met les adresses au presse-papier, au lieu de
   laisser la messagerie couper la liste en silence.
+- **`essai-poste.py`** — le service d'envoi. AUCUN courriel ne part
+  pendant l'épreuve : les appels vers Brevo et Resend sont interceptés
+  et l'on vérifie ce qui LEUR aurait été remis. Sans clé configurée le
+  bouton n'existe pas ; avec, un seul appel porte tous les messages, un
+  par personne ; une adresse glissée dans la requête n'est JAMAIS
+  servie ; et quand le service refuse, rien n'est annoncé comme parti.
 - **`essai-documents.py`** — la qualité et le contreseing du Souverain
   Grand Commandeur sur chaque document, la feuille des Visiteurs sur sa
   page, le point du Temple sur la convocation.
@@ -120,3 +133,31 @@ Et demandez à l'intéressé de le changer lui-même, par « Mon mot de
 passe », dès sa première entrée.
 
 Le même outil crée un compte : la seconde ligne imprimée est l'`INSERT`.
+
+
+## Faire poster l'Atelier lui-même
+
+Sans configuration, le programme ouvre la messagerie de qui l'utilise —
+et un lien `mailto:` trop long est coupé en silence. Avec un service de
+courrier, le serveur remet les messages et sait ce qu'il en est.
+
+Dans Cloudflare Pages → Settings → **Variables and Secrets**, en
+production :
+
+| Variable | Valeur |
+|---|---|
+| `BREVO_CLE` *(ou `RESEND_CLE`)* | la clé d'API du service, **en secret** |
+| `COURRIEL_EXPEDITEUR` | l'adresse d'expédition, vérifiée chez le service |
+| `COURRIEL_NOM` | facultatif — le nom affiché |
+
+**L'adresse d'expédition doit être vérifiée chez le service**, sinon
+rien ne part. Brevo la vérifie par un simple courriel de confirmation ;
+Resend demande de poser des enregistrements DNS sur le domaine.
+
+Expédier depuis une adresse `@gmail.com` par un service tiers passe mal
+les filtres : mieux vaut une adresse du domaine de l'Atelier, avec SPF
+et DKIM. C'est plus de travail une fois, et cela évite que les
+convocations tombent en indésirables tous les mois.
+
+Sans ces variables, rien ne casse : le bouton d'envoi réel n'apparaît
+simplement pas, et l'ancien chemin reste.
