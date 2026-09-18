@@ -261,8 +261,27 @@ with sync_playwright() as p:
     h4, t4 = doc("#imp-convoc", "#t-convoc")
     v("exemple.test/agapes" in t4, "le feuillet le porte aussi")
     v("don" in t4 and "0" in t4, "avec la meme mise en garde", t4[-300:])
+    # == ON EPROUVE LE LIEN AVANT DE L'ENVOYER, PAS APRES ===========
+    # Une adresse de paiement fausse a l'air d'une adresse. On ne s'en
+    # apercoit qu'une fois la convocation partie a cent personnes, quand
+    # la premiere tombe sur l'accueil du site au lieu des agapes.
+    pg.click("#t-convoc"); pg.wait_for_timeout(700)
+    v(pg.locator("#eprouver-paiement").count() == 1,
+      "UN BOUTON OUVRE LE LIEN DE PAIEMENT, POUR L'EPROUVER AVANT L'ENVOI")
+    v(pg.get_attribute("#eprouver-paiement", "href") == "https://exemple.test/agapes",
+      "et c'est bien celui que la Secretaire a saisi",
+      pg.get_attribute("#eprouver-paiement", "href"))
+    v(pg.get_attribute("#eprouver-paiement", "target") == "_blank",
+      "il s'ouvre a cote : on ne perd pas la convocation en cours")
+    v("noopener" in (pg.get_attribute("#eprouver-paiement", "rel") or ""),
+      "et la page ouverte ne peut rien sur celle-ci",
+      pg.get_attribute("#eprouver-paiement", "rel"))
+
     pg.evaluate("() => { E.tenue.agapesPaiement = ''; garder(); dessiner(); }")
     pg.wait_for_timeout(400)
+    pg.click("#t-convoc"); pg.wait_for_timeout(600)
+    v(pg.locator("#eprouver-paiement").count() == 0,
+      "sans lien, pas de bouton : on n'eprouve pas le vide")
     txt = pg.evaluate("() => convocationTexte()")
     v("don \u00e0 0" not in txt,
       "sans lien de paiement, aucune mise en garde ne parait", txt[-200:])

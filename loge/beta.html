@@ -2125,7 +2125,22 @@ function vueConvocation(){
           'Il paraît sur la convocation, dans le courriel, et sur la page de ' +
           'réponse — au moment même où l’on vient de dire qu’on reste à table. ' +
           'Laissez vide s’il n’y a rien à régler en ligne.')}
-      </div></fieldset>
+      </div>
+      ${/* ── ON ÉPROUVE LE LIEN AVANT DE L'ENVOYER, PAS APRÈS ──────────
+             Une adresse de paiement fausse ne se voit pas : elle a
+             l'air d'une adresse. On ne s'en aperçoit qu'une fois la
+             convocation partie à cent personnes, quand la première
+             tombe sur l'accueil du site au lieu de la page des agapes.
+             Le bouton l'ouvre ici, en un geste, pendant qu'il est
+             encore temps de la corriger. */''}
+      ${E.tenue.agapesPaiement ? `<p class="sous" style="margin-top:10px">
+        <a class="btn" href="${ech(E.tenue.agapesPaiement)}" target="_blank"
+           rel="noopener noreferrer" id="eprouver-paiement"
+           >↗ Ouvrir ce lien pour l’éprouver</a>
+        <span style="margin-left:10px">Vérifiez qu’il mène bien à la page des
+          agapes, et non à l’accueil du site. Une adresse fausse a l’air d’une
+          adresse ; on ne le voit qu’une fois la convocation partie.</span></p>`
+        : ''}</fieldset>
 
     <details class="replie">
       <summary>Ce qui ne change presque jamais — lieu, adage, contacts</summary>
@@ -2294,7 +2309,7 @@ function convocation(){
   <table class="serre"><tbody>${odjRange().filter(o=>o.t.trim()).map(o=>
     `<tr><td style="width:22mm;color:#5a4d22;font-size:10pt">${ech(o.h||'')}</td>
      <td>${ech(o.t)}</td></tr>`).join('')}</tbody></table>
-  ${T.agapesOui?`<p style="margin-top:4mm"><b>Agapes rituelles.</b> ${ech(T.agapesTraiteur)} —
+  ${T.agapesOui?`<p style="margin-top:4mm${T.agapesPaiement?';text-align:left':''}"><b>Agapes rituelles.</b> ${ech(T.agapesTraiteur)} —
     le triangle est de ${ech(T.agapesPrix)} €. Inscription avant le
     ${dateLongue(T.agapesLimite)}.${T.agapesQuiPaie ? ' ' + ech(T.agapesQuiPaie) : ''}${
       T.agapesPaiement
