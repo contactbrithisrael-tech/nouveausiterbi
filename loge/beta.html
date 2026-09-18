@@ -495,7 +495,8 @@ function neuf(){ return {
     /* Le lien où l'on règle sa part. Il paraît au bas de la
        convocation, dans le courriel, et SUR LA PAGE DE RÉPONSE — à
        l'instant précis où l'on vient de dire qu'on reste à table. */
-    agapesPaiement:'',
+    agapesPaiement:'https://www.helloasso.com/associations/' +
+                   'les-enfants-de-nostradamus/evenements/agapes-visiteurs',
     /* ── LA SIGNATURE DU COURRIEL ──────────────────────────────────
        Elle dit qui écrit, et de quel droit. Une convocation part de la
        main de la Sœur Secrétaire, mais par mandat du Vénérable Maître :
@@ -1868,7 +1869,12 @@ function ouvrir(html, nom, editable){
      déborde, et c'est à la Secrétaire de raccourcir l'ordre du jour.
      Le programme ne décide pas à sa place ce qu'il faut retrancher. */
 const HAUTEUR_PAGE = 1030;   // A4 moins les marges, en pixels d'écran
-const SERRAGE_MIN = 0.78;
+/* 82 % et pas moins. On resserre une convocation trop longue plutôt
+   que de la laisser déborder — mais on ne la resserre pas au point
+   qu'elle se lise mal. Passé cette limite, le feuillet prend une
+   seconde page, et c'est très bien : deux pages lisibles valent mieux
+   qu'une page qu'on plisse les yeux pour lire. */
+const SERRAGE_MIN = 0.82;
 
 function tenirSurUnePage(P){
   P.style.zoom = '';

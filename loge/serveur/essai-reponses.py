@@ -95,14 +95,25 @@ with sync_playwright() as pw:
     v("Nekouda" in anon.inner_text("#nom"), "et sait qui repond",
       anon.inner_text("#nom"))
 
-    fuite = anon.evaluate("""async (j) => {
+    brut = anon.evaluate("""async (j) => {
       const r = await fetch('/api/reponse?j=' + j);
-      return JSON.stringify(await r.json()); }""", jeton)
+      return await r.json(); }""", jeton)
+    # Le lien de paiement est une adresse PUBLIQUE, choisie par la
+    # Secretaire : elle peut contenir n'importe quel mot, et notamment
+    # « agapes-visiteurs ». On l'ecarte donc de la fouille, sans quoi
+    # l'epreuve accuse le registre de fuir la ou c'est le lien qui parle.
+    sansLien = {k: v for k, v in brut.items() if k != "paiement"}
+    import json as _j
+    fuite = _j.dumps(sansLien, ensure_ascii=False)
     v("@" not in fuite,
       "AUCUNE ADRESSE NE SORT PAR CE LIEN", fuite[:200])
     for interdit in ["TICHRI", "HECHVAN", "membres", "visiteurs"]:
         v(interdit not in fuite,
           f"ni « {interdit} » : le Tableau reste ferme", fuite[:200])
+    # et le lien, lui, doit etre une adresse web et rien d'autre
+    lien = brut.get("paiement") or ""
+    v(not lien or lien.startswith("https://"),
+      "et le lien de paiement est une adresse web, ou rien", lien[:80])
 
     sansSession = anon.evaluate("""async () => {
       const r = await fetch('/api/reponses');
