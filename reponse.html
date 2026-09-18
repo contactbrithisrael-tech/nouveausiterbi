@@ -67,6 +67,8 @@ h1{font-family:var(--titre);font-size:21px;font-weight:700;color:var(--or-vif);
 .etat[hidden]{display:none}
 .regler{font-size:13.5px;color:var(--encre-3);margin:16px 0 10px;
   padding-top:14px;border-top:1px solid var(--trait)}
+.attention{font-size:13.5px;color:var(--alerte);background:var(--alerte-fond);
+  border-radius:6px;padding:10px 12px;margin:0 0 12px;line-height:1.5}
 #bloc-paiement[hidden]{display:none}
 a.btn{text-decoration:none;display:block}
 .pied{text-align:center;color:var(--encre-3);font-size:12.5px;margin-top:22px;
@@ -115,6 +117,12 @@ a.btn{text-decoration:none;display:block}
         <div id="bloc-paiement" hidden>
           <p class="regler">Votre couvert est retenu. Vous pouvez régler votre
             part dès maintenant — cela évite de le faire à la porte du Temple.</p>
+          <!-- La plateforme ajoute d'elle-même une contribution à son profit,
+               pré-remplie. Qui ne la voit pas règle vingt euros pour un
+               triangle de quinze, et croit s'être trompé de montant. -->
+          <p class="attention">Sur la page de paiement, pensez à ramener le
+            <b>don à 0 €</b> : la plateforme en propose un, qui s’ajoute au
+            triangle.</p>
           <a class="btn btn-or" id="payer" href="#" target="_blank" rel="noopener">
             Régler ma part</a>
         </div>
