@@ -492,6 +492,13 @@ function neuf(){ return {
     adage:"L'assiduité aux travaux est le premier devoir du Maçon",
     agapesOui:true, agapesPrix:15, agapesLimite:'2026-09-03',
     agapesTraiteur:'Traiteur — inscription obligatoire',
+    /* Les colonnes ont réglé leur part avec la capitation : le triangle
+       ne regarde que les Visiteurs et les Amis. Le dire évite qu'une
+       Sœur de l'Atelier paie deux fois, et qu'un Visiteur croie n'avoir
+       rien à verser. */
+    agapesQuiPaie:'Les Sœurs et Frères de l’Atelier ont leur part comprise ' +
+                  'dans la capitation. Le triangle ne concerne que les ' +
+                  'Visiteurs et les Amis de la Loge.',
     /* Le lien où l'on règle sa part. Il paraît au bas de la
        convocation, dans le courriel, et SUR LA PAGE DE RÉPONSE — à
        l'instant précis où l'on vient de dire qu'on reste à table. */
@@ -1018,7 +1025,10 @@ function vueTenue(){
         invitesPresents() ? ` · + ${invitesPresents()} invité${invitesPresents()>1?'s':''}` : ''}</div></div>
       <div class="tuile"><div class="n">${compte('excuse')}</div><div class="l">Excusés</div></div>
       <div class="tuile"><div class="n">${compte('attendu')}</div><div class="l">Sans réponse</div></div>
-      <div class="tuile"><div class="n">${auxAgapesTous()}</div><div class="l">Aux agapes · ${euro(auxAgapesTous()*(E.tenue.agapesPrix||0))}</div></div>
+      <div class="tuile"><div class="n">${auxAgapesTous()}</div><div class="l">Couverts${
+        auxAgapesPayants()
+          ? ` · ${auxAgapesPayants()} au triangle, ${euro(auxAgapesPayants()*(E.tenue.agapesPrix||0))}`
+          : ''}</div></div>
     </div></div>
     <div class="bloc"><header><div><h2>Ordre du jour</h2></div></header>
       <ul class="odj">${odjRange().map(o=>`<li><span class="h">${o.h||'—'}</span><span>${ech(o.t)}</span></li>`).join('')}</ul>
@@ -2090,6 +2100,10 @@ function vueConvocation(){
         ${champ('agapesLimite','Inscription avant le','date')}
       </div>
       <div class="rangee" style="margin-top:13px">
+        ${champ('agapesQuiPaie','Qui verse le triangle','text',
+          'Les colonnes règlent leur part avec la capitation ; le triangle ne ' +
+          'regarde que les Visiteurs et les Amis. Cette phrase le dit sur la ' +
+          'convocation et dans le courriel.')}
         ${champ('agapesPaiement','Lien de paiement des agapes','url',
           'Il paraît sur la convocation, dans le courriel, et sur la page de ' +
           'réponse — au moment même où l’on vient de dire qu’on reste à table. ' +
@@ -2265,7 +2279,8 @@ function convocation(){
      <td>${ech(o.t)}</td></tr>`).join('')}</tbody></table>
   ${T.agapesOui?`<p style="margin-top:4mm"><b>Agapes rituelles.</b> ${ech(T.agapesTraiteur)} —
     le triangle est de ${ech(T.agapesPrix)} €. Inscription avant le
-    ${dateLongue(T.agapesLimite)}.${T.agapesPaiement
+    ${dateLongue(T.agapesLimite)}.${T.agapesQuiPaie ? ' ' + ech(T.agapesQuiPaie) : ''}${
+      T.agapesPaiement
       ? ` Règlement en ligne : <a href="${ech(T.agapesPaiement)}">${ech(T.agapesPaiement)}</a>.
          <i>${ech(MENTION_DON)}</i>`
       : ''}</p>`:''}
@@ -2688,6 +2703,7 @@ function convocationTexte(){
     l.push("");
     l.push("AGAPES RITUELLES — triangle de " + T.agapesPrix + " €.");
     l.push("Merci de confirmer votre présence avant le " + dateLongue(T.agapesLimite) + ".");
+    if (T.agapesQuiPaie) l.push(T.agapesQuiPaie);
     if (T.agapesPaiement){
       l.push("Régler sa part : " + T.agapesPaiement);
       l.push(MENTION_DON);
@@ -3455,6 +3471,22 @@ function auxAgapesTous(){
   const ami = Object.values(E.reponsesAmis || {})
     .filter(x => x && x.agapes).length;
   return mem + vis + ami;
+}
+
+/* ── LES COUVERTS SE COMPTENT, LE TRIANGLE SE PAIE ─────────────────
+   Les Sœurs et Frères de l'Atelier règlent leur part d'avance, avec la
+   capitation : ils s'asseyent à table sans rien devoir ce soir-là.
+   Seuls les Visiteurs et les Amis de la Loge versent le triangle.
+
+   Le traiteur compte donc TOUT LE MONDE, et la caisse n'attend que les
+   invités. Confondre les deux, c'est annoncer une recette qui n'entrera
+   jamais — ou commander court en croyant que ceux qui ne paient pas ne
+   mangent pas. */
+function auxAgapesPayants(){
+  const vis = Object.values(E.agapesVisiteurs || {}).filter(Boolean).length;
+  const ami = Object.values(E.reponsesAmis || {})
+    .filter(x => x && x.agapes).length;
+  return vis + ami;
 }
 
 /* ═══════════════════════════════════════════════════════════════════
