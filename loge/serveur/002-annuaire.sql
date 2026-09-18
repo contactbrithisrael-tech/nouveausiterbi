@@ -20,7 +20,7 @@
      ne s'efface pas parce qu'on l'a recopiée.
 ═══════════════════════════════════════════════════════════════════ */
 
-CREATE TABLE annuaire (
+CREATE TABLE IF NOT EXISTS annuaire (
   id       INTEGER PRIMARY KEY,
   loge_id  INTEGER NOT NULL REFERENCES loges(id),
   recu_le  TEXT    NOT NULL DEFAULT (datetime('now')),
@@ -30,4 +30,4 @@ CREATE TABLE annuaire (
   versee_le TEXT
 );
 
-CREATE INDEX idx_annuaire_attente ON annuaire(loge_id, versee, id);
+CREATE INDEX IF NOT EXISTS idx_annuaire_attente ON annuaire(loge_id, versee, id);

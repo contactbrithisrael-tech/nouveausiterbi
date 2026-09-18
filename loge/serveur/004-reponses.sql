@@ -24,7 +24,7 @@
      une trace, et une trace ne s'efface pas parce qu'on l'a recopiée.
 ═══════════════════════════════════════════════════════════════════ */
 
-CREATE TABLE reponses (
+CREATE TABLE IF NOT EXISTS reponses (
   jeton      TEXT PRIMARY KEY,
   loge_id    INTEGER NOT NULL REFERENCES loges(id),
   tenue      TEXT    NOT NULL,          -- la date de la tenue
@@ -39,7 +39,7 @@ CREATE TABLE reponses (
   cree_le    TEXT    NOT NULL DEFAULT (datetime('now'))
 );
 
-CREATE UNIQUE INDEX idx_reponses_qui
+CREATE UNIQUE INDEX IF NOT EXISTS idx_reponses_qui
   ON reponses(loge_id, tenue, qui_type, qui_id);
-CREATE INDEX idx_reponses_attente
+CREATE INDEX IF NOT EXISTS idx_reponses_attente
   ON reponses(loge_id, tenue, versee);
