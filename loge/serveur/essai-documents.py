@@ -194,12 +194,22 @@ with sync_playwright() as p:
     # Ce qui reste interdit dans ce fichier servi en clair : un NOM DE
     # FAMILLE entier, et une adresse de courriel personnelle. Les deux
     # ensemble designent quelqu'un ; une initiale, non.
-    NOMS_INTERDITS = ["HABERT", "DARMON", "GASMI", "KHANAFER", "NAKACHE",
-                      "SAFFARO", "ALLAN", "NOTARIANNI", "CARILLO", "BUHLER",
-                      "ROUME", "JOURDAN", "PRATS", "OLOMBEL", "ARNEODO"]
-    fuites = [n for n in NOMS_INTERDITS if n.lower() in PAGE.lower()]
+    # LA LISTE DE GARDE NE PORTE PAS LES NOMS QU'ELLE GARDE. Ecrire
+    # ici les noms des Sœurs et Freres dans un depot public, c'etait
+    # publier la liste des Sœurs et Freres de l'Atelier — le garde-fou
+    # faisait lui-meme la fuite qu'il devait empecher.
+    #
+    # On garde leurs EMPREINTES. On releve tous les mots en capitales
+    # de la page, on les empreinte, et l'on compare : un nom qui s'y
+    # glisserait serait reconnu sans avoir jamais ete ecrit ici.
+    import hashlib, re as _re
+    EMPREINTES = ['00fa6ed7d665', '07083d867cae', '0e116a9faf64', '1e3a6119ee11', '329ccd680d9b', '62aa42deefc5', '6555706078a9', '6c94d0e5823e', '890aa779b6ed', '935b7474a054', '9a722032ed9b', 'a1df48acdc6d', 'c14964440bfd', 'd07c7bea47f5', 'dd4054a74e88']
+    mots = set(_re.findall(r"[A-ZÀ-Þ][A-ZÀ-Þ'\-]{3,}", PAGE))
+    fuites = [m for m in mots
+              if hashlib.sha256(m.encode()).hexdigest()[:12] in EMPREINTES]
     v(not fuites,
       "AUCUN NOM DE FAMILLE D'UN MEMBRE N'EST ECRIT DANS LE PROGRAMME", fuites)
+    v(len(EMPREINTES) == 15, "et la garde porte bien sur quinze noms", len(EMPREINTES))
     motfin = pg.evaluate("E.tenue.motFin")
     v("@" not in motfin,
       "et le mot de fin ne porte aucune adresse de courriel personnelle", motfin)
