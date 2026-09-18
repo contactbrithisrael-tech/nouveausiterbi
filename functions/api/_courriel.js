@@ -39,11 +39,26 @@ export function fournisseur(env){
 }
 
 export function expediteur(env){
-  /* L'adresse qui apparaît comme expéditeur. Elle doit être vérifiée
-     chez le service, sans quoi rien ne part. */
+  /* ── EXPÉDIER N'EST PAS RECEVOIR ─────────────────────────────────
+     L'adresse d'expédition doit appartenir à un domaine vérifié chez
+     le service : c'est ce qui fait qu'un courriel n'est pas jeté en
+     indésirable. Mais elle n'a besoin d'AUCUNE boîte aux lettres —
+     on peut expédier depuis « contact@brith-israel.org » sans que ce
+     domaine ne reçoive rien, et c'est ce qui rend l'opération
+     gratuite : trois lignes dans les réglages du domaine, pas de
+     messagerie à payer.
+
+     Reste qu'une convocation appelle des réponses. L'adresse de
+     RÉPONSE, elle, peut être n'importe quelle boîte existante — celle
+     que l'on relève déjà. Qui répond écrit là, et non dans le vide.
+
+     Sans elle, une réponse partirait vers une adresse que personne ne
+     relève, et se perdrait sans que ni l'expéditeur ni le
+     destinataire ne s'en doutent. */
   return {
     adresse: (env && env.COURRIEL_EXPEDITEUR) || '',
-    nom: (env && env.COURRIEL_NOM) || 'R∴L∴ Bereshit n°00'
+    nom: (env && env.COURRIEL_NOM) || 'R∴L∴ Bereshit n°00',
+    reponse: (env && env.COURRIEL_REPONSE) || ''
   };
 }
 
@@ -57,6 +72,7 @@ async function envoyerBrevo(cle, de, sujet, corps, liste){
                'accept': 'application/json' },
     body: JSON.stringify({
       sender: { email: de.adresse, name: de.nom },
+      ...(de.reponse ? { replyTo: { email: de.reponse } } : {}),
       subject: sujet,
       textContent: corps,
       messageVersions: liste.map(a => ({ to: [{ email: a }] }))
@@ -77,6 +93,7 @@ async function envoyerResend(cle, de, sujet, corps, liste){
     headers: { authorization: 'Bearer ' + cle, 'content-type': 'application/json' },
     body: JSON.stringify(liste.map(a => ({
       from: de.nom + ' <' + de.adresse + '>', to: [a],
+      ...(de.reponse ? { reply_to: de.reponse } : {}),
       subject: sujet, text: corps
     })))
   });

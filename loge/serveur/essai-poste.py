@@ -115,6 +115,13 @@ with sync_playwright() as pw:
         v("nekouda@exemple.test" in adrs, "les visiteurs aussi")
         v(c["sender"]["email"] == "epreuve@exemple.test",
           "l'expediteur est celui du serveur, non celui de la requete")
+        # EXPEDIER N'EST PAS RECEVOIR. On peut expedier depuis un
+        # domaine qui n'a aucune boite aux lettres — c'est ce qui rend
+        # l'operation gratuite. Mais une convocation appelle des
+        # reponses : elles doivent aller vers une boite qu'on releve.
+        v(c.get("replyTo", {}).get("email") == "reponses@exemple.test",
+          "ET LES REPONSES VONT VERS UNE BOITE QU'ON RELEVE, "
+          "non vers le neant", c.get("replyTo"))
         v("TENUE D'OBLIGATION" in c.get("textContent", ""),
           "et le corps est bien la convocation", c.get("textContent", "")[:120])
         v("bcc" not in json.dumps(c).lower(),

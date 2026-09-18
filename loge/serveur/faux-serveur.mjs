@@ -115,6 +115,7 @@ createServer(async (req, res) => {
     env.BREVO_CLE = 'cle-d-epreuve';
     env.COURRIEL_EXPEDITEUR = 'epreuve@exemple.test';
     env.COURRIEL_NOM = 'Atelier d’épreuve';
+    env.COURRIEL_REPONSE = 'reponses@exemple.test';
   }
   const mod = F[m[1]];
   const fn = req.method === 'GET' ? mod.onRequestGet
