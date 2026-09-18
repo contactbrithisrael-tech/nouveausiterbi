@@ -206,7 +206,40 @@ with sync_playwright() as pw:
       dit[-400:])
     ec.close(); c3.close()
 
-    v(not errs and not e0 and not e3, "aucune erreur JavaScript", errs + e0 + e3)
+    # == 4. UN JETON QU'ON N'A PAS RELU N'EST PAS UN JETON ==========
+    # La panne la plus traitre de la chaine : l'ecriture des liens de
+    # reponse echoue SANS RIEN DIRE. L'INSERT rend la main, le courriel
+    # part avec un lien que rien ne connait, et cent personnes tombent
+    # sur « ce lien ne mene nulle part » en croyant que c'est leur
+    # messagerie qui l'a coupe. Mieux vaut ne rien envoyer.
+    MUET = os.environ.get("RBI_URL_MUET", "http://127.0.0.1:8802/")
+    c4 = b.new_context(); mu = c4.new_page()
+    e4 = []; mu.on("pageerror", lambda e: e4.append(str(e)))
+    mu.on("dialog", lambda d: d.accept())
+    entrer(mu, MUET)
+    mu.click("#t-tableau"); mu.wait_for_timeout(400)
+    mu.set_input_files("#fichier-sauvegarde", TABLEAU); mu.wait_for_timeout(2500)
+    rep = mu.evaluate("""async () => {
+      const r = await fetch('/api/envoyer', { method:'POST',
+        headers:{'content-type':'application/json'},
+        body: JSON.stringify({ sujet:'Convocation', corps:'Texte',
+          groupe:'tous', reponse:true, tenue: E.tenue.date }) });
+      return { statut: r.status, corps: await r.text() }; }""")
+    v(rep["statut"] == 500,
+      "QUAND LES JETONS NE S'ENREGISTRENT PAS, LA ROUTE REFUSE", rep)
+    v("jetons_non_enregistres" in rep["corps"],
+      "et elle dit laquelle des pannes c'est", rep["corps"][:200])
+    v("004-reponses" in rep["corps"],
+      "avec de quoi la reparer, non une formule vague", rep["corps"][:240])
+    partis = mu.evaluate("""async () => {
+      const r = await fetch('/__courriels'); return (await r.json()).length; }""")
+    v(partis == 0,
+      "ET SURTOUT : PAS UN SEUL COURRIEL N'EST PARTI avec un lien mort",
+      f"{partis} courriel(s)")
+    mu.close(); c4.close()
+
+    v(not errs and not e0 and not e3 and not e4,
+      "aucune erreur JavaScript", errs + e0 + e3 + e4)
     b.close()
 
 print(f"\n  {len(ko)} echec(s)" if ko else "\n  tout passe")

@@ -143,6 +143,29 @@ async function jetons(context, loge_id, tenue, gens){
         'VALUES ' + trous).bind(...liants).run();
     } catch (e) { /* une ligne déjà là : le lien existant fera l'affaire */ }
   }
+
+  /* ── ON NE CROIT PAS L'ÉCRITURE SUR PAROLE ────────────────────────
+     L'INSERT ci-dessus avale son erreur, et il a de bonnes raisons de
+     le faire : une ligne déjà posée n'est pas un incident. Mais il
+     avalait AUSSI les vraies pannes — une colonne manquante, une base
+     où 004-reponses.sql n'a jamais été joué. Le courriel partait
+     alors avec un jeton que rien ne connaissait, à cent personnes, et
+     chacune tombait sur « ce lien ne mène nulle part ».
+
+     UN LIEN QU'ON N'A PAS RELU N'EST PAS UN LIEN. On relit donc la
+     table : chaque jeton qu'on s'apprête à mettre dans un courriel
+     doit y être. Ce qui n'y est pas ne part pas. */
+  const { results: poses } = await context.env.DB.prepare(
+    'SELECT jeton FROM reponses WHERE loge_id = ? AND tenue = ?')
+    .bind(loge_id, tenue).all();
+  const relus = new Set((poses || []).map(r => r.jeton));
+  const perdus = gens.filter(g => g.jeton && !relus.has(g.jeton));
+  if (perdus.length) {
+    const e = new Error('jetons_non_enregistres');
+    e.perdus = perdus.length;
+    e.total = gens.length;
+    throw e;
+  }
   return gens;
 }
 
@@ -190,8 +213,22 @@ export async function onRequestPost(context){
   const tenue = propre(corpsRequete?.tenue) ||
                 (etat && etat.tenue && etat.tenue.date) || '';
   let avecJeton = gens;
-  if (veutReponse && tenue)
-    avecJeton = await jetons(context, moi.loge_id, tenue, gens);
+  if (veutReponse && tenue){
+    try {
+      avecJeton = await jetons(context, moi.loge_id, tenue, gens);
+    } catch (e) {
+      /* Mieux vaut ne rien envoyer qu'envoyer des liens morts : on les
+         retrouverait dans cent boîtes aux lettres, et chacun croirait
+         que c'est sa messagerie qui a coupé le lien. */
+      return json({
+        erreur: 'jetons_non_enregistres',
+        perdus: e.perdus || null, total: e.total || gens.length,
+        detail: 'Les liens de réponse n’ont pas pu être enregistrés. ' +
+                'Rien n’a été envoyé. Vérifiez que 004-reponses.sql a ' +
+                'bien été joué sur la base.'
+      }, 500);
+    }
+  }
 
   const racine = new URL(context.request.url).origin;
   const corpsPour = g => (veutReponse && g.jeton)
