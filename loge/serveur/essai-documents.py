@@ -33,6 +33,8 @@ with sync_playwright() as p:
     pg.click("#t-tableau"); pg.wait_for_timeout(400)
     pg.set_input_files("#fichier-sauvegarde", TABLEAU); pg.wait_for_timeout(2200)
 
+    PAGE = pg.content()
+
     def doc(bouton, onglet=None):
         if onglet: pg.click(onglet); pg.wait_for_timeout(400)
         pg.click(bouton); pg.wait_for_timeout(700)
@@ -179,6 +181,63 @@ with sync_playwright() as p:
               f"Visiteurs — et rien ne déborde sur une troisième (il en fait {n})", n)
     n = pages("#imp-carnet", "#t-visiteurs")
     v(n == 1, f"le carnet des visiteurs tient sur une page (il en fait {n})", n)
+
+    # == LE MOT DE FIN, AU BAS DE LA CONVOCATION ====================
+    # Il est gardé dans le registre de l'Atelier, jamais écrit dans le
+    # programme : ce fichier est servi en clair sur le site, et
+    # l'appartenance maçonnique d'une personne n'a pas à y figurer.
+    v("Martine" not in PAGE and "HABERT" not in PAGE,
+      "AUCUN NOM DE SECRÉTAIRE N'EST ÉCRIT DANS LE PROGRAMME")
+    v(pg.evaluate("typeof E.tenue.motFin") == "string",
+      "le mot de fin est un champ du registre", pg.evaluate("typeof E.tenue.motFin"))
+
+    h, t = doc("#imp-convoc", "#t-convoc")
+    v("enregistrer individuellement sur le site" in t,
+      "LA CONVOCATION LE PORTE", t[-300:])
+    v("notre Soeur Secretaire".replace("oe", "\u0153").replace("Secretaire",
+      "Secr\u00e9taire") in t, "et nomme la charge", t[-300:])
+
+    # on y ajoute un nom, comme le fera le Souverain Grand Commandeur
+    pg.click("#t-convoc"); pg.wait_for_timeout(400)
+    pg.evaluate("""() => { const c = document.getElementById('f-motFin');
+      c.value = c.value.replace(/\\.$/, ' Une Soeur.');
+      c.dispatchEvent(new Event('input', {bubbles:true})); }""")
+    pg.wait_for_timeout(700)
+    h, t = doc("#imp-convoc")
+    v("Une Soeur" in t, "le nom ajouté s'imprime", t[-200:])
+    txt = pg.evaluate("convocationTexte()")
+    v("enregistrer individuellement sur le site" in txt and "Une Soeur" in txt,
+      "et la convocation envoyée par courriel le porte aussi", txt[-300:])
+
+    # avec le nom, la convocation doit TOUJOURS tenir sur une feuille :
+    # c'est la forme qu'elle aura tous les mois.
+    import re as _re0
+    pg.click("#t-convoc"); pg.wait_for_timeout(400)
+    pg.click("#imp-convoc"); pg.wait_for_timeout(900)
+    _pdf = pg.pdf(format="A4", margin={"top":"12mm","bottom":"12mm",
+                  "left":"14mm","right":"14mm"}, print_background=True)
+    _n = len(_re0.findall(rb'/Type\s*/Page[^s]', _pdf))
+    pg.click("#fermer"); pg.wait_for_timeout(250)
+    v(_n == 1, f"ET ELLE TIENT ENCORE SUR UNE PAGE, mot de fin compris "
+               f"(elle en fait {_n})", _n)
+
+    # vide, il ne s'imprime pas
+    pg.click("#t-convoc"); pg.wait_for_timeout(400)
+    pg.evaluate("""() => { const c = document.getElementById('f-motFin');
+      c.value = ''; c.dispatchEvent(new Event('input', {bubbles:true})); }""")
+    pg.wait_for_timeout(700)
+    h, t = doc("#imp-convoc")
+    v("enregistrer individuellement" not in t,
+      "laissé vide, il ne s'imprime pas du tout")
+
+    # et on le remet, pour la mesure des pages qui suit
+    pg.click("#t-convoc"); pg.wait_for_timeout(400)
+    pg.evaluate("""() => { const c = document.getElementById('f-motFin');
+      c.value = 'Mes Soeurs, mes Freres. Merci de bien vouloir vous enregistrer '
+              + 'individuellement sur le site et, en cas de doute, de contacter '
+              + 'notre Soeur Secretaire Une Soeur Quelconque.';
+      c.dispatchEvent(new Event('input', {bubbles:true})); }""")
+    pg.wait_for_timeout(700)
 
     # ══ 3. LE POINT DU TEMPLE ═══════════════════════════════════════
     v(pg.evaluate("E.tenue.lieuGps") in ("", None),
