@@ -168,6 +168,38 @@ with sync_playwright() as pw:
     v(a2.locator("#bloc-paiement").is_hidden(), "un excuse non plus")
     a2.close()
 
+    # ── ET SURTOUT : UN MEMBRE DE L'ATELIER NE PAIE PAS ───────────
+    # Les colonnes reglent leur part avec la capitation, d'avance. Leur
+    # montrer un bouton de paiement, c'est leur reclamer deux fois la
+    # meme chose — et certains paieraient, par scrupule, sans rien dire.
+    jetonMembre = None
+    for courriel, jj in liens:
+        d = pg.evaluate("""async (j) => {
+          const r = await fetch('/api/reponse?j=' + j); return await r.json(); }""", jj)
+        if d.get("qualite") == "membre": jetonMembre = jj; break
+    v(jetonMembre is not None, "on trouve bien un membre parmi les destinataires")
+    if jetonMembre:
+        am = b.new_context().new_page()
+        am.goto(U + "reponse.html?j=" + jetonMembre); am.wait_for_timeout(1400)
+        am.click("#present"); am.wait_for_timeout(900)
+        am.click("#oui-agapes"); am.wait_for_timeout(1400)
+        v(am.locator("#bloc-paiement").is_hidden(),
+          "UN MEMBRE DE L'ATELIER AUX AGAPES NE SE VOIT RIEN RECLAMER : "
+          "sa part est comprise dans la capitation")
+        dm = am.evaluate("""async (j) => {
+          const r = await fetch('/api/reponse?j=' + j); return await r.json(); }""", jetonMembre)
+        v(dm.get("paiement") in (None, ""),
+          "et le serveur ne lui envoie meme pas le lien", dm.get("paiement"))
+        am.close()
+
+    # le couvert du membre compte quand meme pour le traiteur
+    pg.evaluate("async () => await releverReponses()")
+    pg.wait_for_timeout(1500)
+    tous, payants = pg.evaluate("() => [auxAgapesTous(), auxAgapesPayants()]")
+    v(tous > payants,
+      "LE TRAITEUR COMPTE TOUT LE MONDE, LA CAISSE N'ATTEND QUE LES INVITES",
+      f"{tous} couverts, {payants} au triangle")
+
     # un lien qui n'est pas une adresse web ne devient pas un bouton
     pg.evaluate("() => { E.tenue.agapesPaiement = 'javascript:alert(1)'; garder(); }")
     pg.wait_for_timeout(1500)
@@ -204,9 +236,12 @@ with sync_playwright() as pw:
     pg.wait_for_timeout(1200)
     v(bilan and bilan["combien"] >= 2, "les reponses sont reprises au registre", bilan)
     apres = pg.evaluate("auxAgapesTous()")
-    v(apres == 2,
+    # trois couverts, et pas un courriel depouille a la main pour les
+    # obtenir : le Visiteur, l'Ami de la Loge, et le membre de l'Atelier
+    # (qui ne paie pas, mais qui mange).
+    v(apres == 3,
       "LE COMPTE DES AGAPES A BOUGE SANS QU'ON DEPOUILLE UN COURRIEL",
-      f"{agapes_avant} → {apres}")
+      f"{agapes_avant} → {apres} (visiteur + ami + membre attendus)")
     v(pg.evaluate("E.visiteurs.find(x=>x.nom==='TSEDEK').presentTenue") is True,
       "le visiteur est marque attendu par SA propre reponse")
     v(pg.evaluate("(E.agapesVisiteurs||{})[E.visiteurs.find(x=>x.nom==='TSEDEK').id]") is True,

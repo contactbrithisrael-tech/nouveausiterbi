@@ -33,7 +33,14 @@ const REPONSES = ['present', 'excuse'];
    registre porte le Tableau, les adresses, les présences : rien de
    cela ne doit sortir par cette route, qui s'ouvre sans compte. Une
    adresse web publique, et rien d'autre. */
-async function lienDePaiement(context, jeton){
+async function lienDePaiement(context, jeton, qualite){
+  /* ── LES COLONNES ONT DÉJÀ PAYÉ ─────────────────────────────────
+     Les Sœurs et Frères de l'Atelier règlent leur part avec la
+     capitation, d'avance. Leur montrer un bouton de paiement, c'est
+     leur réclamer deux fois la même chose — et certains paieraient,
+     par scrupule, sans rien dire. Le triangle ne regarde que les
+     Visiteurs et les Amis de la Loge. */
+  if (qualite === 'membre') return null;
   try {
     const r = await context.env.DB.prepare(
       'SELECT donnees FROM etat WHERE loge_id = ' +
@@ -80,7 +87,7 @@ export async function onRequestGet(context){
     nom: r.nom || '', tenue: r.tenue, qualite: r.qui_type,
     reponse: r.reponse || null,
     agapes: r.agapes === null || r.agapes === undefined ? null : !!r.agapes,
-    paiement: await lienDePaiement(context, j),
+    paiement: await lienDePaiement(context, j, r.qui_type),
     loge: loge ? { nom: loge.nom, numero: loge.numero, orient: loge.orient } : null
   });
 }
@@ -111,5 +118,5 @@ export async function onRequestPost(context){
   const r = await ligne(context, j);
   return json({ enregistre: true, nom: r.nom || '', tenue: r.tenue,
                 reponse: r.reponse, agapes: !!r.agapes,
-                paiement: await lienDePaiement(context, j) });
+                paiement: await lienDePaiement(context, j, r.qui_type) });
 }
