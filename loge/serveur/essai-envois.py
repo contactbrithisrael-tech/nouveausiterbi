@@ -99,18 +99,47 @@ with sync_playwright() as pw:
     v(m["court"] < m["long"],
       "le lien sans les adresses est plus court : c'est le chemin de repli", m)
 
-    # == 4. ON PREVIENT AU LIEU DE COUPER EN SILENCE ================
+    # == 4. LE CHEMIN DE REPLI EST MESURE, LUI AUSSI ================
+    # Le defaut trouve en service : on refusait le lien complet, puis on
+    # ouvrait le lien SANS ADRESSES sans jamais le mesurer. La convocation
+    # pese a elle seule plus de trois mille caracteres : la messagerie
+    # ouvrait un brouillon VIDE, et l'on croyait avoir pris le chemin sur.
+    v(m["court"] > m["seuil"],
+      "la convocation entiere ne tient pas dans un lien, meme sans adresses",
+      m)
     dlg.clear()
-    pg.click("#mail-tous"); pg.wait_for_timeout(1500)
+    pg.click("#mail-tous"); pg.wait_for_timeout(1800)
     ensemble = " ".join(dlg)
     v("Convoquer" in ensemble and "Ami(s) de la Loge" in ensemble,
       "on demande confirmation en detaillant qui recevra", ensemble[:260])
+    v("vide" in ensemble,
+      "ON NE FAIT PLUS SEMBLANT : on dit que le brouillon s'ouvrirait vide",
+      ensemble[:400])
+    presse = pg.evaluate("() => navigator.clipboard.readText()")
+    v("TENUE" in presse.upper() or "convoqu" in presse.lower(),
+      "et c'est LE TEXTE de la convocation qui passe au presse-papier",
+      presse[:120])
+
+    # == 4bis. QUAND LE MESSAGE TIENT, LE CHEMIN SUR EST GARDE ======
+    # On depouille la convocation jusqu'a ce que le lien sans adresses
+    # repasse sous le seuil : la, et la seulement, on ouvre le brouillon
+    # sans les adresses et on les met au presse-papier pour la case Cci.
+    pg.evaluate("""() => { E.odj = []; E.tenue.motAccueil = '';
+      E.tenue.signature = ''; E.tenue.agapesQuiPaie = '';
+      E.tenue.agapesPaiement = '';
+      if (E.reglages) E.reglages.motFin = ''; garder(); dessiner(); }""")
+    pg.wait_for_timeout(800)
+    pg.click("#t-tenue"); pg.wait_for_timeout(600)
+    c2 = pg.evaluate("() => lienCourriel([], 'Convocation', convocationTexte()).length")
+    v(c2 < 2000, "depouillee, la convocation repasse sous le seuil", c2)
+    dlg.clear()
+    pg.click("#mail-tous"); pg.wait_for_timeout(1800)
+    ensemble = " ".join(dlg)
     v("SANS RIEN DIRE" in ensemble,
       "ON PREVIENT QUE LA LISTE POURRAIT ETRE COUPEE EN SILENCE", ensemble[:400])
     v("Cci" in ensemble,
       "et l'on dit exactement quoi faire : coller en copie cachee", ensemble[:400])
 
-    # les adresses sont bien dans le presse-papier
     pg.wait_for_timeout(800)
     presse = pg.evaluate("() => navigator.clipboard.readText()")
     v(presse.count("@") >= 60,
@@ -118,6 +147,40 @@ with sync_playwright() as pw:
       str(presse.count("@")) + " adresses")
     v("ami.numero.00@exemple-assez-long.test" in presse,
       "y compris celles des Amis", presse[:120])
+
+    # == 4ter. QUAND L'ATELIER POSTE, ON Y RENVOIE ==================
+    # Sur ce serveur le service n'est pas configure ; on le simule pour
+    # eprouver le seul chemin qui reste quand la messagerie ne peut rien :
+    # renvoyer au bouton qui marche, au lieu d'un brouillon vide.
+    pg.set_input_files("#fichier-sauvegarde", chemin); pg.wait_for_timeout(2500)
+    # on rend a la convocation sa longueur : c'est elle qui deborde
+    pg.evaluate("""() => { E.odj = Array.from({length: 10}, (_, i) =>
+      ({ h: '2' + i + ':00', t: 'Point numero ' + i +
+         ' de l ordre du jour, ecrit assez long pour peser son poids' }));
+      garder(); dessiner(); }""")
+    pg.wait_for_timeout(700)
+    pg.click("#t-tenue"); pg.wait_for_timeout(500)
+    c3 = pg.evaluate("() => lienCourriel([], 'Convocation', convocationTexte()).length")
+    v(c3 > 2000, "la convocation entiere redeborde le seuil", c3)
+    pg.evaluate("() => { POSTE.su = true; POSTE.configure = true; "
+                "POSTE.service = 'brevo'; POSTE.expediteur = 'x@exemple.test'; "
+                "dessiner(); }")
+    pg.wait_for_timeout(700)
+    pg.click("#t-tenue"); pg.wait_for_timeout(700)
+    v(pg.locator("#poste-tous").count() == 1,
+      "le bouton d'envoi reel parait quand le service est la")
+    v("btn-or" in (pg.get_attribute("#poste-tous", "class") or ""),
+      "ET C'EST LUI QUI PORTE L'OR : le geste ordinaire est celui qui marche",
+      pg.get_attribute("#poste-tous", "class"))
+    v("btn-or" not in (pg.get_attribute("#mail-tous", "class") or ""),
+      "la messagerie redevient un recours, non le geste ordinaire",
+      pg.get_attribute("#mail-tous", "class"))
+    dlg.clear()
+    pg.click("#mail-tous"); pg.wait_for_timeout(1800)
+    ensemble = " ".join(dlg)
+    v("Envoyer vraiment" in ensemble,
+      "ET L'ON RENVOIE AU BOUTON QUI MARCHE au lieu d'un brouillon vide",
+      ensemble[:400])
 
     # == 5. UN ENVOI COURT PART SANS RIEN DEMANDER ==================
     # on retire les Amis : le lien redevient court
