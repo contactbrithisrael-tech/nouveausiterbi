@@ -214,8 +214,8 @@ with sync_playwright() as p:
     pg.click("#t-convoc"); pg.wait_for_timeout(400)
     pg.click("#imp-convoc"); pg.wait_for_timeout(800)
     z = float(pg.evaluate("() => document.getElementById('papier').style.zoom || 1"))
-    v(0.78 <= z < 1, f"le feuillet a ete resserre, sans descendre sous 78 % ({z})", z)
-    v(z >= 0.80, "et il reste lisible : on ne resserre qu'autant qu'il faut", z)
+    v(0.82 <= z < 1, f"le feuillet a ete resserre, sans descendre sous 82 % ({z})", z)
+    v(z >= 0.82, "et il reste lisible : au-dela, on prefere deux pages", z)
     pg.click("#fermer"); pg.wait_for_timeout(250)
 
     # ── LE MOT D'ACCUEIL OUVRE LE COURRIEL, ET LUI SEUL ────────────
