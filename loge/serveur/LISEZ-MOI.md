@@ -13,10 +13,12 @@ Cloudflare Pages, dans `functions/api/`, qui écrivent dans une base D1.
 | `envoyer.js` | remet la convocation par un service de courrier, et en rend compte |
 | `_courriel.js` | les deux services possibles — Brevo, Resend |
 | `annuaire.js` | reçoit les fiches du formulaire, et les rend à la Secrétaire |
+| `reponse.js` | la SEULE route sans session : on y répond avec son seul lien |
+| `reponses.js` | relève les réponses pour le Secrétariat — session exigée |
 
 `001-socle-en-ligne.sql` est le schéma à passer dans la console D1,
-puis `002-annuaire.sql` et `003-envois.sql`. Les comptes s'ajoutent à la main, un `INSERT`
-par Officier.
+puis `002-annuaire.sql`, `003-envois.sql` et `004-reponses.sql`. Les
+comptes s'ajoutent à la main, un `INSERT` par Officier.
 
 ## Rejouer les épreuves
 
@@ -45,6 +47,7 @@ RBI_PORT=8795 RBI_COURRIEL=1 node loge/serveur/faux-serveur.mjs &
 RBI_PORT=8796 node loge/serveur/faux-serveur.mjs &
 RBI_PORT=8797 RBI_COURRIEL=1 RBI_COURRIEL_ECHEC=1 \
   node loge/serveur/faux-serveur.mjs &
+RBI_PORT=8798 RBI_COURRIEL=1 node loge/serveur/faux-serveur.mjs &
 
 RBI_URL=http://127.0.0.1:8787/ python3 loge/serveur/essai-documents.py
 RBI_URL=http://127.0.0.1:8789/ python3 loge/serveur/essai-partage.py
@@ -56,6 +59,7 @@ RBI_URL=http://127.0.0.1:8792/ python3 loge/serveur/essai-annuaire.py
 RBI_URL=http://127.0.0.1:8793/ python3 loge/serveur/essai-carnet.py
 RBI_URL=http://127.0.0.1:8794/ python3 loge/serveur/essai-envois.py
 python3 loge/serveur/essai-poste.py
+RBI_URL=http://127.0.0.1:8798/ python3 loge/serveur/essai-reponses.py
 ```
 
 **Chaque suite veut un serveur neuf.** La base est en mémoire : une

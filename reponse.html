@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Votre réponse — R∴L∴ Bereshit</title>
+<!-- ═══════════════════════════════════════════════════════════════════
+     RÉPONDRE À LA CONVOCATION
+
+     Cette page s'ouvre depuis un lien reçu par courriel, sur un
+     téléphone, souvent d'une main, souvent en marchant. Elle ne demande
+     donc RIEN : ni compte, ni mot de passe, ni de retrouver son nom
+     dans une liste. Le lien sait déjà qui vous êtes.
+
+     Deux boutons, et un troisième qui n'apparaît que si l'on vient.
+     Répondre doit prendre trois secondes, sans quoi on remet à plus
+     tard et le traiteur attend toujours son chiffre.
+
+     ► ELLE NE DIT RIEN DE L'ATELIER. Ni la liste des présents, ni les
+       adresses, ni le tableau. Un lien retrouvé dans une boîte aux
+       lettres ne doit pas ouvrir le registre.
+
+     ► ON PEUT CHANGER D'AVIS. La page rouvre sur ce qui a été répondu,
+       et un nouveau clic remplace l'ancien.
+═══════════════════════════════════════════════════════════════════ -->
+<style>
+:root{
+  --or:#9A7535; --or-vif:#C9A84C; --encre:#1B1813; --encre-2:#4A4238;
+  --encre-3:#7A7062; --fond:#FAF7F0; --carte:#FFF; --trait:#E4DCC9;
+  --ok:#2F6B45; --ok-fond:#E7F1E9; --alerte:#8E3A32; --alerte-fond:#F8E8E5;
+  --sans:'IBM Plex Sans',system-ui,-apple-system,sans-serif;
+  --titre:Cinzel,Georgia,serif;
+}
+@media (prefers-color-scheme:dark){:root{
+  --or:#C9A84C; --or-vif:#E8C96A; --encre:#F0EADD; --encre-2:#BDB4A2;
+  --encre-3:#8B8272; --fond:#100F0C; --carte:#1A1814; --trait:#332E24;
+  --ok:#7FBF95; --ok-fond:#16261B; --alerte:#E08A80; --alerte-fond:#2B1614;
+}}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--fond);color:var(--encre);font-family:var(--sans);
+  line-height:1.55;-webkit-text-size-adjust:100%}
+.page{max-width:460px;margin:0 auto;padding:28px 18px 60px}
+.formule{font-family:var(--titre);font-size:11px;letter-spacing:.16em;
+  color:var(--or);text-align:center}
+h1{font-family:var(--titre);font-size:21px;font-weight:700;color:var(--or-vif);
+  text-align:center;margin:10px 0 4px;line-height:1.3}
+.sous{text-align:center;color:var(--encre-3);font-size:14px;margin-bottom:22px}
+.carte{background:var(--carte);border:1px solid var(--trait);border-radius:6px;
+  padding:22px 20px;margin-bottom:16px}
+.qui{font-size:19px;font-weight:600;text-align:center;margin-bottom:2px}
+.quand{text-align:center;color:var(--encre-2);font-size:15px;margin-bottom:20px}
+.btn{display:block;width:100%;font:inherit;font-size:16px;font-weight:500;
+  padding:15px 16px;margin-bottom:11px;border-radius:6px;border:1px solid var(--trait);
+  background:var(--carte);color:var(--encre);cursor:pointer;text-align:center}
+.btn:active{transform:translateY(1px)}
+.btn[aria-pressed="true"]{background:var(--or);border-color:var(--or);color:#fff}
+.btn-or{background:var(--or);border-color:var(--or);color:#fff}
+.agapes{margin-top:18px;padding-top:18px;border-top:1px solid var(--trait)}
+.agapes[hidden]{display:none}
+.agapes h2{font-family:var(--titre);font-size:15px;font-weight:600;
+  margin-bottom:4px;color:var(--encre)}
+.agapes p{font-size:13.5px;color:var(--encre-3);margin-bottom:14px}
+.etat{border-radius:6px;padding:14px 16px;font-size:15px;margin-bottom:16px}
+.etat-ok{background:var(--ok-fond);color:var(--ok)}
+.etat-mal{background:var(--alerte-fond);color:var(--alerte)}
+.etat[hidden]{display:none}
+.pied{text-align:center;color:var(--encre-3);font-size:12.5px;margin-top:22px;
+  line-height:1.6}
+.charge{text-align:center;color:var(--encre-3);padding:40px 0}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="formule">A∴L∴G∴D∴G∴A∴D∴L∴U∴</div>
+
+  <div id="charge" class="charge">Un instant…</div>
+
+  <div id="perdu" class="carte" hidden>
+    <h1>Ce lien ne mène nulle part</h1>
+    <p class="sous" style="margin:12px 0 0">Il a peut-être été coupé en deux par
+      votre messagerie. Ouvrez le courriel de la convocation et touchez le lien
+      entier, ou répondez simplement à ce courriel : votre réponse sera
+      enregistrée à la main.</p>
+  </div>
+
+  <div id="tout" hidden>
+    <h1 id="titre">Votre réponse</h1>
+    <p class="sous" id="atelier"></p>
+
+    <div class="carte">
+      <div class="qui" id="nom"></div>
+      <div class="quand" id="date"></div>
+
+      <div id="etat" class="etat" hidden></div>
+
+      <button class="btn" id="present" aria-pressed="false">Je serai présent·e</button>
+      <button class="btn" id="excuse"  aria-pressed="false">Je me fais excuser</button>
+
+      <div class="agapes" id="bloc-agapes" hidden>
+        <h2>Et aux agapes ?</h2>
+        <p>Le traiteur compte les couverts d'après vos réponses. Un couvert
+           commandé pour personne est payé quand même.</p>
+        <button class="btn" id="oui-agapes" aria-pressed="false">Oui, je reste à table</button>
+        <button class="btn" id="non-agapes" aria-pressed="false">Non, je ne reste pas</button>
+      </div>
+    </div>
+
+    <p class="pied">Vous pouvez changer d'avis : revenez sur ce lien,
+      votre dernière réponse remplace la précédente.</p>
+  </div>
+</div>
+
+<script>
+'use strict';
+/* Le jeton vient de l'adresse. On ne le lit nulle part ailleurs, et on
+   ne le garde pas : cette page n'écrit rien dans le navigateur. */
+const JETON = new URLSearchParams(location.search).get('j') || '';
+
+const $ = s => document.querySelector(s);
+const ech = t => String(t == null ? '' : t).replace(/[&<>"]/g,
+  c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+const MOIS = ['janvier','février','mars','avril','mai','juin','juillet',
+              'août','septembre','octobre','novembre','décembre'];
+const JOURS = ['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
+
+function dateLongue(iso){
+  if (!iso) return '';
+  const d = new Date(iso + 'T12:00:00');
+  if (isNaN(d)) return iso;
+  return JOURS[d.getDay()] + ' ' + d.getDate() + ' ' +
+         MOIS[d.getMonth()] + ' ' + d.getFullYear();
+}
+
+let etat = { reponse: null, agapes: null };
+
+function peindre(){
+  $('#present').setAttribute('aria-pressed', String(etat.reponse === 'present'));
+  $('#excuse').setAttribute('aria-pressed', String(etat.reponse === 'excuse'));
+  /* Les agapes ne se posent que si l'on vient : demander à un absent
+     s'il reste à table n'a pas de sens, et ferait compter un couvert. */
+  $('#bloc-agapes').hidden = etat.reponse !== 'present';
+  $('#oui-agapes').setAttribute('aria-pressed', String(etat.agapes === true));
+  $('#non-agapes').setAttribute('aria-pressed', String(etat.agapes === false));
+}
+
+function dire(texte, mal){
+  const z = $('#etat');
+  z.textContent = texte;
+  z.className = 'etat ' + (mal ? 'etat-mal' : 'etat-ok');
+  z.hidden = !texte;
+}
+
+async function ouvrir(){
+  if (!/^[a-f0-9]{64}$/.test(JETON)){ $('#charge').hidden = true; $('#perdu').hidden = false; return; }
+  let r;
+  try { r = await fetch('/api/reponse?j=' + encodeURIComponent(JETON)); }
+  catch (e){ $('#charge').textContent = 'Pas de réseau. Réessayez dans un instant.'; return; }
+  if (!r.ok){ $('#charge').hidden = true; $('#perdu').hidden = false; return; }
+  const d = await r.json();
+
+  $('#nom').textContent = d.nom || 'Vous';
+  $('#date').textContent = 'Tenue du ' + dateLongue(d.tenue);
+  $('#atelier').textContent = d.loge
+    ? 'R∴L∴ ' + d.loge.nom + (d.loge.numero ? ' n°' + d.loge.numero : '') +
+      (d.loge.orient ? ' — à l’O∴ de ' + d.loge.orient : '')
+    : '';
+  etat.reponse = d.reponse;
+  etat.agapes = d.agapes;
+  peindre();
+  if (d.reponse) dire(resume());
+  $('#charge').hidden = true; $('#tout').hidden = false;
+}
+
+function resume(){
+  if (etat.reponse === 'excuse') return '✓ Enregistré : vous vous faites excuser.';
+  if (etat.reponse !== 'present') return '';
+  if (etat.agapes === true)  return '✓ Enregistré : présent·e, et vous restez aux agapes.';
+  if (etat.agapes === false) return '✓ Enregistré : présent·e, sans les agapes.';
+  return '✓ Enregistré : présent·e. Dites-nous pour les agapes.';
+}
+
+let enCours = false;
+async function repondre(reponse, agapes){
+  if (enCours) return;
+  enCours = true;
+  const avant = { ...etat };
+  etat.reponse = reponse;
+  etat.agapes = agapes === undefined ? etat.agapes : agapes;
+  peindre(); dire('Enregistrement…');
+  try {
+    const r = await fetch('/api/reponse?j=' + encodeURIComponent(JETON), {
+      method: 'POST', headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ reponse: etat.reponse,
+                             agapes: etat.agapes === true })
+    });
+    if (!r.ok) throw new Error('refus');
+    const d = await r.json();
+    etat.reponse = d.reponse; etat.agapes = d.agapes;
+    peindre(); dire(resume());
+  } catch (e) {
+    /* On ne laisse PAS l'écran montrer une réponse qui n'est pas
+       partie : il faudrait revenir, et personne ne revient. */
+    etat = avant; peindre();
+    dire('Votre réponse n’a pas pu être enregistrée. Réessayez, ou ' +
+         'répondez simplement à la convocation par courriel.', true);
+  } finally { enCours = false; }
+}
+
+$('#present').addEventListener('click', () => repondre('present'));
+$('#excuse').addEventListener('click',  () => repondre('excuse', false));
+$('#oui-agapes').addEventListener('click', () => repondre('present', true));
+$('#non-agapes').addEventListener('click', () => repondre('present', false));
+
+ouvrir();
+</script>
+</body>
+</html>

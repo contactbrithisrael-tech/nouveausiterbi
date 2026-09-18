@@ -41,19 +41,72 @@ function sansDoublon(liste){
 }
 
 /* Qui reçoit, d'après le registre — et non d'après ce qu'on nous
-   demande d'envoyer. */
+   demande d'envoyer.
+
+   On rend des PERSONNES, non des adresses : il faut savoir à qui
+   appartient chaque courriel pour lui remettre le lien de réponse qui
+   n'est qu'à lui. Une liste d'adresses ne le permettrait pas. */
 function destinataires(etat, groupe){
   const d = (etat && typeof etat === 'object') ? etat : {};
-  const actifs = (d.membres || []).filter(m =>
-    m && m.email && !['demission','radiation','decede'].includes(m.statut));
-  const mem = actifs.map(m => m.email);
-  const vis = (d.visiteurs || []).filter(v => v && v.email).map(v => v.email);
-  const ami = (d.amis || []).filter(a => a && a.email).map(a => a.email);
-  const choix = groupe === 'membres'   ? mem
-              : groupe === 'visiteurs' ? vis
-              : groupe === 'amis'      ? ami
-              : mem.concat(vis).concat(ami);
-  return sansDoublon(choix).filter(valable);
+  const gens = [];
+  const ajoute = (t, x, nom) => {
+    if (x && x.email && valable(propre(x.email)))
+      gens.push({ type: t, id: x.id, nom, email: propre(x.email) });
+  };
+  if (groupe === 'tous' || groupe === 'membres')
+    (d.membres || []).filter(m =>
+        m && !['demission','radiation','decede'].includes(m.statut))
+      .forEach(m => ajoute('membre', m,
+        ((m.prenoms || '') + ' ' + (m.nom || '')).trim()));
+  if (groupe === 'tous' || groupe === 'visiteurs')
+    (d.visiteurs || []).forEach(v => ajoute('visiteur', v,
+      ((v.prenom || '') + ' ' + (v.nom || '')).trim()));
+  if (groupe === 'tous' || groupe === 'amis')
+    (d.amis || []).forEach(a => ajoute('ami', a,
+      ((a.prenom || '') + ' ' + (a.nom || '')).trim()));
+
+  /* Une même adresse ne reçoit qu'une fois, et c'est la première
+     qualité trouvée qui la porte. */
+  const vus = new Set();
+  return gens.filter(g => {
+    const c = g.email.toLowerCase();
+    if (vus.has(c)) return false;
+    vus.add(c); return true;
+  });
+}
+
+/* Un jeton par personne et par tenue : trente-deux octets tirés au
+   hasard, réutilisés si la convocation est renvoyée — sans quoi le
+   premier lien cesserait de marcher au second envoi, et une réponse
+   déjà donnée serait perdue. */
+const hex = t => [...new Uint8Array(t)].map(o => o.toString(16).padStart(2, '0')).join('');
+
+async function jetons(context, loge_id, tenue, gens){
+  const dessus = new Map();
+  const { results } = await context.env.DB.prepare(
+    'SELECT jeton, qui_type, qui_id FROM reponses WHERE loge_id = ? AND tenue = ?')
+    .bind(loge_id, tenue).all();
+  for (const r of (results || [])) dessus.set(r.qui_type + ':' + r.qui_id, r.jeton);
+
+  const neufs = [];
+  for (const g of gens){
+    const cle = g.type + ':' + g.id;
+    if (dessus.has(cle)){ g.jeton = dessus.get(cle); continue; }
+    g.jeton = hex(crypto.getRandomValues(new Uint8Array(32)));
+    neufs.push(g);
+  }
+  if (neufs.length){
+    const trous = neufs.map(() => '(?, ?, ?, ?, ?, ?, ?)').join(', ');
+    const liants = [];
+    for (const g of neufs)
+      liants.push(g.jeton, loge_id, tenue, g.type, g.id, g.nom || '', g.email);
+    try {
+      await context.env.DB.prepare(
+        'INSERT INTO reponses (jeton, loge_id, tenue, qui_type, qui_id, nom, courriel) ' +
+        'VALUES ' + trous).bind(...liants).run();
+    } catch (e) { /* une ligne déjà là : le lien existant fera l'affaire */ }
+  }
+  return gens;
 }
 
 export async function onRequestPost(context){
@@ -86,12 +139,35 @@ export async function onRequestPost(context){
   try { etat = r ? JSON.parse(r.donnees) : null; }
   catch (e) { return json({ erreur: 'etat_illisible' }, 500); }
 
-  const liste = destinataires(etat, groupe);
-  if (!liste.length) return json({ erreur: 'aucun_destinataire', groupe }, 400);
-  if (liste.length > DESTINATAIRES_MAX)
-    return json({ erreur: 'trop_de_destinataires', combien: liste.length }, 413);
+  const gens = destinataires(etat, groupe);
+  if (!gens.length) return json({ erreur: 'aucun_destinataire', groupe }, 400);
+  if (gens.length > DESTINATAIRES_MAX)
+    return json({ erreur: 'trop_de_destinataires', combien: gens.length }, 413);
 
-  const sortie = await remettre(context.env, sujet, corps, liste);
+  /* ── LE LIEN DE RÉPONSE ──────────────────────────────────────────
+     Demandé seulement quand le message en appelle une — une
+     convocation, non une lettre de nouvelles. Chacun reçoit LE SIEN :
+     c'est ce qui permet de compter les présents et les couverts sans
+     que personne ne dépouille quatre-vingts courriels à la main. */
+  const veutReponse = corpsRequete?.reponse === true;
+  const tenue = propre(corpsRequete?.tenue) ||
+                (etat && etat.tenue && etat.tenue.date) || '';
+  let avecJeton = gens;
+  if (veutReponse && tenue)
+    avecJeton = await jetons(context, moi.loge_id, tenue, gens);
+
+  const racine = new URL(context.request.url).origin;
+  const corpsPour = g => (veutReponse && g.jeton)
+    ? corps + '\n\n' +
+      '— — — — — — — — — — — — — — — — — — — —\n' +
+      'RÉPONDEZ D\'UN CLIC — ce lien n\'est qu\'à vous :\n' +
+      racine + '/reponse.html?j=' + g.jeton + '\n' +
+      'Présent ou excusé, et si vous restez aux agapes.\n' +
+      'Votre réponse est comptée aussitôt ; le traiteur en dépend.'
+    : corps;
+
+  const liste = gens.map(g => g.email);
+  const sortie = await remettre(context.env, sujet, corpsPour, gens);
   if (!sortie.configure)
     return json({ configure: false, pourquoi: sortie.pourquoi || 'aucune_cle' });
 

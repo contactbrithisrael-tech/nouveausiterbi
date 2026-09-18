@@ -16,6 +16,7 @@ const db = new DatabaseSync(':memory:');
 db.exec(fs.readFileSync(RACINE + 'loge/serveur/001-socle-en-ligne.sql', 'utf8'));
 db.exec(fs.readFileSync(RACINE + 'loge/serveur/002-annuaire.sql', 'utf8'));
 db.exec(fs.readFileSync(RACINE + 'loge/serveur/003-envois.sql', 'utf8'));
+db.exec(fs.readFileSync(RACINE + 'loge/serveur/004-reponses.sql', 'utf8'));
 
 /* RBI_SANS_COMPTES reproduit la panne du premier soir : le serveur
    répond, la base est en place, mais la table des utilisateurs est
@@ -72,6 +73,8 @@ const F = {
   mdp:    await import(RACINE + 'functions/api/mdp.js'),
   annuaire: await import(RACINE + 'functions/api/annuaire.js'),
   envoyer:  await import(RACINE + 'functions/api/envoyer.js'),
+  reponse:  await import(RACINE + 'functions/api/reponse.js'),
+  reponses: await import(RACINE + 'functions/api/reponses.js'),
   sortir: await import(RACINE + 'functions/api/sortir.js'),
   etat:   await import(RACINE + 'functions/api/etat.js'),
 };
@@ -84,6 +87,10 @@ createServer(async (req, res) => {
   }
   /* L'Espace Membres, pour éprouver le formulaire de l'annuaire là où
      il vit vraiment — et non une imitation qui lui ressemblerait. */
+  if (u.pathname === '/reponse.html'){
+    res.writeHead(200, {'content-type':'text/html; charset=utf-8'});
+    return res.end(fs.readFileSync(RACINE + 'reponse.html'));
+  }
   if (u.pathname === '/espace-membres.html'){
     res.writeHead(200, {'content-type':'text/html; charset=utf-8'});
     return res.end(fs.readFileSync(RACINE + 'espace-membres.html'));
@@ -93,16 +100,31 @@ createServer(async (req, res) => {
     res.writeHead(200, {'content-type':'application/json'});
     return res.end(JSON.stringify(globalThis.__courriels));
   }
+  /* Le contenu brut d'une table — pour DIAGNOSTIQUER une épreuve qui
+     échoue, et non pour la faire passer : rien du programme ne l'appelle. */
+  if (u.pathname === '/__table'){
+    const nom = (u.searchParams.get('nom') || '').replace(/[^a-z_]/g, '');
+    res.writeHead(200, {'content-type':'application/json'});
+    try { return res.end(JSON.stringify(db.prepare('SELECT * FROM ' + nom).all(),
+      (k, v) => typeof v === 'bigint' ? Number(v) : v)); }
+    catch (e) { return res.end(JSON.stringify({ erreur: String(e) })); }
+  }
   if (u.pathname === '/__courriels/vider'){
     globalThis.__courriels = [];
     res.writeHead(200, {'content-type':'application/json'});
     return res.end('[]');
   }
-  const m = u.pathname.match(/^\/api\/(entrer|sortir|etat|porte|mdp|annuaire|envoyer)$/);
+  const m = u.pathname.match(/^\/api\/(entrer|sortir|etat|porte|mdp|annuaire|envoyer|reponses?)$/);
   if (!m){ res.writeHead(404); return res.end('non'); }
 
   const corps = await new Promise(ok => { let d=''; req.on('data',c=>d+=c); req.on('end',()=>ok(d)); });
-  const requete = new Request('https://x' + u.pathname, {
+  /* PATHNAME + SEARCH. La chaîne de requête était jetée ici, et les
+     fonctions recevaient une adresse nue : « /api/reponse?j=… » leur
+     arrivait sans jeton, et elles répondaient « lien inconnu » à un
+     lien parfaitement valable. Le défaut était dans le banc d'essai,
+     non dans le programme — c'est pire : il faisait échouer ce qui
+     marche, et aurait pu faire passer ce qui ne marche pas. */
+  const requete = new Request('https://x' + u.pathname + u.search, {
     method: req.method,
     headers: { cookie: req.headers.cookie || '', 'content-type': 'application/json' },
     body: ['GET','HEAD'].includes(req.method) ? undefined : (corps || undefined)
