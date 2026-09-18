@@ -186,8 +186,23 @@ with sync_playwright() as p:
     # Il est gardé dans le registre de l'Atelier, jamais écrit dans le
     # programme : ce fichier est servi en clair sur le site, et
     # l'appartenance maçonnique d'une personne n'a pas à y figurer.
-    v("Martine" not in PAGE and "HABERT" not in PAGE,
-      "AUCUN NOM DE SECRÉTAIRE N'EST ÉCRIT DANS LE PROGRAMME")
+    # LA LIGNE EST ICI, ET ELLE N'EST PAS LA MIENNE. Le Souverain Grand
+    # Commandeur a tranche : le prenom et l'INITIALE du nom peuvent
+    # figurer au mot de fin — c'est la convention du Rite, celle que
+    # l'annuaire emploie deja (« Nom (ou initial) »).
+    #
+    # Ce qui reste interdit dans ce fichier servi en clair : un NOM DE
+    # FAMILLE entier, et une adresse de courriel personnelle. Les deux
+    # ensemble designent quelqu'un ; une initiale, non.
+    NOMS_INTERDITS = ["HABERT", "DARMON", "GASMI", "KHANAFER", "NAKACHE",
+                      "SAFFARO", "ALLAN", "NOTARIANNI", "CARILLO", "BUHLER",
+                      "ROUME", "JOURDAN", "PRATS", "OLOMBEL", "ARNEODO"]
+    fuites = [n for n in NOMS_INTERDITS if n.lower() in PAGE.lower()]
+    v(not fuites,
+      "AUCUN NOM DE FAMILLE D'UN MEMBRE N'EST ECRIT DANS LE PROGRAMME", fuites)
+    motfin = pg.evaluate("E.tenue.motFin")
+    v("@" not in motfin,
+      "et le mot de fin ne porte aucune adresse de courriel personnelle", motfin)
     v(pg.evaluate("typeof E.tenue.motFin") == "string",
       "le mot de fin est un champ du registre", pg.evaluate("typeof E.tenue.motFin"))
 

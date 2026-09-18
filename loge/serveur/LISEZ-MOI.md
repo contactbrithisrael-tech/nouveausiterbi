@@ -37,6 +37,7 @@ RBI_PORT=8789 node loge/serveur/faux-serveur.mjs &
 RBI_PORT=8790 node loge/serveur/faux-serveur.mjs &
 RBI_PORT=8791 RBI_SANS_COMPTES=1 node loge/serveur/faux-serveur.mjs &
 RBI_PORT=8792 node loge/serveur/faux-serveur.mjs &
+RBI_PORT=8793 node loge/serveur/faux-serveur.mjs &
 
 RBI_URL=http://127.0.0.1:8787/ python3 loge/serveur/essai-documents.py
 RBI_URL=http://127.0.0.1:8789/ python3 loge/serveur/essai-partage.py
@@ -45,6 +46,7 @@ RBI_URL_SANS=http://127.0.0.1:8788/ RBI_URL_AVEC=http://127.0.0.1:8789/ \
 RBI_URL_AVEC=http://127.0.0.1:8790/ RBI_URL_SANS=http://127.0.0.1:8791/ \
   python3 loge/serveur/essai-mdp.py
 RBI_URL=http://127.0.0.1:8792/ python3 loge/serveur/essai-annuaire.py
+RBI_URL=http://127.0.0.1:8793/ python3 loge/serveur/essai-carnet.py
 ```
 
 **Chaque suite veut un serveur neuf.** La base est en mémoire : une
@@ -77,6 +79,11 @@ le monde.
   tuilage compris, jusqu'au carnet des Visiteurs : la fiche arrive
   seule, sa case « Tuilé par » reste vide, le même Frère n'entre pas
   deux fois, et seuls les champs attendus sont gardés.
+- **`essai-carnet.py`** — un CARNET de contacts s'ajoute sans rien
+  effacer, une SAUVEGARDE remplace : les confondre coûterait le Tableau
+  de la Loge. Les réserves de lecture suivent la fiche, une adresse
+  illisible n'est pas inscrite comme une adresse, le même carnet versé
+  deux fois n'ajoute personne, et ce qu'une main a corrigé l'emporte.
 - **`essai-documents.py`** — la qualité et le contreseing du Souverain
   Grand Commandeur sur chaque document, la feuille des Visiteurs sur sa
   page, le point du Temple sur la convocation.
