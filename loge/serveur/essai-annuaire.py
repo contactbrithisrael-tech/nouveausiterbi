@@ -40,7 +40,7 @@ with sync_playwright() as p:
     v(not F.locator("#contenu-membres").is_visible(),
       "et ne montre rien avant d'être répondu")
 
-    F.fill("#porte-q1", "de la loge de St Jean")
+    F.fill("#porte-q1", "de midi a minuit")
     F.fill("#porte-q2", "7 ans")
     F.click("#porte-form button[type=submit]"); F.wait_for_timeout(600)
     v(F.locator("#contenu-membres").is_visible(), "les questions d'usage ouvrent")

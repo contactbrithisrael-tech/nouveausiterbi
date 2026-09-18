@@ -49,6 +49,7 @@ RBI_PORT=8797 RBI_COURRIEL=1 RBI_COURRIEL_ECHEC=1 \
   node loge/serveur/faux-serveur.mjs &
 RBI_PORT=8798 RBI_COURRIEL=1 node loge/serveur/faux-serveur.mjs &
 RBI_PORT=8799 RBI_COURRIEL=1 node loge/serveur/faux-serveur.mjs &
+RBI_PORT=8800 node loge/serveur/faux-serveur.mjs &
 
 RBI_URL=http://127.0.0.1:8787/ python3 loge/serveur/essai-documents.py
 RBI_URL=http://127.0.0.1:8789/ python3 loge/serveur/essai-partage.py
@@ -62,6 +63,7 @@ RBI_URL=http://127.0.0.1:8794/ python3 loge/serveur/essai-envois.py
 python3 loge/serveur/essai-poste.py
 RBI_URL=http://127.0.0.1:8798/ python3 loge/serveur/essai-reponses.py
 RBI_URL=http://127.0.0.1:8799/ python3 loge/serveur/essai-pdf.py
+RBI_URL=http://127.0.0.1:8800/ python3 loge/serveur/essai-tuilage.py
 ```
 
 Chaque épreuve veut un serveur NEUF : `essai-mdp` change un mot de

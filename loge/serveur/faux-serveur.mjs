@@ -81,7 +81,10 @@ const F = {
 
 createServer(async (req, res) => {
   const u = new URL(req.url, 'http://x');
-  if (u.pathname === '/' || u.pathname === '/index.html'){
+  /* « / » sert le programme de gestion : c'est ce que toutes les
+     épreuves ouvrent. L'accueil du site, lui, garde son propre chemin
+     — sans quoi l'un recouvrirait l'autre. */
+  if (u.pathname === '/'){
     res.writeHead(200, {'content-type':'text/html; charset=utf-8'});
     return res.end(fs.readFileSync(PAGE));
   }
@@ -90,6 +93,25 @@ createServer(async (req, res) => {
   if (u.pathname === '/reponse.html'){
     res.writeHead(200, {'content-type':'text/html; charset=utf-8'});
     return res.end(fs.readFileSync(RACINE + 'reponse.html'));
+  }
+  /* L'accueil et ses fichiers : le tuilage du site y vit, et ses
+     questions sont dans assets/config.js. On sert le dépôt tel quel,
+     en lecture seule et sur des chemins connus — une épreuve doit
+     éprouver la vraie page, non une imitation. */
+  {
+    const m2 = u.pathname.match(
+      /^\/(index\.html|assets\/[\w.-]+\.(?:js|css|png|jpe?g|svg|webp))$/);
+    if (m2){
+      const f = RACINE + m2[1];
+      if (fs.existsSync(f)){
+        const t = f.endsWith('.js')  ? 'text/javascript'
+                : f.endsWith('.css') ? 'text/css'
+                : f.endsWith('.html')? 'text/html; charset=utf-8'
+                : f.endsWith('.svg') ? 'image/svg+xml' : 'image/*';
+        res.writeHead(200, {'content-type': t});
+        return res.end(fs.readFileSync(f));
+      }
+    }
   }
   if (u.pathname === '/espace-membres.html'){
     res.writeHead(200, {'content-type':'text/html; charset=utf-8'});
