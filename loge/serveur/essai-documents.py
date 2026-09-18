@@ -232,6 +232,40 @@ with sync_playwright() as p:
     txt = pg.evaluate("() => convocationTexte()")
     v("Mes bien chers S\u0153urs et Fr\u00e8res" in txt,
       "laisse vide, la formule ordinaire revient", txt[:160])
+
+    # ── LA SIGNATURE : QUI ECRIT, ET DE QUEL DROIT ────────────────
+    # Une convocation part de la main de la Soeur Secretaire, mais par
+    # mandat du Venerable Maitre. Les deux doivent y figurer, sans quoi
+    # l'on ne sait plus qui convoque.
+    pg.evaluate("() => { E.tenue.signature = E.tenue.signature || ''; }")
+    txt = pg.evaluate("() => convocationTexte()")
+    v("Secr\u00e9taire" in txt.split("Fraternellement")[-1],
+      "LE COURRIEL EST SIGNE DE LA SOEUR SECRETAIRE", txt[-220:])
+    v("mandat" in txt.split("Fraternellement")[-1],
+      "ET DIT DE QUEL MANDAT elle le fait", txt[-220:])
+    h3, t3 = doc("#imp-convoc", "#t-convoc")
+    v("par mandat" not in t3,
+      "mais le feuillet ne la porte pas : l'en-tete y dit deja l'Atelier", t3[-200:])
+
+    # ── LE DON A ZERO ─────────────────────────────────────────────
+    # La plateforme ajoute d'elle-meme une contribution a son profit,
+    # pre-remplie. Qui ne la voit pas regle vingt euros pour un triangle
+    # de quinze, et croit s'etre trompe de montant.
+    pg.evaluate("""() => { E.tenue.agapesPaiement = 'https://exemple.test/agapes';
+      garder(); dessiner(); }""")
+    pg.wait_for_timeout(500)
+    txt = pg.evaluate("() => convocationTexte()")
+    v("exemple.test/agapes" in txt, "le lien de reglement est dans le courriel")
+    v("don \u00e0 0" in txt.replace("\u00e0", "\u00e0"),
+      "ET LA MENTION DU DON A ZERO L'ACCOMPAGNE", txt[txt.find("R\u00e9gler"):][:180])
+    h4, t4 = doc("#imp-convoc", "#t-convoc")
+    v("exemple.test/agapes" in t4, "le feuillet le porte aussi")
+    v("don" in t4 and "0" in t4, "avec la meme mise en garde", t4[-300:])
+    pg.evaluate("() => { E.tenue.agapesPaiement = ''; garder(); dessiner(); }")
+    pg.wait_for_timeout(400)
+    txt = pg.evaluate("() => convocationTexte()")
+    v("don \u00e0 0" not in txt,
+      "sans lien de paiement, aucune mise en garde ne parait", txt[-200:])
     n = pages("#imp-emarg", "#t-tenue")
     v(n == 2, f"l'émargement fait deux pages : les membres, puis les "
               f"Visiteurs — et rien ne déborde sur une troisième (il en fait {n})", n)
