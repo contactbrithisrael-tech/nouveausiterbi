@@ -450,6 +450,16 @@ function neuf(){ return {
     adage:"L'assiduité aux travaux est le premier devoir du Maçon",
     agapesOui:true, agapesPrix:15, agapesLimite:'2026-09-03',
     agapesTraiteur:'Traiteur — inscription obligatoire',
+    /* LE MOT DE FIN. Il est ici, dans le registre de l'Atelier, et non
+       écrit dans ce fichier — qui est servi en clair sur le site. Y
+       inscrire « notre Sœur Secrétaire, Untel » publierait
+       l'appartenance maçonnique d'une personne, et ce qui est publié
+       ne se retire plus. Le nom se complète une fois dans l'écran de
+       la convocation ; il suivra la personne qui tient la charge, sans
+       qu'on touche au programme. */
+    motFin:"Mes Sœurs, mes Frères. Merci de bien vouloir vous enregistrer " +
+           "individuellement sur le site et, en cas de doute, de contacter " +
+           "notre Sœur Secrétaire.",
     contact:"R∴L∴ Bereshit n°00 — contact.brith.israel@gmail.com"
   },
   odj:[
@@ -1740,6 +1750,16 @@ function champ(cle,label,type,aide){
     ${aide?`<span class="aide">${aide}</span>`:''}</div>`;
 }
 
+/* Une phrase ne se tape pas dans un champ d'une ligne : on n'en voit
+   que le bout, et l'on corrige à l'aveugle. */
+function champLong(cle,label,aide,lignes){
+  const v = E.tenue[cle] ?? '';
+  return `<div class="champ" style="grid-column:1/-1"><label for="f-${cle}">${label}</label>
+    <textarea id="f-${cle}" data-t="${cle}" rows="${lignes||3}"
+      style="resize:vertical">${ech(v)}</textarea>
+    ${aide?`<span class="aide">${aide}</span>`:''}</div>`;
+}
+
 /* La date se relit en clair sous les champs. Elle est rafraîchie seule,
    sans redessiner le formulaire : un redessin à chaque frappe ferait
    sauter le curseur hors du champ. */
@@ -1813,6 +1833,12 @@ function vueConvocation(){
         ${champ('agapesTraiteur','Mention des agapes','text')}
         ${champ('adage','Adage','text')}
         ${champ('contact','Contacts','text')}
+        ${champLong('motFin','Mot de fin — au bas de la convocation',
+          'Complétez-le du nom de la Sœur Secrétaire. Il est gardé dans le ' +
+          'registre de l’Atelier, et non dans le programme : le fichier du ' +
+          'programme est lisible de tous sur le site, et l’appartenance ' +
+          'maçonnique d’une personne n’a pas à y figurer. Laissez-le vide ' +
+          'pour qu’il ne s’imprime pas.', 3)}
       </div>
     </details>
   </div></div>`;
@@ -1943,11 +1969,12 @@ function convocation(){
   <table class="serre"><tbody>${E.odj.filter(o=>o.t.trim()).map(o=>
     `<tr><td style="width:22mm;color:#7a6a3e;font-size:10pt">${ech(o.h||'')}</td>
      <td>${ech(o.t)}</td></tr>`).join('')}</tbody></table>
-  ${T.agapesOui?`<p style="margin-top:5mm"><b>Agapes rituelles.</b> ${ech(T.agapesTraiteur)} —
+  ${T.agapesOui?`<p style="margin-top:4mm"><b>Agapes rituelles.</b> ${ech(T.agapesTraiteur)} —
     le triangle est de ${ech(T.agapesPrix)} €. Inscription avant le
     ${dateLongue(T.agapesLimite)}.</p>`:''}
+  ${T.motFin?`<p style="margin-top:4mm">${ech(T.motFin)}</p>`:''}
   ${T.adage?`<p style="text-align:center;font-style:italic;margin-top:5mm">« ${ech(T.adage)} »</p>`:''}
-  ${T.contact?`<p style="font-size:9.5pt;color:#5c5346;margin-top:5mm">${ech(T.contact)}</p>`:''}`;
+  ${T.contact?`<p style="font-size:9.5pt;color:#5c5346;margin-top:4mm">${ech(T.contact)}</p>`:''}`;
 }
 
 /* ── Saisie du formulaire : on écrit dans E sans redessiner ──────── */
@@ -2347,6 +2374,7 @@ function convocationTexte(){
     l.push("AGAPES RITUELLES — triangle de " + T.agapesPrix + " €.");
     l.push("Merci de confirmer votre présence avant le " + dateLongue(T.agapesLimite) + ".");
   }
+  if (T.motFin){ l.push(""); l.push(T.motFin); }
   if (T.adage){ l.push(""); l.push("« " + T.adage + " »"); }
   l.push(""); l.push("Fraternellement,");
   l.push("Pour la R∴L∴ Bereshit n°00 — " + COURRIEL_LOGE);
