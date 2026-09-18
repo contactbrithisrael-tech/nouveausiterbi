@@ -136,6 +136,51 @@ with sync_playwright() as pw:
     anon.click("#present"); anon.wait_for_timeout(1000)
     anon.click("#oui-agapes"); anon.wait_for_timeout(1200)
 
+    # == 3bis. LE REGLEMENT DES AGAPES ==============================
+    # Il parait a l'instant ou l'on vient de dire qu'on reste a table —
+    # le seul moment ou l'on est dispose a le faire. Pas avant : montrer
+    # un bouton de paiement a qui s'excuse, c'est reclamer de l'argent
+    # a qui ne doit rien.
+    LIEN = "https://exemple.test/agapes-du-rite"
+    pg.evaluate("(l) => { E.tenue.agapesPaiement = l; garder(); }", LIEN)
+    pg.wait_for_timeout(1500)
+    a2 = b.new_context().new_page()
+    a2.goto(U + "reponse.html?j=" + jeton); a2.wait_for_timeout(1500)
+    v(a2.locator("#bloc-paiement").is_visible(),
+      "LE REGLEMENT PARAIT A QUI VIENT ET RESTE A TABLE")
+    v(a2.get_attribute("#payer", "href") == LIEN,
+      "et il mene la ou la Secretaire l'a dit", a2.get_attribute("#payer", "href"))
+    a2.click("#non-agapes"); a2.wait_for_timeout(1200)
+    v(a2.locator("#bloc-paiement").is_hidden(),
+      "QUI NE RESTE PAS NE SE VOIT RIEN RECLAMER")
+    a2.click("#excuse"); a2.wait_for_timeout(1200)
+    v(a2.locator("#bloc-paiement").is_hidden(), "un excuse non plus")
+    a2.close()
+
+    # un lien qui n'est pas une adresse web ne devient pas un bouton
+    pg.evaluate("() => { E.tenue.agapesPaiement = 'javascript:alert(1)'; garder(); }")
+    pg.wait_for_timeout(1500)
+    a3 = b.new_context().new_page()
+    a3.goto(U + "reponse.html?j=" + jeton); a3.wait_for_timeout(900)
+    d3 = a3.evaluate("""async (j) => {
+      const r = await fetch('/api/reponse?j=' + j); return await r.json(); }""", jeton)
+    v(d3.get("paiement") in (None, ""),
+      "UN LIEN QUI N'EST PAS UNE ADRESSE WEB EST REFUSE PAR LE SERVEUR", d3.get("paiement"))
+    a3.close()
+    pg.evaluate("(l) => { E.tenue.agapesPaiement = l; garder(); }", LIEN)
+    pg.wait_for_timeout(1500)
+
+    # la page de reponse ne laisse toujours rien filtrer du registre
+    fuite2 = pg.evaluate("""async (j) => {
+      const r = await fetch('/api/reponse?j=' + j);
+      return JSON.stringify(await r.json()); }""", jeton)
+    v("@" not in fuite2, "et le registre ne filtre toujours pas par cette route",
+      fuite2[:160])
+
+    anon.goto(U + "reponse.html?j=" + jeton); anon.wait_for_timeout(1400)
+    anon.click("#present"); anon.wait_for_timeout(900)
+    anon.click("#oui-agapes"); anon.wait_for_timeout(1200)
+
     # l'Ami repond aussi
     jetonAmi = dict((e, j) for e, j in liens)["tikva@exemple.test"]
     a2 = b.new_context().new_page()

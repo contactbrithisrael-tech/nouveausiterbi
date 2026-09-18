@@ -492,6 +492,10 @@ function neuf(){ return {
     adage:"L'assiduité aux travaux est le premier devoir du Maçon",
     agapesOui:true, agapesPrix:15, agapesLimite:'2026-09-03',
     agapesTraiteur:'Traiteur — inscription obligatoire',
+    /* Le lien où l'on règle sa part. Il paraît au bas de la
+       convocation, dans le courriel, et SUR LA PAGE DE RÉPONSE — à
+       l'instant précis où l'on vient de dire qu'on reste à table. */
+    agapesPaiement:'',
     /* LE MOT DE FIN. Il est ici, dans le registre de l'Atelier, et non
        écrit dans ce fichier — qui est servi en clair sur le site. Y
        inscrire « notre Sœur Secrétaire, Untel » publierait
@@ -2067,6 +2071,12 @@ function vueConvocation(){
       <div class="rangee" style="margin-top:13px">
         ${champ('agapesPrix','Triangle au repas (€)','number','Pour qui n’a pas le forfait')}
         ${champ('agapesLimite','Inscription avant le','date')}
+      </div>
+      <div class="rangee" style="margin-top:13px">
+        ${champ('agapesPaiement','Lien de paiement des agapes','url',
+          'Il paraît sur la convocation, dans le courriel, et sur la page de ' +
+          'réponse — au moment même où l’on vient de dire qu’on reste à table. ' +
+          'Laissez vide s’il n’y a rien à régler en ligne.')}
       </div></fieldset>
 
     <details class="replie">
@@ -2234,7 +2244,9 @@ function convocation(){
      <td>${ech(o.t)}</td></tr>`).join('')}</tbody></table>
   ${T.agapesOui?`<p style="margin-top:4mm"><b>Agapes rituelles.</b> ${ech(T.agapesTraiteur)} —
     le triangle est de ${ech(T.agapesPrix)} €. Inscription avant le
-    ${dateLongue(T.agapesLimite)}.</p>`:''}
+    ${dateLongue(T.agapesLimite)}.${T.agapesPaiement
+      ? ` Règlement en ligne : <a href="${ech(T.agapesPaiement)}">${ech(T.agapesPaiement)}</a>.`
+      : ''}</p>`:''}
   ${T.motFin?`<p style="margin-top:4mm">${ech(T.motFin)}</p>`:''}
   ${T.adage?`<p style="text-align:center;font-style:italic;margin-top:5mm">« ${ech(T.adage)} »</p>`:''}
   ${T.contact?`<p style="font-size:9.5pt;color:#3b3427;margin-top:4mm">${ech(T.contact)}</p>`:''}`;
@@ -2645,6 +2657,7 @@ function convocationTexte(){
     l.push("");
     l.push("AGAPES RITUELLES — triangle de " + T.agapesPrix + " €.");
     l.push("Merci de confirmer votre présence avant le " + dateLongue(T.agapesLimite) + ".");
+    if (T.agapesPaiement) l.push("Régler sa part : " + T.agapesPaiement);
   }
   if (T.motFin){ l.push(""); l.push(T.motFin); }
   if (T.adage){ l.push(""); l.push("« " + T.adage + " »"); }
