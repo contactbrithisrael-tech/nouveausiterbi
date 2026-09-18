@@ -147,17 +147,29 @@ production :
 | Variable | Valeur |
 |---|---|
 | `BREVO_CLE` *(ou `RESEND_CLE`)* | la clé d'API du service, **en secret** |
-| `COURRIEL_EXPEDITEUR` | l'adresse d'expédition, vérifiée chez le service |
+| `COURRIEL_EXPEDITEUR` | l'adresse d'expédition, sur un domaine vérifié |
+| `COURRIEL_REPONSE` | où doivent arriver les réponses |
 | `COURRIEL_NOM` | facultatif — le nom affiché |
 
-**L'adresse d'expédition doit être vérifiée chez le service**, sinon
-rien ne part. Brevo la vérifie par un simple courriel de confirmation ;
-Resend demande de poser des enregistrements DNS sur le domaine.
+### Expédier n'est pas recevoir
+
+C'est ce qui rend l'opération gratuite, et cela mérite d'être compris.
+
+**L'adresse d'expédition** doit appartenir à un domaine vérifié chez le
+service — trois lignes dans les réglages DNS du domaine. Elle n'a
+besoin d'AUCUNE boîte aux lettres : on expédie depuis
+`contact@brith-israel.org` sans que ce domaine ne reçoive quoi que ce
+soit. Pas de messagerie à payer.
+
+**L'adresse de réponse** (`COURRIEL_REPONSE`) peut être n'importe
+quelle boîte existante — celle qu'on relève déjà. Sans elle, une
+réponse partirait vers une adresse que personne ne relève et se
+perdrait, sans que ni l'expéditeur ni le destinataire ne s'en doutent.
 
 Expédier depuis une adresse `@gmail.com` par un service tiers passe mal
-les filtres : mieux vaut une adresse du domaine de l'Atelier, avec SPF
-et DKIM. C'est plus de travail une fois, et cela évite que les
-convocations tombent en indésirables tous les mois.
+les filtres : c'est le domaine de l'Atelier qu'il faut vérifier, avec
+SPF et DKIM. Une convocation tombée en indésirables est un Frère
+absent.
 
 Sans ces variables, rien ne casse : le bouton d'envoi réel n'apparaît
 simplement pas, et l'ancien chemin reste.

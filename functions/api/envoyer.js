@@ -127,5 +127,6 @@ export async function onRequestGet(context){
   const f = fournisseur(context.env), de = expediteur(context.env);
   return json({ configure: !!f && !!de.adresse,
                 service: f ? f.nom : null,
-                expediteur: de.adresse || null });
+                expediteur: de.adresse || null,
+                reponse: de.reponse || null });
 }
