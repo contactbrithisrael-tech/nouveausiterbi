@@ -65,7 +65,12 @@ export function expediteur(env){
 /* ── BREVO ──────────────────────────────────────────────────────────
    « messageVersions » porte jusqu'à deux mille destinataires en un
    seul appel, chacun recevant son propre message. */
-async function envoyerBrevo(cle, de, sujet, corps, liste){
+async function envoyerBrevo(cle, de, sujet, corps, liste, piece){
+  /* « corps » peut être un texte, ou une fonction qui en rend un pour
+     chaque personne : c'est ainsi que chacun reçoit SON lien de
+     réponse sans qu'on fasse quatre-vingts appels au service. */
+  const pour = g => typeof corps === 'function' ? corps(g) : corps;
+  const unique = typeof corps !== 'function';
   const r = await fetch('https://api.brevo.com/v3/smtp/email', {
     method: 'POST',
     headers: { 'api-key': cle, 'content-type': 'application/json',
@@ -74,57 +79,71 @@ async function envoyerBrevo(cle, de, sujet, corps, liste){
       sender: { email: de.adresse, name: de.nom },
       ...(de.reponse ? { replyTo: { email: de.reponse } } : {}),
       subject: sujet,
-      textContent: corps,
-      messageVersions: liste.map(a => ({ to: [{ email: a }] }))
+      textContent: unique ? pour(null) : pour(liste[0]),
+      /* La pièce est la même pour tous — la convocation en PDF. Brevo
+         la porte une seule fois, au-dessus des versions : elle n'est
+         pas recopiée quatre-vingts fois dans la requête. */
+      ...(piece ? { attachment: [{ content: piece.contenu, name: piece.nom }] } : {}),
+      messageVersions: liste.map(g => ({
+        to: [{ email: g.email }],
+        ...(unique ? {} : { textContent: pour(g) })
+      }))
     })
   });
   const texte = await r.text();
-  if (r.ok) return liste.map(a => ({ adresse: a, statut: 'partie', detail: '' }));
-  return liste.map(a => ({ adresse: a, statut: 'refusee',
+  if (r.ok) return liste.map(g => ({ adresse: g.email, statut: 'partie', detail: '' }));
+  return liste.map(g => ({ adresse: g.email, statut: 'refusee',
                            detail: ('HTTP ' + r.status + ' ' + texte).slice(0, 300) }));
 }
 
 /* ── RESEND ─────────────────────────────────────────────────────────
    L'envoi par lot accepte cent messages d'un coup, et répond pour
    chacun. */
-async function envoyerResend(cle, de, sujet, corps, liste){
+async function envoyerResend(cle, de, sujet, corps, liste, piece){
+  const pour = g => typeof corps === 'function' ? corps(g) : corps;
   const r = await fetch('https://api.resend.com/emails/batch', {
     method: 'POST',
     headers: { authorization: 'Bearer ' + cle, 'content-type': 'application/json' },
-    body: JSON.stringify(liste.map(a => ({
-      from: de.nom + ' <' + de.adresse + '>', to: [a],
+    body: JSON.stringify(liste.map(g => ({
+      from: de.nom + ' <' + de.adresse + '>', to: [g.email],
       ...(de.reponse ? { reply_to: de.reponse } : {}),
-      subject: sujet, text: corps
+      subject: sujet, text: pour(g),
+      ...(piece ? { attachments: [{ content: piece.contenu, filename: piece.nom }] } : {})
     })))
   });
   const texte = await r.text();
   if (!r.ok)
-    return liste.map(a => ({ adresse: a, statut: 'refusee',
+    return liste.map(g => ({ adresse: g.email, statut: 'refusee',
                              detail: ('HTTP ' + r.status + ' ' + texte).slice(0, 300) }));
-  return liste.map(a => ({ adresse: a, statut: 'partie', detail: '' }));
+  return liste.map(g => ({ adresse: g.email, statut: 'partie', detail: '' }));
 }
 
 /* ── L'ENTRÉE UNIQUE ────────────────────────────────────────────────
    Rend une ligne par destinataire. Ce qui a été refusé le dit, avec la
    raison telle que le service l'a donnée : inventer un message d'erreur
    ferait chercher la panne au mauvais endroit. */
-export async function remettre(env, sujet, corps, destinataires){
+export async function remettre(env, sujet, corps, destinataires, piece){
   const f = fournisseur(env);
   if (!f) return { configure: false, resultats: [] };
   const de = expediteur(env);
   if (!de.adresse)
     return { configure: false, pourquoi: 'expediteur_manquant', resultats: [] };
 
+  /* « destinataires » porte des personnes : { email, nom, jeton… }.
+     Une simple liste d'adresses est acceptée aussi, et enveloppée. */
+  const gens = destinataires.map(d =>
+    typeof d === 'string' ? { email: d } : d);
+
   const resultats = [];
-  for (let i = 0; i < destinataires.length; i += LIMITE_LOT){
-    const lot = destinataires.slice(i, i + LIMITE_LOT);
+  for (let i = 0; i < gens.length; i += LIMITE_LOT){
+    const lot = gens.slice(i, i + LIMITE_LOT);
     try {
       const r = f.nom === 'brevo'
-        ? await envoyerBrevo(f.cle, de, sujet, corps, lot)
-        : await envoyerResend(f.cle, de, sujet, corps, lot);
+        ? await envoyerBrevo(f.cle, de, sujet, corps, lot, piece)
+        : await envoyerResend(f.cle, de, sujet, corps, lot, piece);
       resultats.push(...r);
     } catch (e) {
-      resultats.push(...lot.map(a => ({ adresse: a, statut: 'refusee',
+      resultats.push(...lot.map(g => ({ adresse: g.email, statut: 'refusee',
         detail: ('le service n’a pas répondu : ' + e).slice(0, 300) })));
     }
   }

@@ -517,7 +517,7 @@
     <div class="porte__sep"></div>
 
     <form id="porte-form" autocomplete="off">
-      <label class="porte__label" for="porte-q1">D'où venez-vous ?</label>
+      <label class="porte__label" for="porte-q1">À quelle heure commencez-vous à travailler ?</label>
       <input class="porte__champ" id="porte-q1" type="text" required>
 
       <label class="porte__label" for="porte-q2">Quel âge avez-vous ?</label>
@@ -1350,11 +1350,14 @@
     var CLE     = 'rbi-tuilage-membres';
 
     /* On reconnaît la réponse à ce qu'elle contient, non à sa forme exacte.
-       Une liste de formulations closes rejetait « de la loge de St Jean »
-       parce qu'elle ne prévoyait pas ce second « de » — un Frère se serait
-       vu refuser l'entrée sur une tournure. */
+       Une liste de formulations closes rejetterait « de midi à minuit »
+       parce qu'elle n'aurait prévu que « à midi » — un Frère se verrait
+       refuser l'entrée sur une tournure.
+
+       « minuit » seul ne contient pas « midi » : c'est l'heure de
+       fermer les travaux, non de les ouvrir, et elle ne passe pas. */
     var ATTENDU = {
-      q1: /(saint|st) ?jean/,
+      q1: /midi/,
       q2: /(^| )(3|5|7|trois|cinq|sept)( |$)/
     };
 

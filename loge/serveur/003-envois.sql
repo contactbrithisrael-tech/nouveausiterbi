@@ -16,7 +16,7 @@
    quatre-vingts exemplaires n'apprendrait rien.
 ═══════════════════════════════════════════════════════════════════ */
 
-CREATE TABLE envois (
+CREATE TABLE IF NOT EXISTS envois (
   id            INTEGER PRIMARY KEY,
   loge_id       INTEGER NOT NULL REFERENCES loges(id),
   le            TEXT    NOT NULL DEFAULT (datetime('now')),
@@ -28,4 +28,4 @@ CREATE TABLE envois (
   detail        TEXT                  -- ce que le fournisseur a dit
 );
 
-CREATE INDEX idx_envois_loge ON envois(loge_id, le);
+CREATE INDEX IF NOT EXISTS idx_envois_loge ON envois(loge_id, le);

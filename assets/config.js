@@ -438,23 +438,23 @@ var RBI_CONFIG = {
     questions: [
       {
         id:       "q1",
-        texte:    "D'où venez-vous ?",
-        // Reconnu à ce que la réponse contient : « de Saint-Jean », « de la
-        // loge de St Jean », « d'une Loge Saint Jean »… La liste ci-dessous
-        // reste le repli si « motif » est retiré.
-        motif:    "(saint|st) ?jean",
+        texte:    "À quelle heure commencez-vous à travailler ?",
+        // Reconnu à ce que la réponse contient : « midi », « à midi »,
+        // « de midi à minuit »… La liste ci-dessous reste le repli si
+        // « motif » est retiré. « minuit » seul ne contient pas « midi »
+        // et ne passe donc pas : c'est l'heure de fermer, non d'ouvrir.
+        motif:    "midi",
         // Toutes les réponses acceptées (insensible accents + casse)
         reponses: [
-          "de saint jean",
-          "saint jean",
-          "du saint jean",
-          "de chez saint jean",
-          "loge de saint jean",
-          "loge saint jean",
-          "loge de st jean",
-          "loge st jean",
-          "de la loge saint jean",
-          "de la loge st jean"
+          "midi",
+          "a midi",
+          "a midi plein",
+          "midi plein",
+          "en plein midi",
+          "de midi a minuit",
+          "a midi juste",
+          "il est midi",
+          "midi juste"
         ]
       },
       {

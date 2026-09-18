@@ -202,9 +202,12 @@ with sync_playwright() as p:
     # On garde leurs EMPREINTES. On releve tous les mots en capitales
     # de la page, on les empreinte, et l'on compare : un nom qui s'y
     # glisserait serait reconnu sans avoir jamais ete ecrit ici.
-    import hashlib, re as _re
+    import hashlib, io, re as _re
     EMPREINTES = ['00fa6ed7d665', '07083d867cae', '0e116a9faf64', '1e3a6119ee11', '329ccd680d9b', '62aa42deefc5', '6555706078a9', '6c94d0e5823e', '890aa779b6ed', '935b7474a054', '9a722032ed9b', 'a1df48acdc6d', 'c14964440bfd', 'd07c7bea47f5', 'dd4054a74e88']
-    mots = set(_re.findall(r"[A-ZÀ-Þ][A-ZÀ-Þ'\-]{3,}", PAGE))
+    # La page de réponse est servie au même titre que le programme, et
+    # à qui n'a pas de compte : elle tombe sous la même garde.
+    PUBLIC = PAGE + io.open("reponse.html", encoding="utf-8").read()
+    mots = set(_re.findall(r"[A-ZÀ-Þ][A-ZÀ-Þ'\-]{3,}", PUBLIC))
     fuites = [m for m in mots
               if hashlib.sha256(m.encode()).hexdigest()[:12] in EMPREINTES]
     v(not fuites,

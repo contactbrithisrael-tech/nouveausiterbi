@@ -124,8 +124,13 @@ with sync_playwright() as pw:
           "non vers le neant", c.get("replyTo"))
         v("TENUE D'OBLIGATION" in c.get("textContent", ""),
           "et le corps est bien la convocation", c.get("textContent", "")[:120])
-        v("bcc" not in json.dumps(c).lower(),
-          "personne n'est en copie cachee de personne : chacun a son message")
+        # On cherche le CHAMP bcc, non les trois lettres : « bcc » est
+        # une suite hexadecimale valable, et un jeton de reponse sur
+        # sept en porte une par hasard. L'epreuve accusait alors une
+        # copie cachee qui n'existait pas.
+        v('"bcc"' not in json.dumps(c).lower(),
+          "personne n'est en copie cachee de personne : chacun a son message",
+          [k for k in json.dumps(c).lower().split('"') if k == 'bcc'])
 
     v("remise(s) au service" in ensemble, "on rend compte de ce qui est parti", ensemble[-300:])
     v("ne veut pas dire" in ensemble,
