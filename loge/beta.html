@@ -499,6 +499,16 @@ function neuf(){ return {
        ne se retire plus. Le nom se complète une fois dans l'écran de
        la convocation ; il suivra la personne qui tient la charge, sans
        qu'on touche au programme. */
+    /* ── LE MOT D'ACCUEIL ──────────────────────────────────────────
+       Il ouvre le COURRIEL, et lui seul. Une convocation qui arrive
+       nue, en tête d'une boîte de réception, ressemble à une
+       circulaire ; quelques mots de la main du Vénérable la rendent à
+       ce qu'elle est. Sur le feuillet imprimé, en revanche, l'en-tête
+       et la formule disent déjà tout : l'y répéter mangerait des
+       lignes sur une page qui doit rester unique. */
+    motAccueil:"Mon très cher Frère, ma très chère Sœur,\n\n" +
+           "Tu voudras bien recevoir ci-dessous la convocation à notre " +
+           "prochaine Tenue, et la porter à ton calendrier.",
     motFin:"Mes Sœurs, mes Frères. Merci de bien vouloir vous enregistrer " +
            "individuellement sur le site www.brith-israel.org, onglet " +
            "« Annuaire F∴M∴ » de l’Espace Membres, et, en cas de doute, " +
@@ -1820,10 +1830,48 @@ function ouvrir(html, nom, editable){
   }
   $('#voile').hidden = false;
   $('#barre-edition').hidden = !editable;
+  /* La convocation part à cent personnes : elle doit tenir sur UNE
+     feuille, quel que soit l'ordre du jour qu'on y a mis. */
+  if (String(docCourant.nom).startsWith('Convocation')) tenirSurUnePage(P);
+  else P.style.zoom = '';
   const env = document.getElementById('agenda-envoyer');
   if (env) env.hidden = (docCourant.nom !== 'Agenda des visites');
 }
-$('#fermer').addEventListener('click', () => { $('#voile').hidden = true; });
+/* ── UNE CONVOCATION TIENT SUR UNE PAGE ────────────────────────────
+   Dix points à l'ordre du jour, une planche au titre long, et le
+   feuillet passe sur une seconde page — qui ne porte qu'un adage et
+   une ligne de contact. À cent envois, c'est cent feuilles perdues, et
+   un document qui n'a plus l'air d'un seul tenant.
+
+   On mesure, et l'on resserre jusqu'à ce que cela tombe. « zoom »
+   plutôt qu'une transformation : lui seul refait la mise en pages, de
+   sorte que l'impression et le PDF suivent ce qu'on voit.
+
+   ► ON NE DESCEND PAS SOUS 78 %. En deçà, on ne resserre plus, on rend
+     illisible — et une convocation qu'on ne lit pas ne vaut pas mieux
+     qu'une convocation sur deux pages. Passé cette limite, la feuille
+     déborde, et c'est à la Secrétaire de raccourcir l'ordre du jour.
+     Le programme ne décide pas à sa place ce qu'il faut retrancher. */
+const HAUTEUR_PAGE = 1030;   // A4 moins les marges, en pixels d'écran
+const SERRAGE_MIN = 0.78;
+
+function tenirSurUnePage(P){
+  P.style.zoom = '';
+  const naturelle = P.scrollHeight;
+  if (naturelle <= HAUTEUR_PAGE) return 1;
+  /* « scrollHeight » se lit AVANT le zoom : le navigateur rend la
+     hauteur en pixels de mise en pages, non en pixels d'écran. Une
+     boucle qui compare l'un à l'autre ne converge jamais et descend
+     au plancher pour rien. On calcule donc le rapport d'un coup. */
+  const z = Math.max(SERRAGE_MIN, Math.floor(HAUTEUR_PAGE / naturelle * 100) / 100);
+  P.style.zoom = z.toFixed(2);
+  return z;
+}
+
+$('#fermer').addEventListener('click', () => {
+  $('#voile').hidden = true;
+  $('#papier').style.zoom = '';
+});
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && !$('#voile').hidden) $('#voile').hidden = true;
 });
@@ -2043,6 +2091,11 @@ function vueConvocation(){
         ${champ('agapesTraiteur','Mention des agapes','text')}
         ${champ('adage','Adage','text')}
         ${champ('contact','Contacts','text')}
+        ${champLong('motAccueil','Mot d’accueil — en tête du courriel',
+          'Il ouvre le message, avant la convocation. Il ne s’imprime pas sur ' +
+          'le feuillet : l’en-tête y dit déjà l’essentiel, et la convocation ' +
+          'doit tenir sur une page. Laissez-le vide pour revenir à la formule ' +
+          'ordinaire.', 3)}
         ${champLong('motFin','Mot de fin — au bas de la convocation',
           'Complétez-le du nom de la Sœur Secrétaire. Il est gardé dans le ' +
           'registre de l’Atelier, et non dans le programme : le fichier du ' +
@@ -2571,8 +2624,11 @@ function convocationTexte(){
   l.push("Suprême Conseil Mondial du Rite Brith Israël");
   l.push("R∴L∴ BERESHIT n°00 — à l'Orient de l'Alliance");
   l.push("");
-  l.push("Mes bien chers Sœurs et Frères,");
-  l.push("");
+  if (T.motAccueil && T.motAccueil.trim()){
+    l.push(T.motAccueil.trim()); l.push("");
+  } else {
+    l.push("Mes bien chers Sœurs et Frères,"); l.push("");
+  }
   l.push("Vous êtes convoqués à une " + (T.titre || TYPES[T.type]));
   l.push("au " + RANGS[T.degre] + " degré " + DE[T.degre] + " du Rite Brith Israël,");
   l.push("le " + dateLongue(T.date) + " à " + T.heureOuv);

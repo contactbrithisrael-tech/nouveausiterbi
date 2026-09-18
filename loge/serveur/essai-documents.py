@@ -189,6 +189,49 @@ with sync_playwright() as p:
 
     n = pages("#imp-convoc", "#t-convoc")
     v(n == 1, f"LA CONVOCATION TIENT SUR UNE SEULE PAGE (elle en fait {n})", n)
+
+    # ── ET ELLE Y TIENT AVEC UN VRAI ORDRE DU JOUR ─────────────────
+    # Dix points, dont quatre passent a la ligne : c'est l'ordre du jour
+    # reel du 5 octobre. Sans serrage, le feuillet passait sur une
+    # seconde page qui ne portait qu'un adage et une ligne de contact —
+    # a cent envois, cent feuilles perdues.
+    CHARGE = [("18:15","Convocation de tous les SS et FF Maitres de la loge (conseil des Maitres)"),
+      ("19:30","Ouverture de la Tenue au premier degre d'Apprenti Oved"),
+      ("19:45","Quelques mots de bienvenue du Venerable Maitre"),
+      ("20:00","Cinq minutes de symbolisme — « L'initiation au Rite Brith Israel », par le SGC Mickael DARMON"),
+      ("20:30","Impressions d'initiation de notre A Caroline A…"),
+      ("21:40","Planche de notre F Pierre J… : le tapis de LOGE au BRITH ISRAEL"),
+      ("22:00","Lecture de la lettre de demande d'affiliation du F Atteia Oved et vote pour approbation"),
+      ("22:30","Cloture des travaux au degre Oved"),
+      ("23:00","Agapes fraternelles — triangle 15 euros, inscription avant le 2 octobre"),
+      ("19:15","Accueil sur les parvis des AA CC de la loge et visiteurs")]
+    garde = pg.evaluate("() => JSON.stringify(E.odj)")
+    pg.evaluate("(o) => { E.odj = o.map(x => ({h:x[0], t:x[1]})); garder(); dessiner(); }", CHARGE)
+    pg.wait_for_timeout(600)
+    n = pages("#imp-convoc", "#t-convoc")
+    v(n == 1, f"ET AVEC DIX POINTS A L'ORDRE DU JOUR, ELLE Y TIENT ENCORE (elle en fait {n})", n)
+
+    pg.click("#t-convoc"); pg.wait_for_timeout(400)
+    pg.click("#imp-convoc"); pg.wait_for_timeout(800)
+    z = float(pg.evaluate("() => document.getElementById('papier').style.zoom || 1"))
+    v(0.78 <= z < 1, f"le feuillet a ete resserre, sans descendre sous 78 % ({z})", z)
+    v(z >= 0.80, "et il reste lisible : on ne resserre qu'autant qu'il faut", z)
+    pg.click("#fermer"); pg.wait_for_timeout(250)
+
+    # ── LE MOT D'ACCUEIL OUVRE LE COURRIEL, ET LUI SEUL ────────────
+    txt = pg.evaluate("() => convocationTexte()")
+    v("Mon tr\u00e8s cher Fr\u00e8re" in txt,
+      "LE COURRIEL S'OUVRE SUR UN MOT D'ACCUEIL", txt[:160])
+    h2, t2 = doc("#imp-convoc", "#t-convoc")
+    v("Mon tr\u00e8s cher Fr\u00e8re" not in t2,
+      "MAIS LE FEUILLET NE LE PORTE PAS : l'en-tete y dit deja l'essentiel, "
+      "et la page est comptee", t2[:160])
+
+    pg.evaluate("(g) => { E.tenue.motAccueil = ''; E.odj = JSON.parse(g); garder(); dessiner(); }", garde)
+    pg.wait_for_timeout(500)
+    txt = pg.evaluate("() => convocationTexte()")
+    v("Mes bien chers S\u0153urs et Fr\u00e8res" in txt,
+      "laisse vide, la formule ordinaire revient", txt[:160])
     n = pages("#imp-emarg", "#t-tenue")
     v(n == 2, f"l'émargement fait deux pages : les membres, puis les "
               f"Visiteurs — et rien ne déborde sur une troisième (il en fait {n})", n)
