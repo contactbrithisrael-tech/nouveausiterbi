@@ -160,6 +160,12 @@ createServer(async (req, res) => {
     res.writeHead(200, {'content-type':'text/html; charset=utf-8'});
     return res.end(fs.readFileSync(RACINE + 'espace-membres.html'));
   }
+  /* La page des Loges amies — en accès libre, et éprouvée comme telle :
+     aucune session, aucun tuilage, on ouvre et l'on dépose. */
+  if (u.pathname === '/loges-amies.html'){
+    res.writeHead(200, {'content-type':'text/html; charset=utf-8'});
+    return res.end(fs.readFileSync(RACINE + 'loges-amies.html'));
+  }
   /* Ce que le faux service a reçu — pour l'épreuve seulement. */
   if (u.pathname === '/__courriels'){
     res.writeHead(200, {'content-type':'application/json'});

@@ -38,6 +38,10 @@ var RBI_CONFIG = {
   { label: "Devenir FM",       href: "devenir-fm.html", style: "cta" },
   { label: "Tuilage",          href: "#tuilage", style: "discret" },
   { label: "Espace Membres",   href: "espace-membres.html" },
+  // EN ACCÈS LIBRE, et c'est le seul lien du menu qui le soit
+  // délibérément : un Atelier qu'on ne connaît pas encore ne peut pas
+  // franchir un tuilage pour se faire connaître.
+  { label: "Loges amies",      href: "loges-amies.html" },
   // Le lien mène à la SECTION Joshua, et non directement au service.
   // Depuis qu'il est ouvert à tous, un curieux qui atterrit sans
   // préambule sur une fenêtre de conversation ne sait ni à qui il parle

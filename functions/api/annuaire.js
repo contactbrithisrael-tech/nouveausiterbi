@@ -1,18 +1,28 @@
 /* ═══════════════════════════════════════════════════════════════════
    L'ANNUAIRE — DÉPOSER, ET RELEVER
 
-   POST — sans session. C'est le formulaire de l'Espace Membres qui
-   écrit ici, et il écrit depuis le navigateur d'un Frère, pas depuis
-   une session d'Officier.
+   POST — sans session, et c'est voulu. Deux pages écrivent ici :
+   le formulaire de l'Espace Membres, et « loges-amies.html », qui
+   est en ACCÈS LIBRE parce qu'un Atelier qu'on ne connaît pas encore
+   ne peut pas franchir un tuilage pour se faire connaître.
 
-   Cette route est atteignable sans jamais charger la page : le
-   tuilage garde le seuil de l'Espace Membres, il ne garde pas une
-   adresse HTTP. Ce qui arrive ici est donc traité comme ce que c'est
-   — une déclaration, pas une identité établie. On la borne, on la
-   range dans sa propre table, et le carnet des Visiteurs la recevra
-   avec sa case « Tuilé par » VIDE : le Rite a déjà prévu qui répond
-   de l'introduction d'un Visiteur dans le Temple, et ce n'est pas un
+   Cette route l'a d'ailleurs toujours été : le tuilage garde le seuil
+   d'une page, il ne garde pas une adresse HTTP. Ouvrir la page ne
+   change donc rien à ce qui peut arriver ici — cela le rend
+   seulement visible, et c'est mieux ainsi.
+
+   Ce qui arrive est traité comme ce que c'est : une déclaration, pas
+   une identité établie. On la borne, on la range dans sa propre
+   table, et le carnet des Visiteurs la recevra avec sa case
+   « Tuilé par » VIDE — le Rite a déjà prévu qui répond de
+   l'introduction d'un Visiteur dans le Temple, et ce n'est pas un
    formulaire.
+
+   ► CE QUI EST DÉPOSÉ ICI N'EST MONTRÉ À PERSONNE. Rien de cette
+     table ne s'affiche nulle part tant qu'un Officier n'a pas ouvert
+     son écran : c'est son programme qui verse au carnet, et le
+     carnet seul nourrit l'agenda des visites. Une adresse ouverte au
+     dépôt n'est donc pas une adresse ouverte à la publication.
 
    GET — avec session. Rend les fiches qui n'ont pas encore rejoint le
    carnet, et le compte de celles qui y sont déjà.
@@ -27,6 +37,33 @@ const LOGE = 1;                    // un seul Atelier pour l'instant
 const POIDS_MAX = 8 * 1024;        // une fiche, pas un fichier
 const EN_ATTENTE_MAX = 300;        // au-delà, on cesse d'accepter
 const CHAMP_MAX = 400;
+
+/* ── DEUX BORNES CONTRE L'ARROSAGE ─────────────────────────────────
+   Le plafond des 300 en attente protégeait la base ; il ne protégeait
+   pas l'Atelier. Un robot qui remplit ces 300 places en une minute ne
+   fait pas tomber le serveur : il fait refuser les Loges qui
+   s'inscrivent ensuite, et ce refus dure jusqu'à ce qu'un humain
+   relève la boîte. Une panne qui attend un geste n'est pas une
+   protection.
+
+   ► UN PLAFOND À L'HEURE. Trente dépôts, tous formulaires confondus.
+     Un jour ordinaire n'en voit pas trois. Un robot l'atteint en une
+     minute, et tout est refusé pendant une heure — puis cela repart
+     tout seul, sans que personne n'ait eu à intervenir. Il faudrait
+     dix heures d'arrosage continu pour atteindre les 300, ce qui
+     laisse le temps de le voir.
+
+   ► UN LEURRE. Un champ que la page porte, que personne ne voit, et
+     qu'aucune main ne remplit. Rempli, c'est une machine.
+
+   Et il faut dire ce que cela ne fait pas : ni l'un ni l'autre
+   n'arrête quelqu'un qui lit le code de la page — il est public, le
+   leurre s'y voit, et le plafond se contourne en déposant lentement.
+   Cela écarte l'arrosage automatique, qui est ce qu'un site reçoit
+   réellement. Contre une main déterminée, la réponse est Cloudflare
+   Turnstile, qui se règle dans le compte et non dans ce dépôt. */
+const PAR_HEURE_MAX = 30;
+const LEURRE = 'loge_annexe';
 
 /* Les seuls champs retenus. Ce qui n'est pas dans cette liste est
    jeté : un formulaire public ne décide pas de ce que porte la base. */
@@ -91,6 +128,13 @@ export async function onRequestPost(context){
   if (!corps || typeof corps !== 'object')
     return json({ erreur: 'requete_illisible' }, 400);
 
+  /* Le leurre. On refuse en le disant plutôt que de faire semblant
+     d'accepter : une page qui confirme un dépôt qu'elle a jeté est
+     précisément le défaut qu'on passe son temps à corriger ici. Et
+     le refus n'égare personne — les deux formulaires retombent alors
+     sur le courriel, qui arrive toujours. */
+  if (texte(corps[LEURRE])) return json({ erreur: 'depot_refuse' }, 400);
+
   const quoi = texte(corps.type);
   const estLoge = quoi === 'loge';
   const estConv = quoi === 'convocation';
@@ -137,6 +181,16 @@ export async function onRequestPost(context){
     .bind(LOGE).first();
   if (Number(attente?.n ?? 0) >= EN_ATTENTE_MAX)
     return json({ erreur: 'file_pleine' }, 429);
+
+  /* Et le rythme. Compté sur TOUTES les fiches, versées comprises :
+     ce qu'on borne, c'est ce qui entre, et une fiche versée est bien
+     entrée. Ne compter que l'attente laisserait un robot recommencer
+     à chaque fois que la Secrétaire relève sa boîte. */
+  const recentes = await context.env.DB.prepare(
+    "SELECT COUNT(*) AS n FROM annuaire WHERE loge_id = ? " +
+    "AND recu_le > datetime('now','-1 hour')").bind(LOGE).first();
+  if (Number(recentes?.n ?? 0) >= PAR_HEURE_MAX)
+    return json({ erreur: 'trop_vite' }, 429);
 
   await context.env.DB.prepare(
     'INSERT INTO annuaire (loge_id, source, donnees) VALUES (?, ?, ?)')

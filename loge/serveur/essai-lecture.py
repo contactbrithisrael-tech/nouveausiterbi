@@ -169,7 +169,46 @@ with sync_playwright() as pw:
       ditR[:220])
     R.close(); c3.close()
 
-    v(not eA and not eS and not eR, "aucune erreur JavaScript", eA + eS + eR)
+    # == 5. LE VERDICT SE REPREND QUAND LA SESSION S'OUVRE ==========
+    # LE DEFAUT, TEL QU'IL S'EST PRESENTE. Une fiche de Loge amie
+    # laissee ouverte se redessine DES LE CHARGEMENT, avant que la
+    # session ne soit retablie. Le verdict de lecture, rendu a cet
+    # instant, etait garde pour toute la vie de la page : la session
+    # s'ouvrait une seconde plus tard, la cle etait posee, le service
+    # marchait — et le programme repondait encore « la lecture n'existe
+    # que sur la page en ligne » a quelqu'un QUI Y ETAIT.
+    #
+    # Il ne se voyait pas en essayant apres coup : il suffisait
+    # d'arriver sur la fiche APRES l'ouverture. Il ne frappait que
+    # celle qui reprend son travail la ou elle l'a laisse.
+    c4 = b.new_context(); V = c4.new_page()
+    eV = []; V.on("pageerror", lambda e: eV.append(str(e)))
+    V.goto(AVEC); V.wait_for_timeout(700)
+
+    SONDE = ("async () => { const e = await etatLecture();"
+             " return { cas: e.cas, possible: e.possible,"
+             " serveur: SERVEUR.actif }; }")
+    avant = V.evaluate(SONDE)
+    v(avant["serveur"] is False and avant["possible"] is False,
+      "avant l'ouverture, la lecture ne peut pas repondre — et ne pretend pas",
+      avant)
+    v(avant["cas"] == "session-fermee",
+      "ET LA RAISON EST LA BONNE : la session n'est pas ouverte, "
+      "non « vous n'etes pas sur la page en ligne »", avant)
+    phrase = V.evaluate("RAISON_LECTURE['session-fermee']") or ""
+    v("que sur la page en ligne" not in phrase,
+      "on cesse d'envoyer chercher la ou l'on est deja", phrase)
+
+    V.fill("#porte-mdp", CLE); V.click("#porte-form button[type=submit]")
+    V.wait_for_timeout(2600)
+    apres = V.evaluate(SONDE)
+    v(apres["possible"] is True and apres["cas"] == "serveur",
+      "UNE FOIS LA SESSION OUVERTE, LE VERDICT EST REPRIS : un « non » "
+      "rendu avant l'ouverture ne se garde pas", apres)
+    V.close(); c4.close()
+
+    v(not eA and not eS and not eR and not eV,
+      "aucune erreur JavaScript", eA + eS + eR + eV)
     b.close()
 
 print(f"\n  {len(ko)} echec(s)" if ko else "\n  tout passe")
