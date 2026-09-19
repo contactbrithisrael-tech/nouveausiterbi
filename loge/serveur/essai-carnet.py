@@ -194,6 +194,48 @@ with sync_playwright() as b0:
       "et elle remplace bien : on retrouve le tableau seul",
       pg.evaluate("E.visiteurs.length"))
 
+    # == LA FICHE D'UN AMI S'OUVRE, ET SE MODIFIE ===================
+    # Deux defauts, l'un derriere l'autre, et aucun ne disait rien.
+    #
+    # 1. Le test de la ligne etait place APRES « si ce n'est pas un
+    #    bouton, on sort ». Une ligne de tableau n'est pas un bouton :
+    #    la fiche ne s'ouvrait JAMAIS.
+    # 2. Deux fonctions portaient le nom « aChamp » — l'une pour les
+    #    Amis, l'autre pour les Loges amies. La seconde ecrasait la
+    #    premiere : les champs d'un Ami se dessinaient avec les
+    #    etiquettes des Loges, et la saisie partait dans la mauvaise
+    #    branche. AUCUN AMI NE POUVAIT ETRE MODIFIE.
+    pg.evaluate("""() => { E.amiOuvert = null;
+      E.amis = [{ id: 811, nom: 'CCC', prenom: 'Trois',
+                  email: 'c@x.test', tel: '', notes: '' }];
+      garder(); dessiner(); }""")
+    pg.wait_for_timeout(600)
+    pg.click("#t-amis"); pg.wait_for_timeout(600)
+    pg.click("tr[data-ami-ligne='811']"); pg.wait_for_timeout(900)
+    v(pg.evaluate("E.amiOuvert") == 811,
+      "LA FICHE D'UN AMI S'OUVRE quand on clique sa ligne",
+      pg.evaluate("E.amiOuvert"))
+    champs = pg.evaluate("[...document.querySelectorAll('[data-ami]')].map(e=>e.dataset.ami)")
+    v(sorted(champs) == ["email", "nom", "notes", "prenom", "tel"],
+      "et elle porte ses cinq champs, aux etiquettes des Amis", champs)
+
+    pg.fill("#f-ami-tel", "06 12 34 56 78"); pg.wait_for_timeout(600)
+    v(pg.evaluate("(E.amis||[]).find(a=>a.id===811).tel") == "06 12 34 56 78",
+      "LE TELEPHONE S'ENREGISTRE",
+      pg.evaluate("(E.amis||[]).find(a=>a.id===811).tel"))
+    pg.fill("#f-ami-email", "neuf@x.test"); pg.wait_for_timeout(600)
+    v(pg.evaluate("(E.amis||[]).find(a=>a.id===811).email") == "neuf@x.test",
+      "l'adresse aussi — c'est elle qui porte la convocation",
+      pg.evaluate("(E.amis||[]).find(a=>a.id===811).email"))
+    pg.fill("#f-ami-nom", "ZZZ"); pg.wait_for_timeout(800)
+    v(pg.evaluate("(E.amis||[]).find(a=>a.id===811).nom") == "ZZZ",
+      "et le nom, sans que la fiche se referme sous les doigts",
+      pg.evaluate("(E.amis||[]).find(a=>a.id===811).nom"))
+    v(pg.evaluate("E.amiOuvert") == 811,
+      "la fiche reste ouverte pendant qu'on ecrit")
+    pg.evaluate("() => { E.amiOuvert = null; dessiner(); }")
+    pg.wait_for_timeout(500)
+
     # == ON RETIRE DEPUIS LA LISTE, NON DEPUIS LA FICHE =============
     # Le bouton « Retirer » n'existait que dans la fiche ouverte :
     # trouver la ligne parmi quatre-vingt-dix, l'ouvrir, descendre,
