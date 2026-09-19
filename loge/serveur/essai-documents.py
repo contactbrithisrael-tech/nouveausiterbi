@@ -485,6 +485,56 @@ with sync_playwright() as p:
       "la convocation par courriel le porte également", txt[:300])
     v("maps" in txt, "avec le lien")
 
+    # == UNE LOGE S'ENREGISTRE DEPUIS SA CONVOCATION ================
+    # Il fallait d'abord CREER LA LOGE — donc en connaitre le nom,
+    # l'ecrire, ouvrir sa fiche — et seulement alors joindre la photo
+    # qui portait ce nom. On demandait a la Secretaire de saisir ce que
+    # la machine allait lire. On renverse : la photo d'abord.
+    import base64 as _b64, tempfile as _tmp, os as _os
+    # un PDF de scan : une image JPEG enveloppee, comme ceux qu'on recoit
+    _jpg = _b64.b64decode(
+        "/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8U"
+        "HRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/wAALCAABAAEBAREA"
+        "/8QAFAABAAAAAAAAAAAAAAAAAAAACf/EABQQAQAAAAAAAAAAAAAAAAAAAAD/2gAIAQEA"
+        "AD8AKp//2Q==")
+    _pdf = _os.path.join(_tmp.gettempdir(), "convocation-scan.pdf")
+    open(_pdf, "wb").write(b"%PDF-1.4\n% scan\n" + _jpg + b"\n%%EOF\n")
+
+    pg.click("#t-amies"); pg.wait_for_timeout(700)
+    v(pg.locator("#amie-depuis-conv").count() == 1,
+      "UN BOUTON PART DE LA CONVOCATION, non de la fiche a creer")
+    avant = pg.evaluate("(E.amies||[]).length")
+    pg.set_input_files("#fichier-amie-conv", _pdf)
+    pg.wait_for_timeout(3000)
+    v(pg.evaluate("(E.amies||[]).length") == avant + 1,
+      "LA LOGE EST CREEE PAR LE SEUL FICHIER",
+      pg.evaluate("(E.amies||[]).length"))
+    v(pg.evaluate("""() => { const a = (E.amies||[]).find(x => x.id === E.amieOuverte);
+        return !!(a && (a.convocations||[])[0] && a.convocations[0].piece); }"""),
+      "avec sa convocation attachee")
+
+    # et l'on sait ouvrir un PDF de scan sans bibliotheque
+    trouve = pg.evaluate("""async () => {
+      const a = (E.amies||[]).find(x => x.id === E.amieOuverte);
+      const p = await PIECES.lire(a.convocations[0].piece);
+      const r = imageDeLaPiece(p);
+      return r.image ? r.image.type : 'aucune : ' + r.pourquoi; }""")
+    v(trouve == "image/jpeg",
+      "ET L'ON TIRE L'IMAGE D'UN PDF SCANNE, sans bibliotheque : "
+      "« photographiez-le vous-meme » n'etait pas une reponse", trouve)
+
+    # un PDF de vrai texte n'en contient pas, et on le DIT
+    _txt = _os.path.join(_tmp.gettempdir(), "convocation-texte.pdf")
+    open(_txt, "wb").write(b"%PDF-1.4\n1 0 obj<</Type/Catalog>>endobj\n%%EOF\n")
+    pg.set_input_files("#fichier-amie-conv", _txt)
+    pg.wait_for_timeout(2500)
+    dit = pg.evaluate("""async () => {
+      const a = (E.amies||[]).find(x => x.id === E.amieOuverte);
+      const p = await PIECES.lire(a.convocations[0].piece);
+      return imageDeLaPiece(p).pourquoi; }""")
+    v("vrai texte" in dit,
+      "et l'on dit pourquoi quand il n'y a pas d'image a tirer", dit[:120])
+
     v(not errs, "aucune erreur JavaScript", errs)
     b.close()
 
