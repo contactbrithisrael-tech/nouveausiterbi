@@ -153,6 +153,43 @@ with sync_playwright() as pw:
     v("Convocation Bereshit.pdf" in pg.inner_text("#v-tenue"),
       "et l'ecran dit ce qui partira")
 
+    # == 3bis. LA PIECE PORTE LE FEUILLET : LE MESSAGE NE LE RECOPIE PLUS
+    # Recopier tout le feuillet dans le corps, c'est le dire deux fois —
+    # et c'est cette copie qui pese trois mille caracteres et fait
+    # deborder les liens mailto. Le message garde ce qu'aucun PDF ne
+    # donne : le mot de la Secretaire, la date, ET LES LIENS.
+    court = pg.evaluate("() => corpsConvocation()")
+    v("ci-joint" in court,
+      "AVEC LA PIECE, LE MESSAGE ANNONCE LA CONVOCATION AU LIEU DE LA RECOPIER",
+      court[:160])
+    v("ORDRE DU JOUR" not in court,
+      "l'ordre du jour n'est plus recopie : il est dans la piece", court[:300])
+    v(len(court) < 1800,
+      "et le message tient desormais dans un lien de messagerie",
+      str(len(court)) + " caracteres")
+
+    # les liens, eux, restent : on ne clique pas sur du papier
+    pg.evaluate("() => { E.tenue.agapesPaiement = 'https://exemple.test/agapes'; "
+                "E.tenue.motFin = 'Inscrivez-vous sur www.brith-israel.org, "
+                "Espace Membres.'; garder(); dessiner(); }")
+    pg.wait_for_timeout(600)
+    court = pg.evaluate("() => corpsConvocation()")
+    v("exemple.test/agapes" in court,
+      "LE LIEN DE PAIEMENT RESTE DANS LE MESSAGE", court[-400:])
+    v("https://www.brith-israel.org" in court,
+      "ET UNE ADRESSE EN « www... » DEVIENT UN VRAI LIEN : sans schema, "
+      "plusieurs messageries n'en font pas un lien du tout", court[-400:])
+
+    # sans piece, le texte complet reste le seul porteur
+    pg.evaluate("() => { const b = document.getElementById('piece-retirer'); "
+                "if (b) b.click(); }")
+    pg.wait_for_timeout(700)
+    complet = pg.evaluate("() => corpsConvocation()")
+    v("ORDRE DU JOUR" in complet,
+      "SANS PIECE, LE TEXTE COMPLET REPART : rien d'autre ne porte le feuillet",
+      complet[:200])
+    pg.set_input_files("#fichier-piece", vrai); pg.wait_for_timeout(1400)
+
     # == 4. ELLE PART AVEC LA CONVOCATION ============================
     pg.evaluate("async () => { await fetch('/__courriels/vider'); }")
     dlg.clear()
