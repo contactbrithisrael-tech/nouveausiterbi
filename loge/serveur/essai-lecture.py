@@ -81,6 +81,28 @@ with sync_playwright() as pw:
     v(any("RELISEZ" in d for d in dA),
       "on rappelle de RELIRE : une lecture automatique se trompe", dA[-1:])
 
+    # == LA CONSIGNE DIT LE CAS QU'ON A VU SE TROMPER ===============
+    # Sur la premiere convocation lue en service — R. Loge BASTET n°901
+    # — le modele a range sous le Secretaire un numero qui etait celui
+    # d'une Soeur chargee des repas : « reserver par SMS aupres de notre
+    # Soeur Marie au 06 76 00 61 66 ». Il a vu un numero, il a vu un
+    # contact, il les a maries. Un champ vide se remplit d'un coup de
+    # telephone ; un mauvais numero se decouvre le soir de la tenue.
+    consigne = A.evaluate("""async () => {
+      const r = await fetch('/__lectures'); const l = await r.json();
+      const c = l[0].corps.messages[0].content.find(x => x.type === 'text');
+      return c ? c.text : ''; }""")
+    v("Sœur Marie" in consigne or "Soeur Marie" in consigne,
+      "LA CONSIGNE PORTE LE CAS REEL QU'ON A VU SE TROMPER, non une "
+      "recommandation en l'air", consigne[-400:])
+    # le texte est replie sur plusieurs lignes : on cherche un fragment
+    # qui n'enjambe pas une coupure
+    v("donne, non au secrétariat" in consigne,
+      "et la regle qui en sort : un numero appartient a qui le donne",
+      consigne[-400:])
+    v("reste null" in consigne,
+      "avec le refuge : dans le doute, on ne remplit pas", consigne[-300:])
+
     # == 2. LA CLE NE QUITTE PAS LE SERVEUR =========================
     envoye = A.evaluate("""async () => {
       const r = await fetch('/__lectures'); return await r.json(); }""")
