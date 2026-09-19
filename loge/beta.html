@@ -1108,6 +1108,9 @@ function blocEnvois(){
         <button class="btn" id="liens-verifier"
           title="Compte les liens de réponse posés pour cette Tenue"
           >⚭ Les liens de réponse sont-ils posés ?</button>
+        <button class="btn" id="voir-mot"
+          title="Le texte du message, tel qu'il partira"
+          >👁 Voir le mot d'envoi</button>
       </div>
       <p class="sous" style="margin-top:8px">${(typeof PIECE === 'object' && PIECE.nom)
         ? `Chaque message portera <b>${ech(PIECE.nom)}</b> (${poidsLisible(PIECE.octets)}) —
@@ -2744,13 +2747,79 @@ function convocationTexte(){
       l.push(MENTION_DON);
     }
   }
-  if (T.motFin){ l.push(""); l.push(T.motFin); }
+  if (T.motFin){ l.push(""); l.push(adressesCliquables(T.motFin)); }
   if (T.adage){ l.push(""); l.push("« " + T.adage + " »"); }
   l.push("");
   if (T.signature && T.signature.trim()) l.push(T.signature.trim());
   else { l.push("Fraternellement,");
          l.push("Pour la R∴L∴ Bereshit n°00 — " + COURRIEL_LOGE); }
   return l.join("\n");
+}
+
+/* Le corps qui part réellement : c'est la présence de la pièce jointe
+   qui décide, non un réglage de plus. Une pièce qui porte le feuillet
+   dispense de le recopier ; pas de pièce, pas de dispense. */
+function corpsConvocation(){
+  return (typeof PIECE === 'object' && PIECE.nom)
+    ? convocationTexteCourt() : convocationTexte();
+}
+
+/* ── QUAND LE PDF PORTE DÉJÀ LA CONVOCATION ────────────────────────
+   Recopier tout le feuillet dans le corps du message, c'est le dire
+   deux fois — et c'est cette copie-là qui pèse trois mille caractères
+   et fait déborder les liens « mailto: ».
+
+   Quand la pièce jointe porte la convocation mise en pages, le
+   message n'a plus qu'à dire ce qu'aucun PDF ne dit : le mot de la
+   Secrétaire, la date en une ligne pour le calendrier, ET LES LIENS
+   — qu'on ne clique pas sur du papier.
+
+   L'ordre du jour, les sceaux, l'en-tête : ils sont dans la pièce.
+   Sans pièce jointe, le texte complet reste le seul porteur, et c'est
+   lui qui part. */
+function convocationTexteCourt(){
+  const T = E.tenue;
+  const l = [];
+  if (T.motAccueil && T.motAccueil.trim()) l.push(T.motAccueil.trim());
+  else l.push("Mes bien chers Sœurs et Frères,");
+  l.push("");
+  l.push("Veuillez trouver ci-joint la convocation à notre prochaine Tenue :");
+  l.push("");
+  l.push("  " + (T.titre || TYPES[T.type]) +
+         ", le " + dateLongue(T.date) + " à " + T.heureOuv +
+         (T.heureConv ? " (Officiers à " + T.heureConv + ")" : ""));
+  l.push("  " + T.lieuNom + " — " + T.lieuAdresse + ", " +
+         T.lieuCp + " " + T.lieuVille);
+  { const o = pointDuTemple(); if (o.lien) l.push("  " + o.lien); }
+  if (T.agapesOui){
+    l.push("");
+    l.push("AGAPES — triangle de " + T.agapesPrix + " €, à confirmer avant le " +
+           dateLongue(T.agapesLimite) + ".");
+    if (T.agapesQuiPaie) l.push(T.agapesQuiPaie);
+    if (T.agapesPaiement){
+      l.push("Régler sa part : " + T.agapesPaiement);
+      l.push(MENTION_DON);
+    }
+  }
+  if (T.motFin){ l.push(""); l.push(adressesCliquables(T.motFin)); }
+  if (T.adage){ l.push(""); l.push("« " + T.adage + " »"); }
+  l.push("");
+  if (T.signature && T.signature.trim()) l.push(T.signature.trim());
+  else { l.push("Fraternellement,");
+         l.push("Pour la R∴L∴ Bereshit n°00 — " + COURRIEL_LOGE); }
+  return l.join("\n");
+}
+
+/* ── « www.quelque-chose » N'EST PAS TOUJOURS UN LIEN ───────────────
+   Écrite sans « https:// », une adresse reste du texte dans plusieurs
+   messageries : on la voit, on ne peut pas la toucher. Sur un
+   téléphone, c'est un lien mort. On complète donc l'adresse au moment
+   d'écrire le message — la phrase de la Secrétaire n'est pas touchée,
+   c'est le courriel qui la rend cliquable. */
+function adressesCliquables(texte){
+  return String(texte || '').replace(
+    /(^|[\s(«"'])(www\.[a-z0-9-]+(?:\.[a-z0-9-]+)+(?:\/[^\s,;)»"']*)?)/gi,
+    (tout, avant, adresse) => avant + 'https://' + adresse);
 }
 
 function ouvrirCourriel(dest, sujet, corps){
@@ -3069,7 +3138,7 @@ document.addEventListener('click', e => {
       `Rien ne s'annule après.`)) return;
     b.disabled = true; const libelle = b.textContent; b.textContent = 'Remise en cours…';
     remettreParLePoste('tous',
-      'Convocation — Tenue du ' + dateLongue(E.tenue.date), convocationTexte(), true)
+      'Convocation — Tenue du ' + dateLongue(E.tenue.date), corpsConvocation(), true)
       .then(r => {
         b.disabled = false; b.textContent = libelle;
         if (r === null){
@@ -3104,6 +3173,27 @@ document.addEventListener('click', e => {
      lien n'a jamais été enregistré — et dans ce second cas tous les
      liens envoyés sont morts, sans que rien ne le dise. On demande
      donc le compte, qui sépare les deux. */
+  /* ── LE MOT TEL QU'IL PARTIRA ─────────────────────────────────────
+     Non tel qu'on l'imagine : avec la pièce jointe s'il y en a une,
+     sans elle s'il n'y en a pas — c'est cela qui décide si le feuillet
+     est recopié dans le message ou seulement annoncé. On le montre
+     avant l'envoi, parce qu'après il est chez cent personnes. */
+  if (b.id === 'voir-mot'){
+    const joint = (typeof PIECE === 'object' && PIECE.nom);
+    alert(
+      (joint
+        ? `Message COURT : « ${PIECE.nom} » porte la convocation, le ` +
+          `message ne la recopie pas.\n\n`
+        : `Message COMPLET : aucune pièce jointe, le texte est le seul ` +
+          `porteur.\n\n`) +
+      `— — — — — — — — — — — — — — — —\n` +
+      corpsConvocation() +
+      `\n— — — — — — — — — — — — — — — —\n\n` +
+      `Le lien de réponse, propre à chacun, est ajouté par le serveur ` +
+      `au bas de chaque message.`);
+    return;
+  }
+
   if (b.id === 'liens-verifier'){
     const date = (E.tenue && E.tenue.date) || '';
     const libelle = b.textContent;
@@ -3165,7 +3255,7 @@ document.addEventListener('click', e => {
             "être convoqué."); return;
     }
     const n = envoiGroupe(mem.concat(vis).concat(ami),
-      'Convocation — Tenue du ' + dateLongue(E.tenue.date), convocationTexte());
+      'Convocation — Tenue du ' + dateLongue(E.tenue.date), corpsConvocation());
     if (!n) return;
     const jour = new Date().toLocaleDateString('fr-FR');
     if (mem.length) convocables().filter(m => m.email).forEach(m => E.envoyes[m.id] = jour);
