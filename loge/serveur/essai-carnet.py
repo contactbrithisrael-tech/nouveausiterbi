@@ -194,6 +194,38 @@ with sync_playwright() as b0:
       "et elle remplace bien : on retrouve le tableau seul",
       pg.evaluate("E.visiteurs.length"))
 
+    # == LES AMIS SE LISENT, DONC ILS SE RANGENT ====================
+    # Ils arrivaient dans l'ordre ou on les avait saisis, ou verses d'un
+    # carnet : quatre-vingt-dix noms dans le desordre du hasard, qu'on
+    # parcourait a l'oeil. Le registre garde son ordre d'arrivee — qui
+    # est une date, donc une trace ; c'est l'ECRAN qui se range.
+    pg.evaluate("""() => { E.amis = [
+        { id: 901, nom: 'ZOHAR',  prenom: 'Aaron' },
+        { id: 902, nom: 'élie',   prenom: 'Sarah' },
+        { id: 903, nom: 'ABBOU',  prenom: 'Myriam' },
+        { id: 904, nom: 'Elie',   prenom: 'David' },
+        { id: 905, nom: 'MERCIER', prenom: 'Paul' } ];
+      garder(); dessiner(); }""")
+    pg.wait_for_timeout(700)
+    pg.click("#t-amis"); pg.wait_for_timeout(700)
+    # on lit les NOMS dans l'ordre ou l'ecran les pose, non le texte
+    # affiche : la cellule porte « Prenom NOM », et c'est le nom qui range.
+    ordre = pg.evaluate("""() => [...document.querySelectorAll('[data-ami-ligne]')]
+        .map(t => +t.dataset.amiLigne)
+        .map(id => (E.amis.find(a => a.id === id) || {}).nom)""")
+    v(len(ordre) == 5, "les cinq Amis sont a l'ecran", ordre)
+    v(ordre == ["ABBOU", "Elie", "élie", "MERCIER", "ZOHAR"] or
+      ordre == ["ABBOU", "élie", "Elie", "MERCIER", "ZOHAR"],
+      "LES AMIS SONT RANGES PAR ORDRE ALPHABETIQUE", ordre)
+    v(ordre[0] == "ABBOU", "le premier est bien le premier", ordre)
+    v(ordre[-1] == "ZOHAR", "et le dernier le dernier", ordre)
+    v(ordre.index("MERCIER") > max(ordre.index("Elie"), ordre.index("élie")),
+      "ET LES ACCENTS SE RANGENT COMME EN FRANCAIS : elie pres d Elie, "
+      "non rejete a la fin", ordre)
+    v(pg.evaluate("(E.amis||[]).map(a => a.id)") == [901, 902, 903, 904, 905],
+      "mais le registre garde son ordre d'arrivee : c'est une trace",
+      pg.evaluate("(E.amis||[]).map(a => a.id)"))
+
     v(not errs, "aucune erreur JavaScript", errs)
     b.close()
 

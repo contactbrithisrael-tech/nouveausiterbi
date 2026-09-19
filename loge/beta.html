@@ -835,7 +835,7 @@ function pierrePlate(m){ const c=Math.round(m*100), kg=Math.floor(c/100), g=c%10
 /* La date de ce programme. Changée à chaque livraison, elle permet de
    savoir en un coup d'œil si le navigateur a bien pris la nouvelle
    version — ou s'il ressert celle d'hier. */
-const VERSION = '19 septembre 2026 · 8h45';
+const VERSION = '19 septembre 2026 · 9h';
 
 const $ = s => document.querySelector(s);
 
@@ -3893,7 +3893,21 @@ function aChamp(x, cle, label, type, aide){
 }
 
 function vueAmis(){
-  const l = E.amis || [];
+  /* ── PAR ORDRE ALPHABÉTIQUE ───────────────────────────────────────
+     Ils arrivaient dans l'ordre où on les avait saisis, ou versés d'un
+     carnet : quatre-vingt-dix noms dans le désordre du hasard. On y
+     cherchait quelqu'un en descendant la liste à l'œil.
+
+     Le tri se fait au DESSIN, sur une copie : le registre garde son
+     ordre d'arrivée — qui est une date, et donc une trace — et
+     l'écran, lui, se lit. « localeCompare » range les accents comme
+     on les range en français : Élie près d'Elie, non à la fin.
+
+     Le nom d'abord, le prénom ensuite : c'est ainsi qu'on cherche un
+     Frère dans un carnet, et non l'inverse. */
+  const l = (E.amis || []).slice().sort((a, b) =>
+    (a.nom || '').localeCompare(b.nom || '', 'fr', { sensitivity: 'base' }) ||
+    (a.prenom || '').localeCompare(b.prenom || '', 'fr', { sensitivity: 'base' }));
   const avec = l.filter(a => a.email).length;
   const ouvert = E.amiOuvert ? l.find(a => a.id === E.amiOuvert) : null;
 
