@@ -227,8 +227,16 @@ tr.cliquable{cursor:pointer}
    format : la même convocation sortait en A4 ici, en Lettre ailleurs,
    avec l'en-tête tantôt collé au bord, tantôt rentré de trois
    centimètres. Le PDF qu'on expédie doit être le même pour tous. */
+/* Le mot qui explique pourquoi la convocation prend deux pages. Il
+   est à l'écran, jamais sur le feuillet : c'est une remarque à la
+   Secrétaire, pas une ligne de la convocation. */
+.avis-pages{max-width:190mm;margin:0 auto 10px;padding:9px 13px;
+  background:rgba(140,123,51,.14);border:1px solid rgba(140,123,51,.45);
+  border-radius:8px;color:var(--encre);font-size:13px;line-height:1.5}
+
 @page{ size:A4; margin:12mm 14mm; }
 @media print{
+  .avis-pages{display:none!important}
   /* Le feuillet s'arrête où finit son texte ; en dessous, c'est le fond
      de la page qui se voyait — un bandeau beige en bas de chaque
      convocation, qui se voit sur le papier et consomme de l'encre pour
@@ -438,6 +446,7 @@ details.replie summary:hover{color:var(--encre)}
     <button class="btn btn-or" id="tel-pdf">⤓ Enregistrer en PDF</button>
     <button class="btn" id="fermer">Fermer</button>
   </div>
+  <p id="avis-pages" class="avis-pages" hidden></p>
   <div class="papier" id="papier"></div>
 </div>
 
@@ -1874,7 +1883,35 @@ function ouvrir(html, nom, editable){
   $('#barre-edition').hidden = !editable;
   /* La convocation part à cent personnes : elle doit tenir sur UNE
      feuille, quel que soit l'ordre du jour qu'on y a mis. */
-  if (String(docCourant.nom).startsWith('Convocation')) tenirSurUnePage(P);
+  const avis = $('#avis-pages');
+  avis.hidden = true;
+  if (String(docCourant.nom).startsWith('Convocation')){
+    const z = tenirSurUnePage(P);
+    /* ── POURQUOI DEUX PAGES ────────────────────────────────────────
+       Jusqu'ici le feuillet prenait une seconde page en silence, et
+       l'on ne savait ni pourquoi ni quoi y faire. Le serrage a un
+       plancher — 82 %, en deçà duquel la convocation ne se lit plus.
+       Quand on bute dessus, c'est que le texte est trop long pour une
+       A4 lisible : ce n'est pas une panne, c'est un arbitrage, et il
+       revient à la Secrétaire. On le lui dit, avec le seul levier
+       qu'elle ait : raccourcir. */
+    if (z <= SERRAGE_MIN + 0.001){
+      const lignes = odjRange().filter(o => o.t.trim()).length;
+      avis.innerHTML =
+        '<b>Cette convocation prendra sans doute deux pages.</b> Le texte ' +
+        'est resserré au maximum que je m’autorise (' + Math.round(z * 100) +
+        ' %) : en deçà, elle ne se lirait plus. ' +
+        (lignes > 10
+          ? 'L’ordre du jour compte ' + lignes + ' lignes — c’est lui qui ' +
+            'pèse le plus. En retirer quelques-unes, ou raccourcir les plus ' +
+            'longues, la ramènerait sur une page.'
+          : 'Raccourcir le mot d’accueil, le mot de fin ou l’ordre du jour ' +
+            'la ramènerait sur une page.') +
+        ' Deux pages lisibles valent mieux qu’une page illisible : si cela ' +
+        'vous convient, n’en tenez pas compte.';
+      avis.hidden = false;
+    }
+  }
   else P.style.zoom = '';
   const env = document.getElementById('agenda-envoyer');
   if (env) env.hidden = (docCourant.nom !== 'Agenda des visites');
@@ -1894,7 +1931,36 @@ function ouvrir(html, nom, editable){
      qu'une convocation sur deux pages. Passé cette limite, la feuille
      déborde, et c'est à la Secrétaire de raccourcir l'ordre du jour.
      Le programme ne décide pas à sa place ce qu'il faut retrancher. */
-const HAUTEUR_PAGE = 1030;   // A4 moins les marges, en pixels d'écran
+/* ── ON MESURE LA FEUILLE TELLE QU'ELLE S'IMPRIMERA ────────────────
+   Deux fois déjà cette fonction s'est trompée, et toujours de la même
+   façon : elle mesurait L'ÉCRAN pour régler L'IMPRESSION. Or les
+   règles @media print changent le rembourrage ET LA LARGEUR de la
+   feuille — donc les retours à la ligne, donc le nombre de lignes,
+   donc la hauteur. Une feuille large à l'écran tient en moins de
+   lignes qu'une feuille étroite à l'impression, et le calcul sortait
+   un serrage juste pour une page qu'on n'imprime pas.
+
+   On reproduit donc la géométrie d'impression le temps de la mesure :
+   la largeur du bloc de texte d'une A4 (210 mm moins les marges), et
+   aucun rembourrage propre. On mesure, on rend la feuille à l'écran,
+   et le rapport est enfin celui de la page réelle.
+
+   Les hauteurs ne sont plus devinées non plus : on fait mesurer
+   « 273 mm » par le navigateur lui-même plutôt que d'écrire 1030 et
+   d'espérer que tout le monde compte en 96 points par pouce. */
+const PAGE_HAUTEUR_MM = 273;   // A4 (297) moins les marges @page (12 + 12)
+const PAGE_LARGEUR_MM = 182;   // A4 (210) moins les marges @page (14 + 14)
+
+function enPixels(mm){
+  const d = document.createElement('div');
+  d.style.cssText = 'position:absolute;left:-9999px;top:0;visibility:hidden;' +
+                    'height:' + mm + 'mm';
+  document.body.appendChild(d);
+  const h = d.getBoundingClientRect().height;
+  d.remove();
+  return h || 0;
+}
+
 /* 82 % et pas moins. On resserre une convocation trop longue plutôt
    que de la laisser déborder — mais on ne la resserre pas au point
    qu'elle se lise mal. Passé cette limite, le feuillet prend une
@@ -1902,24 +1968,45 @@ const HAUTEUR_PAGE = 1030;   // A4 moins les marges, en pixels d'écran
    qu'une page qu'on plisse les yeux pour lire. */
 const SERRAGE_MIN = 0.82;
 
+/* Un peu de jeu. La mesure est faite par un moteur, l'impression par
+   un autre — parfois le même, souvent non : Safari sur un iPad ne
+   met pas en pages exactement comme Chrome sur un ordinateur. Viser
+   le dernier millimètre, c'est déborder d'une ligne chez celui qui
+   compte autrement. On vise donc 98 % de la page. */
+const MARGE_DE_SURETE = 0.98;
+
 function tenirSurUnePage(P){
-  P.style.zoom = '';
-  /* À l'écran, la feuille porte ses propres marges (padding 18mm) ;
-     à l'impression elle les perd — c'est la page A4 qui les fournit
-     (@media print : padding 0). Mesurer avec elles, c'est resserrer
-     le texte pour du blanc qui ne sera pas imprimé : la convocation
-     descendait au plancher de 82 % alors que 86 % suffisaient. */
-  const c = getComputedStyle(P);
-  const margesEcran = parseFloat(c.paddingTop) + parseFloat(c.paddingBottom);
-  const naturelle = P.scrollHeight - (margesEcran || 0);
-  if (naturelle <= HAUTEUR_PAGE) return 1;
-  /* « scrollHeight » se lit AVANT le zoom : le navigateur rend la
-     hauteur en pixels de mise en pages, non en pixels d'écran. Une
-     boucle qui compare l'un à l'autre ne converge jamais et descend
-     au plancher pour rien. On calcule donc le rapport d'un coup. */
-  const z = Math.max(SERRAGE_MIN, Math.floor(HAUTEUR_PAGE / naturelle * 100) / 100);
-  P.style.zoom = z.toFixed(2);
-  return z;
+  const avant = P.getAttribute('style') || '';
+  const cible = enPixels(PAGE_HAUTEUR_MM) * MARGE_DE_SURETE;
+  if (!cible){ P.style.zoom = ''; return 1; }
+
+  /* ── ON ESSAIE, ON REGARDE, ON RECOMMENCE ───────────────────────
+     Le calcul d'un coup — hauteur naturelle divisée par hauteur de
+     page — repose sur l'idée que le contenu rétrécit exactement dans
+     la proportion du zoom. C'est faux : une ligne qui passe de deux
+     lignes à une ne rend pas 14 % de sa hauteur, elle en rend la
+     moitié. Le rapport calculé est donc toujours un à-peu-près, et
+     l'à-peu-près se paie d'une seconde page.
+
+     « scrollHeight » se lit avant le zoom, mais
+     « getBoundingClientRect().height » se lit APRÈS : c'est la
+     hauteur telle qu'elle sera. On l'essaie donc pour de bon, par
+     pas d'un centième, et l'on s'arrête au premier serrage qui
+     tient — le plus doux qui marche, non le plus fort qu'on ait
+     calculé. Dix-neuf essais au pire, imperceptibles. */
+  P.style.maxWidth = PAGE_LARGEUR_MM + 'mm';
+  P.style.width    = PAGE_LARGEUR_MM + 'mm';
+  P.style.padding  = '0';
+
+  let retenu = SERRAGE_MIN;
+  for (let z = 100; z >= Math.round(SERRAGE_MIN * 100); z--){
+    P.style.zoom = (z / 100).toFixed(2);
+    if (P.getBoundingClientRect().height <= cible){ retenu = z / 100; break; }
+  }
+
+  P.setAttribute('style', avant);
+  P.style.zoom = retenu >= 1 ? '' : retenu.toFixed(2);
+  return retenu;
 }
 
 $('#fermer').addEventListener('click', () => {

@@ -261,6 +261,40 @@ with sync_playwright() as p:
     h4, t4 = doc("#imp-convoc", "#t-convoc")
     v("exemple.test/agapes" in t4, "le feuillet le porte aussi")
     v("don" in t4 and "0" in t4, "avec la meme mise en garde", t4[-300:])
+    # == DEUX PAGES : ON DIT POURQUOI, ET CE QUI LES RAMENERAIT A UNE
+    # Le feuillet prenait une seconde page en silence : on ne savait ni
+    # pourquoi, ni quoi y faire. Le serrage a un plancher — en deca, la
+    # convocation ne se lit plus. Buter dessus n'est pas une panne,
+    # c'est un arbitrage, et il revient a la Secretaire.
+    court = [{"h": "19:30", "t": "Ouverture"}, {"h": "23:00", "t": "Agapes"}]
+    long = [{"h": "%02d:%02d" % ((8 + i) % 24, (i * 7) % 60),
+             "t": "Point numero %d de l ordre du jour, ecrit assez long "
+                  "pour peser son poids" % i} for i in range(18)]
+
+    pg.evaluate("(o) => { E.odj = o; garder(); dessiner(); }", court)
+    pg.wait_for_timeout(500)
+    pg.click("#t-convoc"); pg.wait_for_timeout(500)
+    pg.click("#imp-convoc"); pg.wait_for_timeout(900)
+    v(pg.locator("#avis-pages").is_hidden(),
+      "une convocation qui tient sur une page ne dit rien")
+    pg.click("#fermer"); pg.wait_for_timeout(400)
+
+    pg.evaluate("(o) => { E.odj = o; garder(); dessiner(); }", long)
+    pg.wait_for_timeout(500)
+    pg.click("#t-convoc"); pg.wait_for_timeout(500)
+    pg.click("#imp-convoc"); pg.wait_for_timeout(900)
+    v(not pg.locator("#avis-pages").is_hidden(),
+      "QUAND LE SERRAGE BUTE SUR SON PLANCHER, ON DIT POURQUOI")
+    dit = pg.inner_text("#avis-pages")
+    v("deux pages" in dit, "on annonce les deux pages", dit[:140])
+    v("18 lignes" in dit,
+      "ET L'ON NOMME CE QUI PESE : l'ordre du jour, et de combien", dit[:220])
+    v("avis-pages" not in pg.inner_html("#papier"),
+      "mais rien de tout cela ne s'imprime sur le feuillet")
+    pg.click("#fermer"); pg.wait_for_timeout(400)
+    pg.evaluate("(o) => { E.odj = o; garder(); dessiner(); }", court)
+    pg.wait_for_timeout(500)
+
     # == ON EPROUVE LE LIEN AVANT DE L'ENVOYER, PAS APRES ===========
     # Une adresse de paiement fausse a l'air d'une adresse. On ne s'en
     # apercoit qu'une fois la convocation partie a cent personnes, quand
