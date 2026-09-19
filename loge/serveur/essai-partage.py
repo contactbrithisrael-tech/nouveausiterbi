@@ -112,6 +112,44 @@ with sync_playwright() as p:
     v(not X.locator("#appli").is_visible(),"un mot de passe faux n'ouvre rien")
     v(X.locator("#porte-erreur").is_visible(),"et le dit")
 
+    # == HUIT ONGLETS SUR UN ECRAN ETROIT ===========================
+    # Ils se repliaient sur trois ou quatre rangees : la barre changeait
+    # de hauteur a chaque changement d'onglet, l'ecran sautait, et
+    # l'onglet qu'on cherchait n'etait jamais deux fois au meme endroit.
+    g = M.evaluate("""() => {
+      const o = document.querySelector('.onglets');
+      const b = [...o.querySelectorAll('button')].filter(x => !x.hidden);
+      const rangees = new Set(b.map(x => Math.round(x.getBoundingClientRect().top)));
+      return { rangees: rangees.size, onglets: b.length,
+               hauteur: Math.round(o.getBoundingClientRect().height) }; }""")
+    v(g["rangees"] == 1,
+      "LES ONGLETS TIENNENT SUR UNE SEULE RANGEE, qui defile du doigt", g)
+    v(g["hauteur"] < 70,
+      "la barre ne change plus de hauteur sous les doigts", g)
+
+    # l'onglet choisi revient dans le champ de vision
+    M.evaluate("() => { document.querySelector('.onglets').scrollLeft = 0; }")
+    M.click("#t-tenue"); M.wait_for_timeout(700)
+    v(M.evaluate("""() => {
+        const o = document.querySelector('.onglets').getBoundingClientRect();
+        const t = document.querySelector('#t-tenue').getBoundingClientRect();
+        return t.left >= o.left - 1 && t.right <= o.right + 1; }"""),
+      "ET L'ONGLET CHOISI EST RAMENE DANS LE CHAMP DE VISION : on ne "
+      "perd pas ou l'on est")
+
+    # == ET L'ON DIT QUE TOUT S'ENREGISTRE TOUT SEUL ================
+    # Le mot du haut disait « rien n'est envoye, rien ne remonte nulle
+    # part ». Vrai du programme sans serveur ; faux des que le registre
+    # de l'Atelier est en place — et une phrase fausse sur ce point-la
+    # est la pire de toutes.
+    mot = M.inner_text("#mot-donnees")
+    v("enregistre tout seul" in mot.replace("’", "'").replace("é", "e"),
+      "LE MOT DU HAUT DIT QUE TOUT S'ENREGISTRE TOUT SEUL", mot[:160])
+    v("onglet" in mot and "recharg" in mot,
+      "ET NOMME LES DEUX PEURS : changer d'onglet, recharger", mot[:300])
+    v("rien n'est envoyé" not in mot,
+      "il ne dit plus que rien ne remonte : ce serait faux ici", mot[:300])
+
     # == ET LE PROGRAMME VEILLE SUR SA PROPRE VERSION ===============
     # Trois fois de suite une correction livree n'est pas arrivee
     # jusqu'a l'ecran : un onglet Safari deja ouvert ne redemande rien,

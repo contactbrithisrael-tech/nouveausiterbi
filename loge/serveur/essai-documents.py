@@ -535,6 +535,38 @@ with sync_playwright() as p:
     v("vrai texte" in dit,
       "et l'on dit pourquoi quand il n'y a pas d'image a tirer", dit[:120])
 
+    # == UNE DIGNITE N'EST PAS UN OFFICE ============================
+    # Le Souverain Grand Commandeur ne tient pas un maillet dans cet
+    # Atelier : il preside le Rite. Il n'etait donc nulle part — ni
+    # parmi les Offices, elus du College des Trois Lumieres, ni parmi
+    # les charges, designees par elles. On ne pouvait pas l'inscrire.
+    v(pg.evaluate("typeof OFFICES.sgc === 'object'"),
+      "LE SOUVERAIN GRAND COMMANDEUR EXISTE dans la liste")
+    v(pg.evaluate("OFFICES.sgc.n") == "dignite",
+      "et il a sa propre nature : ni elu, ni designe",
+      pg.evaluate("OFFICES.sgc.n"))
+    v(pg.evaluate("OFFICES.sgc.a") == "SGC∴",
+      "avec son abreviation", pg.evaluate("OFFICES.sgc.a"))
+    v(pg.evaluate("OFFICES.sgc.r") == 0,
+      "et le premier rang au Tableau — celui qu'il occupe en tenue",
+      pg.evaluate("OFFICES.sgc.r"))
+
+    # on peut l'inscrire pour de bon, depuis la fiche
+    pg.click("#t-tableau"); pg.wait_for_timeout(600)
+    prem = pg.evaluate("(E.membres||[])[0] ? E.membres[0].id : null")
+    if prem:
+        pg.evaluate("(id) => { E.fiche = id; courante = 'fiche'; dessiner(); }", prem)
+        pg.wait_for_timeout(700)
+        choix = pg.evaluate("""() => [...document.querySelectorAll('#m-office option')]
+            .map(o => o.value)""")
+        v("sgc" in choix,
+          "ET LE CHOIX EST OFFERT DANS LA FICHE, non seulement dans le code",
+          choix)
+        grp = pg.evaluate("""() => [...document.querySelectorAll('#m-office optgroup')]
+            .map(g => g.label)""")
+        v(any("ignité" in g or "ignite" in g for g in grp),
+          "sous son propre intitule, non melange aux Offices", grp)
+
     v(not errs, "aucune erreur JavaScript", errs)
     b.close()
 
