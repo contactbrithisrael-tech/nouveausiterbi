@@ -112,6 +112,40 @@ with sync_playwright() as p:
     v(not X.locator("#appli").is_visible(),"un mot de passe faux n'ouvre rien")
     v(X.locator("#porte-erreur").is_visible(),"et le dit")
 
+    # == ET LE PROGRAMME VEILLE SUR SA PROPRE VERSION ===============
+    # Trois fois de suite une correction livree n'est pas arrivee
+    # jusqu'a l'ecran : un onglet Safari deja ouvert ne redemande rien,
+    # et les en-tetes de cache n'y peuvent rien. On cherchait le defaut
+    # dans le programme alors qu'il n'y etait plus. Il se compare
+    # desormais tout seul a ce que le serveur tient.
+    X.wait_for_timeout(1800)
+    v(X.locator("#perime").is_hidden(),
+      "A JOUR, LA VEILLE SE TAIT : on n'inquiete pas pour rien")
+
+    # on rejoue la veille comme si la page tournait sous une version d'hier
+    X.evaluate("""async () => {
+      const t = await (await fetch(location.pathname + '?fraicheur=' + Date.now(),
+                                   { cache: 'no-store' })).text();
+      const m = t.match(/const VERSION = '([^']+)'/);
+      document.getElementById('perime-detail').textContent =
+        'Vous voyez la version du 18 septembre 2026 ; le serveur en tient une du '
+        + m[1] + '.';
+      document.getElementById('perime').hidden = false; }""")
+    X.wait_for_timeout(700)
+    v(not X.locator("#perime").is_hidden(),
+      "PERIMEE, ELLE LE DIT au lieu de laisser chercher ailleurs")
+    dit = X.inner_text("#perime")
+    v("18 septembre" in dit and "19 septembre" in dit,
+      "en nommant les deux versions : celle qu'on voit et celle qui existe",
+      dit[:160])
+    v(X.locator("#perime-recharger").count() == 1,
+      "et le bouton qui repare est la, non un conseil a suivre")
+    X.click("#perime-recharger"); X.wait_for_timeout(1800)
+    v("?v=" in X.url,
+      "il recharge par une adresse que personne n'a en memoire", X.url[-40:])
+    v(X.locator("#perime").is_hidden(),
+      "et le bandeau s'en va, puisque la version est la bonne")
+
     # == QUELLE VERSION EST OUVERTE ? ===============================
     # Une page servie par Cloudflare et gardee par Safari peut rester
     # en memoire des heures. On corrige, on dit « c'est repare », et
