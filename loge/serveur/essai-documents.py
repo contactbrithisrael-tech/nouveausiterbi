@@ -261,6 +261,49 @@ with sync_playwright() as p:
     h4, t4 = doc("#imp-convoc", "#t-convoc")
     v("exemple.test/agapes" in t4, "le feuillet le porte aussi")
     v("don" in t4 and "0" in t4, "avec la meme mise en garde", t4[-300:])
+    # == LE BLANC AVANT LA LISIBILITE ===============================
+    # Resserrer le texte le rend plus petit ; resserrer l'air qui
+    # l'entoure ne lui ote rien. On depense donc le blanc d'abord, et
+    # le corps ensuite — jamais l'inverse.
+    moyen = [{"h": "%02d:%02d" % (8 + i, (i * 11) % 60),
+              "t": "Point numero %d de l ordre du jour, ecrit assez long "
+                   "pour peser son poids sur la feuille" % i} for i in range(13)]
+    pg.evaluate("(o) => { E.odj = o; garder(); dessiner(); }", moyen)
+    pg.wait_for_timeout(500)
+    pg.click("#t-convoc"); pg.wait_for_timeout(500)
+    pg.click("#imp-convoc"); pg.wait_for_timeout(1000)
+    serree = pg.evaluate("document.querySelector('#papier').classList.contains('serree')")
+    v(serree, "UNE CONVOCATION LONGUE RESSERRE D'ABORD SON AIR", serree)
+
+    # ce que l'air rend, mesure : la meme feuille, avec et sans
+    gain = pg.evaluate("""() => {
+      const P = document.querySelector('#papier');
+      const etait = P.classList.contains('serree');
+      const z = P.style.zoom; P.style.zoom = '';
+      P.classList.remove('serree'); const large = P.scrollHeight;
+      P.classList.add('serree');    const serre = P.scrollHeight;
+      P.classList.toggle('serree', etait); P.style.zoom = z;
+      return { large, serre }; }""")
+    v(gain["serre"] < gain["large"],
+      "ET L'AIR REND DE LA HAUTEUR SANS OTER UNE LETTRE",
+      str(gain["large"] - gain["serre"]) + " px rendus, soit " +
+      str(round(100 - gain["serre"] * 100 / gain["large"])) + " %")
+    # on referme avant de recompter : « pages » rouvre le document, et
+    # un onglet ne se clique pas a travers le voile
+    pg.click("#fermer"); pg.wait_for_timeout(400)
+    v(pages("#imp-convoc", "#t-convoc") == 1,
+      "et elle tient sur une page")
+
+    # une convocation courte garde son air
+    bref = [{"h": "19:30", "t": "Ouverture"}, {"h": "23:00", "t": "Agapes"}]
+    pg.evaluate("(o) => { E.odj = o; garder(); dessiner(); }", bref)
+    pg.wait_for_timeout(500)
+    pg.click("#t-convoc"); pg.wait_for_timeout(500)
+    pg.click("#imp-convoc"); pg.wait_for_timeout(900)
+    v(not pg.evaluate("document.querySelector('#papier').classList.contains('serree')"),
+      "UNE CONVOCATION COURTE GARDE SON AIR : on ne resserre pas pour rien")
+    pg.click("#fermer"); pg.wait_for_timeout(400)
+
     # == DEUX PAGES : ON DIT POURQUOI, ET CE QUI LES RAMENERAIT A UNE
     # Le feuillet prenait une seconde page en silence : on ne savait ni
     # pourquoi, ni quoi y faire. Le serrage a un plancher — en deca, la
