@@ -99,9 +99,10 @@ with sync_playwright() as pw:
       const r = await fetch('/api/reponse?j=' + j);
       return await r.json(); }""", jeton)
     # Le lien de paiement est une adresse PUBLIQUE, choisie par la
-    # Secretaire : elle peut contenir n'importe quel mot, et notamment
-    # « agapes-visiteurs ». On l'ecarte donc de la fouille, sans quoi
-    # l'epreuve accuse le registre de fuir la ou c'est le lien qui parle.
+    # Secretaire : elle peut contenir n'importe lequel des mots qu'on
+    # cherche ici — « visiteurs », « membres », le nom d'un mois. On
+    # l'ecarte donc de la fouille, sans quoi l'epreuve accuse le
+    # registre de fuir la ou c'est le lien qui parle.
     sansLien = {k: v for k, v in brut.items() if k != "paiement"}
     import json as _j
     fuite = _j.dumps(sansLien, ensure_ascii=False)
