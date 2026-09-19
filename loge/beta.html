@@ -1968,12 +1968,24 @@ function enPixels(mm){
    qu'une page qu'on plisse les yeux pour lire. */
 const SERRAGE_MIN = 0.82;
 
-/* Un peu de jeu. La mesure est faite par un moteur, l'impression par
-   un autre — parfois le même, souvent non : Safari sur un iPad ne
-   met pas en pages exactement comme Chrome sur un ordinateur. Viser
-   le dernier millimètre, c'est déborder d'une ligne chez celui qui
-   compte autrement. On vise donc 98 % de la page. */
-const MARGE_DE_SURETE = 0.98;
+/* ── LA PAGE EST PLUS PETITE QU'ELLE NE LE DIT ─────────────────────
+   On calcule la hauteur imprimable comme A4 moins les marges qu'on a
+   demandées : 297 − 24 = 273 mm. Mais ces marges, on les DEMANDE ;
+   tous les systèmes ne les accordent pas. iOS en impose de son cru,
+   par-dessus les nôtres, et la place qui reste est plus courte que
+   celle qu'on a calculée.
+
+   MESURÉ, non supposé : une convocation que Chrome tenait entière sur
+   une page débordait sur iPad de la fin du mot de fin, de l'adage et
+   du pied — quatre lignes sur une cinquantaine, soit environ huit pour
+   cent de la page. On ne vise donc pas la page entière : on lui laisse
+   ce que le système se réserve.
+
+   Le prix est un texte un peu plus petit chez tout le monde. Il est
+   moindre que celui d'une convocation qui se coupe en deux chez la
+   moitié des Sœurs et Frères — et personne ne sait, en l'imprimant,
+   sur quel appareil elle sera lue. */
+const MARGE_DE_SURETE = 0.92;
 
 function tenirSurUnePage(P){
   const avant = P.getAttribute('style') || '';
