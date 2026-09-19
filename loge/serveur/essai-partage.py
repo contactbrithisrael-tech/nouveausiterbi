@@ -112,6 +112,19 @@ with sync_playwright() as p:
     v(not X.locator("#appli").is_visible(),"un mot de passe faux n'ouvre rien")
     v(X.locator("#porte-erreur").is_visible(),"et le dit")
 
+    # == QUELLE VERSION EST OUVERTE ? ===============================
+    # Une page servie par Cloudflare et gardee par Safari peut rester
+    # en memoire des heures. On corrige, on dit « c'est repare », et
+    # l'ecran d'en face n'a pas change d'une virgule — mais rien ne le
+    # dit, ni d'un cote ni de l'autre, et l'on cherche le defaut la ou
+    # il n'est plus. Un coup d'oeil doit trancher.
+    marque = X.inner_text("#marque-version")
+    v(marque.startswith("v. ") and len(marque) > 5,
+      "LE PROGRAMME DIT QUELLE VERSION EST OUVERTE", marque)
+    v(marque == X.evaluate("'v. ' + VERSION"),
+      "et c'est bien celle du programme, non une date ecrite a la main",
+      marque)
+
     v(not eM and not eS,"aucune erreur JavaScript, des deux côtés",eM+eS)
     b.close()
 
