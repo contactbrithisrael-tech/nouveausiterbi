@@ -836,7 +836,7 @@ function pierrePlate(m){ const c=Math.round(m*100), kg=Math.floor(c/100), g=c%10
 /* La date de ce programme. Changée à chaque livraison, elle permet de
    savoir en un coup d'œil si le navigateur a bien pris la nouvelle
    version — ou s'il ressert celle d'hier. */
-const VERSION = '19 septembre 2026 · 10h30';
+const VERSION = '19 septembre 2026 · 11h';
 
 const $ = s => document.querySelector(s);
 
@@ -5840,7 +5840,15 @@ function carnetAmies(){
       >⤒ Depuis leur convocation</button>
   </div></header>
 
-  ${(agenda.length || dFiltre) ? `<div class="bloc"><header><div><h2>Agenda des visites</h2>
+  ${/* ── L'AGENDA SE MONTRE, MÊME VIDE ─────────────────────────────
+         Il ne paraissait que s'il portait déjà une date. Une Secrétaire
+         qui venait d'inscrire onze Loges amies ne voyait donc aucun
+         agenda — et rien ne lui disait ni qu'il existait, ni comment
+         les dates y entrent.
+
+         Il paraît désormais dès qu'il y a une Loge au carnet, et quand
+         il est vide il dit d'où viennent les dates. */''}
+  ${(agenda.length || dFiltre || E.amies.length) ? `<div class="bloc"><header><div><h2>Agenda des visites</h2>
     <p class="sous">Les tenues des Ateliers amis où nos Sœurs et Frères peuvent se
       rendre. <b>On ne visite qu’une tenue dont le degré n’excède pas le sien.</b></p>
     <div class="groupe" style="margin-top:12px;align-items:center">
@@ -5856,7 +5864,25 @@ function carnetAmies(){
       <button class="btn" id="agenda-diffuser">Agenda à diffuser</button>
       <button class="btn btn-or" id="agenda-tout">⤓ Mettre à mon agenda</button>
     </div></header>
-    <div class="enveloppe"><table class="tab" id="t-agenda"><thead><tr>
+    ${!agenda.length ? `<div class="note"><b>Aucune tenue n’est annoncée.</b>
+      Les dates entrent ici de deux façons : une Loge amie dépose sa convocation
+      depuis l’Espace Membres du site — onglet « Convocation de ma Loge » —, ou
+      vous l’ajoutez vous-même en ouvrant sa fiche, plus bas.</div>` : ''}
+    ${(() => {
+        /* Qui n'a rien annoncé ? La question se posait en comparant le
+           carnet à l'agenda, ligne à ligne. Elle se lit maintenant. */
+        const aujourdhui = new Date().toISOString().slice(0,10);
+        const muettes = (E.amies || []).filter(a =>
+          !(a.convocations || []).some(c => c.date && c.date >= aujourdhui));
+        if (!muettes.length || !E.amies.length) return '';
+        return `<p class="sous" style="margin:0 0 14px"><b>${muettes.length}
+          Loge${muettes.length>1?'s':''} inscrite${muettes.length>1?'s':''}
+          n’${muettes.length>1?'ont':'a'} annoncé aucune date</b> :
+          ${muettes.slice(0, 8).map(a => ech(a.nom || '(sans nom)')).join(', ')}${
+            muettes.length > 8 ? `, et ${muettes.length - 8} autre${muettes.length-8>1?'s':''}` : ''}.
+          Leur secrétariat peut la déposer depuis le site.</p>`;
+      })()}
+    ${agenda.length ? `<div class="enveloppe"><table class="tab" id="t-agenda"><thead><tr>
       <th>Date</th><th>Loge</th><th>Degré</th><th>Objet</th><th>Lieu</th><th></th>
     </tr></thead><tbody>${agenda.map(x=>`<tr>
       <td style="white-space:nowrap"><span class="nom-membre">${dateLongue(x.c.date)}</span>
@@ -5873,8 +5899,8 @@ function carnetAmies(){
         <button class="btn btn-mini" data-ics="${x.a.id}|${x.c.id}">⤓ Agenda</button>
         ${x.a.contactEmail?`<button class="btn btn-mini" data-renvoi="${x.a.id}"
             >Leur envoyer la nôtre</button>`:''}</div></td>
-    </tr>`).join('')}</tbody></table></div>
-    ${!agenda.length?`<div class="note" style="margin-top:14px">Aucune tenue n’est
+    </tr>`).join('')}</tbody></table></div>` : ''}
+    ${(!agenda.length && dFiltre)?`<div class="note" style="margin-top:14px">Aucune tenue n’est
       ouverte à ce degré parmi celles annoncées.</div>`:''}</div>`
    : ''}
 
@@ -6593,9 +6619,17 @@ Rends UNIQUEMENT un objet JSON, sans phrase autour, avec exactement ces clés :
  "contactNom":null,"contactEmail":null,"contactTel":null,
  "date":null,"heure":null,"degre":null,"objet":null,"odj":null}
 
+QUATRE CLÉS AVANT TOUTES LES AUTRES : "nom", "date", et le lieu
+("temple", "adresse", "codePostal", "ville"), et "contactEmail". Ce sont
+elles qui permettent d'écrire à cet Atelier et de porter sa tenue à
+l'agenda. Le reste est du confort. Si la photo est mauvaise et que tu
+dois choisir où mettre ton attention, mets-la là.
+
 Règles, sans exception :
 - N'INVENTE RIEN. Toute clé dont la réponse n'est pas écrite sur l'image reste null.
   Un blanc se corrige à la main ; une invention vraisemblable passe inaperçue.
+  Cela vaut AUSSI pour les quatre clés ci-dessus : importantes ne veut pas
+  dire à deviner.
 - "nom" : le nom de la Loge tel qu'écrit, titre compris (« Respectable Mère
   Loge », « R.'.L.'. »), mais SANS son Orient. L'Orient est presque toujours
   accroché au nom : « Les Ecossais de la Sainte Baume à l'Orient de Saint
