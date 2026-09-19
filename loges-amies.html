@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192.png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+  <title>Loges amies — inscrire son Atelier, déposer une convocation — Rite Brith Israël</title>
+  <meta name="description" content="Ateliers de toutes obédiences : inscrivez votre Loge pour recevoir nos convocations, et déposez les vôtres à notre agenda des visites. Sans tuilage, sans compte à créer.">
+
+<!-- ═══════════════════════════════════════════════════════════════
+     LOGES AMIES — ET POURQUOI CETTE PAGE N'A PAS DE TUILAGE
+
+     Les deux formulaires qui suivent existaient déjà, dans l'Espace
+     Membres, DERRIÈRE le tuilage. Ils n'y servaient à rien : un
+     Atelier qu'on ne connaît pas encore ne peut pas franchir un
+     tuilage pour se faire connaître. La fonction existait, et
+     personne au dehors ne pouvait l'atteindre.
+
+     ► LE TUILAGE SE FAIT AU TEMPLE. C'est la règle, et elle ne se
+       délègue pas à un formulaire : le Rite a prévu qui répond de
+       l'introduction d'un Visiteur, et ce n'est pas une page web.
+       Ce qui se dépose ici n'ouvre donc aucune porte — cela pose un
+       nom sur un registre, que la Secrétaire relèvera.
+
+     ► RIEN DE MAÇONNIQUE N'EST DEMANDÉ ICI. Le nom d'un Atelier, son
+       Orient, l'adresse de son secrétariat, la date d'une Tenue :
+       tout cela figure déjà sur les planches qui circulent entre
+       Ateliers. Ce qui relève du Temple est resté dans l'Espace
+       Membres, et derrière son tuilage.
+
+     ► CE QUI EST DÉPOSÉ N'EST PUBLIÉ NULLE PART. Cette page écrit
+       dans une boîte aux lettres que seul un Officier connecté peut
+       relever. Aucune des fiches déposées ne s'affiche ici, ni
+       ailleurs sur le site.
+═══════════════════════════════════════════════════════════════ -->
+
+  <style>
+    :root {
+      --or: #c9a84c; --or2: #e8c96a;
+      --fond: #0d0d0d; --fond2: #141414; --fond3: #1a1a1a;
+      --texte: #e8e0d0; --gris: #888; --rouge: #d98b8b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--fond); color: var(--texte);
+      font-family: 'Georgia', serif; min-height: 100vh;
+    }
+
+    /* ── EN-TÊTE ── */
+    .header { text-align: center; padding: 3rem 1.5rem 2rem;
+              border-bottom: 1px solid rgba(201,168,76,.25); }
+    .header__badge {
+      display: inline-block; border: 1px solid var(--or); color: var(--or);
+      font-size: .7rem; letter-spacing: .2em; padding: .35rem .9rem;
+      margin-bottom: 1.2rem; text-transform: uppercase;
+    }
+    .header__titre {
+      font-size: 2.2rem; font-variant: small-caps; letter-spacing: .12em;
+      color: var(--or); margin-bottom: .5rem;
+    }
+    .header__sous { font-style: italic; color: var(--gris); font-size: .95rem; }
+
+    /* ── ONGLETS ── */
+    .nav-onglets {
+      display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem;
+      padding: 1.5rem 1rem; background: var(--fond2);
+      border-bottom: 1px solid rgba(201,168,76,.15);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .onglet {
+      background: transparent; border: 1px solid rgba(201,168,76,.4);
+      color: var(--or); padding: .5rem 1.1rem; font-size: .8rem;
+      letter-spacing: .12em; text-transform: uppercase; cursor: pointer;
+      font-family: 'Georgia', serif; transition: all .25s;
+    }
+    .onglet:hover, .onglet.actif { background: var(--or); color: var(--fond); }
+
+    /* ── SECTIONS ── */
+    .section { display: none; max-width: 860px; margin: 0 auto; padding: 3rem 1.5rem; }
+    .section.actif { display: block; }
+    .section__titre {
+      font-variant: small-caps; letter-spacing: .15em; color: var(--or);
+      font-size: 1.5rem; margin-bottom: .5rem; text-align: center;
+    }
+    .section__sep {
+      width: 60px; height: 1px; background: var(--or);
+      margin: .6rem auto 2rem; opacity: .5;
+    }
+    .intro {
+      background: var(--fond3); border-left: 3px solid var(--or);
+      padding: 1rem 1.5rem; margin-bottom: 2rem; font-style: italic;
+      color: var(--gris); font-size: .9rem; line-height: 1.7;
+    }
+    .intro strong { color: var(--or); font-style: normal; font-weight: normal; }
+
+    /* ── FORMULAIRES ── */
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+    @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
+    .form-full { grid-column: 1 / -1; }
+    .form-titre {
+      color: var(--or); font-variant: small-caps; letter-spacing: .1em;
+      margin: 1.2rem 0 .6rem;
+    }
+    .form-titre:first-child { margin-top: 0; }
+    .form-mot { font-size: .85rem; color: var(--gris); margin-bottom: 1rem; line-height: 1.7; }
+    label {
+      display: block; font-size: .78rem; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--or); margin-bottom: .4rem;
+    }
+    input, textarea, select {
+      width: 100%; background: var(--fond3);
+      border: 1px solid rgba(201,168,76,.3); color: var(--texte);
+      padding: .7rem .9rem; font-family: 'Georgia', serif; font-size: .9rem;
+      outline: none; transition: border-color .2s;
+    }
+    input:focus, textarea:focus, select:focus { border-color: var(--or); }
+    select option { background: var(--fond3); }
+    textarea { resize: vertical; min-height: 100px; }
+
+    /* Le leurre. Il n'est ni vu, ni atteint au clavier, ni lu à voix
+       haute : seul un automate qui remplit tout ce qu'il trouve y
+       touche. Il est hors de l'écran plutôt que « display:none »,
+       parce que certains automates sautent ce qui est masqué. */
+    .leurre {
+      position: absolute; left: -9999px; top: auto;
+      width: 1px; height: 1px; overflow: hidden;
+    }
+
+    .btn {
+      display: inline-block; padding: .8rem 2rem; font-size: .8rem;
+      letter-spacing: .15em; text-transform: uppercase;
+      font-family: 'Georgia', serif; cursor: pointer;
+      transition: all .25s; border: none;
+    }
+    .btn-or { background: var(--or); color: var(--fond); }
+    .btn-or:hover { background: var(--or2); }
+    .btn-or:disabled { opacity: .55; cursor: wait; }
+    .form-footer { margin-top: 2rem; display: flex; justify-content: center;
+                   gap: 1rem; flex-wrap: wrap; }
+
+    .msg { display: none; text-align: center; padding: 2rem;
+           border: 1px solid var(--or); color: var(--or);
+           font-style: italic; margin-top: 2rem; line-height: 1.8; }
+    .msg.visible { display: block; }
+    .msg a { color: var(--or2); }
+    .ennui { display: none; margin-top: 1.5rem; padding: 1.2rem 1.4rem;
+             background: var(--fond3); border-left: 2px solid var(--rouge);
+             color: var(--texte); font-size: .88rem; line-height: 1.75; }
+    .ennui.visible { display: block; }
+    .ennui a { color: var(--or); }
+
+    .pied { text-align: center; font-size: .78rem; color: var(--gris);
+            font-style: italic; margin-top: 3rem; padding: 1.5rem;
+            border-top: 1px solid rgba(201,168,76,.1); line-height: 1.8; }
+    .pied a { color: var(--gris); }
+    .pied a:hover { color: var(--or); }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header__badge">✡ Accès libre — sans tuilage, sans compte</div>
+  <h1 class="header__titre">Loges amies</h1>
+  <p class="header__sous">Suprême Conseil du Rite Brith Israël</p>
+</div>
+
+<nav class="nav-onglets">
+  <button class="onglet actif" id="ong-loge" type="button">Inscrire ma Loge</button>
+  <button class="onglet" id="ong-conv" type="button">Déposer une convocation</button>
+  <a class="onglet" href="index.html" style="text-decoration:none;">← Le Rite</a>
+</nav>
+
+<!-- ═══════════════════════════════════════════
+     1. INSCRIRE SA LOGE
+
+     Une Loge n'est pas une personne. Celle qui s'inscrit ici ne vient
+     pas visiter : elle vient CORRESPONDRE. Elle donne l'adresse de
+     son secrétariat — celle à qui nos convocations seront envoyées —
+     et dépose son propre état civil.
+═══════════════════════════════════════════ -->
+<section class="section actif" id="sec-loge">
+  <h2 class="section__titre">Inscrire ma Loge</h2>
+  <div class="section__sep"></div>
+
+  <div class="intro">
+    Vous êtes Secrétaire, Vénérable Maître ou Officier d'un Atelier, et vous
+    souhaitez que votre Loge reçoive nos convocations. Inscrivez-la ici : elles
+    partiront à l'adresse de votre secrétariat, et non à celle d'un Frère en
+    particulier.
+    <br><br>
+    <strong>C'est une inscription d'Atelier, non de personne</strong>, et elle
+    n'ouvre aucune porte : le tuilage se fait au Temple, le soir de la Tenue.
+  </div>
+
+  <form id="form-loge" autocomplete="on">
+    <div class="form-grid">
+
+      <div class="form-full"><p class="form-titre">L'Atelier</p></div>
+      <div>
+        <label for="l-nom">Nom de la Loge *</label>
+        <input id="l-nom" type="text" name="loge_nom" required placeholder="Les Trois Colonnes">
+      </div>
+      <div>
+        <label for="l-num">Numéro</label>
+        <input id="l-num" type="text" name="loge_numero" placeholder="142">
+      </div>
+      <div>
+        <label for="l-or">Orient</label>
+        <input id="l-or" type="text" name="loge_orient" placeholder="Marseille">
+      </div>
+      <div>
+        <label for="l-ob">Obédience</label>
+        <input id="l-ob" type="text" name="loge_obedience">
+      </div>
+      <div>
+        <label for="l-ri">Rite</label>
+        <input id="l-ri" type="text" name="loge_rite">
+      </div>
+      <div>
+        <label for="l-te">Temple</label>
+        <input id="l-te" type="text" name="loge_temple" placeholder="Nom du local">
+      </div>
+      <div class="form-full">
+        <label for="l-ad">Adresse du Temple</label>
+        <input id="l-ad" type="text" name="loge_adresse">
+      </div>
+      <div>
+        <label for="l-cp">Code postal</label>
+        <input id="l-cp" type="text" name="loge_cp">
+      </div>
+      <div>
+        <label for="l-vi">Ville</label>
+        <input id="l-vi" type="text" name="loge_ville">
+      </div>
+
+      <div class="form-full">
+        <p class="form-titre">Où vous adresser nos convocations</p>
+        <p class="form-mot">
+          L'adresse de votre secrétariat. C'est là que partiront nos convocations —
+          à la charge de votre Atelier de les porter à ses colonnes.
+        </p>
+      </div>
+      <div>
+        <label for="l-cn">Secrétaire — nom</label>
+        <input id="l-cn" type="text" name="contact_nom">
+      </div>
+      <div>
+        <label for="l-ce">Courriel du secrétariat *</label>
+        <input id="l-ce" type="email" name="contact_email" required>
+      </div>
+      <div class="form-full">
+        <label for="l-ct">Téléphone</label>
+        <input id="l-ct" type="tel" name="contact_tel">
+      </div>
+
+      <div class="form-full">
+        <label for="l-no">Un mot, s'il y a lieu</label>
+        <textarea id="l-no" name="loge_notes" rows="3"
+          placeholder="Jours de tenue, usages particuliers, ce que vous voulez nous dire."></textarea>
+      </div>
+
+      <div class="leurre" aria-hidden="true">
+        <label for="l-an">Ne remplissez pas ce champ</label>
+        <input id="l-an" type="text" name="loge_annexe" tabindex="-1" autocomplete="off">
+      </div>
+
+    </div>
+    <div class="form-footer">
+      <button type="submit" class="btn btn-or">Inscrire ma Loge</button>
+    </div>
+  </form>
+
+  <div class="msg" id="msg-loge">
+    ✡ Votre Atelier est inscrit.<br>
+    Nos convocations partiront désormais à l'adresse de votre secrétariat. Vous
+    pouvez demander à tout moment qu'elles cessent, sur simple courriel.<br>
+    Que la Lumière vous guide, T∴C∴F∴.
+  </div>
+  <div class="ennui" id="ennui-loge"></div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     2. DÉPOSER UNE CONVOCATION
+
+     Un Atelier qui nous invite dépose ce qui se met à l'agenda : une
+     date, une heure, un degré, un objet. LE FEUILLET RESTE CHEZ LUI —
+     on n'en garde qu'un lien, s'il en a un en ligne.
+
+     C'est un choix, et il se dit : porter les fichiers des autres, ce
+     serait s'engager à les garder, à les servir, et à répondre de ce
+     qu'ils contiennent. Un lien n'engage à rien de cela, et il mène
+     au même feuillet.
+═══════════════════════════════════════════ -->
+<section class="section" id="sec-conv">
+  <h2 class="section__titre">Déposer une convocation</h2>
+  <div class="section__sep"></div>
+
+  <div class="intro">
+    Votre Atelier tient, et souhaite nous y voir ? Déposez sa Tenue ici : elle
+    entrera à notre agenda des visites, et nos Sœurs et Frères la verront.
+    <br><br>
+    <strong>Gardez votre feuillet chez vous.</strong> Nous n'en conservons pas de
+    copie — donnez-nous son adresse s'il est en ligne, et chacun ira le lire
+    chez vous.
+  </div>
+
+  <form id="form-conv" autocomplete="on">
+    <div class="form-grid">
+
+      <div class="form-full">
+        <p class="form-titre">Qui convoque</p>
+        <p class="form-mot">
+          Le même nom, ou le même courriel, que lors de votre inscription : c'est
+          ainsi que la Tenue rejoint la fiche de votre Atelier plutôt que d'en
+          créer une seconde.
+        </p>
+      </div>
+      <div>
+        <label for="c-nom">Nom de la Loge *</label>
+        <input id="c-nom" type="text" name="loge_nom" required>
+      </div>
+      <div>
+        <label for="c-num">Numéro</label>
+        <input id="c-num" type="text" name="loge_numero">
+      </div>
+      <div class="form-full">
+        <label for="c-ce">Courriel du secrétariat</label>
+        <input id="c-ce" type="email" name="contact_email">
+      </div>
+
+      <div class="form-full"><p class="form-titre">La Tenue</p></div>
+      <div>
+        <label for="c-da">Date *</label>
+        <input id="c-da" type="date" name="conv_date" required>
+      </div>
+      <div>
+        <label for="c-he">Heure d'ouverture</label>
+        <input id="c-he" type="time" name="conv_heure">
+      </div>
+      <div>
+        <label for="c-de">Degré</label>
+        <select id="c-de" name="conv_degre">
+          <option value="">—</option>
+          <option value="1">Premier</option>
+          <option value="2">Deuxième</option>
+          <option value="3">Troisième</option>
+        </select>
+      </div>
+      <div>
+        <label for="c-ob">Objet</label>
+        <input id="c-ob" type="text" name="conv_objet" placeholder="Tenue d'installation, initiation…">
+      </div>
+      <div class="form-full">
+        <label for="c-li">Lieu, s'il diffère de votre Temple</label>
+        <input id="c-li" type="text" name="conv_lieu">
+      </div>
+      <div class="form-full">
+        <label for="c-fe">Votre feuillet, en ligne</label>
+        <input id="c-fe" type="url" name="conv_lien" placeholder="https://…">
+      </div>
+      <div class="form-full">
+        <label for="c-od">Ordre du jour, s'il y a lieu</label>
+        <textarea id="c-od" name="conv_odj" rows="4"
+          placeholder="Ce que vous voulez nous en dire."></textarea>
+      </div>
+
+      <div class="leurre" aria-hidden="true">
+        <label for="c-an">Ne remplissez pas ce champ</label>
+        <input id="c-an" type="text" name="loge_annexe" tabindex="-1" autocomplete="off">
+      </div>
+
+    </div>
+    <div class="form-footer">
+      <button type="submit" class="btn btn-or">Déposer la convocation</button>
+    </div>
+  </form>
+
+  <div class="msg" id="msg-conv">
+    ✡ Votre Tenue est à notre agenda.<br>
+    Nos Sœurs et Frères la verront parmi les visites à venir. Si votre Atelier ne
+    nous était pas encore connu, il l'est désormais.<br>
+    Que la Lumière vous guide, T∴C∴F∴.
+  </div>
+  <div class="ennui" id="ennui-conv"></div>
+</section>
+
+<p class="pied">
+  Conformément au RGPD, vous disposez d'un droit d'accès, de rectification et de
+  suppression des données déposées ici.<br>
+  Écrivez à <a href="mailto:contact.brith.israel@gmail.com">contact.brith.israel@gmail.com</a>.
+  <br><br>
+  <a href="index.html">Rite Brith Israël</a> ·
+  <a href="espace-membres.html">Espace Membres</a>
+</p>
+
+<noscript>
+  <p class="pied">
+    Cette page a besoin de JavaScript pour déposer votre fiche. S'il est
+    désactivé, écrivez-nous simplement à
+    <a href="mailto:contact.brith.israel@gmail.com">contact.brith.israel@gmail.com</a> :
+    le nom de votre Loge, son Orient, l'adresse de votre secrétariat, et la date
+    de votre prochaine Tenue suffisent.
+  </p>
+</noscript>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   LE DÉPÔT
+
+   ► LE REGISTRE EST LE CHEMIN PRINCIPAL, ET L'ON DIT CE QU'IL
+     RÉPOND. L'Espace Membres, lui, dépose « au cas où » et avale
+     l'échec sans rien dire : il le peut, parce qu'un courriel part
+     de toute façon en parallèle. Ici, il n'y a pas de second envoi
+     systématique — confirmer un dépôt qu'on n'a pas obtenu serait
+     mentir à un Atelier qui attendra ensuite des convocations qui ne
+     viendront jamais.
+
+   ► LE COURRIEL RESTE, EN REPLI. Dès que le serveur ne répond pas,
+     refuse, ou se tait, la messagerie du visiteur s'ouvre avec ses
+     réponses déjà écrites. Aucune fiche n'est perdue faute de
+     serveur — elle change seulement de chemin.
+
+   ► POURQUOI PAS D'ENVOI SYSTÉMATIQUE PAR COURRIEL. Parce que cette
+     page est ouverte à tous : un arrosage automatique remplirait la
+     boîte du Rite. La boîte aux lettres du registre, elle, est
+     bornée côté serveur.
+═══════════════════════════════════════════════════════════════ */
+(function () {
+  'use strict';
+
+  var COURRIEL = 'contact.brith.israel@gmail.com';
+
+  function $(id) { return document.getElementById(id); }
+
+  /* ── Les onglets ── */
+  function montrer(lequel) {
+    var loge = lequel === 'loge';
+    $('sec-loge').classList.toggle('actif', loge);
+    $('sec-conv').classList.toggle('actif', !loge);
+    $('ong-loge').classList.toggle('actif', loge);
+    $('ong-conv').classList.toggle('actif', !loge);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  $('ong-loge').addEventListener('click', function () { montrer('loge'); });
+  $('ong-conv').addEventListener('click', function () { montrer('conv'); });
+
+  /* Une adresse partagée peut désigner l'onglet : « …/loges-amies.html#convocation »
+     mène un Atelier directement là où on l'attend.
+
+     Et l'on écoute aussi le changement d'ancre : arriver sur cette
+     adresse alors que la page est DÉJÀ ouverte ne recharge rien, et
+     le lien resterait sans effet. */
+  function suivreAncre() {
+    if (/convocation/i.test(location.hash)) montrer('conv');
+    else if (/loge/i.test(location.hash)) montrer('loge');
+  }
+  window.addEventListener('hashchange', suivreAncre);
+  suivreAncre();
+
+  /* ── Ce que porte le formulaire ── */
+  function valeurs(form) {
+    var o = {};
+    new FormData(form).forEach(function (v, k) {
+      if (o[k] === undefined) o[k] = v;
+      else o[k] = [].concat(o[k], v).join(', ');
+    });
+    return o;
+  }
+
+  /* Le repli : la messagerie s'ouvre, les réponses déjà écrites. */
+  function parCourriel(form, objet) {
+    var lignes = [];
+    new FormData(form).forEach(function (v, k) {
+      if (k === 'loge_annexe') return;          // le leurre ne se recopie pas
+      if (v) lignes.push(k + ' : ' + v);
+    });
+    return 'mailto:' + COURRIEL +
+      '?subject=' + encodeURIComponent(objet) +
+      '&body=' + encodeURIComponent(lignes.join('\n'));
+  }
+
+  /* Ce que le serveur refuse, et ce qu'il faut en dire. Une erreur de
+     saisie se corrige sur place ; tout le reste bascule au courriel. */
+  var ASAISIR = {
+    loge_manquante  : 'Le nom de votre Loge nous manque — c’est à lui que la fiche se rattache.',
+    courriel_manquant: 'Le courriel du secrétariat n’a pas été reconnu. Vérifiez-le : c’est à cette adresse que partiront nos convocations.',
+    date_manquante  : 'La date de la Tenue nous manque, et sans elle rien ne se range à l’agenda.'
+  };
+
+  function confirmer(form, msg, ennui) {
+    ennui.classList.remove('visible');
+    form.style.display = 'none';
+    msg.classList.add('visible');
+    window.scrollTo({ top: msg.offsetTop - 80, behavior: 'smooth' });
+  }
+
+  function replier(form, ennui, objet, pourquoi) {
+    ennui.innerHTML = '';
+    var p = document.createElement('p');
+    p.textContent = pourquoi + ' Votre fiche n’est pas perdue : ' +
+                    'le bouton ci-dessous ouvre votre messagerie avec vos ' +
+                    'réponses déjà écrites, il ne reste qu’à envoyer.';
+    var a = document.createElement('a');
+    a.href = parCourriel(form, objet);
+    a.className = 'btn btn-or';
+    a.style.marginTop = '1rem';
+    a.textContent = 'Nous l’envoyer par courriel';
+    ennui.appendChild(p);
+    ennui.appendChild(a);
+    ennui.classList.add('visible');
+    ennui.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }
+
+  function asaisir(ennui, mot) {
+    ennui.textContent = mot;
+    ennui.classList.add('visible');
+    ennui.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }
+
+  function brancher(formId, type, msgId, ennuiId, objet) {
+    var form = $(formId), msg = $(msgId), ennui = $(ennuiId);
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      ennui.classList.remove('visible');
+
+      var o = valeurs(form);
+      o.type = type;
+      o.source = 'loges-amies';               // d'où vient la fiche, pour la Secrétaire
+
+      var bouton = form.querySelector('[type=submit]');
+      var libelle = bouton.textContent;
+      bouton.disabled = true; bouton.textContent = 'Envoi…';
+
+      fetch('/api/annuaire', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(o)
+      })
+        .then(function (r) {
+          return r.json().catch(function () { return {}; })
+                  .then(function (c) { return { ok: r.ok, c: c }; });
+        })
+        .then(function (rep) {
+          bouton.disabled = false; bouton.textContent = libelle;
+          if (rep.ok && rep.c.recue === true) { confirmer(form, msg, ennui); return; }
+          var mot = ASAISIR[rep.c.erreur];
+          if (mot) { asaisir(ennui, mot); return; }
+          replier(form, ennui, objet,
+                  'Le registre du Rite n’a pas accepté ce dépôt.');
+        })
+        .catch(function () {
+          bouton.disabled = false; bouton.textContent = libelle;
+          replier(form, ennui, objet,
+                  'Le registre du Rite n’a pas répondu.');
+        });
+    });
+  }
+
+  brancher('form-loge', 'loge', 'msg-loge', 'ennui-loge',
+           'Inscription d’une Loge');
+  brancher('form-conv', 'convocation', 'msg-conv', 'ennui-conv',
+           'Convocation d’une Loge amie');
+})();
+</script>
+
+</body>
+</html>
