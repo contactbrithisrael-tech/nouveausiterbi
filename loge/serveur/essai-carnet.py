@@ -194,6 +194,46 @@ with sync_playwright() as b0:
       "et elle remplace bien : on retrouve le tableau seul",
       pg.evaluate("E.visiteurs.length"))
 
+    # == L'AGENDA DES VISITES SE MONTRE, MEME VIDE ==================
+    # Il ne paraissait que s'il portait DEJA une date. Une Secretaire
+    # qui venait d'inscrire onze Loges amies ne voyait donc aucun
+    # agenda — et rien ne lui disait ni qu'il existait, ni comment les
+    # dates y entrent. On croyait la chose a faire ; elle etait faite,
+    # et cachee.
+    pg.evaluate("""() => { E.amieOuverte = null; E.filtreDegre = null;
+      E.amies = [
+        { id: 1, nom: 'Les Trois Colonnes n°142', convocations: [] },
+        { id: 2, nom: 'L Etoile du Sud n°7',      convocations: [] },
+        { id: 3, nom: 'La Parfaite Union',        convocations: [] }];
+      garder(); dessiner(); }""")
+    pg.wait_for_timeout(700)
+    pg.click("#t-amies"); pg.wait_for_timeout(700)
+    t = pg.inner_text("#v-amies")
+    v("Agenda des visites" in t,
+      "L'AGENDA PARAIT DES QU'IL Y A UNE LOGE AU CARNET, meme sans date")
+    v("Aucune tenue n’est annoncée" in t,
+      "et il dit qu'il est vide plutot que de disparaitre", t[:200])
+    v("Convocation de ma Loge" in t,
+      "ET D'OU VIENNENT LES DATES : la Loge les depose depuis le site",
+      t[:400])
+    v("3 Loges inscrites n’ont annoncé aucune date" in t,
+      "IL NOMME CELLES QUI SE TAISENT : la question se posait en "
+      "comparant le carnet a l'agenda, ligne a ligne", t[:400])
+    v("La Parfaite Union" in t, "en les nommant, non en les comptant")
+
+    pg.evaluate("""() => { E.amies[0].convocations = [
+        { id: 'c1', date: '2027-03-08', heure: '20:00', degre: 1,
+          objet: 'Initiation', lieu: '', odj: '' }];
+      garder(); dessiner(); }""")
+    pg.wait_for_timeout(700)
+    pg.click("#t-amies"); pg.wait_for_timeout(600)
+    t2 = pg.inner_text("#v-amies")
+    v("2027" in t2, "une date annoncee entre au tableau", t2[:300])
+    v("2 Loges inscrites" in t2,
+      "et le compte des muettes se corrige tout seul", t2[:400])
+    pg.evaluate("() => { E.amies = []; garder(); dessiner(); }")
+    pg.wait_for_timeout(500)
+
     # == LA FICHE D'UN AMI S'OUVRE, ET SE MODIFIE ===================
     # Deux defauts, l'un derriere l'autre, et aucun ne disait rien.
     #
