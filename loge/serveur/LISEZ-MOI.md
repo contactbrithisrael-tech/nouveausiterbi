@@ -53,6 +53,10 @@ RBI_PORT=8800 node loge/serveur/faux-serveur.mjs &
 RBI_PORT=8801 node loge/serveur/faux-serveur.mjs &
 RBI_PORT=8802 RBI_COURRIEL=1 RBI_JETONS_MUETS=1 \
   node loge/serveur/faux-serveur.mjs &   # l'ecriture des jetons echoue en silence
+RBI_PORT=8803 RBI_LECTURE=1  node loge/serveur/faux-serveur.mjs &   # la clé de lecture est posée
+RBI_PORT=8804               node loge/serveur/faux-serveur.mjs &   # aucune clé de lecture
+RBI_PORT=8805 RBI_LECTURE=1 RBI_LECTURE_ECHEC=1 \
+  node loge/serveur/faux-serveur.mjs &   # le service de lecture refuse la clé
 
 RBI_URL=http://127.0.0.1:8787/ python3 loge/serveur/essai-documents.py
 RBI_URL=http://127.0.0.1:8789/ python3 loge/serveur/essai-partage.py
@@ -69,6 +73,7 @@ RBI_URL=http://127.0.0.1:8799/ RBI_THEME=light python3 loge/serveur/essai-pdf.py
 RBI_URL=http://127.0.0.1:8799/ RBI_THEME=dark  python3 loge/serveur/essai-pdf.py
 RBI_URL=http://127.0.0.1:8800/ python3 loge/serveur/essai-tuilage.py
 RBI_URL=http://127.0.0.1:8801/ python3 loge/serveur/essai-odj.py
+python3 loge/serveur/essai-lecture.py
 ```
 
 `essai-pdf` se joue DEUX FOIS, en clair et en sombre. L'application est
