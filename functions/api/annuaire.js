@@ -85,6 +85,38 @@ export async function onRequestGet(context){
   const moi = await sessionCourante(context);
   if (!moi) return json({ erreur: 'non_connecte' }, 401);
 
+  /* ── L'ANNUAIRE DU SITE ARRIVE-T-IL SEULEMENT ? ───────────────────
+     La liste ci-dessous ne rend que les fiches EN ATTENTE. Elle est
+     donc vide dans deux cas qu'on ne peut pas distinguer : tout a été
+     versé au carnet — ou rien n'est jamais arrivé.
+
+     Et rien n'arriverait sans bruit : le formulaire de l'Espace
+     Membres dépose sa fiche « au cas où », et avale l'échec
+     volontairement, parce que le courriel, lui, part de toute façon.
+     Ce choix protège le Frère qui remplit le formulaire ; il aveugle
+     la Secrétaire, qui est la seule à pouvoir y remédier.
+
+     Ce compte la rend voyante. Des NOMBRES seuls, et la date de la
+     dernière fiche reçue : ni nom, ni adresse. */
+  if (new URL(context.request.url).searchParams.get('compte') === '1'){
+    try {
+      const r = await context.env.DB.prepare(
+        'SELECT COUNT(*) AS recues, ' +
+        'SUM(CASE WHEN versee = 0 THEN 1 ELSE 0 END) AS attente, ' +
+        'MAX(recu_le) AS derniere FROM annuaire WHERE loge_id = ?')
+        .bind(moi.loge_id).first();
+      const recues = Number(r?.recues || 0);
+      const attente = Number(r?.attente || 0);
+      return json({ compte: {
+        recues, attente, versees: recues - attente,
+        derniere: r?.derniere || null } });
+    } catch (e) {
+      return json({ erreur: 'annuaire_illisible',
+        detail: 'La table de l’annuaire n’a pas pu être lue. ' +
+                'Vérifiez que 002-annuaire.sql a été joué sur la base.' }, 500);
+    }
+  }
+
   const { results } = await context.env.DB.prepare(
     'SELECT id, recu_le, source, donnees FROM annuaire ' +
     'WHERE loge_id = ? AND versee = 0 ORDER BY id').bind(moi.loge_id).all();
