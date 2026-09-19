@@ -220,6 +220,29 @@ with sync_playwright() as p:
     v(M.evaluate(lu + ".presentTenue") is False,
       "et la marque retombe : la tenue est passee")
 
+    # == LA CHAINE EST-ELLE VIVANTE ? ===============================
+    # La liste des fiches ne rend que celles EN ATTENTE : elle est donc
+    # vide aussi bien quand tout a ete verse au carnet que quand RIEN
+    # n'est jamais arrive. Et rien n'arriverait sans bruit — le
+    # formulaire de l'Espace Membres avale son echec volontairement,
+    # parce que le courriel part de toute facon. Ce choix protege le
+    # Frere qui remplit ; il aveugle la Secretaire, seule a pouvoir y
+    # remedier. Elle peut desormais le demander.
+    dit = []
+    M.on("dialog", lambda d: dit.append(d.message))
+    M.click("#t-visiteurs"); M.wait_for_timeout(700)
+    v(M.locator("#annuaire-verifier").count() == 1,
+      "un bouton demande si l'annuaire du site arrive jusqu'ici")
+    dit.clear()
+    M.click("#annuaire-verifier"); M.wait_for_timeout(2500)
+    ens = " ".join(dit)
+    v("fiche" in ens.lower(), "et il repond", ens[:200])
+    v("@" not in ens,
+      "SANS RIEN LIVRER DU REGISTRE : des nombres, pas des adresses", ens[:200])
+    v("vers" in ens.lower() and "attente" in ens.lower(),
+      "il separe ce qui est verse au carnet de ce qui attend encore",
+      ens[:260])
+
     v(not eF and not eM, "aucune erreur JavaScript, des deux côtés", eF + eM)
     b.close()
 
