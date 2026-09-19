@@ -51,6 +51,28 @@ const CHAMPS_LOGE = ['loge_nom','loge_numero','loge_orient','loge_obedience',
                      'loge_ville','contact_nom','contact_email','contact_tel',
                      'loge_notes'];
 
+/* ── ET LA CONVOCATION QU'ELLE DÉPOSE ───────────────────────────────
+   Un Atelier qui nous invite dépose ce qui se met à l'agenda : une
+   date, une heure, un degré, un objet. Le feuillet lui-même reste
+   CHEZ LUI — on n'en garde qu'un lien, s'il en a un en ligne.
+
+   C'est un choix, et il se dit : porter les fichiers des autres, ce
+   serait s'engager à les garder, à les servir, et à répondre de ce
+   qu'ils contiennent. Un lien n'engage à rien de tout cela, et il
+   mène au même feuillet. */
+const CHAMPS_CONV = ['loge_nom','loge_numero','contact_email',
+                     'conv_date','conv_heure','conv_degre','conv_objet',
+                     'conv_lieu','conv_odj','conv_lien'];
+
+/* Une date au format du calendrier, non un texte libre : c'est elle
+   qui range la Tenue à l'agenda, et une date qu'on ne sait pas lire
+   ne se range nulle part. */
+const dateLisible = d => /^\d{4}-\d{2}-\d{2}$/.test(d);
+
+/* Un lien vers un feuillet, et rien d'autre : ni « javascript: », ni
+   une adresse qu'on nous ferait ouvrir. */
+const lienSur = u => /^https:\/\/[^\s"'<>]+$/.test(u);
+
 const texte = v => {
   if (Array.isArray(v)) v = v.join(', ');
   if (typeof v === 'boolean') return v ? 'oui' : '';
@@ -69,14 +91,27 @@ export async function onRequestPost(context){
   if (!corps || typeof corps !== 'object')
     return json({ erreur: 'requete_illisible' }, 400);
 
-  const estLoge = texte(corps.type) === 'loge';
+  const quoi = texte(corps.type);
+  const estLoge = quoi === 'loge';
+  const estConv = quoi === 'convocation';
   const fiche = {};
-  for (const c of (estLoge ? CHAMPS_LOGE : CHAMPS)){
+  for (const c of (estConv ? CHAMPS_CONV : estLoge ? CHAMPS_LOGE : CHAMPS)){
     const v = texte(corps[c]); if (v) fiche[c] = v;
   }
   if (estLoge) fiche.type = 'loge';
+  if (estConv) fiche.type = 'convocation';
 
-  if (estLoge){
+  if (estConv){
+    /* De quelle Loge, et quel jour. Sans l'un on ne sait à qui
+       rattacher la Tenue ; sans l'autre elle ne se range nulle part. */
+    if (!fiche.loge_nom && !fiche.contact_email)
+      return json({ erreur: 'loge_manquante' }, 400);
+    if (!dateLisible(fiche.conv_date || ''))
+      return json({ erreur: 'date_manquante' }, 400);
+    /* Un lien qu'on ne peut pas suivre vaut mieux retiré qu'affiché :
+       on le laisse tomber plutôt que de poser un bouton mort. */
+    if (fiche.conv_lien && !lienSur(fiche.conv_lien)) delete fiche.conv_lien;
+  } else if (estLoge){
     /* Le nom de l'Atelier, et une adresse où lui écrire. Sans l'un,
        on ne sait pas qui inscrit ; sans l'autre, on ne peut pas lui
        envoyer ce qu'il est venu demander. */

@@ -554,6 +554,7 @@
   <button class="onglet" onclick="afficherSection('documents')">Documents & Téléchargements</button>
   <button class="onglet" onclick="afficherSection('annuaire')">Annuaire F∴M∴</button>
   <button class="onglet" onclick="afficherSection('inscrire-loge')">Inscrire ma Loge</button>
+  <button class="onglet" onclick="afficherSection('convocation-loge')">Convocation de ma Loge</button>
   <button class="onglet" onclick="afficherSection('constitutions')">Constitutions</button>
   <button class="onglet" onclick="afficherSection('rituels')">Rituels & Commandes</button>
   <button class="onglet" onclick="afficherSection('secretariat')">Secrétariat & Trésorerie</button>
@@ -1268,6 +1269,114 @@
 
 
 <!-- ═══════════════════════════════════════════
+     CONVOCATION DE MA LOGE
+
+     Un Atelier qui nous invite dépose ce qui se met à l'agenda : une
+     date, une heure, un degré, un objet. LE FEUILLET RESTE CHEZ LUI —
+     on n'en garde qu'un lien, s'il en a un en ligne.
+
+     C'est un choix, et il se dit : porter les fichiers des autres, ce
+     serait s'engager à les garder, à les servir, et à répondre de ce
+     qu'ils contiennent. Un lien n'engage à rien de cela, et il mène au
+     même feuillet.
+═══════════════════════════════════════════ -->
+<section class="section" id="convocation-loge">
+  <h2 class="section__titre">Convocation de ma Loge</h2>
+  <div class="section__sep"></div>
+
+  <div class="annuaire-intro">
+    Votre Atelier tient et souhaite nous y voir ? Déposez-la ici : elle entrera
+    à notre agenda des visites, et nos Sœurs et Frères la verront.
+    <br><br>
+    <strong style="color:var(--or);">Gardez votre feuillet chez vous.</strong>
+    Nous n'en conservons pas de copie — donnez-nous son adresse s'il est en ligne,
+    et chacun ira le lire chez vous.
+  </div>
+
+  <form id="form-convocation" onsubmit="soumettre(event, 'form-convocation', 'msg-convocation')">
+    <input type="hidden" name="type" value="convocation">
+    <div class="form-grid">
+
+      <div class="form-full">
+        <p style="color:var(--or);font-variant:small-caps;letter-spacing:.1em;margin-bottom:.6rem;">Qui convoque</p>
+        <p style="font-size:.85rem;color:var(--gris);margin-bottom:1rem;">
+          Le même nom, ou le même courriel, que lors de votre inscription : c'est ainsi
+          que la Tenue rejoint la fiche de votre Atelier plutôt que d'en créer une seconde.
+        </p>
+      </div>
+      <div>
+        <label>Nom de la Loge *</label>
+        <input type="text" name="loge_nom" required>
+      </div>
+      <div>
+        <label>Numéro</label>
+        <input type="text" name="loge_numero">
+      </div>
+      <div class="form-full">
+        <label>Courriel du secrétariat</label>
+        <input type="email" name="contact_email">
+      </div>
+
+      <div class="form-full">
+        <p style="color:var(--or);font-variant:small-caps;letter-spacing:.1em;margin:1.2rem 0 .6rem;">La Tenue</p>
+      </div>
+      <div>
+        <label>Date *</label>
+        <input type="date" name="conv_date" required>
+      </div>
+      <div>
+        <label>Heure d'ouverture</label>
+        <input type="time" name="conv_heure">
+      </div>
+      <div>
+        <label>Degré</label>
+        <select name="conv_degre">
+          <option value="">—</option>
+          <option value="1">Premier</option>
+          <option value="2">Deuxième</option>
+          <option value="3">Troisième</option>
+        </select>
+      </div>
+      <div>
+        <label>Objet</label>
+        <input type="text" name="conv_objet" placeholder="Tenue d'installation, initiation…">
+      </div>
+      <div class="form-full">
+        <label>Lieu, s'il diffère de votre Temple</label>
+        <input type="text" name="conv_lieu">
+      </div>
+      <div class="form-full">
+        <label>Votre feuillet, en ligne</label>
+        <input type="url" name="conv_lien" placeholder="https://…">
+      </div>
+      <div class="form-full">
+        <label>Ordre du jour, s'il y a lieu</label>
+        <textarea name="conv_odj" rows="4"
+          placeholder="Ce que vous voulez nous en dire."></textarea>
+      </div>
+
+    </div>
+
+    <div class="form-footer">
+      <button type="submit" class="btn btn-or">Déposer la convocation</button>
+    </div>
+  </form>
+
+  <div class="msg-success" id="msg-convocation">
+    ✡ Votre Tenue est à notre agenda.<br>
+    Nos Sœurs et Frères la verront parmi les visites à venir. Si votre Atelier ne nous
+    était pas encore connu, il l'est désormais.
+    Que la Lumière vous guide, T∴C∴F∴.
+  </div>
+
+  <p class="confidentialite">
+    Conformément au RGPD, vous disposez d'un droit d'accès, de rectification et de suppression de vos données.<br>
+    Contact : contact.brith.israel@gmail.com
+  </p>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
      SECTION 5 : CONSTITUTIONS
 ═══════════════════════════════════════════ -->
 <section class="section" id="constitutions">
@@ -1582,7 +1691,8 @@
     'form-adhesion': "Demande d'adhésion individuelle",
     'form-patente' : "Demande de patente",
     'form-annuaire': "Coordonnées, convocations et annuaire",
-    'form-loge'    : "Inscription d'une Loge"
+    'form-loge'    : "Inscription d'une Loge",
+    'form-convocation': "Convocation d'une Loge amie"
   };
 
   // Rassemble les réponses en texte lisible. Les cases à cocher de même
@@ -1643,10 +1753,12 @@
        rien à faire d'un ennui de serveur : son envoi lui est confirmé
        dès que le courriel est parti. */
   function deposerAuRegistre(form) {
-    if (form.id !== 'form-annuaire' && form.id !== 'form-loge') return;
+    if (form.id !== 'form-annuaire' && form.id !== 'form-loge' &&
+        form.id !== 'form-convocation') return;
     var d = new FormData(form);
-    var o = { source: form.id === 'form-loge' ? 'espace-membres-loge'
-                                              : 'espace-membres' };
+    var SOURCES = { 'form-loge': 'espace-membres-loge',
+                    'form-convocation': 'espace-membres-convocation' };
+    var o = { source: SOURCES[form.id] || 'espace-membres' };
     d.forEach(function (v, k) {
       if (o[k] === undefined) { o[k] = v; }
       else { o[k] = [].concat(o[k], v).join(', '); }   // cases à cocher

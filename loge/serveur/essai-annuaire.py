@@ -287,6 +287,81 @@ with sync_playwright() as p:
       M.evaluate("(E.amies||[]).map(x=>x.nom)"))
     L.close()
 
+    # == ET LA CONVOCATION QU'ELLE DEPOSE ===========================
+    # Un Atelier qui nous invite depose ce qui se met a l'agenda. LE
+    # FEUILLET RESTE CHEZ LUI : on n'en garde qu'un lien. Porter les
+    # fichiers des autres, ce serait s'engager a les garder, a les
+    # servir, et a repondre de ce qu'ils contiennent.
+    C = cF.new_page()
+    eC = []; C.on("pageerror", lambda e: eC.append(str(e)))
+    C.goto(U + "espace-membres.html"); C.wait_for_timeout(900)
+    if C.locator("#tuilage-porte").is_visible():
+        C.fill("#porte-q1", "de midi a minuit")
+        C.fill("#porte-q2", "7 ans")
+        C.click("#porte-form button[type=submit]"); C.wait_for_timeout(700)
+    C.click("button.onglet:has-text('Convocation de ma Loge')"); C.wait_for_timeout(600)
+    v(C.locator("#convocation-loge").is_visible(),
+      "l'Espace Membres porte un onglet « Convocation de ma Loge »")
+    for champ, valeur in (("loge_nom", "Les Trois Colonnes"),
+                          ("loge_numero", "142"),
+                          ("contact_email", "secretariat@trois-colonnes.test"),
+                          ("conv_date", "2026-11-14"),
+                          ("conv_heure", "20:00"),
+                          ("conv_objet", "Tenue d installation"),
+                          ("conv_lien", "https://trois-colonnes.test/convocation.pdf"),
+                          ("conv_odj", "Installation des Officiers")):
+        C.fill("#form-convocation [name=" + champ + "]", valeur)
+    C.select_option("#form-convocation [name=conv_degre]", "3")
+    C.click("#form-convocation button[type=submit]"); C.wait_for_timeout(2000)
+    v(not eC, "aucune erreur JavaScript au formulaire de convocation", eC)
+
+    M.reload(); M.wait_for_timeout(2600)
+    conv = M.evaluate("""() => {
+      const a = (E.amies||[]).find(x => (x.nom||'').indexOf('Trois Colonnes')>=0);
+      return a ? ((a.convocations||[])[0] || null) : null; }""")
+    v(conv is not None,
+      "LA CONVOCATION DEPOSEE REJOINT LA FICHE DE SA LOGE",
+      M.evaluate("(E.amies||[]).map(x=>[x.nom,(x.convocations||[]).length])"))
+    if conv:
+        v(conv.get("date") == "2026-11-14" and conv.get("heure") == "20:00",
+          "avec sa date et son heure", conv)
+        v(conv.get("degre") == 3, "et son degre", conv.get("degre"))
+        v(conv.get("lien") == "https://trois-colonnes.test/convocation.pdf",
+          "LE FEUILLET RESTE CHEZ EUX : on n'en garde que le lien",
+          conv.get("lien"))
+    v(M.evaluate("prochainesVisites().some(x => x.c.date === '2026-11-14')"),
+      "ET LA TENUE ENTRE A L'AGENDA DES VISITES, sans que personne la saisisse")
+
+    # un lien qui n'est pas une adresse web ne devient pas un bouton
+    rej = M.evaluate("""async () => {
+      const r = await fetch('/api/annuaire', { method:'POST',
+        headers:{'content-type':'application/json'},
+        body: JSON.stringify({ type:'convocation', loge_nom:'Les Trois Colonnes',
+          loge_numero:'142', conv_date:'2027-01-09',
+          conv_lien:'javascript:alert(1)' }) });
+      return r.status; }""")
+    v(rej == 200, "une convocation au lien douteux est acceptee", rej)
+    M.reload(); M.wait_for_timeout(2600)
+    douteux = M.evaluate("""() => {
+      const a = (E.amies||[]).find(x => (x.nom||'').indexOf('Trois Colonnes')>=0);
+      const c = (a.convocations||[]).find(x => x.date === '2027-01-09');
+      return c ? (c.lien || '') : '(absente)'; }""")
+    v(douteux == "",
+      "MAIS SON LIEN EST ECARTE : on ne pose pas un bouton qui n'est pas "
+      "une adresse web", douteux)
+
+    # une date illisible ne se range nulle part : on la refuse
+    sansDate = M.evaluate("""async () => {
+      const r = await fetch('/api/annuaire', { method:'POST',
+        headers:{'content-type':'application/json'},
+        body: JSON.stringify({ type:'convocation', loge_nom:'X',
+          conv_date:'le mois prochain' }) });
+      return r.status; }""")
+    v(sansDate == 400,
+      "une Tenue sans date lisible est refusee : elle ne se rangerait nulle part",
+      sansDate)
+    C.close()
+
     # == LA CHAINE EST-ELLE VIVANTE ? ===============================
     # La liste des fiches ne rend que celles EN ATTENTE : elle est donc
     # vide aussi bien quand tout a ete verse au carnet que quand RIEN
