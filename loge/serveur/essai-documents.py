@@ -157,20 +157,41 @@ with sync_playwright() as p:
     # LE DERNIER tbody, non le premier : le navigateur en insere un dans
     # le tableau de l'en-tete aussi, et c'est celui-la qu'on attrapait.
     corps = apres.split("<tbody>")[-1].split("</tbody>")[0]
-    lignes = corps.count("<tr>")
-    # Treize, mesure prise : le doctype a fait passer le programme en mode
-    # standard, ou la meme feuille occupe un peu plus de hauteur. Au-dela
-    # de treize, l'emargement deborde sur une TROISIEME page qui ne porte
-    # que quelques traits — une feuille perdue a chaque tenue. Le nombre
-    # de lignes se plie a la page, non l'inverse.
-    v(lignes >= 13, f"elle offre au moins treize lignes (elle en offre {lignes})", lignes)
-    for col in ["Nom et prénom", "Grade", "Loge, Orient, Obédience", "Tuilé par", "Signature"]:
-        v(col in apres, f"colonne « {col} »")
+    hauts = corps.count('class="vis-haut"')
+    bas   = corps.count('class="vis-bas"')
+    # Neuf, mesure prise, en produisant le PDF et en comptant les pages.
+    # CE NOMBRE A BAISSE, ET C'EST VOULU : une ligne unique en tenait
+    # treize, mais sept renseignements ecrits a la main n'y tenaient pas.
+    # Chaque Visiteur prend deux rangs, on retombe a neuf — et neuf
+    # places ou l'on peut ecrire valent mieux que treize ou l'on ne peut
+    # pas. Au-dela de neuf, l'emargement deborde sur une TROISIEME page.
+    v(hauts >= 9, f"elle offre au moins neuf blocs (elle en offre {hauts})", hauts)
+    v(hauts == bas,
+      "chaque Visiteur a bien SES DEUX rangs : celui qui l'identifie et "
+      "celui par lequel on le joindra", (hauts, bas))
+
+    # L'EN-TETE A DEUX RANGS, COMME LES BLOCS QU'IL ANNONCE. Sans lui,
+    # passe la premiere ligne, on ne sait plus quelle case est le prenom
+    # et laquelle le grade — et une case qu'on ne sait pas nommer ne se
+    # remplit pas.
+    tete = apres.split("<thead>")[-1].split("</thead>")[0]
+    for col in ["Nom", "Prénom", "Grade", "Tuilé par", "Courriel",
+                "Obédience", "Loge et Orient", "Téléphone", "Signature"]:
+        v(col in tete, f"colonne « {col} », nommée dans l'en-tête")
+    v(tete.count("<tr") == 2,
+      "et l'en-tête a deux rangs, comme les blocs", tete.count("<tr"))
+
     v("après avoir été tuilé" in apres,
       "et elle rappelle que nul ne signe sans avoir été tuilé")
-    v(corps.count('class="sig"') == lignes,
-      "chaque ligne porte son trait de signature — autant de traits que de "
-      "lignes, quel que soit leur nombre", (corps.count('class="sig"'), lignes))
+
+    # CHAQUE CASE VIDE PORTE SA LIGNE. Une case sans ligne, sur du
+    # papier, n'est pas une case : c'est du blanc. Le premier rang n'en
+    # avait pas, et c'est le Visiteur IMPREVU — celui pour qui la
+    # feuille existe — qui n'avait rien sur quoi ecrire.
+    vides = hauts - int(pg.evaluate("visiteursDeLaTenue().length"))
+    v(corps.count('class="trait"') >= vides * 8,
+      "chaque case vide porte sa ligne d'écriture, sur les DEUX rangs",
+      (corps.count('class="trait"'), vides))
 
     # ── CE QUI TOMBE SUR LE PAPIER ──────────────────────────────────
     # Une convocation en deux feuillets, c'est douze envois dont le
