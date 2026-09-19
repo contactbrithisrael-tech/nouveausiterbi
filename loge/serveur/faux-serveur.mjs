@@ -59,6 +59,7 @@ db.exec(`INSERT INTO utilisateurs (loge_id, courriel, nom, charge, mdp_hash, mdp
    que le programme fait quand le service refuse. */
 const vraiFetch = globalThis.fetch;
 globalThis.__courriels = [];
+globalThis.__lectures = [];
 globalThis.fetch = async (url, options) => {
   const u = String(url);
   if (u.includes('api.brevo.com') || u.includes('api.resend.com')){
@@ -69,6 +70,34 @@ globalThis.fetch = async (url, options) => {
     if (process.env.RBI_COURRIEL_ECHEC)
       return new Response('{"message":"cle refusee"}', { status: 401 });
     return new Response('{"messageId":"epreuve"}', { status: 201 });
+  }
+  /* AUCUNE LECTURE NE PART VERS ANTHROPIC PENDANT UNE EPREUVE. On
+     intercepte l'appel et l'on garde ce qui LUI AURAIT ete remis :
+     c'est cela qu'on verifie — l'image, le modele, le schema — et ce
+     que le programme fait quand le service refuse. */
+  if (u.includes('api.anthropic.com')){
+    let corps = null;
+    try { corps = JSON.parse(options && options.body); } catch (e) {}
+    globalThis.__lectures.push({
+      cle: options && options.headers && options.headers['x-api-key'],
+      corps });
+    if (process.env.RBI_LECTURE_ECHEC)
+      return new Response('{"error":{"message":"cle refusee"}}', { status: 401 });
+    if (process.env.RBI_LECTURE_DECLINE)
+      return new Response(JSON.stringify({ stop_reason: 'refusal', content: [] }),
+                          { status: 200 });
+    return new Response(JSON.stringify({
+      stop_reason: 'end_turn',
+      content: [{ type: 'text', text: JSON.stringify({
+        nom: 'Les Ecossais de la Sainte Baume', orient: 'Saint Maximin',
+        obedience: 'GLMF', rite: 'REAA', temple: 'Temple Hiram',
+        adresse: 'Chemin du chevalier', codePostal: '83470',
+        ville: 'St Maximin la Sainte Baume',
+        contactNom: 'Paul D.', contactEmail: 'secretariat@ecossais.test',
+        contactTel: '0611223344', date: '2027-05-12', heure: '20:00',
+        degre: 1, objet: 'Initiation', odj: null }) }],
+      usage: { input_tokens: 1200, output_tokens: 180 }
+    }), { status: 200 });
   }
   return vraiFetch(url, options);
 };
@@ -88,6 +117,7 @@ const F = {
   envoyer:  await import(RACINE + 'functions/api/envoyer.js'),
   reponse:  await import(RACINE + 'functions/api/reponse.js'),
   reponses: await import(RACINE + 'functions/api/reponses.js'),
+  lire: await import(RACINE + 'functions/api/lire.js'),
   sortir: await import(RACINE + 'functions/api/sortir.js'),
   etat:   await import(RACINE + 'functions/api/etat.js'),
 };
@@ -144,12 +174,16 @@ createServer(async (req, res) => {
       (k, v) => typeof v === 'bigint' ? Number(v) : v)); }
     catch (e) { return res.end(JSON.stringify({ erreur: String(e) })); }
   }
+  if (u.pathname === '/__lectures'){
+    res.writeHead(200, { 'content-type': 'application/json' });
+    return res.end(JSON.stringify(globalThis.__lectures));
+  }
   if (u.pathname === '/__courriels/vider'){
     globalThis.__courriels = [];
     res.writeHead(200, {'content-type':'application/json'});
     return res.end('[]');
   }
-  const m = u.pathname.match(/^\/api\/(entrer|sortir|etat|porte|mdp|annuaire|envoyer|reponses?)$/);
+  const m = u.pathname.match(/^\/api\/(entrer|sortir|etat|porte|mdp|annuaire|envoyer|reponses?|lire)$/);
   if (!m){ res.writeHead(404); return res.end('non'); }
 
   const corps = await new Promise(ok => { let d=''; req.on('data',c=>d+=c); req.on('end',()=>ok(d)); });
@@ -168,6 +202,9 @@ createServer(async (req, res) => {
      personne. RBI_COURRIEL=1 le branche ; sinon la fonction se
      comporte comme sur un site non configuré. */
   const env = { DB };
+  /* RBI_LECTURE pose une fausse cle : la route se croit configuree, et
+     l'appel est intercepte plus haut. Aucune vraie clé n'existe ici. */
+  if (process.env.RBI_LECTURE) env.CLE_ANTHROPIC = 'cle-epreuve-sans-valeur';
   if (process.env.RBI_COURRIEL){
     env.BREVO_CLE = 'cle-d-epreuve';
     env.COURRIEL_EXPEDITEUR = 'epreuve@exemple.test';
