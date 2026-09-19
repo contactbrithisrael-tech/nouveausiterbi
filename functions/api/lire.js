@@ -81,6 +81,20 @@ vraisemblable passe inaperçue et entre au registre.
   saint et très éclairé » est une formule rituelle, non un nom de
   temple : dans ce cas "temple" reste null. C'est l'invention la plus
   tentante de toutes.
+- "contactNom", "contactEmail", "contactTel" : LA MÊME PERSONNE, celle
+  à qui l'on écrit pour cet Atelier — son Secrétaire d'ordinaire. Ne
+  marie pas un nom trouvé ici avec un numéro trouvé là.
+
+  CAS RÉEL : une convocation nomme son Secrétaire et son courriel en
+  bas de page, et porte ailleurs « réserver votre repas par SMS auprès
+  de notre Sœur Marie au 06 76 00 61 66 ». Ce numéro est celui de Sœur
+  Marie ; il n'a rien à faire dans "contactTel". Un numéro donné pour
+  les agapes, les transports ou l'hébergement appartient à qui le
+  donne, non au secrétariat.
+
+  Si le seul numéro de la page est rattaché à quelqu'un d'autre que le
+  contact, "contactTel" reste null. Un champ vide se remplit d'un coup
+  de téléphone ; un mauvais numéro se découvre le soir de la tenue.
 - "date" : la tenue, au format AAAA-MM-JJ. Une date maçonnique porte
   souvent l'an de la Vraie Lumière (année civile + 4000) : ne la rends
   pas telle quelle. Si l'année civile n'est pas déductible, laisse null.
