@@ -48,3 +48,28 @@
 /secretariat.html
   X-Robots-Tag: noindex, nofollow, noarchive
   Cache-Control: public, max-age=0, must-revalidate
+
+# ── Les documents du Rite ──────────────────────────────────────────
+# DEMANDÉ : les mettre derrière le tuilage. CE QUI EST FAIT ICI N'EST
+# PAS CELA, et il faut le dire.
+#
+# Le tuilage de l'Espace Membres vit dans le navigateur : il cache une
+# page, il ne garde pas un fichier. Un fichier servi par Cloudflare
+# Pages part avant qu'aucune fonction ne soit consultée — on ne peut
+# donc pas l'intercepter depuis ce dépôt.
+#
+# Ce que ces lignes font, et c'est tout : les moteurs de recherche et
+# les IA cessent de les indexer, de les archiver et d'en montrer des
+# extraits. Qui a l'adresse les obtient toujours.
+#
+# La vraie mise à l'abri demande Cloudflare Access (gratuit jusqu'à
+# cinquante personnes) ou un stockage privé R2. L'un et l'autre se
+# règlent dans le compte Cloudflare, non dans ce fichier.
+/Constitution_RBI_repaginee_V7.pdf
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet
+
+/Fiche_Individuelle_Adhesion_RBI.pdf
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet
+
+/Formulaire_Demande_Patente_BI.pdf
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet
