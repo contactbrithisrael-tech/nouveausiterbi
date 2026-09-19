@@ -61,10 +61,22 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
 .beta{margin-left:auto;font-size:11px;font-weight:600;letter-spacing:.1em;
       text-transform:uppercase;color:#100F0C;background:#C9A84C;
       padding:4px 10px;border-radius:99px}
+/* ── HUIT ONGLETS SUR UN ÉCRAN ÉTROIT ─────────────────────────────
+   Ils se repliaient sur trois ou quatre rangées : la barre changeait
+   de hauteur à chaque changement d'onglet, l'écran sautait, et
+   l'onglet qu'on cherchait n'était jamais deux fois au même endroit.
+
+   Une seule rangée, qui défile du doigt. L'onglet choisi est ramené
+   dans le champ de vision à chaque dessin : on ne perd pas où l'on
+   est. Sur un grand écran les huit tiennent, et rien ne change. */
 .onglets{max-width:1120px;margin:0 auto;padding-inline:20px;display:flex;gap:2px;
-         flex-wrap:wrap;border-bottom:1px solid var(--trait)}
+         flex-wrap:nowrap;overflow-x:auto;overscroll-behavior-x:contain;
+         -webkit-overflow-scrolling:touch;scrollbar-width:none;
+         border-bottom:1px solid var(--trait)}
+.onglets::-webkit-scrollbar{display:none}
 .onglets button{padding:11px 16px;font-size:14px;font-weight:500;color:var(--encre-3);
-                border-bottom:2px solid transparent;margin-bottom:-1px}
+                border-bottom:2px solid transparent;margin-bottom:-1px;
+                white-space:nowrap;flex:0 0 auto}
 .onglets button[aria-selected="true"]{color:var(--encre);border-bottom-color:var(--or)}
 .onglets button:hover{color:var(--encre)}
 
@@ -456,12 +468,17 @@ details.replie summary:hover{color:var(--encre)}
 </div>
 
 <main>
-  <p class="note"><b>Ce programme ne contient aucune donnée.</b> Il ne sait rien de
-  votre Loge tant que vous ne lui avez rien dit. Ce que vous saisissez reste sur cet
-  appareil, dans ce navigateur : rien n'est envoyé, rien n'est encaissé, rien ne
-  remonte nulle part. Le bouton <b>⤓ Sauvegarder mes données</b>, en bas de page,
-  en fait un fichier que vous gardez, que vous transportez et que vous rechargez
-  ailleurs. C'est votre seule copie : faites-en une régulièrement.</p>
+  <!-- Ce mot disait « rien n'est envoyé, rien ne remonte nulle part ».
+       C'était vrai du programme sans serveur ; ce ne l'est plus quand
+       le registre de l'Atelier est en place, et une phrase fausse sur
+       ce point-là est la pire de toutes. Chacun des deux cas a son
+       texte, et c'est le programme qui choisit. -->
+  <p class="note" id="mot-donnees"><b>Ce programme ne contient aucune donnée.</b>
+  Il ne sait rien de votre Loge tant que vous ne lui avez rien dit. Ce que vous
+  saisissez reste sur cet appareil, dans ce navigateur. Le bouton
+  <b>⤓ Sauvegarder mes données</b>, en bas de page, en fait un fichier que vous
+  gardez, que vous transportez et que vous rechargez ailleurs. C'est votre seule
+  copie : faites-en une régulièrement.</p>
 
   <section id="v-aide"></section>
   <section id="v-tableau" hidden></section>
@@ -519,6 +536,17 @@ const CLE = 'rbi-beta-v1';
    Surveillant en assume la fonction. Pas de Secrétaire — le PV est
    tenu par rotation. Pas de Trésorier, pas d'Hospitalier en Loge. */
 const OFFICES = {
+  /* ── UNE DIGNITÉ N'EST PAS UN OFFICE ──────────────────────────────
+     Le Souverain Grand Commandeur ne tient pas un maillet dans cet
+     Atelier : il préside le Rite. Le ranger parmi les Offices en ferait
+     un élu du Collège des Trois Lumières, ce qu'il n'est pas ; le
+     ranger parmi les charges en ferait un désigné par elles, ce qui
+     l'est moins encore.
+
+     Il a donc sa propre nature, et le premier rang au Tableau — celui
+     qu'il occupe en tenue. Un Atelier n'en a pas toujours un sur ses
+     colonnes ; celui-ci, si. */
+  sgc:{l:'Souverain Grand Commandeur',a:'SGC∴',r:0,n:'dignite'},
   venerable:{l:'Vénérable Maître',a:'VM∴',h:'הנשיא',r:1,n:'office'},
   premier_surveillant:{l:'Premier Surveillant',a:'1er Surv∴',h:'השומר ראשון',r:2,n:'office'},
   second_surveillant:{l:'Second Surveillant',a:'2d Surv∴',h:'השומר שני',r:3,n:'office'},
@@ -800,6 +828,23 @@ function majPied(){
      ferait chercher un geste devenu inutile — et la nouvelle serait un
      mensonge si le serveur venait à manquer, d'où les deux cas de
      panne, dits sans détour. */
+  /* Le mot du haut suit le même état que la pastille : quand le
+     registre de l'Atelier tient les données, on cesse de parler d'un
+     fichier à sauvegarder — et l'on dit, une fois pour toutes, que
+     rien ne se perd en changeant d'onglet ni en rechargeant. C'est la
+     question qu'on se pose en premier devant un écran qu'on ne connaît
+     pas, et personne n'y répondait. */
+  const mot = document.getElementById('mot-donnees');
+  if (mot && typeof SERVEUR === 'object' && SERVEUR.actif){
+    mot.innerHTML =
+      '<b>Tout s’enregistre tout seul.</b> Chaque mot que vous écrivez part au ' +
+      'registre de l’Atelier à la seconde où vous le tapez : il n’y a aucun ' +
+      'bouton « enregistrer », et il n’y en a pas besoin. <b>Changez d’onglet, ' +
+      'fermez la page, rechargez : vous retrouvez tout.</b> Vos Officiers voient ' +
+      'la même chose depuis leur appareil. La pastille, en haut, dit à chaque ' +
+      'instant où en est l’enregistrement — et le dit aussi quand il échoue.';
+  }
+
   if (typeof SERVEUR === 'object' && (SERVEUR.actif || SERVEUR.dernierEchec)){
     if (SERVEUR.dernierEchec === 'conflit'){
       z.innerHTML = `<span class="p p-al">Deux versions</span>` +
@@ -856,7 +901,7 @@ function pierrePlate(m){ const c=Math.round(m*100), kg=Math.floor(c/100), g=c%10
 /* La date de ce programme. Changée à chaque livraison, elle permet de
    savoir en un coup d'œil si le navigateur a bien pris la nouvelle
    version — ou s'il ressert celle d'hier. */
-const VERSION = '19 septembre 2026 · 12h';
+const VERSION = '19 septembre 2026 · 12h30';
 
 const $ = s => document.querySelector(s);
 
@@ -931,7 +976,9 @@ function vueTableau(){
           : x.qualite ? `<span class="qual">${ech(x.qualite)}</span>`
           : '<span class="qual">—</span>'}</td>
       <td>${x.grade?`<span class="p p-neutre">${ech(x.grade)}</span>`:'<span class="qual">—</span>'}</td>
-      <td>${OFFICES[x.office]?`<span class="p ${OFFICES[x.office].n==='office'?'p-ok':'p-neutre'}"
+      <td>${OFFICES[x.office]?`<span class="p ${
+          OFFICES[x.office].n==='dignite' ? 'p-att'
+          : OFFICES[x.office].n==='office' ? 'p-ok' : 'p-neutre'}"
           >${ech(nomOffice(x.office))}</span>${OFFICES[x.office].n==='charge'
           ?'<div class="qual">charge désignée</div>':''}`:''}</td>
       <td>${statutPastille(x.statut)}</td>
@@ -1959,6 +2006,13 @@ function dessiner(){
     if (ong) ong.setAttribute(       // elle n'a pas d'onglet à elle
       'aria-selected', String(k === courante));
   }
+  /* La barre défile : l'onglet en cours peut être hors du champ de
+     vision — après un rechargement, ou quand on revient à un écran
+     qu'on avait quitté. On le ramène, sans faire sauter la page. */
+  const actif = $('#t-'+courante);
+  if (actif && actif.scrollIntoView) try {
+    actif.scrollIntoView({ inline: 'nearest', block: 'nearest' });
+  } catch (e) { /* un vieux navigateur : tant pis, il reste le doigt */ }
   garder();
 }
 
@@ -2668,6 +2722,10 @@ function vueFiche(){
       <div class="champ"><label for="m-office">Office en Loge</label>
         <select id="m-office" data-m="office">
           <option value=""${!x.office?' selected':''}>— aucun —</option>
+          <optgroup label="Dignité du Rite">
+          ${Object.entries(OFFICES).filter(([,o])=>o.n==='dignite').sort((a,b)=>a[1].r-b[1].r)
+            .map(([k,o])=>`<option value="${k}"${x.office===k?' selected':''}>${o.l}</option>`).join('')}
+          </optgroup>
           <optgroup label="Offices — élus, le Collège des Trois Lumières">
           ${Object.entries(OFFICES).filter(([,o])=>o.n==='office').sort((a,b)=>a[1].r-b[1].r)
             .map(([k,o])=>`<option value="${k}"${x.office===k?' selected':''}>${o.l}</option>`).join('')}
