@@ -1863,6 +1863,21 @@ function permise(vue){
 }
 
 function dessiner(){
+  /* ── ON NE DESSINE PAS UNE PAGE À MOITIÉ LUE ─────────────────────
+     Les vues sont déclarées dans des blocs <script> ULTÉRIEURS à
+     celui-ci : c'est voulu, et c'est dit plus haut. Mais un appel
+     venu d'ailleurs — le relevé de l'annuaire qui rentre, une réponse
+     du serveur — peut arriver AVANT que ces blocs soient lus, et
+     « vueVisiteurs n'est pas définie » casse le dessin en silence.
+
+     Le défaut dormait : il fallait, pour l'éveiller, que le serveur
+     réponde avec quelque chose À MONTRER pendant que la page finit de
+     se lire. L'inscription des Loges l'a réveillé. On attend donc que
+     la page soit lue, et l'on redessine alors. */
+  if (document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', dessiner, { once: true });
+    return;
+  }
   if (!permise(courante)) courante = window.DEPART_DU_ROLE || 'aide';
   E.onglet = courante;
   VUES[courante]();
@@ -4933,14 +4948,78 @@ const CHAMPS_RECUS = {
   ville:'orient'
 };
 
+/* ── CE QU'UNE LOGE DÉPOSE D'ELLE-MÊME ─────────────────────────────
+   Un Atelier qui s'inscrit ne visite pas : il correspond. Sa fiche
+   rejoint donc le carnet des LOGES AMIES, et non celui des Visiteurs.
+
+   Ce qu'il donne de sa Secrétaire va dans « À qui renvoyer nos
+   convocations » — le champ que la nôtre remplissait jusqu'ici à la
+   main, en cherchant l'adresse quelque part. */
+const CHAMPS_LOGE_RECUS = {
+  loge_nom:'nom', loge_orient:'orient', loge_obedience:'obedience',
+  loge_rite:'rite', loge_temple:'temple', loge_adresse:'adresse',
+  loge_cp:'codePostal', loge_ville:'ville', loge_notes:'notes',
+  contact_nom:'contactNom', contact_email:'contactEmail',
+  contact_tel:'contactTel'
+};
+
 function memeCourriel(a, b){
   return !!a && !!b && String(a).trim().toLowerCase() === String(b).trim().toLowerCase();
 }
 
 /* Rend le nombre de fiches réellement ajoutées ou complétées. */
+/* Le numéro d'un Atelier fait partie de son nom : « Bereshit n°00 »
+   n'est pas « Bereshit n°12 ». On les réunit donc pour comparer, sans
+   quoi deux Loges homonymes n'en feraient qu'une. */
+function nomComplet(f){
+  const n = (f.loge_nom || '').trim();
+  const num = (f.loge_numero || '').trim();
+  return num && !n.toLowerCase().includes(num.toLowerCase())
+    ? n + ' n°' + num : n;
+}
+
+function meme(a, b){
+  return !!a && !!b &&
+    String(a).trim().toLowerCase() === String(b).trim().toLowerCase();
+}
+
+function verserUneLoge(fiche){
+  E.amies = E.amies || [];
+  const nom = nomComplet(fiche);
+  /* On reconnaît d'abord au courriel du secrétariat — il ne change
+     pas quand on écrit le nom autrement — puis au nom. */
+  const dej = E.amies.find(a => memeCourriel(a.contactEmail, fiche.contact_email))
+           || E.amies.find(a => meme(a.nom, nom));
+  if (dej){
+    let touche = false;
+    for (const [de, vers] of Object.entries(CHAMPS_LOGE_RECUS)){
+      const val = de === 'loge_nom' ? nom : fiche[de];
+      if (val && !dej[vers]){ dej[vers] = val; touche = true; }
+    }
+    return touche ? 'completee' : 'rien';
+  }
+  const id = Math.max(0, ...E.amies.map(a => a.id)) + 1;
+  const a = { id, nom:'', orient:'', obedience:'', rite:'', notes:'',
+              temple:'', adresse:'', codePostal:'', ville:'',
+              contactNom:'', contactEmail:'', contactTel:'',
+              convocations:[], venueDeLAnnuaire:true };
+  for (const [de, vers] of Object.entries(CHAMPS_LOGE_RECUS)){
+    const val = de === 'loge_nom' ? nom : fiche[de];
+    if (val) a[vers] = val;
+  }
+  E.amies.push(a);
+  return 'neuve';
+}
+
 function verserAuCarnet(recues){
   let neuves = 0, completees = 0;
   for (const { fiche } of recues){
+    if (fiche && fiche.type === 'loge'){
+      const r = verserUneLoge(fiche);
+      if (r === 'neuve') neuves++;
+      else if (r === 'completee') completees++;
+      continue;
+    }
     const dej = E.visiteurs.find(v => memeCourriel(v.email, fiche.email));
     if (dej){
       let touche = false;

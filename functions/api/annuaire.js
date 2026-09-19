@@ -34,6 +34,23 @@ const CHAMPS = ['prenom','nom','email','telephone','ville','pays','grade',
                 'loge','obedience','rite','dispo_notes','jours','souhaits',
                 'accord_partage'];
 
+/* ── UNE LOGE N'EST PAS UNE PERSONNE ────────────────────────────────
+   Un Atelier qui souhaite recevoir nos convocations n'inscrit pas un
+   Frère : il inscrit SA SECRÉTAIRE ou SON SECRÉTAIRE, à qui les
+   convocations seront adressées, et il dépose son propre état civil —
+   nom, numéro, orient, obédience, rite, temple.
+
+   Ce n'est donc pas la même fiche, et il serait faux de la ranger avec
+   les Visiteurs : une Loge ne visite pas, elle correspond. Elle rejoint
+   le carnet des LOGES AMIES.
+
+   Deux formulaires, deux jeux de champs, une seule route : c'est le
+   champ « type » qui décide, et rien d'autre. */
+const CHAMPS_LOGE = ['loge_nom','loge_numero','loge_orient','loge_obedience',
+                     'loge_rite','loge_temple','loge_adresse','loge_cp',
+                     'loge_ville','contact_nom','contact_email','contact_tel',
+                     'loge_notes'];
+
 const texte = v => {
   if (Array.isArray(v)) v = v.join(', ');
   if (typeof v === 'boolean') return v ? 'oui' : '';
@@ -52,14 +69,27 @@ export async function onRequestPost(context){
   if (!corps || typeof corps !== 'object')
     return json({ erreur: 'requete_illisible' }, 400);
 
+  const estLoge = texte(corps.type) === 'loge';
   const fiche = {};
-  for (const c of CHAMPS){ const v = texte(corps[c]); if (v) fiche[c] = v; }
+  for (const c of (estLoge ? CHAMPS_LOGE : CHAMPS)){
+    const v = texte(corps[c]); if (v) fiche[c] = v;
+  }
+  if (estLoge) fiche.type = 'loge';
 
-  /* De quoi savoir de qui il s'agit et comment le joindre. Sans cela,
-     la fiche n'apprend rien et n'encombre que la base. */
-  if (!fiche.nom || !fiche.prenom) return json({ erreur: 'nom_manquant' }, 400);
-  if (!fiche.email || !courrielPlausible(fiche.email))
-    return json({ erreur: 'courriel_manquant' }, 400);
+  if (estLoge){
+    /* Le nom de l'Atelier, et une adresse où lui écrire. Sans l'un,
+       on ne sait pas qui inscrit ; sans l'autre, on ne peut pas lui
+       envoyer ce qu'il est venu demander. */
+    if (!fiche.loge_nom) return json({ erreur: 'loge_manquante' }, 400);
+    if (!fiche.contact_email || !courrielPlausible(fiche.contact_email))
+      return json({ erreur: 'courriel_manquant' }, 400);
+  } else {
+    /* De quoi savoir de qui il s'agit et comment le joindre. Sans cela,
+       la fiche n'apprend rien et n'encombre que la base. */
+    if (!fiche.nom || !fiche.prenom) return json({ erreur: 'nom_manquant' }, 400);
+    if (!fiche.email || !courrielPlausible(fiche.email))
+      return json({ erreur: 'courriel_manquant' }, 400);
+  }
 
   const brut = JSON.stringify(fiche);
   if (brut.length > POIDS_MAX) return json({ erreur: 'trop_gros' }, 413);

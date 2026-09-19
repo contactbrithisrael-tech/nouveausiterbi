@@ -220,6 +220,73 @@ with sync_playwright() as p:
     v(M.evaluate(lu + ".presentTenue") is False,
       "et la marque retombe : la tenue est passee")
 
+    # == UNE LOGE N'EST PAS UNE PERSONNE ============================
+    # Un Atelier qui s'inscrit ne vient pas visiter : il vient
+    # CORRESPONDRE. Il donne l'adresse de son secretariat — celle a qui
+    # nos convocations partiront — et depose son etat civil. Sa fiche
+    # rejoint donc les LOGES AMIES, et surtout PAS les Visiteurs : ce
+    # serait porter au carnet des visites un Atelier qui n'est jamais
+    # venu.
+    L = cF.new_page()
+    eL = []; L.on("pageerror", lambda e: eL.append(str(e)))
+    L.goto(U + "espace-membres.html"); L.wait_for_timeout(900)
+    L.fill("#porte-q1", "de midi a minuit")
+    L.fill("#porte-q2", "7 ans")
+    L.click("#porte-form button[type=submit]"); L.wait_for_timeout(700)
+    L.click("button.onglet:has-text('Inscrire ma Loge')"); L.wait_for_timeout(600)
+    v(L.locator("#inscrire-loge").is_visible(),
+      "l'Espace Membres porte un onglet « Inscrire ma Loge »")
+    for champ, valeur in (("loge_nom", "Les Trois Colonnes"),
+                          ("loge_numero", "142"),
+                          ("loge_orient", "Marseille"),
+                          ("loge_obedience", "GLMF"),
+                          ("loge_temple", "Temple Salomon"),
+                          ("contact_nom", "Sarah B."),
+                          ("contact_email", "secretariat@trois-colonnes.test"),
+                          ("contact_tel", "06 11 22 33 44")):
+        L.fill("#form-loge [name=" + champ + "]", valeur)
+    L.click("#form-loge button[type=submit]"); L.wait_for_timeout(2000)
+    v(not eL, "aucune erreur JavaScript au formulaire de Loge", eL)
+
+    M.reload(); M.wait_for_timeout(2600)
+    trouvee = M.evaluate(
+        "(E.amies||[]).find(x => (x.nom||'').indexOf('Trois Colonnes') >= 0) || null")
+    v(trouvee is not None,
+      "ET ELLE REJOINT LE CARNET DES LOGES AMIES, non celui des Visiteurs",
+      M.evaluate("(E.amies||[]).map(x=>x.nom)"))
+    if trouvee:
+        v(trouvee.get("nom") == "Les Trois Colonnes n°142",
+          "le numero fait partie du nom : deux homonymes ne se confondent pas",
+          trouvee.get("nom"))
+        v(trouvee.get("contactEmail") == "secretariat@trois-colonnes.test",
+          "C'EST LE SECRETARIAT DE L'ATELIER QUI RECEVRA NOS CONVOCATIONS, "
+          "non un Frere en particulier", trouvee.get("contactEmail"))
+        v(trouvee.get("orient") == "Marseille" and trouvee.get("temple") == "Temple Salomon",
+          "et son etat civil suit", trouvee)
+    v(M.evaluate("!(E.visiteurs||[]).some(v => (v.nom||'').indexOf('Colonnes')>=0)"),
+      "une Loge n'entre PAS au carnet des Visiteurs : elle n'est jamais venue")
+
+    # deux depots ne font pas deux Loges. Le formulaire se ferme une
+    # fois envoye : on rouvre la page, comme le ferait un Secretaire
+    # qui s'y reprend a deux fois.
+    L.reload(); L.wait_for_timeout(1000)
+    # le tuilage passe une fois ne se redemande pas : on ne le refait
+    # que s'il est la
+    if L.locator("#tuilage-porte").is_visible():
+        L.fill("#porte-q1", "de midi a minuit")
+        L.fill("#porte-q2", "7 ans")
+        L.click("#porte-form button[type=submit]"); L.wait_for_timeout(700)
+    L.click("button.onglet:has-text('Inscrire ma Loge')"); L.wait_for_timeout(600)
+    L.fill("#form-loge [name=loge_nom]", "Les Trois Colonnes")
+    L.fill("#form-loge [name=loge_numero]", "142")
+    L.fill("#form-loge [name=contact_email]", "secretariat@trois-colonnes.test")
+    L.click("#form-loge button[type=submit]"); L.wait_for_timeout(2000)
+    M.reload(); M.wait_for_timeout(2600)
+    v(M.evaluate("(E.amies||[]).filter(x => (x.nom||'').indexOf('Trois Colonnes')>=0).length") == 1,
+      "un second depot ne cree pas une seconde Loge",
+      M.evaluate("(E.amies||[]).map(x=>x.nom)"))
+    L.close()
+
     # == LA CHAINE EST-ELLE VIVANTE ? ===============================
     # La liste des fiches ne rend que celles EN ATTENTE : elle est donc
     # vide aussi bien quand tout a ete verse au carnet que quand RIEN

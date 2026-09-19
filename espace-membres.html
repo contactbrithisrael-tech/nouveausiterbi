@@ -553,6 +553,7 @@
   <button class="onglet" onclick="afficherSection('patente')">Demande de patente</button>
   <button class="onglet" onclick="afficherSection('documents')">Documents & Téléchargements</button>
   <button class="onglet" onclick="afficherSection('annuaire')">Annuaire F∴M∴</button>
+  <button class="onglet" onclick="afficherSection('inscrire-loge')">Inscrire ma Loge</button>
   <button class="onglet" onclick="afficherSection('constitutions')">Constitutions</button>
   <button class="onglet" onclick="afficherSection('rituels')">Rituels & Commandes</button>
   <button class="onglet" onclick="afficherSection('secretariat')">Secrétariat & Trésorerie</button>
@@ -1151,6 +1152,122 @@
 
 
 <!-- ═══════════════════════════════════════════
+     INSCRIRE MA LOGE
+
+     Une Loge n'est pas une personne. Celle qui s'inscrit ici ne vient
+     pas visiter : elle vient CORRESPONDRE. Elle donne l'adresse de son
+     secrétariat — celle à qui nos convocations seront envoyées — et
+     dépose son propre état civil.
+
+     Sa fiche ne rejoint donc pas le carnet des Visiteurs mais celui
+     des LOGES AMIES, où notre Secrétaire trouvait jusqu'ici ces
+     coordonnées en les cherchant à la main.
+═══════════════════════════════════════════ -->
+<section class="section" id="inscrire-loge">
+  <h2 class="section__titre">Inscrire ma Loge</h2>
+  <div class="section__sep"></div>
+
+  <div class="annuaire-intro">
+    Vous êtes Secrétaire, Vénérable Maître ou Officier d'un Atelier, et vous souhaitez
+    que votre Loge reçoive nos convocations. Inscrivez-la ici : elles partiront à
+    l'adresse de votre secrétariat, et non à celle d'un Frère en particulier.
+    <br><br>
+    <strong style="color:var(--or);">C'est une inscription d'Atelier, non de personne.</strong>
+    Pour vous inscrire à titre individuel, servez-vous de l'onglet « Annuaire F∴M∴ ».
+  </div>
+
+  <form id="form-loge" onsubmit="soumettre(event, 'form-loge', 'msg-loge')">
+    <input type="hidden" name="type" value="loge">
+    <div class="form-grid">
+
+      <div class="form-full">
+        <p style="color:var(--or);font-variant:small-caps;letter-spacing:.1em;margin-bottom:.6rem;">L'Atelier</p>
+      </div>
+      <div>
+        <label>Nom de la Loge *</label>
+        <input type="text" name="loge_nom" required placeholder="Les Trois Colonnes">
+      </div>
+      <div>
+        <label>Numéro</label>
+        <input type="text" name="loge_numero" placeholder="142">
+      </div>
+      <div>
+        <label>Orient</label>
+        <input type="text" name="loge_orient" placeholder="Marseille">
+      </div>
+      <div>
+        <label>Obédience</label>
+        <input type="text" name="loge_obedience">
+      </div>
+      <div>
+        <label>Rite</label>
+        <input type="text" name="loge_rite">
+      </div>
+      <div>
+        <label>Temple</label>
+        <input type="text" name="loge_temple" placeholder="Nom du local">
+      </div>
+      <div class="form-full">
+        <label>Adresse du Temple</label>
+        <input type="text" name="loge_adresse">
+      </div>
+      <div>
+        <label>Code postal</label>
+        <input type="text" name="loge_cp">
+      </div>
+      <div>
+        <label>Ville</label>
+        <input type="text" name="loge_ville">
+      </div>
+
+      <div class="form-full">
+        <p style="color:var(--or);font-variant:small-caps;letter-spacing:.1em;margin:1.2rem 0 .6rem;">Où vous adresser nos convocations</p>
+        <p style="font-size:.85rem;color:var(--gris);margin-bottom:1rem;">
+          L'adresse de votre secrétariat. C'est là que partiront nos convocations —
+          à la charge de votre Atelier de les porter à ses colonnes.
+        </p>
+      </div>
+      <div>
+        <label>Secrétaire — nom</label>
+        <input type="text" name="contact_nom">
+      </div>
+      <div>
+        <label>Courriel du secrétariat *</label>
+        <input type="email" name="contact_email" required>
+      </div>
+      <div>
+        <label>Téléphone</label>
+        <input type="tel" name="contact_tel">
+      </div>
+
+      <div class="form-full">
+        <label>Un mot, s'il y a lieu</label>
+        <textarea name="loge_notes" rows="3"
+          placeholder="Jours de tenue, usages particuliers, ce que vous voulez nous dire."></textarea>
+      </div>
+
+    </div>
+
+    <div class="form-footer">
+      <button type="submit" class="btn btn-or">Inscrire ma Loge</button>
+    </div>
+  </form>
+
+  <div class="msg-success" id="msg-loge">
+    ✡ Votre Atelier est inscrit.<br>
+    Nos convocations partiront désormais à l'adresse de votre secrétariat. Vous pouvez
+    demander à tout moment qu'elles cessent, sur simple courriel.
+    Que la Lumière vous guide, T∴C∴F∴.
+  </div>
+
+  <p class="confidentialite">
+    Conformément au RGPD, vous disposez d'un droit d'accès, de rectification et de suppression de vos données.<br>
+    Contact : contact.brith.israel@gmail.com
+  </p>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
      SECTION 5 : CONSTITUTIONS
 ═══════════════════════════════════════════ -->
 <section class="section" id="constitutions">
@@ -1464,7 +1581,8 @@
   var RBI_FORM_OBJETS = {
     'form-adhesion': "Demande d'adhésion individuelle",
     'form-patente' : "Demande de patente",
-    'form-annuaire': "Coordonnées, convocations et annuaire"
+    'form-annuaire': "Coordonnées, convocations et annuaire",
+    'form-loge'    : "Inscription d'une Loge"
   };
 
   // Rassemble les réponses en texte lisible. Les cases à cocher de même
@@ -1525,8 +1643,10 @@
        rien à faire d'un ennui de serveur : son envoi lui est confirmé
        dès que le courriel est parti. */
   function deposerAuRegistre(form) {
-    if (form.id !== 'form-annuaire') return;
-    var d = new FormData(form), o = { source: 'espace-membres' };
+    if (form.id !== 'form-annuaire' && form.id !== 'form-loge') return;
+    var d = new FormData(form);
+    var o = { source: form.id === 'form-loge' ? 'espace-membres-loge'
+                                              : 'espace-membres' };
     d.forEach(function (v, k) {
       if (o[k] === undefined) { o[k] = v; }
       else { o[k] = [].concat(o[k], v).join(', '); }   // cases à cocher
