@@ -194,6 +194,44 @@ with sync_playwright() as b0:
       "et elle remplace bien : on retrouve le tableau seul",
       pg.evaluate("E.visiteurs.length"))
 
+    # == ON RETIRE DEPUIS LA LISTE, NON DEPUIS LA FICHE =============
+    # Le bouton « Retirer » n'existait que dans la fiche ouverte :
+    # trouver la ligne parmi quatre-vingt-dix, l'ouvrir, descendre,
+    # confirmer, revenir. Cinq gestes pour en retirer un. La croix est
+    # au bout de la ligne — et elle arrete le clic avant qu'il n'ouvre
+    # la fiche, sans quoi on retirerait ET l'on ouvrirait.
+    pg.evaluate("""() => {
+      E.amis = [{ id: 801, nom: 'AAA', prenom: 'Un', email: 'a@x.test' },
+                { id: 802, nom: 'BBB', prenom: 'Deux', email: 'b@x.test' }];
+      E.reponsesAmis = { 801: { reponse: 'present', agapes: true } };
+      E.visiteurs = [{ id: 701, nom: 'VVV', prenom: 'Vis', email: 'v@x.test',
+                       venuDeLAnnuaire: true, visites: [] }];
+      E.agapesVisiteurs = { 701: true };
+      garder(); dessiner(); }""")
+    pg.wait_for_timeout(600)
+
+    pg.click("#t-amis"); pg.wait_for_timeout(600)
+    v(pg.locator("[data-ami-retirer]").count() == 2,
+      "CHAQUE AMI PORTE SA CROIX, dans la liste")
+    pg.click("[data-ami-retirer='801']"); pg.wait_for_timeout(900)
+    v(pg.evaluate("(E.amis||[]).map(a=>a.nom)") == ["BBB"],
+      "un Ami se retire d'un geste", pg.evaluate("(E.amis||[]).map(a=>a.nom)"))
+    v(pg.evaluate("!(E.reponsesAmis||{})[801]"),
+      "et sa reponse aux agapes s'en va avec lui : le traiteur ne "
+      "comptera pas un couvert pour un absent du carnet")
+    v(pg.evaluate("!E.amiOuvert"),
+      "LA CROIX N'OUVRE PAS LA FICHE : le clic est arrete avant la ligne")
+
+    pg.click("#t-visiteurs"); pg.wait_for_timeout(600)
+    v(pg.locator("[data-vis-retirer]").count() == 1,
+      "chaque Visiteur porte la sienne")
+    pg.click("[data-vis-retirer='701']"); pg.wait_for_timeout(900)
+    v(pg.evaluate("(E.visiteurs||[]).length") == 0,
+      "un Visiteur venu de l'annuaire se retire de meme",
+      pg.evaluate("(E.visiteurs||[]).length"))
+    v(pg.evaluate("!(E.agapesVisiteurs||{})[701]"),
+      "et son couvert avec lui")
+
     # == LES AMIS SE LISENT, DONC ILS SE RANGENT ====================
     # Ils arrivaient dans l'ordre ou on les avait saisis, ou verses d'un
     # carnet : quatre-vingt-dix noms dans le desordre du hasard, qu'on
