@@ -19,6 +19,37 @@ export async function onRequestGet(context){
   const tenue = (u.searchParams.get('tenue') || '').trim();
   const toutes = u.searchParams.get('toutes') === '1';
 
+  /* ── LES LIENS SONT-ILS SEULEMENT POSÉS ? ─────────────────────────
+     La liste ci-dessous ne rend que ceux qui ONT RÉPONDU. Elle est
+     donc vide dans deux cas qu'on ne peut pas distinguer : personne
+     n'a encore répondu, ou aucun lien n'a jamais été enregistré — et
+     alors tous les liens envoyés sont morts, sans que rien ne le
+     dise.
+
+     Ce compte-ci les sépare. Il ne rend que des NOMBRES : ni nom, ni
+     adresse, ni jeton. De quoi répondre « les liens sont en place »
+     ou « il n'y en a aucun », et rien de plus. */
+  if (u.searchParams.get('compte') === '1'){
+    let sqlC = 'SELECT COUNT(*) AS liens, ' +
+               'SUM(CASE WHEN reponse IS NOT NULL THEN 1 ELSE 0 END) AS repondu ' +
+               'FROM reponses WHERE loge_id = ?';
+    const lc = [moi.loge_id];
+    if (tenue){ sqlC += ' AND tenue = ?'; lc.push(tenue); }
+    try {
+      const r = await context.env.DB.prepare(sqlC).bind(...lc).first();
+      return json({ compte: {
+        tenue: tenue || null,
+        liens: Number(r?.liens || 0),
+        repondu: Number(r?.repondu || 0) } });
+    } catch (e) {
+      /* La table elle-même manque : c'est la réponse la plus utile
+         qu'on puisse rendre, et celle qu'on avalait jusqu'ici. */
+      return json({ erreur: 'registre_illisible',
+        detail: 'La table des réponses n’a pas pu être lue. ' +
+                'Vérifiez que 004-reponses.sql a été joué sur la base.' }, 500);
+    }
+  }
+
   let sql = 'SELECT jeton, tenue, qui_type, qui_id, nom, courriel, reponse, ' +
             'agapes, repondu_le FROM reponses WHERE loge_id = ? AND reponse IS NOT NULL';
   const liants = [moi.loge_id];

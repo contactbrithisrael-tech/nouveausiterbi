@@ -238,8 +238,51 @@ with sync_playwright() as pw:
       f"{partis} courriel(s)")
     mu.close(); c4.close()
 
-    v(not errs and not e0 and not e3 and not e4,
-      "aucune erreur JavaScript", errs + e0 + e3 + e4)
+    # == 5. « LES LIENS SONT-ILS POSES ? » ==========================
+    # Le releve des reponses ne rend que ceux qui ONT REPONDU : il est
+    # donc vide aussi bien le lendemain d'un envoi que lorsque AUCUN
+    # lien n'a jamais ete enregistre. Dans ce second cas tous les liens
+    # envoyes sont morts, et rien ne le disait. Ce compte separe les
+    # deux — en NOMBRES seuls : ni nom, ni adresse, ni jeton.
+    c5 = b.new_context(); vu = c5.new_page()
+    e5 = []; vu.on("pageerror", lambda e: e5.append(str(e)))
+    vu.on("dialog", lambda d: d.accept())
+    entrer(vu, AVEC)
+    vu.click("#t-tableau"); vu.wait_for_timeout(400)
+    vu.set_input_files("#fichier-sauvegarde", TABLEAU); vu.wait_for_timeout(2500)
+    vu.click("#t-tenue"); vu.wait_for_timeout(800)
+    v(vu.locator("#liens-verifier").count() == 1,
+      "un bouton demande si les liens de reponse sont poses")
+    dit5 = []
+    vu.on("dialog", lambda x: dit5.append(x.message))
+    vu.click("#liens-verifier"); vu.wait_for_timeout(2500)
+    ens5 = " ".join(dit5)
+    v("lien" in ens5.lower(), "et il repond", ens5[:200])
+    v("@" not in ens5,
+      "SANS RIEN LIVRER DU REGISTRE : des nombres, pas des adresses", ens5[:200])
+    vu.close(); c5.close()
+
+    # la ou l'ecriture echoue en silence, il le dit
+    c6 = b.new_context(); mv = c6.new_page()
+    e6 = []; mv.on("pageerror", lambda e: e6.append(str(e)))
+    mv.on("dialog", lambda d: d.accept())
+    entrer(mv, MUET)
+    mv.click("#t-tableau"); mv.wait_for_timeout(400)
+    mv.set_input_files("#fichier-sauvegarde", TABLEAU); mv.wait_for_timeout(2500)
+    mv.click("#t-tenue"); mv.wait_for_timeout(800)
+    dit6 = []
+    mv.on("dialog", lambda x: dit6.append(x.message))
+    mv.click("#liens-verifier"); mv.wait_for_timeout(2500)
+    ens6 = " ".join(dit6)
+    v("AUCUN LIEN" in ens6,
+      "LA OU AUCUN LIEN N'EST POSE, LE BOUTON LE DIT SANS DETOUR", ens6[:220])
+    v("morts" in ens6,
+      "et il dit ce que cela veut dire pour les convocations deja parties",
+      ens6[:260])
+    mv.close(); c6.close()
+
+    v(not errs and not e0 and not e3 and not e4 and not e5 and not e6,
+      "aucune erreur JavaScript", errs + e0 + e3 + e4 + e5 + e6)
     b.close()
 
 print(f"\n  {len(ko)} echec(s)" if ko else "\n  tout passe")
