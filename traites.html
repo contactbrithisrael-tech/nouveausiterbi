@@ -113,9 +113,11 @@ ul{list-style:none;}
 .traite-badge--amitie{background:rgba(74,144,217,.1);color:#4A90D9;border:1px solid rgba(74,144,217,.3);}
 .traite-badge--convention{background:rgba(123,104,238,.1);color:#7B68EE;border:1px solid rgba(123,104,238,.3);}
 .traite-badge--lettre{background:rgba(92,184,92,.1);color:#5CB85C;border:1px solid rgba(92,184,92,.3);}
-.traite-flag{font-size:1.4rem;float:right;margin-left:8px;line-height:1;}
-.traite-nom{font-family:var(--font-sous);font-size:.88rem;color:var(--blanc);margin-bottom:4px;line-height:1.4;clear:none;}
-.traite-pays{font-size:.72rem;color:var(--or-dark);margin-bottom:10px;font-style:italic;}
+.traite-flag-bloc{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.traite-flag{font-size:2.4rem;line-height:1;flex-shrink:0;}
+.traite-pays-label{font-family:var(--font-sous);font-size:.78rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--or);background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.25);border-radius:4px;padding:3px 10px;}
+.traite-nom{font-family:var(--font-sous);font-size:.88rem;color:var(--blanc);margin-bottom:4px;line-height:1.4;}
+.traite-pays{display:none;}
 .traite-sgc{font-size:.7rem;color:#999;border-top:1px solid rgba(201,168,76,.1);padding-top:10px;line-height:1.6;}
 .traite-sgc strong{color:rgba(201,168,76,.7);}
 .traite-expand{font-family:var(--font-sous);font-size:.6rem;letter-spacing:.08em;color:var(--or-dark);margin-top:12px;display:inline-block;border-bottom:1px solid rgba(201,168,76,.2);transition:color var(--tr);}
@@ -265,7 +267,7 @@ ul{list-style:none;}
     <!-- 1 -->
     <div class="traite-card reveal" data-type="reconnaissance">
       <span class="traite-badge traite-badge--reconnaissance">Amitié & Reconnaissance</span>
-      <span class="traite-flag">🇸🇻</span>
+      <div class="traite-flag-bloc"><span class="traite-flag">🇸🇻</span><span class="traite-pays-label">El Salvador</span></div>
       <h3 class="traite-nom">Gran Capitulo Noaquita de El Salvador</h3>
       <p class="traite-pays">El Salvador</p>
       <div class="traite-sgc"><strong>Signataire :</strong> G∴M∴ René Canizalez Menendez<br><strong>RBI :</strong> SGM Mickaël Darmon</div>
@@ -274,7 +276,7 @@ ul{list-style:none;}
     <!-- 2 -->
     <div class="traite-card reveal" data-type="amitie">
       <span class="traite-badge traite-badge--amitie">Protocole d'Amitié</span>
-      <span class="traite-flag">🇧🇿</span>
+      <div class="traite-flag-bloc"><span class="traite-flag">🇧🇿</span><span class="traite-pays-label">Belize</span></div>
       <h3 class="traite-nom">Most Worshipful First Grand Lodge of Belize AF&AM</h3>
       <p class="traite-pays">Belize</p>
       <div class="traite-sgc"><strong>Signataire :</strong> MWGM Louis Alberto Ramírez 33°<br><strong>RBI :</strong> SGM Mickaël Darmon</div>
@@ -283,7 +285,7 @@ ul{list-style:none;}
     <!-- 3 -->
     <div class="traite-card reveal" data-type="reconnaissance">
       <span class="traite-badge traite-badge--reconnaissance">Amitié & Reconnaissance</span>
-      <span class="traite-flag">🇵🇭</span>
+      <div class="traite-flag-bloc"><span class="traite-flag">🇵🇭</span><span class="traite-pays-label">Philippines</span></div>
       <h3 class="traite-nom">Independent Grand Lodge of the Orient — Philippines</h3>
       <p class="traite-pays">Philippines</p>
       <div class="traite-sgc"><strong>Signataire :</strong> SGM Francis B. Georsua 33°, 66°<br><strong>RBI :</strong> SGM Mickaël Darmon</div>
@@ -292,7 +294,7 @@ ul{list-style:none;}
     <!-- 4 -->
     <div class="traite-card reveal" data-type="lettre">
       <span class="traite-badge traite-badge--lettre">Lettre de Souveraineté</span>
-      <span class="traite-flag">🌍</span>
+      <div class="traite-flag-bloc"><span class="traite-flag">🌍</span><span class="traite-pays-label">International</span></div>
       <h3 class="traite-nom">Souverain Sanctuaire International de Memphis Mitzraim</h3>
       <p class="traite-pays">International</p>
       <div class="traite-sgc"><strong>Signataires :</strong> Francisco Cássio Lima SGP 100° — Jean Noël Raynaud 100°<br><strong>RBI :</strong> SGM Mickaël Darmon</div>
@@ -301,7 +303,7 @@ ul{list-style:none;}
     <!-- 5 -->
     <div class="traite-card reveal" data-type="reconnaissance">
       <span class="traite-badge traite-badge--reconnaissance">Amitié & Reconnaissance</span>
-      <span class="traite-flag">🇫🇷🇷🇴🇭🇹</span>
+      <div class="traite-flag-bloc"><span class="traite-flag">🇫🇷🇷🇴🇭🇹</span><span class="traite-pays-label">France — Roumanie — Haïti</span></div>
       <h3 class="traite-nom">Grande Loge Nationale Des Rites Maçonniques — France / Roumanie / Haïti</h3>
       <p class="traite-pays">France — Roumanie — Haïti</p>
       <div class="traite-sgc"><strong>Signataire :</strong> T∴I∴F∴ G∴M∴ Augustina Raynaud<br><strong>RBI :</strong> SGM Mickaël Darmon</div>
@@ -310,7 +312,7 @@ ul{list-style:none;}
     <!-- 6 -->
     <div class="traite-card reveal" data-type="convention">
       <span class="traite-badge traite-badge--convention">Convention</span>
-      <span class="traite-flag">🇫🇷</span>
+      <div class="traite-flag-bloc"><span class="traite-flag">🇫🇷</span><span class="traite-pays-label">France — International</span></div>
       <h3 class="traite-nom">L'Institution Maçonnique Universelle</h3>
       <p class="traite-pays">France — International</p>
       <div class="traite-sgc"><strong>Signataires :</strong> Christian Belloc 7°.33°.96°.100° — Augustina Raynaud<br><strong>RBI :</strong> SGM Mickaël Darmon</div>
@@ -319,7 +321,7 @@ ul{list-style:none;}
     <!-- 7 -->
     <div class="traite-card reveal" data-type="reconnaissance">
       <span class="traite-badge traite-badge--reconnaissance">Amitié & Reconnaissance</span>
-      <span class="traite-flag">🇲🇽</span>
+      <div class="traite-flag-bloc"><span class="traite-flag">🇲🇽</span><span class="traite-pays-label">Mexique</span></div>
       <h3 class="traite-nom">Souberano Sanctuario Mexicano — Sublime Consejo Rector</h3>
       <p class="traite-pays">Mexique</p>
       <div class="traite-sgc"><strong>Signataire :</strong> E∴P∴H∴ Edgar Rosario Pineda Espinoza 33° XII°<br><strong>RBI :</strong> SGM Mickaël Darmon</div>
@@ -328,7 +330,7 @@ ul{list-style:none;}
     <!-- 8 -->
     <div class="traite-card reveal" data-type="reconnaissance">
       <span class="traite-badge traite-badge--reconnaissance">Amitié & Reconnaissance</span>
-      <span class="traite-flag">🇧🇷</span>
+      <div class="traite-flag-bloc"><span class="traite-flag">🇧🇷</span><span class="traite-pays-label">Brésil</span></div>
       <h3 class="traite-nom">Grande Loja Paulista — Brésil</h3>
       <p class="traite-pays">Brésil</p>
       <div class="traite-sgc"><strong>Signataire :</strong> G∴M∴ Hugo Luppuner<br><strong>RBI :</strong> SGM Mickaël Darmon</div>
@@ -337,7 +339,7 @@ ul{list-style:none;}
     <!-- 9 -->
     <div class="traite-card reveal" data-type="reconnaissance">
       <span class="traite-badge traite-badge--reconnaissance">Amitié & Reconnaissance</span>
-      <span class="traite-flag">🌍</span>
+      <div class="traite-flag-bloc"><span class="traite-flag">🌍</span><span class="traite-pays-label">Afrique</span></div>
       <h3 class="traite-nom">SC Grades Philosophiques 4.33 Memphis Misraim Afrique</h3>
       <p class="traite-pays">Afrique</p>
       <div class="traite-sgc"><strong>Signataire :</strong> I∴P∴H∴ Loïc Axel Deemin Tete<br><strong>RBI :</strong> SGM Mickaël Darmon</div>
@@ -346,7 +348,7 @@ ul{list-style:none;}
     <!-- 10 -->
     <div class="traite-card reveal" data-type="reconnaissance">
       <span class="traite-badge traite-badge--reconnaissance">Amitié & Reconnaissance</span>
-      <span class="traite-flag">🇫🇷</span>
+      <div class="traite-flag-bloc"><span class="traite-flag">🇫🇷</span><span class="traite-pays-label">France</span></div>
       <h3 class="traite-nom">Suprême Conseil du 33° Degré en Occitanie</h3>
       <p class="traite-pays">France</p>
       <div class="traite-sgc"><strong>Signataire :</strong> S∴G∴C∴ Christian Belloc 33°<br><strong>RBI :</strong> SGM Mickaël Darmon</div>
@@ -355,7 +357,7 @@ ul{list-style:none;}
     <!-- 11 -->
     <div class="traite-card reveal" data-type="reconnaissance">
       <span class="traite-badge traite-badge--reconnaissance">Amitié & Reconnaissance</span>
-      <span class="traite-flag">🇲🇽</span>
+      <div class="traite-flag-bloc"><span class="traite-flag">🇲🇽</span><span class="traite-pays-label">Mexique</span></div>
       <h3 class="traite-nom">Soberano Santuario Nacional de Mexico</h3>
       <p class="traite-pays">Mexique</p>
       <div class="traite-sgc"><strong>Signataire :</strong> G∴M∴ José María Cortés Rodríguez 100°<br><strong>RBI :</strong> SGM Mickaël Darmon</div>
@@ -364,7 +366,7 @@ ul{list-style:none;}
     <!-- 12 -->
     <div class="traite-card reveal" data-type="reconnaissance">
       <span class="traite-badge traite-badge--reconnaissance">Amitié & Reconnaissance</span>
-      <span class="traite-flag">🇺🇸</span>
+      <div class="traite-flag-bloc"><span class="traite-flag">🇺🇸</span><span class="traite-pays-label">USA — Washington D.C.</span></div>
       <h3 class="traite-nom">Most Worshipful Grand Lodge A.F.&A.M. — Washington D.C.</h3>
       <p class="traite-pays">USA — Washington D.C.</p>
       <div class="traite-sgc"><strong>Signataire :</strong> K∴S∴S∴P∴R∴S∴G∴L∴G∴33 Ollie Spencer<br><strong>RBI :</strong> SGM Mickaël Darmon</div>
@@ -373,7 +375,7 @@ ul{list-style:none;}
     <!-- 13 -->
     <div class="traite-card reveal" data-type="reconnaissance">
       <span class="traite-badge traite-badge--reconnaissance">Amitié & Reconnaissance</span>
-      <span class="traite-flag">🇸🇻</span>
+      <div class="traite-flag-bloc"><span class="traite-flag">🇸🇻</span><span class="traite-pays-label">El Salvador — International</span></div>
       <h3 class="traite-nom">Fraternitas Rosicruciana Antiqua — Tradición Gnóstica Krumm-Heller</h3>
       <p class="traite-pays">El Salvador — International</p>
       <div class="traite-sgc"><strong>Signataire :</strong> Tau Bamul — René Canizalez Menendez 13°/33°<br><strong>RBI :</strong> G∴M∴ Mickaël Darmon</div>
@@ -382,7 +384,7 @@ ul{list-style:none;}
     <!-- 14 -->
     <div class="traite-card reveal" data-type="reconnaissance">
       <span class="traite-badge traite-badge--reconnaissance">Amitié & Reconnaissance</span>
-      <span class="traite-flag">🇲🇽</span>
+      <div class="traite-flag-bloc"><span class="traite-flag">🇲🇽</span><span class="traite-pays-label">Mexique</span></div>
       <h3 class="traite-nom">Grande Loge Adytum du Grand Orient du Mexique</h3>
       <p class="traite-pays">Mexique</p>
       <div class="traite-sgc"><strong>Signataire :</strong> G∴M∴ Javier Armando Olivas Quiralte<br><strong>RBI :</strong> SGM Mickaël Darmon</div>
@@ -391,7 +393,7 @@ ul{list-style:none;}
     <!-- 15 -->
     <div class="traite-card reveal" data-type="reconnaissance">
       <span class="traite-badge traite-badge--reconnaissance">Amitié & Reconnaissance</span>
-      <span class="traite-flag">🇷🇴</span>
+      <div class="traite-flag-bloc"><span class="traite-flag">🇷🇴</span><span class="traite-pays-label">Roumanie</span></div>
       <h3 class="traite-nom">Ordinul Masonic Umaniterra — International (Roumanie)</h3>
       <p class="traite-pays">Roumanie</p>
       <div class="traite-sgc"><strong>Signataire :</strong> S∴G∴M∴ Dr. Adrian Ashley Toader Williams Ph.D. 3-33<br><strong>RBI :</strong> SGM Mickaël Darmon</div>
@@ -400,7 +402,7 @@ ul{list-style:none;}
     <!-- 16 -->
     <div class="traite-card reveal" data-type="reconnaissance">
       <span class="traite-badge traite-badge--reconnaissance">Amitié & Reconnaissance</span>
-      <span class="traite-flag">🇺🇸</span>
+      <div class="traite-flag-bloc"><span class="traite-flag">🇺🇸</span><span class="traite-pays-label">USA</span></div>
       <h3 class="traite-nom">Soberano Santuario Internacional Memphis Misraim — USA</h3>
       <p class="traite-pays">USA</p>
       <div class="traite-sgc"><strong>Signataire :</strong> G∴M∴ Victor Salazar Soto 100°<br><strong>RBI :</strong> SGM Mickaël Darmon</div>
@@ -409,7 +411,7 @@ ul{list-style:none;}
     <!-- 17 -->
     <div class="traite-card reveal" data-type="convention">
       <span class="traite-badge traite-badge--convention">Convention</span>
-      <span class="traite-flag">🇭🇹</span>
+      <div class="traite-flag-bloc"><span class="traite-flag">🇭🇹</span><span class="traite-pays-label">Haïti</span></div>
       <h3 class="traite-nom">SS International de Memphis Misraim et des Rites Initiatiques</h3>
       <p class="traite-pays">Haïti</p>
       <div class="traite-sgc"><strong>Signataire :</strong> I∴P∴H∴ Leriche Célestin<br><strong>RBI :</strong> SGM Mickaël Darmon</div>
@@ -418,7 +420,7 @@ ul{list-style:none;}
     <!-- 18 -->
     <div class="traite-card reveal" data-type="reconnaissance">
       <span class="traite-badge traite-badge--reconnaissance">Traité Maçonnique d'Amitié</span>
-      <span class="traite-flag">🌍</span>
+      <div class="traite-flag-bloc"><span class="traite-flag">🌍</span><span class="traite-pays-label">International</span></div>
       <h3 class="traite-nom">Soberano Sanctuario Internacional de Memphis Mitzraim</h3>
       <p class="traite-pays">International</p>
       <div class="traite-sgc"><strong>Signataire :</strong> S∴G∴S∴ Francisco Cássio Lima 3° 33° 66° 99° 100°<br><strong>RBI :</strong> SGM Mickaël Darmon</div>
@@ -427,7 +429,7 @@ ul{list-style:none;}
     <!-- 19 -->
     <div class="traite-card reveal" data-type="amitie">
       <span class="traite-badge traite-badge--amitie">Treaty of Friendship</span>
-      <span class="traite-flag">🌍</span>
+      <div class="traite-flag-bloc"><span class="traite-flag">🌍</span><span class="traite-pays-label">International</span></div>
       <h3 class="traite-nom">Eglise Matriarche Gnostique Apostolique Templière Universelle</h3>
       <p class="traite-pays">International</p>
       <div class="traite-sgc"><strong>Signataire :</strong> Grand Patriarche TAU+RA Tabuthaud Isidor Noël<br><strong>RBI :</strong> SGM Mickaël Darmon</div>
@@ -436,7 +438,7 @@ ul{list-style:none;}
     <!-- 20 -->
     <div class="traite-card reveal" data-type="reconnaissance">
       <span class="traite-badge traite-badge--reconnaissance">Amitié & Reconnaissance</span>
-      <span class="traite-flag">🇺🇸</span>
+      <div class="traite-flag-bloc"><span class="traite-flag">🇺🇸</span><span class="traite-pays-label">USA</span></div>
       <h3 class="traite-nom">Grand Orient of the United States — Ancient Primitive Order of Hérédom 1807</h3>
       <p class="traite-pays">USA</p>
       <div class="traite-sgc"><strong>Signataire :</strong> S∴G∴C∴ Angel Guerra<br><strong>RBI :</strong> SGM Mickaël Darmon</div>
@@ -445,7 +447,7 @@ ul{list-style:none;}
     <!-- 21 -->
     <div class="traite-card reveal" data-type="convention">
       <span class="traite-badge traite-badge--convention">Convention</span>
-      <span class="traite-flag">🇺🇸</span>
+      <div class="traite-flag-bloc"><span class="traite-flag">🇺🇸</span><span class="traite-pays-label">USA — Maryland</span></div>
       <h3 class="traite-nom">M.W. Imhotep Grand Lodge — State of Maryland</h3>
       <p class="traite-pays">USA — Maryland</p>
       <div class="traite-sgc"><strong>Signataire :</strong> SGM Ron E. Jenkins 33°<br><strong>RBI :</strong> SGM Mickaël Darmon</div>
@@ -454,7 +456,7 @@ ul{list-style:none;}
     <!-- 22 -->
     <div class="traite-card reveal" data-type="reconnaissance">
       <span class="traite-badge traite-badge--reconnaissance">Amitié & Reconnaissance</span>
-      <span class="traite-flag">🇫🇷</span>
+      <div class="traite-flag-bloc"><span class="traite-flag">🇫🇷</span><span class="traite-pays-label">France — 21 février 2026</span></div>
       <h3 class="traite-nom">Mère-Loge du Rite Primitif & Traditionnel de Kilwinning</h3>
       <p class="traite-pays">France — 21 février 2026</p>
       <div class="traite-sgc"><strong>Signataire :</strong> T∴I∴P∴ G∴M∴ Joël Prats<br><strong>RBI :</strong> SGM Mickaël Darmon</div>
@@ -463,7 +465,7 @@ ul{list-style:none;}
     <!-- 23 -->
     <div class="traite-card reveal" data-type="reconnaissance">
       <span class="traite-badge traite-badge--reconnaissance">Amitié & Reconnaissance</span>
-      <span class="traite-flag">🇵🇭</span>
+      <div class="traite-flag-bloc"><span class="traite-flag">🇵🇭</span><span class="traite-pays-label">Philippines</span></div>
       <h3 class="traite-nom">Order of the Servants & Daughters of Ruth — Philippines</h3>
       <p class="traite-pays">Philippines</p>
       <div class="traite-sgc"><strong>Signataires :</strong> SGM Francis B. Georsua 33°, 66° — Grande Matronne Maria Laarne Georsua<br><strong>RBI :</strong> SGM Mickaël Darmon</div>
@@ -472,7 +474,7 @@ ul{list-style:none;}
     <!-- 24 -->
     <div class="traite-card reveal" data-type="reconnaissance">
       <span class="traite-badge traite-badge--reconnaissance">Contrat de Reconnaissance</span>
-      <span class="traite-flag">🇫🇷</span>
+      <div class="traite-flag-bloc"><span class="traite-flag">🇫🇷</span><span class="traite-pays-label">France — Orient de Toulouse</span></div>
       <h3 class="traite-nom">Grande Loge Nationale Des Rites Maçonniques (Alain Herrera)</h3>
       <p class="traite-pays">France — Orient de Toulouse</p>
       <div class="traite-sgc"><strong>Signataires :</strong> G∴M∴ Alain Herrera — Christian Belloc (Ad Vitam)<br><strong>RBI :</strong> SGM Mickaël Darmon</div>
@@ -481,7 +483,7 @@ ul{list-style:none;}
     <!-- 25 -->
     <div class="traite-card reveal" data-type="lettre">
       <span class="traite-badge traite-badge--lettre">Lettre d'Amitié</span>
-      <span class="traite-flag">🇫🇷</span>
+      <div class="traite-flag-bloc"><span class="traite-flag">🇫🇷</span><span class="traite-pays-label">France — 23 février 2026</span></div>
       <h3 class="traite-nom">Fédération de Loges Traditionnelles et Souveraines (F.L.T.S.)</h3>
       <p class="traite-pays">France — 23 février 2026</p>
       <div class="traite-sgc"><strong>Signataire :</strong> TIF Thierry Hugon 33°<br><strong>RBI :</strong> TIF Mickaël Darmon 33°</div>
@@ -490,7 +492,7 @@ ul{list-style:none;}
     <!-- 26 -->
     <div class="traite-card reveal" data-type="convention">
       <span class="traite-badge traite-badge--convention">Convention d'Adhésion</span>
-      <span class="traite-flag">🇫🇷</span>
+      <div class="traite-flag-bloc"><span class="traite-flag">🇫🇷</span><span class="traite-pays-label">France — 2 février 2026</span></div>
       <h3 class="traite-nom">F∴M∴I∴G∴S∴ — Fédération Maçonnique Internationale des Grades Supérieurs</h3>
       <p class="traite-pays">France — 2 février 2026</p>
       <div class="traite-sgc"><strong>Signataires :</strong> Joseph Sercia (Président) — Ollivier Chebrou de Lespinats (VP)<br><strong>RBI :</strong> SGM Mickaël Darmon</div>
@@ -499,7 +501,7 @@ ul{list-style:none;}
     <!-- 27 -->
     <div class="traite-card reveal" data-type="reconnaissance">
       <span class="traite-badge traite-badge--reconnaissance">Amitié & Reconnaissance</span>
-      <span class="traite-flag">🇭🇹</span>
+      <div class="traite-flag-bloc"><span class="traite-flag">🇭🇹</span><span class="traite-pays-label">Haïti</span></div>
       <h3 class="traite-nom">Grande Loge Souveraine d'Haïti</h3>
       <p class="traite-pays">Haïti</p>
       <div class="traite-sgc"><strong>Signataire :</strong> SGM Leriche Célestin 33°<br><strong>RBI :</strong> SGM Mickaël Darmon</div>
@@ -508,7 +510,7 @@ ul{list-style:none;}
     <!-- 28 -->
     <div class="traite-card reveal" data-type="reconnaissance">
       <span class="traite-badge traite-badge--reconnaissance">Amitié & Reconnaissance</span>
-      <span class="traite-flag">🇧🇷</span>
+      <div class="traite-flag-bloc"><span class="traite-flag">🇧🇷</span><span class="traite-pays-label">Brésil</span></div>
       <h3 class="traite-nom">Grande Loja Maçônica Brasileira Fraternidade Feminina</h3>
       <p class="traite-pays">Brésil</p>
       <div class="traite-sgc"><strong>Signataire :</strong> M∴M∴ Ramona Dorilene Cott de Souza 33°<br><strong>RBI :</strong> SGM Mickaël Darmon</div>
@@ -517,7 +519,7 @@ ul{list-style:none;}
     <!-- 29 -->
     <div class="traite-card reveal" data-type="reconnaissance">
       <span class="traite-badge traite-badge--reconnaissance">Amitié & Reconnaissance</span>
-      <span class="traite-flag">🇸🇻</span>
+      <div class="traite-flag-bloc"><span class="traite-flag">🇸🇻</span><span class="traite-pays-label">El Salvador</span></div>
       <h3 class="traite-nom">Orden Martinista y Martinezista Iniciática — Salvador</h3>
       <p class="traite-pays">El Salvador</p>
       <div class="traite-sgc"><strong>Signataire :</strong> S∴I∴L∴L∴I∴ TAU+RA René Canizalez Menendez<br><strong>RBI :</strong> G∴M∴ Mickaël Darmon</div>
@@ -526,7 +528,7 @@ ul{list-style:none;}
     <!-- 30 -->
     <div class="traite-card reveal" data-type="reconnaissance">
       <span class="traite-badge traite-badge--reconnaissance">Amitié & Reconnaissance</span>
-      <span class="traite-flag">🌍</span>
+      <div class="traite-flag-bloc"><span class="traite-flag">🌍</span><span class="traite-pays-label">International</span></div>
       <h3 class="traite-nom">Ordre des Élus Cohen — Zélateurs de Martinez de Pasqually #12</h3>
       <p class="traite-pays">International</p>
       <div class="traite-sgc"><strong>Signataire :</strong> S∴E∴L∴G∴ Reau Croix TAU+RA Leriche Célestin<br><strong>RBI :</strong> G∴M∴ Mickaël Darmon</div>
@@ -535,7 +537,7 @@ ul{list-style:none;}
     <!-- 31 -->
     <div class="traite-card reveal" data-type="reconnaissance">
       <span class="traite-badge traite-badge--reconnaissance">Amitié & Reconnaissance</span>
-      <span class="traite-flag">🇵🇪</span>
+      <div class="traite-flag-bloc"><span class="traite-flag">🇵🇪</span><span class="traite-pays-label">Pérou</span></div>
       <h3 class="traite-nom">Gran Logia Maçónica Andrés Avelino Cáceres Del Peru</h3>
       <p class="traite-pays">Pérou</p>
       <div class="traite-sgc"><strong>Signataire :</strong> G∴M∴ Julio César Díaz Villar 33°<br><strong>RBI :</strong> SGM Mickaël Darmon</div>
@@ -544,7 +546,7 @@ ul{list-style:none;}
     <!-- NOUVEAUX TRAITÉS 2025-2026 -->
     <div class="traite-card reveal" data-type="reconnaissance">
       <span class="traite-badge traite-badge--reconnaissance">Amitié & Reconnaissance</span>
-      <span class="traite-flag">🇮🇱</span>
+      <div class="traite-flag-bloc"><span class="traite-flag">🇮🇱</span><span class="traite-pays-label">Israël</span></div>
       <h3 class="traite-nom">Souverain Sanctuaire National de la Terre Sainte — EMOAPRMM</h3>
       <p class="traite-pays">Israël</p>
       <div class="traite-sgc"><strong>Ordre :</strong> Ordre des Maçons de l'Orient Ancien & Primitif Rite de Memphis-Misraïm<br><strong>RBI :</strong> SGM Mickaël Darmon</div>
@@ -552,7 +554,7 @@ ul{list-style:none;}
 
     <div class="traite-card reveal" data-type="reconnaissance">
       <span class="traite-badge traite-badge--reconnaissance">Amitié & Reconnaissance</span>
-      <span class="traite-flag">🇵🇾</span>
+      <div class="traite-flag-bloc"><span class="traite-flag">🇵🇾</span><span class="traite-pays-label">Paraguay</span></div>
       <h3 class="traite-nom">Soberano Santuario General del Paraguay</h3>
       <p class="traite-pays">Paraguay</p>
       <div class="traite-sgc"><strong>RBI :</strong> SGM Mickaël Darmon</div>
@@ -560,7 +562,7 @@ ul{list-style:none;}
 
     <div class="traite-card reveal" data-type="amitie">
       <span class="traite-badge traite-badge--amitie">Traité d'Amitié</span>
-      <span class="traite-flag">🌐</span>
+      <div class="traite-flag-bloc"><span class="traite-flag">🌐</span><span class="traite-pays-label">International</span></div>
       <h3 class="traite-nom">Les Zélateurs de Martinez de Pasqually — Loge #12</h3>
       <p class="traite-pays">International</p>
       <div class="traite-sgc"><strong>Tradition :</strong> Ordre Martiniste & Martineziste<br><strong>RBI :</strong> SGM Mickaël Darmon</div>
@@ -568,7 +570,7 @@ ul{list-style:none;}
 
     <div class="traite-card reveal" data-type="reconnaissance">
       <span class="traite-badge traite-badge--reconnaissance">Amitié & Reconnaissance</span>
-      <span class="traite-flag">🇸🇻</span>
+      <div class="traite-flag-bloc"><span class="traite-flag">🇸🇻</span><span class="traite-pays-label">El Salvador</span></div>
       <h3 class="traite-nom">Fraternitas Rosicruciana Antiqua — Tradición Krumm-Heller</h3>
       <p class="traite-pays">El Salvador</p>
       <div class="traite-sgc"><strong>Gran Commendador :</strong> El Salvador<br><strong>RBI :</strong> SGM Mickaël Darmon</div>
@@ -576,7 +578,7 @@ ul{list-style:none;}
 
     <div class="traite-card reveal" data-type="reconnaissance">
       <span class="traite-badge traite-badge--reconnaissance">Amitié & Reconnaissance</span>
-      <span class="traite-flag">🇧🇷</span>
+      <div class="traite-flag-bloc"><span class="traite-flag">🇧🇷</span><span class="traite-pays-label">Brésil</span></div>
       <h3 class="traite-nom">Grande Loja Unida do Brasil</h3>
       <p class="traite-pays">Brésil</p>
       <div class="traite-sgc"><strong>RBI :</strong> SGM Mickaël Darmon</div>
@@ -584,7 +586,7 @@ ul{list-style:none;}
 
     <div class="traite-card reveal" data-type="reconnaissance">
       <span class="traite-badge traite-badge--reconnaissance">Amitié & Reconnaissance</span>
-      <span class="traite-flag">🇧🇷</span>
+      <div class="traite-flag-bloc"><span class="traite-flag">🇧🇷</span><span class="traite-pays-label">Brésil</span></div>
       <h3 class="traite-nom">Grand Oriente Maçônico Independente Soberano</h3>
       <p class="traite-pays">Brésil</p>
       <div class="traite-sgc"><strong>Signataire :</strong> Francisco Cássio Lima<br><strong>RBI :</strong> SGM Mickaël Darmon</div>
@@ -592,7 +594,7 @@ ul{list-style:none;}
 
     <div class="traite-card reveal" data-type="reconnaissance">
       <span class="traite-badge traite-badge--reconnaissance">Amitié & Reconnaissance</span>
-      <span class="traite-flag">🇮🇹</span>
+      <div class="traite-flag-bloc"><span class="traite-flag">🇮🇹</span><span class="traite-pays-label">Italie</span></div>
       <h3 class="traite-nom">Gran Loggia Unita d'Italia</h3>
       <p class="traite-pays">Italie</p>
       <div class="traite-sgc"><strong>RBI :</strong> SGM Mickaël Darmon</div>
@@ -600,7 +602,7 @@ ul{list-style:none;}
 
     <div class="traite-card reveal" data-type="reconnaissance">
       <span class="traite-badge traite-badge--reconnaissance">Amitié & Reconnaissance</span>
-      <span class="traite-flag">🇷🇺</span>
+      <div class="traite-flag-bloc"><span class="traite-flag">🇷🇺</span><span class="traite-pays-label">Russie</span></div>
       <h3 class="traite-nom">Sanctuaire National de la Fédération de Russie — Rite Memphis-Misraïm</h3>
       <p class="traite-pays">Russie</p>
       <div class="traite-sgc"><strong>Rite :</strong> Ancien et Primitif de Memphis-Misraïm<br><strong>RBI :</strong> SGM Mickaël Darmon</div>
@@ -608,7 +610,7 @@ ul{list-style:none;}
 
     <div class="traite-card reveal" data-type="reconnaissance">
       <span class="traite-badge traite-badge--reconnaissance">Amitié & Reconnaissance</span>
-      <span class="traite-flag">🇷🇺</span>
+      <div class="traite-flag-bloc"><span class="traite-flag">🇷🇺</span><span class="traite-pays-label">Russie</span></div>
       <h3 class="traite-nom">Grand Liberal Lodge of Russia</h3>
       <p class="traite-pays">Russie</p>
       <div class="traite-sgc"><strong>RBI :</strong> SGM Mickaël Darmon</div>
@@ -616,7 +618,7 @@ ul{list-style:none;}
 
     <div class="traite-card reveal" data-type="reconnaissance">
       <span class="traite-badge traite-badge--reconnaissance">Amitié & Reconnaissance</span>
-      <span class="traite-flag">🇪🇸</span>
+      <div class="traite-flag-bloc"><span class="traite-flag">🇪🇸</span><span class="traite-pays-label">Espagne</span></div>
       <h3 class="traite-nom">Gran Oriente Europeo — España</h3>
       <p class="traite-pays">Espagne</p>
       <div class="traite-sgc"><strong>RBI :</strong> SGM Mickaël Darmon</div>
@@ -624,7 +626,7 @@ ul{list-style:none;}
 
     <div class="traite-card reveal" data-type="reconnaissance">
       <span class="traite-badge traite-badge--reconnaissance">Amitié & Reconnaissance</span>
-      <span class="traite-flag">🇨🇦</span>
+      <div class="traite-flag-bloc"><span class="traite-flag">🇨🇦</span><span class="traite-pays-label">Canada — Québec</span></div>
       <h3 class="traite-nom">Souverain Conseil des Maîtres d'Orient Tévah #2 — Québec</h3>
       <p class="traite-pays">Canada — Québec</p>
       <div class="traite-sgc"><strong>RBI :</strong> SGM Mickaël Darmon</div>
@@ -632,7 +634,7 @@ ul{list-style:none;}
 
     <div class="traite-card reveal" data-type="reconnaissance">
       <span class="traite-badge traite-badge--reconnaissance">Amitié & Reconnaissance</span>
-      <span class="traite-flag">🇲🇪</span>
+      <div class="traite-flag-bloc"><span class="traite-flag">🇲🇪</span><span class="traite-pays-label">Monténégro</span></div>
       <h3 class="traite-nom">Grand Lodge Castel Nuovo — Monténégro</h3>
       <p class="traite-pays">Monténégro</p>
       <div class="traite-sgc"><strong>Rite :</strong> Memphis-Misraïm<br><strong>RBI :</strong> SGM Mickaël Darmon</div>
@@ -640,7 +642,7 @@ ul{list-style:none;}
 
     <div class="traite-card reveal" data-type="reconnaissance">
       <span class="traite-badge traite-badge--reconnaissance">Amitié & Reconnaissance</span>
-      <span class="traite-flag">🇧🇷</span>
+      <div class="traite-flag-bloc"><span class="traite-flag">🇧🇷</span><span class="traite-pays-label">Brésil</span></div>
       <h3 class="traite-nom">Soberano Sanctuario de Ismael — APRMM</h3>
       <p class="traite-pays">Brésil</p>
       <div class="traite-sgc"><strong>Signataire :</strong> Gelton Antônio da Silva<br><strong>RBI :</strong> SGM Mickaël Darmon</div>
@@ -648,7 +650,7 @@ ul{list-style:none;}
 
     <div class="traite-card reveal" data-type="reconnaissance">
       <span class="traite-badge traite-badge--reconnaissance">Amitié & Reconnaissance</span>
-      <span class="traite-flag">🇦🇷</span>
+      <div class="traite-flag-bloc"><span class="traite-flag">🇦🇷</span><span class="traite-pays-label">Argentine</span></div>
       <h3 class="traite-nom">Gran Logia Autónoma Argentina</h3>
       <p class="traite-pays">Argentine</p>
       <div class="traite-sgc"><strong>RBI :</strong> SGM Mickaël Darmon</div>
