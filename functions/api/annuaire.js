@@ -261,13 +261,19 @@ export async function onRequestPut(context){
     ? corps.versees.filter(Number.isInteger).slice(0, 500) : [];
   if (!ids.length) return json({ versees: 0 });
 
-  const trous = ids.map(() => '?').join(',');
-  const r = await context.env.DB.prepare(
-    `UPDATE annuaire SET versee = 1, versee_le = datetime('now')
-      WHERE loge_id = ? AND versee = 0 AND id IN (${trous})`)
-    .bind(moi.loge_id, ...ids).run();
-
-  const n = r?.meta?.changes ?? 0;
+  /* D1 refuse plus de 100 paramètres liés par requête : au-delà de 99
+     fiches d'un coup, l'UPDATE entier échouait et rien n'était versé.
+     On verse donc par paquets de 90, en un seul lot. */
+  const requetes = [];
+  for (let i = 0; i < ids.length; i += 90){
+    const paquet = ids.slice(i, i + 90);
+    requetes.push(context.env.DB.prepare(
+      `UPDATE annuaire SET versee = 1, versee_le = datetime('now')
+        WHERE loge_id = ? AND versee = 0 AND id IN (${paquet.map(() => '?').join(',')})`)
+      .bind(moi.loge_id, ...paquet));
+  }
+  const rs = await context.env.DB.batch(requetes);
+  const n = rs.reduce((t, r) => t + (r?.meta?.changes ?? 0), 0);
   if (n) await noter(context, moi.loge_id, moi.id,
                      n + ' fiche(s) de l’annuaire versée(s) au carnet');
   return json({ versees: n });

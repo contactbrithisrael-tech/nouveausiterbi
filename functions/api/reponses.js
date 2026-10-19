@@ -81,13 +81,17 @@ export async function onRequestPut(context){
     : [];
   if (!jetons.length) return json({ versees: 0 });
 
-  const trous = jetons.map(() => '?').join(',');
-  const r = await context.env.DB.prepare(
-    `UPDATE reponses SET versee = 1
-      WHERE loge_id = ? AND versee = 0 AND jeton IN (${trous})`)
-    .bind(moi.loge_id, ...jetons).run();
-
-  const n = r?.meta?.changes ?? 0;
+  /* Même limite de 100 paramètres liés : paquets de 90, en un seul lot. */
+  const requetes = [];
+  for (let i = 0; i < jetons.length; i += 90){
+    const paquet = jetons.slice(i, i + 90);
+    requetes.push(context.env.DB.prepare(
+      `UPDATE reponses SET versee = 1
+        WHERE loge_id = ? AND versee = 0 AND jeton IN (${paquet.map(() => '?').join(',')})`)
+      .bind(moi.loge_id, ...paquet));
+  }
+  const rs = await context.env.DB.batch(requetes);
+  const n = rs.reduce((t, r) => t + (r?.meta?.changes ?? 0), 0);
   if (n) await noter(context, moi.loge_id, moi.id,
                      n + ' réponse(s) reprise(s) au registre');
   return json({ versees: n });
