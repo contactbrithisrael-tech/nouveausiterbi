@@ -126,6 +126,7 @@ async function jetons(context, loge_id, tenue, gens){
   for (const r of (results || [])) dessus.set(r.qui_type + ':' + r.qui_id, r.jeton);
 
   const neufs = [];
+  let erreurEcriture = null;
   for (const g of gens){
     const cle = g.type + ':' + g.id;
     if (dessus.has(cle)){ g.jeton = dessus.get(cle); continue; }
@@ -133,15 +134,29 @@ async function jetons(context, loge_id, tenue, gens){
     neufs.push(g);
   }
   if (neufs.length){
-    const trous = neufs.map(() => '(?, ?, ?, ?, ?, ?, ?)').join(', ');
-    const liants = [];
-    for (const g of neufs)
-      liants.push(g.jeton, loge_id, tenue, g.type, g.id, g.nom || '', g.email);
+    /* D1 refuse plus de 100 paramètres liés par requête : à sept par
+       ligne, un seul INSERT ne passe pas au-delà de 14 personnes. On
+       écrit donc par paquets de 14, en un seul lot. */
+    const PAR_PAQUET = 14;
+    const requetes = [];
+    for (let i = 0; i < neufs.length; i += PAR_PAQUET){
+      const paquet = neufs.slice(i, i + PAR_PAQUET);
+      const trous = paquet.map(() => '(?, ?, ?, ?, ?, ?, ?)').join(', ');
+      const liants = [];
+      for (const g of paquet)
+        liants.push(g.jeton, loge_id, tenue, g.type, g.id, g.nom || '', g.email);
+      requetes.push(context.env.DB.prepare(
+        'INSERT OR IGNORE INTO reponses (jeton, loge_id, tenue, qui_type, qui_id, nom, courriel) ' +
+        'VALUES ' + trous).bind(...liants));
+    }
     try {
-      await context.env.DB.prepare(
-        'INSERT INTO reponses (jeton, loge_id, tenue, qui_type, qui_id, nom, courriel) ' +
-        'VALUES ' + trous).bind(...liants).run();
-    } catch (e) { /* une ligne déjà là : le lien existant fera l'affaire */ }
+      await context.env.DB.batch(requetes);
+    } catch (e) {
+      /* On ne l'avale plus en silence : la cause réelle part au journal
+         du serveur, et la relecture ci-dessous reste le juge. */
+      console.error('jetons: ecriture refusee —', e && e.message);
+      erreurEcriture = String((e && e.message) || e);
+    }
   }
 
   /* ── ON NE CROIT PAS L'ÉCRITURE SUR PAROLE ────────────────────────
@@ -164,6 +179,7 @@ async function jetons(context, loge_id, tenue, gens){
     const e = new Error('jetons_non_enregistres');
     e.perdus = perdus.length;
     e.total = gens.length;
+    e.cause = erreurEcriture;
     throw e;
   }
   return gens;
@@ -223,6 +239,7 @@ export async function onRequestPost(context){
       return json({
         erreur: 'jetons_non_enregistres',
         perdus: e.perdus || null, total: e.total || gens.length,
+        cause: e.cause || null,
         detail: 'Les liens de réponse n’ont pas pu être enregistrés. ' +
                 'Rien n’a été envoyé. Vérifiez que 004-reponses.sql a ' +
                 'bien été joué sur la base.'
@@ -250,15 +267,19 @@ export async function onRequestPost(context){
 
   /* Le journal, une ligne par personne. On l'écrit en un seul lot :
      quatre-vingts écritures séparées coûteraient plus que l'envoi. */
-  const valeurs = [], liants = [];
-  for (const x of sortie.resultats){
-    valeurs.push('(?, ?, ?, ?, ?, ?, ?)');
-    liants.push(moi.loge_id, moi.id, sujet, groupe, x.adresse, x.statut, x.detail || null);
-  }
+  /* Même limite de 100 paramètres : paquets de 14 lignes. */
   try {
-    await context.env.DB.prepare(
-      'INSERT INTO envois (loge_id, par, sujet, groupe, destinataire, statut, detail) ' +
-      'VALUES ' + valeurs.join(', ')).bind(...liants).run();
+    const journal = [];
+    for (let i = 0; i < sortie.resultats.length; i += 14){
+      const paquet = sortie.resultats.slice(i, i + 14);
+      const liants = [];
+      for (const x of paquet)
+        liants.push(moi.loge_id, moi.id, sujet, groupe, x.adresse, x.statut, x.detail || null);
+      journal.push(context.env.DB.prepare(
+        'INSERT INTO envois (loge_id, par, sujet, groupe, destinataire, statut, detail) ' +
+        'VALUES ' + paquet.map(() => '(?, ?, ?, ?, ?, ?, ?)').join(', ')).bind(...liants));
+    }
+    if (journal.length) await context.env.DB.batch(journal);
   } catch (e) { /* le journal ne doit pas faire échouer l'envoi qu'il consigne */ }
 
   const parties = sortie.resultats.filter(x => x.statut === 'partie').length;
