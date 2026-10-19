@@ -226,6 +226,19 @@ export async function onRequestPost(context){
      c'est ce qui permet de compter les présents et les couverts sans
      que personne ne dépouille quatre-vingts courriels à la main. */
   const veutReponse = corpsRequete?.reponse === true;
+
+  /* ── UNE CONVOCATION PART EN PDF, OU NE PART PAS ──────────────────
+     La convocation qui appelle une réponse est le feuillet mis en
+     pages, avec l'en-tête et les sceaux : c'est lui qu'on transfère et
+     qu'on archive. Sans pièce, pas d'envoi — et on le refuse AVANT
+     d'écrire un seul jeton. Une lettre de nouvelles (sans lien de
+     réponse) reste libre de partir en texte. */
+  const jointe = pieceJointe(corpsRequete?.piece);
+  if (!jointe.ok) return json({ erreur: jointe.erreur, octets: jointe.octets }, 413);
+  if (veutReponse && !jointe.piece)
+    return json({ erreur: 'piece_obligatoire',
+                  detail: 'La convocation doit être jointe en PDF.' }, 400);
+
   const tenue = propre(corpsRequete?.tenue) ||
                 (etat && etat.tenue && etat.tenue.date) || '';
   let avecJeton = gens;
@@ -256,9 +269,6 @@ export async function onRequestPost(context){
       'Présent ou excusé, et si vous restez aux agapes.\n' +
       'Votre réponse est comptée aussitôt ; le traiteur en dépend.'
     : corps;
-
-  const jointe = pieceJointe(corpsRequete?.piece);
-  if (!jointe.ok) return json({ erreur: jointe.erreur, octets: jointe.octets }, 413);
 
   const liste = gens.map(g => g.email);
   const sortie = await remettre(context.env, sujet, corpsPour, gens, jointe.piece);
