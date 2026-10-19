@@ -555,6 +555,7 @@
   <button class="onglet" onclick="afficherSection('annuaire')">Annuaire F∴M∴</button>
   <button class="onglet" onclick="afficherSection('inscrire-loge')">Inscrire ma Loge</button>
   <button class="onglet" onclick="afficherSection('convocation-loge')">Convocation de ma Loge</button>
+  <button class="onglet" onclick="afficherSection('venue')">Annoncer ma venue</button>
   <button class="onglet" onclick="afficherSection('constitutions')">Constitutions</button>
   <button class="onglet" onclick="afficherSection('rituels')">Rituels & Commandes</button>
   <button class="onglet" onclick="afficherSection('secretariat')">Secrétariat & Trésorerie</button>
@@ -1386,6 +1387,172 @@
 
 
 <!-- ═══════════════════════════════════════════
+     ANNONCER MA VENUE
+
+     Un Frère ou une Sœur qui souhaite assister à une tenue le dit ici,
+     une fois passé le tuilage d'accès.
+
+     ► LOGE, OBÉDIENCE ET ORIENT SONT FACULTATIFS, ET C'EST VOULU.
+       Certains ne sont plus dans une obédience, d'autres sont en
+       errance, d'autres encore ne peuvent officiellement pas nous
+       visiter. Leur demander un Atelier d'appartenance, ce serait les
+       écarter avant même qu'ils aient écrit. Le Secrétariat sait ainsi
+       à qui il a affaire, sans que personne ait à se justifier ici.
+
+     ► Le formulaire part par les deux chemins de l'annuaire : le
+       courriel du Rite et le registre. La date de la tenue est rangée
+       dans la zone de texte libre du registre (voir deposerAuRegistre).
+═══════════════════════════════════════════ -->
+<section class="section" id="venue">
+  <h2 class="section__titre">Annoncer ma venue</h2>
+  <div class="section__sep"></div>
+
+  <div class="annuaire-intro">
+    Vous souhaitez assister à une tenue du Rite ? Dites-le-nous ici, afin que le
+    Secrétariat vous attende.
+    <br><br>
+    <strong style="color:var(--or);">Votre Loge, votre obédience et votre Orient sont facultatifs.</strong>
+    Certains Frères et Sœurs ne sont plus dans une obédience, d'autres sont en
+    errance, d'autres encore ne peuvent officiellement pas nous visiter : ils sont
+    les bienvenus à nous écrire, sans avoir à se justifier. Donnez ce que vous
+    pouvez et souhaitez donner.
+    <br><br>
+    Annoncer sa venue ne tient pas lieu de tuilage.
+  </div>
+
+  <!-- ═══ TENUE EN COURS — reprise de Convocation_2026-11-02.pdf ═══
+       Rien ici n'est ajouté à la convocation : date, lieu et agapes sont
+       ceux qu'elle porte. À remplacer à chaque nouvelle convocation, avec
+       la date cachée du formulaire (tenue_date) et la date de fin
+       (data-fin) ci-dessous. -->
+  <div id="venue-encadre" data-fin="2026-11-02"
+       style="border:1px solid var(--or);padding:1.2rem 1.4rem;margin:1.5rem 0;line-height:1.8;">
+    <p style="color:var(--or);font-variant:small-caps;letter-spacing:.1em;margin-bottom:.4rem;">Tenue en cours</p>
+    <strong>Tenue d'obligation au premier degré d'Apprenti Oved</strong>
+    <span style="opacity:.85;">(Oved : « serviteur »)</span><br>
+    <strong>Lundi 2 novembre 2026 à 19 h 30</strong> — accueil à partir de 19 h 00<br>
+    R∴L∴ Bereshit n°00 — Loge Mère du Rite, Atelier mixte à l'O∴ de l'Alliance<br>
+    Temple « Le Venaqui », Ancienne Route d'Éguilles — 13122 Ventabren
+    <div style="margin-top:1rem;padding-top:.9rem;border-top:1px solid var(--or);font-size:.92rem;line-height:1.8;">
+      <p style="color:var(--or);font-variant:small-caps;letter-spacing:.1em;margin-bottom:.3rem;">Agapes rituelles — 22 h 15</p>
+      <ul style="margin:0 0 .6rem 1.1rem;padding:0;">
+        <li>Un traiteur prépare le repas : <strong>l'inscription est obligatoire</strong>.</li>
+        <li>Le triangle est de <strong>15 €</strong>. Il ne concerne que les
+            <strong>Visiteurs</strong> et les <strong>Amis de la Loge</strong> ; les Sœurs et
+            Frères de l'Atelier ont leur part comprise dans la capitation.</li>
+        <li>Inscription et règlement en ligne <strong>avant le vendredi 30 octobre 2026</strong>.</li>
+      </ul>
+      <a class="btn btn-or" href="https://www.helloasso.com/associations/les-enfants-de-nostradamus/evenements/agapes-visiteurs"
+         target="_blank" rel="noopener" style="text-decoration:none;">S'inscrire aux agapes et payer (15 €)</a>
+      <p style="margin-top:.7rem;font-size:.85rem;opacity:.9;">
+        Sur la page de paiement, pensez à ramener le <strong>don à 0 €</strong> : la plateforme
+        en propose un, qui s'ajoute au triangle.
+      </p>
+    </div>
+  </div>
+
+  <form id="form-venue" onsubmit="soumettre(event, 'form-venue', 'msg-venue')">
+    <div class="form-grid">
+
+      <div class="form-full">
+        <p style="color:var(--or);font-variant:small-caps;letter-spacing:.1em;margin-bottom:.4rem;">Qui vous êtes</p>
+      </div>
+      <div>
+        <label>Prénom *</label>
+        <input type="text" name="prenom" required>
+      </div>
+      <div>
+        <label>Nom (ou initial) *</label>
+        <input type="text" name="nom" required>
+      </div>
+      <div>
+        <label>Grade *</label>
+        <input type="text" name="grade" required placeholder="Apprenti, Compagnon, Maître, 18°, 30°…">
+      </div>
+      <div>
+        <label>Rite *</label>
+        <input type="text" name="rite" required placeholder="Le rite que vous pratiquez ou avez pratiqué">
+      </div>
+      <div>
+        <label>Email *</label>
+        <input type="email" name="email" required>
+      </div>
+      <div>
+        <label>Téléphone *</label>
+        <input type="tel" name="telephone" required>
+      </div>
+
+      <div class="form-full">
+        <p style="color:var(--or);font-variant:small-caps;letter-spacing:.1em;margin:1rem 0 .4rem;">Votre Atelier, si vous en avez un</p>
+      </div>
+      <div>
+        <label>Loge</label>
+        <input type="text" name="loge">
+      </div>
+      <div>
+        <label>Obédience</label>
+        <input type="text" name="obedience">
+      </div>
+      <div class="form-full">
+        <label>Orient</label>
+        <input type="text" name="ville">
+      </div>
+
+      <!-- La tenue visée est celle de la convocation en cours (encadré
+           ci-dessus) : on ne la saisit pas, on la reprend. À CHANGER avec
+           la date de l'encadré à chaque nouvelle convocation. -->
+      <input type="hidden" name="tenue_date" value="2026-11-02">
+      <div class="form-full">
+        <label>Un mot, s'il y a lieu</label>
+        <textarea name="venue_mot" rows="3"></textarea>
+      </div>
+
+      <!-- Le leurre : invisible, et jamais rempli par une main. -->
+      <div aria-hidden="true" style="position:absolute;left:-9999px;height:0;overflow:hidden;">
+        <label>Ne remplissez pas ce champ</label>
+        <input type="text" name="loge_annexe" tabindex="-1" autocomplete="off">
+      </div>
+
+    </div>
+    <div class="form-footer">
+      <button type="submit" class="btn btn-or">Annoncer ma venue</button>
+    </div>
+  </form>
+
+  <div class="msg-success" id="msg-venue">
+    ✡ Votre venue est annoncée.<br>
+    Le Secrétariat a bien reçu votre message.<br>
+    Que la Lumière vous guide, T∴C∴F∴.
+  </div>
+
+  <p id="venue-close" hidden style="text-align:center;margin:1.5rem 0;">
+    Aucune tenue n'est annoncée pour le moment. Revenez à la prochaine convocation.
+  </p>
+  <script>
+    /* Une tenue passée ne s'annonce plus : au lendemain de la date de
+       l'encadré, le formulaire se retire de lui-même plutôt que de
+       recevoir des venues pour une tenue déjà tenue. */
+    (function () {
+      var e = document.getElementById('venue-encadre');
+      if (!e) return;
+      var auj = new Date(), p = function (n) { return (n < 10 ? '0' : '') + n; };
+      var iso = auj.getFullYear() + '-' + p(auj.getMonth() + 1) + '-' + p(auj.getDate());
+      if (iso > e.getAttribute('data-fin')) {
+        e.hidden = true;
+        document.getElementById('form-venue').style.display = 'none';
+        document.getElementById('venue-close').hidden = false;
+      }
+    })();
+  </script>
+
+  <p class="confidentialite">
+    Conformément au RGPD, vous disposez d'un droit d'accès, de rectification et de suppression de vos données.<br>
+    Contact : contact.brith.israel@gmail.com
+  </p>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
      SECTION 5 : CONSTITUTIONS
 ═══════════════════════════════════════════ -->
 <section class="section" id="constitutions">
@@ -1701,7 +1868,8 @@
     'form-patente' : "Demande de patente",
     'form-annuaire': "Coordonnées, convocations et annuaire",
     'form-loge'    : "Inscription d'une Loge",
-    'form-convocation': "Convocation d'une Loge amie"
+    'form-convocation': "Convocation d'une Loge amie",
+    'form-venue'   : "Annonce de venue à une tenue"
   };
 
   // Rassemble les réponses en texte lisible. Les cases à cocher de même
@@ -1763,15 +1931,24 @@
        dès que le courriel est parti. */
   function deposerAuRegistre(form) {
     if (form.id !== 'form-annuaire' && form.id !== 'form-loge' &&
-        form.id !== 'form-convocation') return;
+        form.id !== 'form-convocation' && form.id !== 'form-venue') return;
     var d = new FormData(form);
     var SOURCES = { 'form-loge': 'espace-membres-loge',
-                    'form-convocation': 'espace-membres-convocation' };
+                    'form-convocation': 'espace-membres-convocation',
+                    'form-venue': 'espace-membres-venue' };
     var o = { source: SOURCES[form.id] || 'espace-membres' };
     d.forEach(function (v, k) {
       if (o[k] === undefined) { o[k] = v; }
       else { o[k] = [].concat(o[k], v).join(', '); }   // cases à cocher
     });
+    /* ── LA VENUE ──────────────────────────────────────────────────
+       Le registre ne retient que les champs de sa liste : la date de
+       la tenue n'y figure pas. On la range donc dans la seule zone de
+       texte libre qu'il garde, pour qu'elle ne se perde pas. */
+    if (form.id === 'form-venue') {
+      var mot = o.venue_mot ? ' — ' + o.venue_mot : '';
+      o.dispo_notes = 'Venue annoncée à la tenue du ' + (o.tenue_date || '?') + mot;
+    }
     try {
       fetch('/api/annuaire', {
         method: 'POST', headers: { 'content-type': 'application/json' },
