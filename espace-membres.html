@@ -1909,6 +1909,7 @@
     }
     form.style.display = 'none';
     msg.classList.add('visible');
+    avertirRegistre(form, msg);
     window.scrollTo({ top: msg.offsetTop - 100, behavior: 'smooth' });
   }
 
@@ -1949,12 +1950,32 @@
       var mot = o.venue_mot ? ' — ' + o.venue_mot : '';
       o.dispo_notes = 'Venue annoncée à la tenue du ' + (o.tenue_date || '?') + mot;
     }
+    /* On rend le résultat : pour la plupart des formulaires on l'ignore
+       (le courriel suffit), mais l'annonce de venue doit pouvoir dire
+       au visiteur si le registre n'a pas répondu. */
     try {
-      fetch('/api/annuaire', {
+      return fetch('/api/annuaire', {
         method: 'POST', headers: { 'content-type': 'application/json' },
         body: JSON.stringify(o)
-      }).catch(function () { /* le courriel suffit */ });
-    } catch (e) { /* idem */ }
+      }).then(function (r) { return r.ok; })
+        .catch(function () { return false; });
+    } catch (e) { return Promise.resolve(false); }
+  }
+
+  /* Si le registre n'a pas enregistré l'annonce, on le dit, et on dit
+     ce qui reste vrai : le courriel est parti, le Secrétariat la verra. */
+  var RBI_REGISTRE = null;
+  function avertirRegistre(form, msg) {
+    if (form.id !== 'form-venue' || !RBI_REGISTRE) return;
+    RBI_REGISTRE.then(function (ok) {
+      if (ok || msg.querySelector('.msg-registre')) return;
+      var p = document.createElement('p');
+      p.className = 'msg-registre';
+      p.style.cssText = 'margin-top:1rem;font-size:.88rem;font-style:italic;opacity:.85;';
+      p.textContent = "Votre message est bien parti par courriel. Son enregistrement " +
+                      "dans l'annuaire n'a pas abouti : le Secrétariat le fera à la main.";
+      msg.appendChild(p);
+    });
   }
 
   function soumettre(e, formId, msgId) {
@@ -1962,7 +1983,7 @@
     var form = document.getElementById(formId);
     var msg  = document.getElementById(msgId);
     var objet = RBI_FORM_OBJETS[formId] || 'Formulaire du Rite Brith Israël';
-    deposerAuRegistre(form);
+    RBI_REGISTRE = deposerAuRegistre(form) || null;
 
     if (RBI_FORM_ENDPOINT) {
       var donnees = new FormData(form);

@@ -69,7 +69,7 @@ const LEURRE = 'loge_annexe';
    jeté : un formulaire public ne décide pas de ce que porte la base. */
 const CHAMPS = ['prenom','nom','email','telephone','ville','pays','grade',
                 'loge','obedience','rite','dispo_notes','jours','souhaits',
-                'accord_partage'];
+                'accord_partage','tenue_date'];
 
 /* ── UNE LOGE N'EST PAS UNE PERSONNE ────────────────────────────────
    Un Atelier qui souhaite recevoir nos convocations n'inscrit pas un
@@ -168,6 +168,22 @@ export async function onRequestPost(context){
     if (!fiche.nom || !fiche.prenom) return json({ erreur: 'nom_manquant' }, 400);
     if (!fiche.email || !courrielPlausible(fiche.email))
       return json({ erreur: 'courriel_manquant' }, 400);
+
+    /* ── L'ANNONCE DE VENUE À UNE TENUE ───────────────────────────
+       La page l'exige déjà, mais une page se contourne : c'est ici
+       qu'on tient la règle. Il faut de quoi savoir qui vient (grade,
+       rite), comment le joindre (téléphone) et à quelle tenue — une
+       date lisible, qui permet de la rattacher à la convocation en
+       cours. Loge, obédience et Orient restent facultatifs : certains
+       n'ont plus d'obédience, ou ne peuvent officiellement pas nous
+       visiter, et n'ont pas à s'en justifier. */
+    if (texte(corps.source) === 'espace-membres-venue'){
+      if (!fiche.grade)     return json({ erreur: 'grade_manquant' }, 400);
+      if (!fiche.rite)      return json({ erreur: 'rite_manquant' }, 400);
+      if (!fiche.telephone) return json({ erreur: 'telephone_manquant' }, 400);
+      if (!dateLisible(fiche.tenue_date || ''))
+        return json({ erreur: 'date_manquante' }, 400);
+    }
   }
 
   const brut = JSON.stringify(fiche);
