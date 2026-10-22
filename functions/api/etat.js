@@ -23,6 +23,7 @@
 ═══════════════════════════════════════════════════════════════════ */
 
 import { sessionCourante, json, noter } from './_commun.js';
+import { fusionner } from './_fusion.js';
 
 const POIDS_MAX = 4 * 1024 * 1024;   // 4 Mio : large pour un Atelier
 
@@ -87,17 +88,70 @@ export async function onRequestPut(context){
       WHERE loge_id = ? AND version = ?`)
     .bind(texte, moi.id, moi.loge_id, corps.version).run();
 
-  const ecrite = res?.meta?.changes ?? res?.changes ?? 0;
-  if (!ecrite){
+  if (res?.meta?.changes ?? res?.changes ?? 0){
+    await noter(context, moi.loge_id, moi.id, 'enregistrement');
+    return json({ version: corps.version + 1 });
+  }
+
+  /* ── QUELQU'UN A ÉCRIT ENTRE-TEMPS ────────────────────────────────
+     On refusait ici, et le programme posait la question qui perd du
+     travail : « OK, je reprends la version du registre — ce qui n'est
+     que sur cet appareil sera perdu. » À deux, l'un des deux
+     recommençait. C'était la conséquence d'écrire en bloc, et cela
+     rendait impossible le travail à plusieurs — qui était pourtant la
+     raison d'être de ce serveur.
+
+     On fusionne désormais, quand le programme a renvoyé son SOCLE : le
+     document tel qu'il était quand celui qui écrit a commencé. Avec
+     lui on sait qui a changé quoi, et les deux travaux tiennent.
+
+     ► ON REFAIT LE TOUR À CHAQUE FOIS. Entre la relecture et
+       l'écriture, un troisième peut encore passer : la condition
+       « AND version = ? » le rattrape, et l'on recommence sur l'état
+       qu'il a laissé. Trois tours suffisent largement pour un Atelier
+       de treize personnes ; au-delà, on refuse plutôt que de tourner.
+
+     ► SANS SOCLE, L'ANCIEN REFUS. Un programme d'une version
+       précédente n'en envoie pas : il doit continuer de recevoir ce
+       qu'il sait traiter, et non une réponse qu'il prendrait pour un
+       succès. */
+  const avecSocle = corps.socle !== null && typeof corps.socle === 'object';
+  for (let tour = 0; avecSocle && tour < 3; tour++){
     const a = await context.env.DB.prepare(
       'SELECT donnees, version, modifie_le FROM etat WHERE loge_id = ?')
       .bind(moi.loge_id).first();
-    await noter(context, moi.loge_id, moi.id, 'écriture refusée : version périmée');
-    return conflit(a);
+    if (!a) break;
+    let leur;
+    try { leur = JSON.parse(a.donnees); } catch (e) { break; }
+
+    const ecrases = [];
+    const fondu = fusionner(corps.socle, leur, corps.donnees, ecrases);
+    const fonduTexte = JSON.stringify(fondu);
+    if (fonduTexte.length > POIDS_MAX)
+      return json({ erreur: 'trop_gros', poids: fonduTexte.length }, 413);
+
+    const r2 = await context.env.DB.prepare(
+      `UPDATE etat SET donnees = ?, version = version + 1,
+              modifie_le = datetime('now'), modifie_par = ?
+        WHERE loge_id = ? AND version = ?`)
+      .bind(fonduTexte, moi.id, moi.loge_id, a.version).run();
+    if (!(r2?.meta?.changes ?? r2?.changes ?? 0)) continue;   // un troisième est passé
+
+    await noter(context, moi.loge_id, moi.id,
+      'enregistrement fusionné avec celui du registre' +
+      (ecrases.length ? ' — tranché sur : ' + ecrases.slice(0, 20).join(', ') : ''));
+    /* On rend le document fusionné : celui qui écrit doit voir
+       apparaître le travail de l'autre, sans recharger et sans qu'on
+       lui demande de choisir. */
+    return json({ version: a.version + 1, donnees: fondu,
+                  fusion: { depuis: corps.version, ecrases } });
   }
 
-  await noter(context, moi.loge_id, moi.id, 'enregistrement');
-  return json({ version: corps.version + 1 });
+  const a = await context.env.DB.prepare(
+    'SELECT donnees, version, modifie_le FROM etat WHERE loge_id = ?')
+    .bind(moi.loge_id).first();
+  await noter(context, moi.loge_id, moi.id, 'écriture refusée : version périmée');
+  return conflit(a);
 }
 
 /* On rend l'état à jour AVEC le refus : sans lui, celui qui écrivait

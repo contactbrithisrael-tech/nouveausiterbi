@@ -173,9 +173,13 @@ with sync_playwright() as p:
     v(not X.locator("#perime").is_hidden(),
       "PERIMEE, ELLE LE DIT au lieu de laisser chercher ailleurs")
     dit = X.inner_text("#perime")
-    v("18 septembre" in dit and "19 septembre" in dit,
+    # LA VERSION DU JOUR NE S'ECRIT PAS DANS L'EPREUVE. Elle etait en
+    # dur — « 19 septembre » — et chaque livraison faisait echouer une
+    # epreuve qui n'avait rien a voir. On lit celle que la page porte.
+    actuelle = X.evaluate("VERSION")
+    v("18 septembre" in dit and actuelle in dit,
       "en nommant les deux versions : celle qu'on voit et celle qui existe",
-      dit[:160])
+      (dit[:160], actuelle))
     v(X.locator("#perime-recharger").count() == 1,
       "et le bouton qui repare est la, non un conseil a suivre")
     X.click("#perime-recharger"); X.wait_for_timeout(1800)
@@ -201,3 +205,9 @@ with sync_playwright() as p:
     b.close()
 
 print(f"\n  {len(ko)} échec(s)" if ko else "\n  tout passe")
+
+# ── UNE ÉPREUVE QUI ÉCHOUE DOIT LE DIRE À QUI LA LANCE ──────────────
+# Elle imprimait son bilan et rendait 0 : un lanceur qui regarde le code
+# de sortie la comptait donc PASSÉE, échecs compris. C'est pire qu'une
+# épreuve absente — une épreuve absente ne rassure personne.
+raise SystemExit(1 if ko else 0)
