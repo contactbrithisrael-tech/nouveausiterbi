@@ -109,6 +109,48 @@ async function leTableau(context, tenue){
   }));
 }
 
+/* ── LA DATE DE LA PROCHAINE TENUE, ET RIEN D'AUTRE ────────────────
+   Le formulaire « Annoncer ma venue » portait sa date ÉCRITE EN DUR :
+   <input type="hidden" name="tenue_date" value="2026-11-02">. Deux
+   conséquences, et la seconde est la mauvaise :
+
+   — il faut la changer à la main à chaque Tenue, et le jour où on
+     l'oublie les Visiteurs s'annoncent pour une date passée, sans que
+     rien ne le signale ;
+   — le Visiteur ne voyait pas pour quelle Tenue il s'engageait. Un
+     champ caché fait signer sans lire.
+
+   Cette route rend la date, et strictement elle. Pas le lieu, pas
+   l'heure, pas le titre, pas l'ordre du jour, pas un nom : une Tenue
+   a une date, et c'est tout ce dont un formulaire d'annonce a besoin.
+
+   ► CE QU'ON DIVULGUE ICI, ET POURQUOI C'EST ACCEPTÉ. Sans session :
+     n'importe qui peut demander cette date. Elle figure déjà sur les
+     convocations qui circulent entre Ateliers, et la page qui invite
+     les Visiteurs à s'annoncer doit bien la leur dire. Divulguer le
+     lieu serait un autre arbitrage — il n'est pas pris ici.
+
+   ► ELLE SORT DU REGISTRE, non de la table des réponses : le registre
+     la porte dès que la Secrétaire l'a saisie, alors que les réponses
+     n'existent qu'une fois les convocations parties. Un Visiteur doit
+     pouvoir s'annoncer AVANT que les convocations ne partent. */
+export async function onRequestGet(context){
+  try {
+    const r = await context.env.DB.prepare(
+      'SELECT donnees FROM etat WHERE loge_id = ?').bind(LOGE).first();
+    if (!r) return json({ tenue: null });
+    const d = JSON.parse(r.donnees)?.tenue?.date;
+    /* Une date au format du calendrier, ou rien : on ne rend pas un
+       texte libre que la page irait poser dans un champ « date ». */
+    return json({ tenue: /^\d{4}-\d{2}-\d{2}$/.test(d) ? d : null });
+  } catch (e) {
+    /* Le registre illisible n'est pas une raison de rendre une erreur
+       parlante à qui n'a pas de session : on rend « pas de date », et
+       le formulaire laisse le Visiteur la saisir. */
+    return json({ tenue: null });
+  }
+}
+
 /* ── SE PRÉSENTER ──────────────────────────────────────────────────
    POST { courriel } rend le Tableau, et la ligne de celui qui demande.
 

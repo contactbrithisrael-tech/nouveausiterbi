@@ -42,7 +42,7 @@ with sync_playwright() as pw:
     # == 1. LA SECRETAIRE CONVOQUE ==================================
     cM = b.new_context(); M = cM.new_page()
     eM = []; M.on("pageerror", lambda e: eM.append(str(e)))
-    M.on("dialog", lambda d: d.accept())
+    dM = []; M.on("dialog", lambda d: (dM.append(d.message), d.accept()))
     M.goto(U); M.wait_for_timeout(800)
     M.fill("#porte-mdp", CLE); M.click("#porte-form button[type=submit]")
     M.wait_for_timeout(2200)
@@ -175,6 +175,110 @@ with sync_playwright() as pw:
       "CE QU'IL A DECLARE ARRIVE AU REGISTRE DE L'ATELIER, sans fusion nouvelle",
       rep)
     v(rep and rep.get("agapes") is True, "et son couvert est compte", rep)
+
+    # == 6bis. LA DATE DE LA TENUE NE S'ECRIT PLUS EN DUR ===========
+    # Elle etait cachee et figee dans la page. La consequence qu'on
+    # mesure ici n'est pas « une date passee » : c'est que le
+    # formulaire SE RETIRAIT passe cette date et ne revenait qu'a la
+    # main — une Tenue de plus, et plus personne ne pouvait s'annoncer,
+    # sans que rien ne le dise.
+    dite = V.evaluate("""async () => (await (await fetch('/api/tableau')).json())""")
+    v(dite.get("tenue") == LE_JOUR,
+      "LA ROUTE REND LA DATE DU REGISTRE, et c'est bien celle de la Tenue",
+      (dite, LE_JOUR))
+    v(set(dite.keys()) == {"tenue"},
+      "ET STRICTEMENT ELLE : ni le lieu, ni l'heure, ni un nom", list(dite.keys()))
+    sans = V.evaluate("""async () => { const r = await fetch('/api/tableau');
+      return r.status; }""")
+    v(sans == 200, "elle repond sans session : un Visiteur n'en a pas", sans)
+
+    # LA TENUE DU TABLEAU D'EPREUVE EST PASSEE : le formulaire doit se
+    # retirer, et le dire. C'est le bon comportement, et on l'eprouve
+    # pour ce qu'il est — non comme un defaut.
+    import datetime as _dt
+    auj = _dt.date.today().isoformat()
+    V.click("button.onglet:has-text('Annoncer ma venue')"); V.wait_for_timeout(1600)
+    if LE_JOUR < auj:
+        v(not V.locator("#form-venue").is_visible(),
+          "UNE TENUE PASSEE NE S'ANNONCE PLUS : le formulaire se retire")
+        v(V.locator("#venue-close").is_visible(),
+          "et la page dit pourquoi, au lieu de laisser une page muette")
+
+    # ET IL REVIENT TOUT SEUL A LA TENUE SUIVANTE. C'est le point :
+    # avant, il fallait rouvrir le fichier et changer la date a la main.
+    DEMAIN = (_dt.date.today() + _dt.timedelta(days=30)).isoformat()
+    M.evaluate("(d) => { E.tenue.date = d; garder(); }", DEMAIN)
+    M.wait_for_timeout(1500)
+    V.reload(); V.wait_for_timeout(900)
+    if V.locator("#tuilage-porte").is_visible():
+        V.fill("#porte-q1", "de midi a minuit"); V.fill("#porte-q2", "7 ans")
+        V.click("#porte-form button[type=submit]"); V.wait_for_timeout(700)
+    V.click("button.onglet:has-text('Annoncer ma venue')"); V.wait_for_timeout(1800)
+    v(V.locator("#form-venue").is_visible(),
+      "LE FORMULAIRE REVIENT DE LUI-MEME A LA TENUE SUIVANTE, sans qu'on "
+      "rouvre le fichier")
+    v(V.input_value("#venue-date") == DEMAIN,
+      "IL EN PORTE LA DATE, et le Visiteur la VOIT : un champ cache fait "
+      "signer sans lire", V.input_value("#venue-date"))
+    v(V.get_attribute("#venue-date", "readonly") is not None,
+      "elle est en lecture seule tant que le registre en annonce une")
+    v("registre" in V.inner_text("#venue-date-mot"),
+      "et la page dit d'ou elle vient", V.inner_text("#venue-date-mot"))
+
+    # L'ENCADRE RESTE ECRIT A LA MAIN : s'il ne parle plus de la meme
+    # Tenue, on le DIT. Deux dates qui se contredisent en silence sont
+    # pires qu'une seule, fut-elle fausse.
+    v(V.get_attribute("#venue-encadre", "data-fin") != DEMAIN,
+      "(l'encadre de la page parle bien d'une autre Tenue)")
+    v("plus à jour" in V.inner_text("#venue-encadre"),
+      "L'ENCADRE PERIME EST SIGNALE, non laisse a lire : son heure, son lieu "
+      "et son triangle ne sont plus ceux de la Tenue annoncee",
+      V.inner_text("#venue-encadre")[:300])
+
+    # on remet la Tenue d'epreuve ou elle etait
+    M.evaluate(f"() => {{ E.tenue.date = '{LE_JOUR}'; garder(); }}")
+    M.wait_for_timeout(1200)
+
+    # == 6ter. L'ERRATUM NE VAUT PLUS POUR UNE SEULE TENUE ==========
+    # Les phrases validees sont gardees mot pour mot ; ce sont les
+    # FAITS qui viennent de la fiche. Changer de Tenue ne change donc
+    # pas une syllabe du texte relu — cela change la date annoncee.
+    suj = M.evaluate("erratumSujet()")
+    v(LE_JOUR.split('-')[2].lstrip('0') in suj and "2026" in suj,
+      "L'OBJET DE L'ERRATUM PORTE LA DATE DE LA TENUE EN COURS", suj)
+    corps = M.evaluate("erratumCorps()")
+    for phrase in ["bien vouloir nous en excuser", "annule et remplace",
+                   "Pour mémoire"]:
+        v(phrase in corps, f"la phrase validée « {phrase} » est gardée", corps[:200])
+    v(M.evaluate("E.tenue.lieuNom") in corps,
+      "et les faits viennent de la fiche, non d'une phrase recopiee", corps[-400:])
+
+    # On change la Tenue : le texte suit, sans qu'on touche a rien.
+    ancien = suj
+    M.evaluate("() => { E.tenue.date = '2027-04-19'; garder(); }")
+    M.wait_for_timeout(400)
+    suj2 = M.evaluate("erratumSujet()")
+    v(suj2 != ancien and "2027" in suj2,
+      "CHANGER DE TENUE CHANGE L'ERRATUM : il n'est plus mort le lendemain",
+      (ancien, suj2))
+    v("bien vouloir nous en excuser" in M.evaluate("erratumCorps()"),
+      "et les phrases validees, elles, n'ont pas bouge")
+    M.evaluate(f"() => {{ E.tenue.date = '{LE_JOUR}'; garder(); }}")
+    M.wait_for_timeout(400)
+
+    # LE VERROU EST DEPLACE, NON LEVE : un erratum sans premier envoi
+    # annoncerait une correction a des gens qui n'ont rien recu.
+    M.evaluate("() => { E.convoquee = false; garder(); dessiner(); }")
+    M.wait_for_timeout(600)
+    M.click("#t-tenue"); M.wait_for_timeout(800)
+    dM.clear()
+    M.click("#poste-erratum"); M.wait_for_timeout(1200)
+    ditE = " ".join(dM)
+    v("AUCUNE CONVOCATION" in ditE and "Rien n" in ditE,
+      "SANS PREMIER ENVOI, L'ERRATUM REFUSE — et dit quoi faire a la place",
+      ditE[:300])
+    M.evaluate("() => { E.convoquee = true; garder(); dessiner(); }")
+    M.wait_for_timeout(500)
 
     # == 7. ON N'ESSAIE PAS LES ADRESSES AU HASARD ==================
     bloc = None

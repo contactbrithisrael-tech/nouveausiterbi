@@ -1529,9 +1529,14 @@
 
   <!-- ═══ TENUE EN COURS — reprise de Convocation_2026-11-02.pdf ═══
        Rien ici n'est ajouté à la convocation : date, lieu et agapes sont
-       ceux qu'elle porte. À remplacer à chaque nouvelle convocation, avec
-       la date cachée du formulaire (tenue_date) et la date de fin
-       (data-fin) ci-dessous. -->
+       ceux qu'elle porte.
+
+       ► CET ENCADRÉ RESTE ÉCRIT À LA MAIN, et « data-fin » avec lui :
+         il porte l'heure, le lieu, le prix du triangle et le lien de
+         paiement, qu'on ne publie pas depuis le registre sans l'avoir
+         décidé. La DATE DU FORMULAIRE, elle, ne vient plus d'ici : elle
+         vient du registre. Si les deux divergent, la page le dit — un
+         encadré périmé est signalé au lieu d'être lu. -->
   <div id="venue-encadre" data-fin="2026-11-02"
        style="border:1px solid var(--or);padding:1.2rem 1.4rem;margin:1.5rem 0;line-height:1.8;">
     <p style="color:var(--or);font-variant:small-caps;letter-spacing:.1em;margin-bottom:.4rem;">Tenue en cours</p>
@@ -1605,10 +1610,25 @@
         <input type="text" name="ville">
       </div>
 
-      <!-- La tenue visée est celle de la convocation en cours (encadré
-           ci-dessus) : on ne la saisit pas, on la reprend. À CHANGER avec
-           la date de l'encadré à chaque nouvelle convocation. -->
-      <input type="hidden" name="tenue_date" value="2026-11-02">
+      <!-- ═══ LA DATE NE S'ÉCRIT PLUS EN DUR ═══════════════════════
+           Elle était cachée et figée : <input type="hidden" value="2026-11-02">.
+           Deux conséquences, et la seconde est la mauvaise :
+
+           — le Visiteur ne voyait pas pour quelle Tenue il s'engageait.
+             Un champ caché fait signer sans lire ;
+           — passé cette date, le formulaire SE RETIRE de lui-même (voir
+             plus bas) et ne revient qu'à la main. Une Tenue de plus, et
+             plus personne ne peut s'annoncer, sans que rien ne le dise.
+
+           Elle vient maintenant du registre de l'Atelier, et le
+           Visiteur la voit. Si le serveur ne répond pas, le champ reste
+           à saisir plutôt que de bloquer. -->
+      <div class="form-full">
+        <label for="venue-date">Tenue à laquelle vous venez *</label>
+        <input id="venue-date" type="date" name="tenue_date" required>
+        <span class="aide" id="venue-date-mot" style="font-size:.82rem;color:var(--gris);"
+          >Reprise du registre de l'Atelier.</span>
+      </div>
       <div class="form-full">
         <label>Un mot, s'il y a lieu</label>
         <textarea name="venue_mot" rows="3"></textarea>
@@ -1636,19 +1656,80 @@
     Aucune tenue n'est annoncée pour le moment. Revenez à la prochaine convocation.
   </p>
   <script>
-    /* Une tenue passée ne s'annonce plus : au lendemain de la date de
-       l'encadré, le formulaire se retire de lui-même plutôt que de
-       recevoir des venues pour une tenue déjà tenue. */
+    /* ═══ LA TENUE VISÉE VIENT DU REGISTRE ═══════════════════════════
+       Une tenue passée ne s'annonce plus : le formulaire se retire de
+       lui-même. Mais il se retirait d'après une date ÉCRITE DANS CETTE
+       PAGE — donc, passé le 2 novembre, il disparaissait et ne revenait
+       qu'à la main. Un Atelier qui convoque la Tenue suivante trouvait
+       « Aucune tenue n'est annoncée », sans que rien ne dise pourquoi.
+
+       La date vient maintenant du registre. Trois cas, et chacun dit ce
+       qu'il est :
+
+       — le registre annonce une Tenue à venir : le champ la porte, en
+         lecture seule, et le Visiteur la voit ;
+       — le registre n'en annonce aucune, ou ne répond pas : le champ
+         reste à saisir. On ne ferme pas une porte parce qu'un serveur
+         se tait ;
+       — la date du registre ne correspond pas à celle de l'encadré
+         ci-dessus : l'encadré est périmé, ET ON LE DIT. Deux dates qui
+         se contredisent en silence sont pires qu'une seule, fût-elle
+         fausse. */
     (function () {
       var e = document.getElementById('venue-encadre');
       if (!e) return;
+      var champ = document.getElementById('venue-date');
+      var mot = document.getElementById('venue-date-mot');
+      var form = document.getElementById('form-venue');
+      var close = document.getElementById('venue-close');
+
       var auj = new Date(), p = function (n) { return (n < 10 ? '0' : '') + n; };
       var iso = auj.getFullYear() + '-' + p(auj.getMonth() + 1) + '-' + p(auj.getDate());
-      if (iso > e.getAttribute('data-fin')) {
-        e.hidden = true;
-        document.getElementById('form-venue').style.display = 'none';
-        document.getElementById('venue-close').hidden = false;
+
+      function fermer() {
+        e.hidden = true; form.style.display = 'none'; close.hidden = false;
       }
+      function ouvrir(date) {
+        champ.value = date;
+        champ.setAttribute('readonly', 'readonly');
+        mot.textContent = 'Tenue annoncée par le registre de l’Atelier.';
+        /* L'encadré ci-dessus est écrit à la main : lieu, heure, prix,
+           lien de paiement. Si sa date n'est plus celle du registre,
+           tout ce qu'il dit est suspect — on le signale plutôt que de
+           laisser lire des agapes périmées. */
+        if (e.getAttribute('data-fin') !== date) {
+          var avis = document.createElement('p');
+          avis.style.cssText = 'margin-top:1rem;padding:.8rem 1rem;' +
+            'border-left:2px solid #d98b8b;background:rgba(0,0,0,.25);' +
+            'font-size:.88rem;line-height:1.7;';
+          avis.innerHTML = '<strong>Cet encadré n’est plus à jour.</strong> ' +
+            'Il décrit la Tenue du ' + e.getAttribute('data-fin') +
+            ', alors que le registre annonce celle du ' + date +
+            '. L’heure, le lieu, le triangle et le lien de paiement ' +
+            'ci-dessus sont donc à vérifier auprès du secrétariat.';
+          e.appendChild(avis);
+        }
+      }
+      function libre(pourquoi) {
+        champ.removeAttribute('readonly');
+        mot.textContent = pourquoi;
+      }
+
+      fetch('/api/tableau', { cache: 'no-store' })
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          if (d && d.tenue) {
+            if (iso > d.tenue) { fermer(); return; }   // elle est passée
+            ouvrir(d.tenue);
+            return;
+          }
+          libre('Aucune Tenue n’est annoncée au registre : indiquez la date ' +
+                'portée sur la convocation que vous avez reçue.');
+        })
+        .catch(function () {
+          libre('Le registre n’a pas répondu : indiquez la date portée sur la ' +
+                'convocation que vous avez reçue.');
+        });
     })();
   </script>
 
