@@ -58,6 +58,7 @@ RBI_PORT=8804               node loge/serveur/faux-serveur.mjs &   # aucune clé
 RBI_PORT=8805 RBI_LECTURE=1 RBI_LECTURE_ECHEC=1 \
   node loge/serveur/faux-serveur.mjs &   # le service de lecture refuse la clé
 RBI_PORT=8806 node loge/serveur/faux-serveur.mjs &   # la page en accès libre
+RBI_PORT=8810 RBI_COURRIEL=1 node loge/serveur/faux-serveur.mjs &   # le Tableau de la Loge
 
 RBI_URL=http://127.0.0.1:8787/ python3 loge/serveur/essai-documents.py
 RBI_URL=http://127.0.0.1:8789/ python3 loge/serveur/essai-partage.py
@@ -75,6 +76,7 @@ RBI_URL=http://127.0.0.1:8799/ RBI_THEME=dark  python3 loge/serveur/essai-pdf.py
 RBI_URL=http://127.0.0.1:8800/ python3 loge/serveur/essai-tuilage.py
 RBI_URL=http://127.0.0.1:8801/ python3 loge/serveur/essai-odj.py
 RBI_URL=http://127.0.0.1:8806/ python3 loge/serveur/essai-loges-amies.py
+RBI_URL=http://127.0.0.1:8810/ python3 loge/serveur/essai-tableau.py
 python3 loge/serveur/essai-lecture.py
 ```
 

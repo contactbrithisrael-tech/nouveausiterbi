@@ -107,7 +107,30 @@ const DB = { prepare(sql){ return {
   async first(){ return db.prepare(sql).get(...this._a) ?? null; },
   async all(){ return { results: db.prepare(sql).all(...this._a) }; },
   async run(){ const r = db.prepare(sql).run(...this._a);
-               return { meta: { changes: Number(r.changes) } }; } }; } };
+               return { meta: { changes: Number(r.changes) } }; } }; },
+/* ── « batch » MANQUAIT, ET TROIS ÉPREUVES TOMBAIENT ───────────────
+   D1 limite une requête à cent paramètres liés : l'écriture des jetons
+   se fait donc par paquets, remis en un seul lot à DB.batch(). Ce banc
+   d'essai n'avait que « prepare » — l'appel levait, l'erreur était
+   consignée, aucun jeton n'était posé, et la relecture refusait
+   l'envoi : « jetons_non_enregistres ».
+
+   ► CE N'ÉTAIT PAS UN DÉFAUT DU PROGRAMME, et il fallait le vérifier
+     avant de le dire : en service, D1 a bien batch(). C'est le banc
+     qui ne savait pas jouer ce que le programme demande — et un banc
+     qui fait échouer ce qui marche est pire qu'un banc absent : il
+     envoie corriger du code sain.
+
+   Le vrai batch de D1 est atomique ; celui-ci joue les requêtes l'une
+   après l'autre. Pour une épreuve, ce qui compte est qu'elles soient
+   toutes jouées — et un échec au milieu laisse ici un état partiel là
+   où D1 n'en laisserait aucun. La nuance est écrite pour qu'on ne la
+   découvre pas un jour en cherchant ailleurs. */
+  async batch(requetes){
+    const sorties = [];
+    for (const q of (requetes || [])) sorties.push(await q.run());
+    return sorties;
+  } };
 
 const F = {
   entrer: await import(RACINE + 'functions/api/entrer.js'),
@@ -118,6 +141,7 @@ const F = {
   reponse:  await import(RACINE + 'functions/api/reponse.js'),
   reponses: await import(RACINE + 'functions/api/reponses.js'),
   lire: await import(RACINE + 'functions/api/lire.js'),
+  tableau: await import(RACINE + 'functions/api/tableau.js'),
   sortir: await import(RACINE + 'functions/api/sortir.js'),
   etat:   await import(RACINE + 'functions/api/etat.js'),
 };
@@ -189,7 +213,7 @@ createServer(async (req, res) => {
     res.writeHead(200, {'content-type':'application/json'});
     return res.end('[]');
   }
-  const m = u.pathname.match(/^\/api\/(entrer|sortir|etat|porte|mdp|annuaire|envoyer|reponses?|lire)$/);
+  const m = u.pathname.match(/^\/api\/(entrer|sortir|etat|porte|mdp|annuaire|envoyer|reponses?|lire|tableau)$/);
   if (!m){ res.writeHead(404); return res.end('non'); }
 
   const corps = await new Promise(ok => { let d=''; req.on('data',c=>d+=c); req.on('end',()=>ok(d)); });

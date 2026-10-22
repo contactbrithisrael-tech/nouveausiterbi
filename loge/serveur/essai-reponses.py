@@ -24,6 +24,17 @@ CLE = os.environ.get("RBI_CLE", "cleSecretariatEpreuve")
 ko = []
 
 
+# Un PDF minuscule mais vrai. LA CONVOCATION NE PART PLUS SANS PIECE
+# JOINTE : c'est une regle posee sur main, et l'epreuve doit s'y plier
+# comme la Secretaire s'y plie. Sans cela l'envoi est refuse, et tout
+# ce qui suit tombe — non parce que le programme est casse, mais parce
+# que l'epreuve ne connaissait pas la regle.
+def faux_pdf():
+    return (b"%PDF-1.4\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n"
+            b"2 0 obj<</Type/Pages/Kids[]/Count 0>>endobj\n"
+            b"trailer<</Root 1 0 R>>\n%%EOF\n")
+
+
 def v(c, n, d=''):
     print(f"  {'OK ' if c else 'NON'}  {n}{'' if c else '  <- ' + str(d)[:240]}")
     if not c:
@@ -63,8 +74,12 @@ with sync_playwright() as pw:
 
     # == 1. LA CONVOCATION PART AVEC UN LIEN PAR PERSONNE ============
     pg.evaluate("async () => { await fetch('/__courriels/vider'); }")
+    # La piece d'abord : sans PDF joint, la convocation ne part pas.
+    piece = os.path.join(tempfile.gettempdir(), "Convocation epreuve reponses.pdf")
+    open(piece, "wb").write(faux_pdf())
+    pg.set_input_files("#fichier-piece", piece); pg.wait_for_timeout(1600)
     dlg.clear()
-    pg.click("#poste-tous"); pg.wait_for_timeout(3500)
+    pg.click("#poste-tous"); pg.wait_for_timeout(4000)
 
     remis = pg.evaluate("async () => (await (await fetch('/__courriels')).json())")
     v(len(remis) == 1, "un seul appel au service", len(remis))
