@@ -925,7 +925,7 @@ function pierrePlate(m){ const c=Math.round(m*100), kg=Math.floor(c/100), g=c%10
 /* La date de ce programme. Changée à chaque livraison, elle permet de
    savoir en un coup d'œil si le navigateur a bien pris la nouvelle
    version — ou s'il ressert celle d'hier. */
-const VERSION = '22 octobre 2026 · 11h00';
+const VERSION = '22 octobre 2026 · 12h00';
 
 const $ = s => document.querySelector(s);
 
@@ -3121,22 +3121,64 @@ function convocationTexte(){
    le 19 octobre 2026. Il n'est donc PAS reconstitué depuis la fiche de
    la Tenue : ce qu'on envoie à cent personnes est ce qui a été relu.
 
-   ► IL NE VAUT QUE POUR LA TENUE DU 2 NOVEMBRE 2026. Sur une autre
-     Tenue, le bouton refuse plutôt que d'annoncer une date fausse. */
-const ERRATUM_TENUE = '2026-11-02';
-const ERRATUM_SUJET = "ERRATUM — Convocation à la Tenue d'Obligation du lundi 2 novembre 2026";
-const ERRATUM_CORPS =
-"Mes très chères Sœurs, mes très chers Frères,\n\n" +
-"Dans notre précédent message, la pièce jointe n'était pas la bonne convocation. " +
-"Nous vous prions de bien vouloir nous en excuser.\n\n" +
-"Vous trouverez ci-joint, en PDF, la convocation à jour : elle annule et remplace " +
-"celle reçue précédemment.\n\n" +
-"Pour mémoire : Tenue d'Obligation au premier degré d'Apprenti Oved, lundi 2 novembre " +
-"2026 à 19:30, Temple « Le Venaqui », Ancienne Route d'Éguilles, 13122 Ventabren. " +
-"Agapes : triangle de 15 € pour les Visiteurs et les Amis de la Loge, inscription avant " +
-"le vendredi 30 octobre 2026.\n\n" +
-"Fraternellement,\n" +
-"Pour la R∴L∴ Bereshit n°00 — contact.brith.israel@gmail.com";
+   ── CE QUI A CHANGÉ, ET POURQUOI ──────────────────────────────────
+
+   Il ne valait que pour la Tenue du 2 novembre 2026 : la date, l'heure,
+   le lieu, le prix et la limite d'inscription étaient écrits dans la
+   phrase. Sur une autre Tenue, le bouton refusait — et c'était le bon
+   réflexe : mieux vaut refuser qu'annoncer une date fausse.
+
+   Mais un bouton qui ne peut servir qu'une fois est un bouton mort le
+   lendemain. Or la faute qu'il répare — joindre le mauvais PDF — ne
+   s'est pas produite une fois par hasard : elle se reproduira.
+
+   LES PHRASES VALIDÉES SONT GARDÉES, MOT POUR MOT. Ce sont les FAITS
+   qui ne sont plus figés : ils viennent de la fiche de la Tenue, comme
+   ceux de la convocation, et par les mêmes tables (TYPES, RANGS, DE).
+   Changer de Tenue ne change donc pas une syllabe du texte relu — cela
+   change la date qu'il annonce, ce qui est précisément ce qu'on veut.
+
+   ► LE VERROU N'EST PAS LEVÉ, IL EST DÉPLACÉ. Il portait sur la date ;
+     il porte maintenant sur le sens : un ERRATUM ne se conçoit qu'APRÈS
+     un premier envoi. Sans lui, il n'y a rien à rectifier, et le bouton
+     refuse — en disant quoi. */
+function erratumSujet(){
+  const T = E.tenue;
+  return "ERRATUM — Convocation à la " + (TYPES[T.type] || T.titre || 'Tenue') +
+         " du " + dateLongue(T.date);
+}
+
+function erratumCorps(){
+  const T = E.tenue;
+  const l = [];
+  l.push("Mes très chères Sœurs, mes très chers Frères,");
+  l.push("");
+  l.push("Dans notre précédent message, la pièce jointe n'était pas la bonne " +
+         "convocation. Nous vous prions de bien vouloir nous en excuser.");
+  l.push("");
+  l.push("Vous trouverez ci-joint, en PDF, la convocation à jour : elle annule " +
+         "et remplace celle reçue précédemment.");
+  l.push("");
+  /* « Pour mémoire » : les mêmes faits que la convocation, tirés de la
+     même fiche. Les recopier à la main les ferait diverger d'elle — et
+     c'est exactement la faute qu'un erratum est censé réparer. */
+  let rappel = "Pour mémoire : " + (TYPES[T.type] || T.titre || 'Tenue');
+  if (T.degre) rappel += " au " + RANGS[T.degre] + " degré " + DE[T.degre];
+  rappel += ", " + dateLongue(T.date) + " à " + T.heureOuv +
+            ", " + T.lieuNom + ", " + T.lieuAdresse + ", " +
+            T.lieuCp + " " + T.lieuVille + ".";
+  l.push(rappel);
+  if (T.agapesOui){
+    l.push("Agapes : triangle de " + T.agapesPrix + " € pour les Visiteurs et " +
+           "les Amis de la Loge, inscription avant le " +
+           dateLongue(T.agapesLimite) + ".");
+  }
+  l.push("");
+  if (T.signature && T.signature.trim()) l.push(T.signature.trim());
+  else { l.push("Fraternellement,");
+         l.push("Pour la R∴L∴ Bereshit n°00 — " + COURRIEL_LOGE); }
+  return l.join("\n");
+}
 
 /* Le corps qui part réellement : c'est la présence de la pièce jointe
    qui décide, non un réglage de plus. Une pièce qui porte le feuillet
@@ -3648,9 +3690,14 @@ document.addEventListener('click', e => {
   /* Un seul geste pour les colonnes et pour les visiteurs. */
   if (b.id === 'poste-tous' || b.id === 'poste-erratum'){
     const erratum = b.id === 'poste-erratum';
-    if (erratum && !(E.tenue && E.tenue.date === ERRATUM_TENUE)){
-      alert("Le texte de l'ERRATUM est prévu pour la Tenue du 2 novembre 2026 " +
-            "seulement. Rien n'a été envoyé."); return;
+    /* Un ERRATUM ne se conçoit qu'après un premier envoi : sans lui, il
+       n'y a rien à rectifier, et l'on annoncerait une correction à des
+       gens qui n'ont rien reçu. */
+    if (erratum && !E.convoquee){
+      alert("AUCUNE CONVOCATION N'EST ENCORE PARTIE pour cette Tenue.\n\n" +
+            "Un ERRATUM rectifie un envoi précédent : il n'y a rien à " +
+            "rectifier. Servez-vous du bouton d'or.\n\nRien n'a été envoyé.");
+      return;
     }
     /* La convocation part en PDF, ou ne part pas. */
     if (!PIECE.nom || !PIECE.contenu){
@@ -3672,7 +3719,7 @@ document.addEventListener('click', e => {
     const n = sansDoublon(destinatairesMembres()
       .concat(destinatairesVisiteurs()).concat(destinatairesAmis())).length;
     if (!confirm(
-      (erratum ? `ENVOYER L'ERRATUM À ${n} DESTINATAIRES ?\n\nObjet : ${ERRATUM_SUJET}\n\n`
+      (erratum ? `ENVOYER L'ERRATUM À ${n} DESTINATAIRES ?\n\nObjet : ${erratumSujet()}\n\n`
                : `Remettre la convocation à ${n} destinataires ?\n\n`) +
       `Les messages partent POUR DE BON, un par personne, depuis ` +
       `${POSTE.expediteur}.\n\n` +
@@ -3680,8 +3727,8 @@ document.addEventListener('click', e => {
       `Rien ne s'annule après.`)) return;
     b.disabled = true; const libelle = b.textContent; b.textContent = 'Remise en cours…';
     remettreParLePoste('tous',
-      erratum ? ERRATUM_SUJET : 'Convocation — Tenue du ' + dateLongue(E.tenue.date),
-      erratum ? ERRATUM_CORPS : corpsConvocation(), true)
+      erratum ? erratumSujet() : 'Convocation — Tenue du ' + dateLongue(E.tenue.date),
+      erratum ? erratumCorps() : corpsConvocation(), true)
       .then(r => {
         b.disabled = false; b.textContent = libelle;
         if (r === null){
