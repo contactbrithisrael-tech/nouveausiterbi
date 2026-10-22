@@ -374,6 +374,34 @@
       font-style: italic;
     }
 
+    /* ── TABLEAU DE LA LOGE ── */
+    .tableau-loge {
+      width: 100%; border-collapse: collapse; margin-top: 2rem; font-size: .92rem;
+    }
+    .tableau-loge th {
+      text-align: left; font-size: .72rem; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--or);
+      border-bottom: 1px solid rgba(201,168,76,.4); padding: .6rem .4rem;
+    }
+    .tableau-loge td {
+      padding: .7rem .4rem; border-bottom: 1px solid rgba(201,168,76,.12);
+    }
+    .ennui-tableau {
+      margin-top: 1.5rem; padding: 1.1rem 1.4rem; background: var(--fond3);
+      border-left: 2px solid #d98b8b; font-size: .9rem; line-height: 1.75;
+    }
+    .ennui-tableau[hidden] { display: none; }
+    /* ── « hidden » NE SUFFIT PAS CONTRE UNE CLASSE ────────────────
+       L'attribut « hidden » pose display:none par la feuille du
+       navigateur, que la moindre règle de classe l'emporte. Ce bloc
+       étant un .form-footer, donc en display:flex, les boutons des
+       agapes paraissaient AVANT qu'on ait dit venir — c'est-à-dire
+       qu'on demandait à un absent s'il restait à table, ce que le code
+       dit précisément ne pas vouloir faire.
+       Trouvé par l'épreuve ; invisible à la relecture. */
+    #tableau-agapes[hidden] { display: none; }
+    #tableau-vu[hidden] { display: none; }
+
     /* ── ANNUAIRE ── */
     .annuaire-intro {
       background: var(--fond3);
@@ -556,6 +584,7 @@
   <button class="onglet" onclick="afficherSection('inscrire-loge')">Inscrire ma Loge</button>
   <button class="onglet" onclick="afficherSection('convocation-loge')">Convocation de ma Loge</button>
   <button class="onglet" onclick="afficherSection('venue')">Annoncer ma venue</button>
+  <button class="onglet" onclick="afficherSection('tableau-loge')">Tableau de la Loge</button>
   <button class="onglet" onclick="afficherSection('constitutions')">Constitutions</button>
   <button class="onglet" onclick="afficherSection('rituels')">Rituels & Commandes</button>
   <button class="onglet" onclick="afficherSection('secretariat')">Secrétariat & Trésorerie</button>
@@ -1152,6 +1181,84 @@
   </p>
 </section>
 
+
+<!-- ═══════════════════════════════════════════
+     TABLEAU DE LA LOGE — RÉSERVÉ AUX COLONNES
+
+     Les noms des Sœurs et Frères inscrits au Tableau, avec présent,
+     absent et agapes — et chacun s'y déclare lui-même.
+
+     ► CE QUI GARDE CETTE PORTE. Le tuilage de cette page écarte le
+       passant ; il n'écarte pas qui lit le code source, où ses
+       réponses sont en clair. Le vrai filtre est le COURRIEL : rien
+       ne s'affiche sans une adresse qui figure parmi les convoqués.
+
+       Une adresse n'est pas un secret, et il faut le dire : qui
+       connaît celle d'une Sœur de l'Atelier verra le Tableau. Ce
+       n'est pas un coffre, c'est une porte avec un nom dessus — et
+       cela vaut mieux que la liste en accès libre.
+
+     ► RIEN N'EST ÉCRIT DANS CETTE PAGE. Les noms viennent du serveur,
+       à la demande. Le dépôt est servi en clair par Cloudflare : un
+       nom inscrit ici serait publié.
+═══════════════════════════════════════════ -->
+<section class="section" id="tableau-loge">
+  <h2 class="section__titre">Tableau de la Loge</h2>
+  <div class="section__sep"></div>
+
+  <div class="avis-rituels">
+    <strong>Réservé aux Sœurs et Frères de BERESHIT</strong>, inscrits au Tableau de
+    l'Atelier et convoqués à la Tenue en cours.
+    <br><br>
+    <strong>Vous êtes Visiteur ?</strong> L'onglet
+    <a href="#" onclick="afficherSection('venue');return false;">« Annoncer
+    ma venue »</a> est le vôtre.
+  </div>
+
+  <div class="annuaire-intro" id="tableau-mot">
+    Donnez l'adresse à laquelle vous recevez vos convocations. C'est elle qui vous
+    reconnaît : rien ne s'affiche sans elle.
+  </div>
+
+  <form id="form-tableau" autocomplete="on">
+    <div class="form-grid">
+      <div class="form-full">
+        <label for="t-courriel">Votre courriel *</label>
+        <input id="t-courriel" type="email" name="courriel" required
+               autocomplete="email">
+      </div>
+    </div>
+    <div class="form-footer">
+      <button type="submit" class="btn btn-or">Voir le Tableau</button>
+    </div>
+  </form>
+
+  <div class="ennui-tableau" id="tableau-ennui" hidden></div>
+
+  <div id="tableau-vu" hidden>
+    <div class="annuaire-intro" id="tableau-moi"></div>
+
+    <div class="form-footer" style="margin-top:0">
+      <button type="button" class="btn btn-outline" data-rep="present">Je serai présent·e</button>
+      <button type="button" class="btn btn-outline" data-rep="excuse">Je me fais excuser</button>
+    </div>
+    <div class="form-footer" id="tableau-agapes" hidden style="margin-top:.8rem">
+      <button type="button" class="btn btn-outline" data-agapes="oui">Oui, je reste à table</button>
+      <button type="button" class="btn btn-outline" data-agapes="non">Non, je ne reste pas</button>
+    </div>
+
+    <table class="tableau-loge" id="tableau-liste"></table>
+
+    <p class="confidentialite" id="tableau-compte"></p>
+  </div>
+
+  <p class="confidentialite">
+    Vous pouvez changer d'avis : revenez ici, votre dernière réponse remplace la
+    précédente.<br>
+    Conformément au RGPD, vous disposez d'un droit d'accès, de rectification et de
+    suppression de vos données. Contact : contact.brith.israel@gmail.com
+  </p>
+</section>
 
 <!-- ═══════════════════════════════════════════
      INSCRIRE MA LOGE
@@ -2022,6 +2129,146 @@
       '&body=' + encodeURIComponent(rassembler(form));
     confirmer(form, msg, true);
   }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   LE TABLEAU DE LA LOGE
+
+   Rien de ce qui s'affiche ici n'est écrit dans cette page : les noms
+   viennent du serveur, à la demande, et seulement contre une adresse
+   qui figure parmi les convoqués. Ce fichier est servi en clair par
+   Cloudflare — un nom inscrit ici serait publié.
+
+   On ne garde pas l'adresse dans le navigateur : elle sert le temps
+   de la visite, et s'en va avec l'onglet. Un appareil partagé ne doit
+   pas ouvrir le Tableau à qui s'en sert ensuite.
+═══════════════════════════════════════════════════════════════ */
+(function () {
+  'use strict';
+  var COURRIEL = '';          // le temps de la visite, et rien de plus
+
+  function $(id) { return document.getElementById(id); }
+  function ech(t) {
+    return String(t == null ? '' : t).replace(/[&<>"]/g, function (c) {
+      return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]; });
+  }
+
+  var ENNUIS = {
+    courriel_manquant: "Cette adresse n'a pas été reconnue comme une adresse de courriel.",
+    inconnu: "Cette adresse ne figure pas parmi les convoqués de la Tenue en cours. " +
+             "Si vous êtes des colonnes et que vos convocations arrivent à une autre " +
+             "adresse, donnez celle-là. Sinon, écrivez au secrétariat.",
+    aucune_convocation: "Aucune convocation n'est encore partie pour une prochaine " +
+             "Tenue : il n'y a pas encore de Tableau à montrer. Ce n'est pas une panne.",
+    trop_dessais: "Trop d'adresses ont été essayées depuis une heure. Le Tableau se " +
+             "rouvre de lui-même ; réessayez tout à l'heure."
+  };
+
+  function ennui(mot) {
+    var e = $('tableau-ennui');
+    e.textContent = mot;
+    e.hidden = false;
+  }
+
+  function demander(corps, apres) {
+    corps.courriel = COURRIEL;
+    fetch('/api/tableau', { method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(corps) })
+      .then(function (r) {
+        return r.json().catch(function () { return {}; })
+          .then(function (c) { return { ok: r.ok, c: c }; });
+      })
+      .then(function (rep) {
+        if (!rep.ok || !rep.c.tableau) {
+          ennui(ENNUIS[rep.c.erreur] ||
+                "Le Tableau n'a pas pu être lu. Réessayez dans un moment.");
+          return;
+        }
+        $('tableau-ennui').hidden = true;
+        peindre(rep.c);
+        if (apres) apres();
+      })
+      .catch(function () {
+        ennui("Le serveur de l'Atelier n'a pas répondu. Réessayez dans un moment.");
+      });
+  }
+
+  var MOT = { present: 'présent·e', excuse: 'excusé·e' };
+
+  function peindre(d) {
+    $('form-tableau').style.display = 'none';
+    $('tableau-mot').style.display = 'none';
+    $('tableau-vu').hidden = false;
+
+    var moi = d.moi || {};
+    $('tableau-moi').innerHTML = '<strong style="color:var(--or);">' +
+      ech(moi.nom) + '</strong> — ' +
+      (moi.reponse ? 'vous vous êtes déclaré·e <strong>' + MOT[moi.reponse] +
+        '</strong>' + (moi.reponse === 'present'
+          ? (moi.agapes === true ? ', et vous restez aux agapes.'
+           : moi.agapes === false ? ', et vous ne restez pas à table.'
+           : '. Dites-nous si vous restez aux agapes.')
+          : '.')
+        : 'vous n’avez pas encore répondu pour cette Tenue.');
+
+    /* Les agapes ne se posent qu'à qui vient : demander à un absent
+       s'il reste à table ferait compter un couvert. */
+    $('tableau-agapes').hidden = moi.reponse !== 'present';
+
+    marquer('[data-rep]', 'rep', moi.reponse);
+    marquer('[data-agapes]', 'agapes',
+            moi.agapes === true ? 'oui' : moi.agapes === false ? 'non' : null);
+
+    var rangs = (d.tableau || []).map(function (x) {
+      var dit = x.reponse === 'present' ? '<span style="color:var(--or2)">Présent·e</span>'
+              : x.reponse === 'excuse' ? '<span style="color:var(--gris)">Excusé·e</span>'
+              : '<span style="color:var(--gris)">—</span>';
+      var ag = x.reponse !== 'present' ? '<span style="color:var(--gris)">—</span>'
+             : x.agapes === true ? '<span style="color:var(--or2)">Oui</span>'
+             : x.agapes === false ? '<span style="color:var(--gris)">Non</span>'
+             : '<span style="color:var(--gris)">—</span>';
+      return '<tr><td>' + ech(x.nom) + '</td><td>' + dit + '</td><td>' + ag + '</td></tr>';
+    }).join('');
+    $('tableau-liste').innerHTML =
+      '<thead><tr><th>Sœur ou Frère</th><th>Présence</th><th>Agapes</th></tr></thead>' +
+      '<tbody>' + rangs + '</tbody>';
+
+    var p = (d.tableau || []).filter(function (x) { return x.reponse === 'present'; }).length;
+    var e = (d.tableau || []).filter(function (x) { return x.reponse === 'excuse'; }).length;
+    var a = (d.tableau || []).filter(function (x) { return x.reponse === 'present' && x.agapes === true; }).length;
+    var muets = (d.tableau || []).length - p - e;
+    $('tableau-compte').textContent =
+      p + ' annoncé·e·s présent·e·s · ' + e + ' excusé·e·s · ' +
+      muets + ' sans réponse · ' + a + ' couvert' + (a > 1 ? 's' : '') + ' aux agapes.' +
+      '  C’est la feuille signée qui fait foi, jamais une case cochée.';
+  }
+
+  function marquer(sel, cle, valeur) {
+    var l = document.querySelectorAll('#tableau-loge ' + sel);
+    for (var i = 0; i < l.length; i++) {
+      var sien = l[i].getAttribute('data-' + cle) === valeur;
+      l[i].classList.toggle('btn-or', sien);
+      l[i].classList.toggle('btn-outline', !sien);
+      l[i].setAttribute('aria-pressed', String(sien));
+    }
+  }
+
+  $('form-tableau').addEventListener('submit', function (e) {
+    e.preventDefault();
+    COURRIEL = $('t-courriel').value.trim();
+    $('tableau-ennui').hidden = true;
+    demander({});
+  });
+
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest ? e.target.closest('#tableau-loge button[data-rep],' +
+            '#tableau-loge button[data-agapes]') : null;
+    if (!b) return;
+    if (b.hasAttribute('data-rep')) demander({ reponse: b.getAttribute('data-rep') });
+    else demander({ agapes: b.getAttribute('data-agapes') === 'oui' });
+  });
+})();
 
   // ── Téléchargement PDF (placeholder) ──
   function telechargerPDF(type) {

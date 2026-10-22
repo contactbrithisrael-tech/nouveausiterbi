@@ -925,7 +925,7 @@ function pierrePlate(m){ const c=Math.round(m*100), kg=Math.floor(c/100), g=c%10
 /* La date de ce programme. Changée à chaque livraison, elle permet de
    savoir en un coup d'œil si le navigateur a bien pris la nouvelle
    version — ou s'il ressert celle d'hier. */
-const VERSION = '19 septembre 2026 · 16h00';
+const VERSION = '22 octobre 2026 · 11h00';
 
 const $ = s => document.querySelector(s);
 
@@ -1276,12 +1276,16 @@ function blocEnvois(){
         messagerie — un message par personne, et le compte rendu de ce qui est
         parti. Expéditeur : ${ech(POSTE.expediteur || '')}.</p>
       <div class="groupe" style="margin-top:10px">
+        <button class="btn btn-or" id="piece-auto">⚙ Fabriquer le PDF de la convocation</button>
         <button class="btn" id="piece-joindre">${(typeof PIECE === 'object' && PIECE.nom)
-          ? '📎 Remplacer le PDF joint' : '📎 Joindre la convocation en PDF'}</button>
+          ? '📎 Remplacer par un autre PDF' : '📎 Joindre un PDF déjà fait'}</button>
         ${(typeof PIECE === 'object' && PIECE.nom)
           ? `<button class="btn" id="piece-retirer">Retirer</button>` : ''}
         <button class="btn btn-or" id="poste-tous"${tous?'':' disabled'}
           >▶ Envoyer vraiment les ${tous} convocations</button>
+        <button class="btn" id="poste-erratum"${tous?'':' disabled'}
+          title="Corrige l'envoi précédent : mauvais PDF joint"
+          >✉ Envoyer l'ERRATUM (mauvais PDF)</button>
         <button class="btn" id="liens-verifier"
           title="Compte les liens de réponse posés pour cette Tenue"
           >⚭ Les liens de réponse sont-ils posés ?</button>
@@ -1292,9 +1296,10 @@ function blocEnvois(){
       <p class="sous" style="margin-top:8px">${(typeof PIECE === 'object' && PIECE.nom)
         ? `Chaque message portera <b>${ech(PIECE.nom)}</b> (${poidsLisible(PIECE.octets)}) —
            la convocation telle qu'elle s'imprime.`
-        : `Ouvrez la convocation, « ⤓ Enregistrer en PDF », puis joignez ce
-           fichier ici : chacun le recevra en pièce, prêt à transférer ou à
-           afficher. Sans cela, le message part en texte seul.`}</p>` : ''}
+        : `Touchez « ⚙ Fabriquer le PDF de la convocation » : le programme la
+           met en pages, en fait un PDF et le joint — chacun le recevra en
+           pièce, prêt à transférer ou à afficher. Vous pouvez aussi joindre un
+           PDF déjà enregistré. <b>Sans ce PDF, la convocation ne part pas.</b>`}</p>` : ''}
       <p class="sous" style="margin-top:10px">Le bouton d'or écrit à
         <b>${mem.length} membre${mem.length>1?'s':''}</b>,
         <b>${vis.length} visiteur${vis.length>1?'s':''}</b> et
@@ -3111,6 +3116,28 @@ function convocationTexte(){
   return l.join("\n");
 }
 
+/* ── L'ERRATUM : « le mauvais PDF était joint au premier envoi » ─────
+   Le texte a été validé mot pour mot par le Souverain Grand Commandeur
+   le 19 octobre 2026. Il n'est donc PAS reconstitué depuis la fiche de
+   la Tenue : ce qu'on envoie à cent personnes est ce qui a été relu.
+
+   ► IL NE VAUT QUE POUR LA TENUE DU 2 NOVEMBRE 2026. Sur une autre
+     Tenue, le bouton refuse plutôt que d'annoncer une date fausse. */
+const ERRATUM_TENUE = '2026-11-02';
+const ERRATUM_SUJET = "ERRATUM — Convocation à la Tenue d'Obligation du lundi 2 novembre 2026";
+const ERRATUM_CORPS =
+"Mes très chères Sœurs, mes très chers Frères,\n\n" +
+"Dans notre précédent message, la pièce jointe n'était pas la bonne convocation. " +
+"Nous vous prions de bien vouloir nous en excuser.\n\n" +
+"Vous trouverez ci-joint, en PDF, la convocation à jour : elle annule et remplace " +
+"celle reçue précédemment.\n\n" +
+"Pour mémoire : Tenue d'Obligation au premier degré d'Apprenti Oved, lundi 2 novembre " +
+"2026 à 19:30, Temple « Le Venaqui », Ancienne Route d'Éguilles, 13122 Ventabren. " +
+"Agapes : triangle de 15 € pour les Visiteurs et les Amis de la Loge, inscription avant " +
+"le vendredi 30 octobre 2026.\n\n" +
+"Fraternellement,\n" +
+"Pour la R∴L∴ Bereshit n°00 — contact.brith.israel@gmail.com";
+
 /* Le corps qui part réellement : c'est la présence de la pièce jointe
    qui décide, non un réglage de plus. Une pièce qui porte le feuillet
    dispense de le recopier ; pas de pièce, pas de dispense. */
@@ -3256,10 +3283,10 @@ const POSTE = { su: false, configure: false, service: null, expediteur: null };
      navigateur. Il vit le temps de l'envoi. Fermer l'onglet le perd,
      et c'est dit à l'écran plutôt que découvert après coup.
 ═══════════════════════════════════════════════════════════════════ */
-const PIECE = { nom: null, octets: 0, contenu: null };
+const PIECE = { nom: null, octets: 0, contenu: null, source: null };
 const PIECE_MAX = 4 * 1024 * 1024;
 
-function oublierPiece(){ PIECE.nom = null; PIECE.octets = 0; PIECE.contenu = null; }
+function oublierPiece(){ PIECE.nom = null; PIECE.octets = 0; PIECE.contenu = null; PIECE.source = null; }
 
 /* Rend null si le fichier ne convient pas — et dit pourquoi. */
 async function lirePiece(f){
@@ -3285,7 +3312,130 @@ async function lirePiece(f){
   PIECE.nom = (f.name || 'convocation.pdf').slice(0, 120);
   PIECE.octets = f.size;
   PIECE.contenu = btoa(brut);
+  PIECE.source = null;   // un fichier choisi à la main n'est pas comparé à la fiche
   return null;
+}
+
+/* ── LE PDF SE FABRIQUE SANS PASSER PAR L'IMPRESSION ────────────────
+   Jusqu'ici, pour joindre la convocation en PDF il fallait l'ouvrir,
+   « ⤓ Enregistrer en PDF », retrouver le fichier dans Fichiers, puis le
+   rejoindre ici : sur un iPhone, quatre gestes dont deux se perdent.
+
+   Ici le programme dessine lui-même la feuille — à la géométrie d'une
+   A4 imprimée, serrée comme à l'impression pour tenir sur une page —, la
+   range dans un PDF et la joint. Un geste.
+
+   ► LE PDF EST UNE IMAGE DE LA FEUILLE, non du texte : on ne peut pas y
+     sélectionner de mots. Les liens, eux, sont reposés à leur place.
+     L'impression du navigateur reste disponible pour qui veut du texte.
+
+   ► LES DEUX BIBLIOTHÈQUES VIENNENT D'INTERNET (cdnjs). Hors ligne, on
+     le dit et l'on renvoie à l'impression, qui marche toujours. */
+function chargerScript(src){
+  return new Promise((ok, non) => {
+    const s = document.createElement('script');
+    s.src = src; s.onload = ok;
+    s.onerror = () => non(new Error('hors ligne'));
+    document.head.appendChild(s);
+  });
+}
+async function bibliothequesPdf(){
+  if (!window.html2canvas)
+    await chargerScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
+  if (!(window.jspdf && window.jspdf.jsPDF))
+    await chargerScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+  if (!window.html2canvas || !(window.jspdf && window.jspdf.jsPDF))
+    throw new Error('bibliothèque absente');
+}
+
+async function fabriquerPdfConvocation(){
+  await bibliothequesPdf();
+  const T = E.tenue;
+
+  /* La feuille est posée hors de l'écran, à la largeur du bloc de texte
+     d'une A4 : les retours à la ligne sont ceux de l'impression, quel
+     que soit l'appareil. */
+  const hote = document.createElement('div');
+  hote.style.cssText = 'position:fixed;left:-20000px;top:0;background:#fff;' +
+    'width:' + PAGE_LARGEUR_MM + 'mm;overflow:visible';
+  const P = document.createElement('div');
+  P.className = 'papier';
+  P.style.cssText = 'box-shadow:none;max-width:none;padding:0;margin:0';
+  P.innerHTML = convocation();
+  hote.appendChild(P);
+  document.body.appendChild(hote);
+  try {
+    if (document.fonts && document.fonts.ready) await document.fonts.ready;
+    /* Les sceaux sont des images : on attend qu'elles soient lues. */
+    await Promise.all([...P.querySelectorAll('img')].map(i =>
+      i.complete ? 0 : new Promise(r => { i.onload = i.onerror = r; })));
+
+    /* Même serrage qu'à l'impression. « zoom » n'est pas rendu par la
+       bibliothèque de capture : on le remplace par un agrandissement
+       équivalent — la feuille est mise en page à la largeur 1/z, puis
+       ramenée à l'échelle z. Le résultat est le même, au pixel près. */
+    const z = tenirSurUnePage(P);
+    P.style.zoom = '';
+    if (z < 1){
+      P.style.width = (PAGE_LARGEUR_MM / z) + 'mm';
+      P.style.transformOrigin = 'top left';
+      P.style.transform = 'scale(' + z + ')';
+    }
+    const hauteur = Math.ceil(P.getBoundingClientRect().height);
+    hote.style.height = hauteur + 'px';
+
+    const largeurPx = hote.getBoundingClientRect().width;
+    const liens = [...P.querySelectorAll('a[href]')].map(a => {
+      const r = a.getBoundingClientRect(), o = hote.getBoundingClientRect();
+      return { url: a.href, x: r.left - o.left, y: r.top - o.top, w: r.width, h: r.height };
+    });
+
+    let canvas;
+    try {
+      canvas = await window.html2canvas(hote, { scale: 3, backgroundColor: '#ffffff',
+        useCORS: true, logging: false });
+    } catch (e) {
+      canvas = await window.html2canvas(hote, { scale: 2, backgroundColor: '#ffffff',
+        useCORS: true, logging: false });
+    }
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+    const MARGE_X = 14, MARGE_Y = 12;
+    const mmParPx = PAGE_LARGEUR_MM / canvas.width;
+    const hautMm = canvas.height * mmParPx;
+
+    if (hautMm <= PAGE_HAUTEUR_MM + 0.5){
+      doc.addImage(canvas.toDataURL('image/jpeg', 0.93), 'JPEG',
+                   MARGE_X, MARGE_Y, PAGE_LARGEUR_MM, hautMm);
+      const k = PAGE_LARGEUR_MM / largeurPx;
+      liens.forEach(l => doc.link(MARGE_X + l.x * k, MARGE_Y + l.y * k, l.w * k, l.h * k,
+                                  { url: l.url }));
+    } else {
+      /* Plus d'une page : on tranche la feuille à la hauteur d'une page. */
+      const hautPagePx = Math.floor(PAGE_HAUTEUR_MM / mmParPx);
+      for (let y = 0, n = 0; y < canvas.height; y += hautPagePx, n++){
+        const h = Math.min(hautPagePx, canvas.height - y);
+        const t = document.createElement('canvas');
+        t.width = canvas.width; t.height = h;
+        const c = t.getContext('2d');
+        c.fillStyle = '#fff'; c.fillRect(0, 0, t.width, t.height);
+        c.drawImage(canvas, 0, y, canvas.width, h, 0, 0, canvas.width, h);
+        if (n) doc.addPage();
+        doc.addImage(t.toDataURL('image/jpeg', 0.93), 'JPEG',
+                     MARGE_X, MARGE_Y, PAGE_LARGEUR_MM, h * mmParPx);
+      }
+    }
+    doc.setProperties({ title: 'Convocation ' + T.date,
+                        creator: 'R∴L∴ Bereshit n°00 — Secrétariat' });
+
+    const uri = doc.output('datauristring');
+    const b64 = uri.slice(uri.indexOf(',') + 1);
+    return { nom: ('Convocation_' + T.date + '.pdf').slice(0, 120),
+             contenu: b64, octets: Math.floor(b64.length * 3 / 4) };
+  } finally {
+    hote.remove();
+  }
 }
 
 async function interrogerPoste(){
@@ -3472,28 +3622,66 @@ document.addEventListener('click', e => {
     E.envoyes[m.id] = new Date().toLocaleDateString('fr-FR');
     garder(); setTimeout(dessiner, 600); return;
   }
+  if (b.id === 'piece-auto'){
+    const libelle = b.textContent;
+    b.disabled = true; b.textContent = 'Je fabrique le PDF…';
+    fabriquerPdfConvocation().then(r => {
+      if (r.octets > 4 * 1024 * 1024)
+        throw new Error('le PDF pèse ' + poidsLisible(r.octets) + ', plus que les 4 Mo permis');
+      PIECE.nom = r.nom; PIECE.octets = r.octets; PIECE.contenu = r.contenu;
+      PIECE.source = convocation();
+      dessiner();
+    }).catch(e => {
+      b.disabled = false; b.textContent = libelle;
+      alert("Le PDF n'a pas pu être fabriqué (" + ((e && e.message) || e) + ").\n\n" +
+            "Sans connexion à Internet, ou si le navigateur refuse, passez par " +
+            "« Voir la convocation », « ⤓ Enregistrer en PDF », puis " +
+            "« 📎 Joindre un PDF déjà fait ».");
+    });
+    return;
+  }
   if (b.id === 'piece-joindre'){
     document.getElementById('fichier-piece').click(); return;
   }
   if (b.id === 'piece-retirer'){ oublierPiece(); dessiner(); return; }
 
   /* Un seul geste pour les colonnes et pour les visiteurs. */
-  if (b.id === 'poste-tous'){
+  if (b.id === 'poste-tous' || b.id === 'poste-erratum'){
+    const erratum = b.id === 'poste-erratum';
+    if (erratum && !(E.tenue && E.tenue.date === ERRATUM_TENUE)){
+      alert("Le texte de l'ERRATUM est prévu pour la Tenue du 2 novembre 2026 " +
+            "seulement. Rien n'a été envoyé."); return;
+    }
+    /* La convocation part en PDF, ou ne part pas. */
+    if (!PIECE.nom || !PIECE.contenu){
+      alert("LA CONVOCATION DOIT ÊTRE JOINTE EN PDF.\n\n" +
+            "Touchez « ⚙ Fabriquer le PDF de la convocation » (ou joignez un " +
+            "PDF déjà fait), puis recommencez.\n\n" +
+            "Rien n'a été envoyé.");
+      return;
+    }
+    /* Un PDF fabriqué par le programme est la photo de la fiche à cet
+       instant. Si la fiche a changé depuis, il est périmé : il partirait
+       à cent personnes avec l'ancien texte. */
+    if (PIECE.source && PIECE.source !== convocation()){
+      alert("LA CONVOCATION A CHANGÉ depuis la fabrication du PDF joint.\n\n" +
+            "Touchez de nouveau « ⚙ Fabriquer le PDF de la convocation », puis " +
+            "recommencez.\n\nRien n'a été envoyé.");
+      return;
+    }
     const n = sansDoublon(destinatairesMembres()
       .concat(destinatairesVisiteurs()).concat(destinatairesAmis())).length;
     if (!confirm(
-      `Remettre la convocation à ${n} destinataires ?\n\n` +
+      (erratum ? `ENVOYER L'ERRATUM À ${n} DESTINATAIRES ?\n\nObjet : ${ERRATUM_SUJET}\n\n`
+               : `Remettre la convocation à ${n} destinataires ?\n\n`) +
       `Les messages partent POUR DE BON, un par personne, depuis ` +
       `${POSTE.expediteur}.\n\n` +
-      (PIECE.nom
-        ? `Chacun recevra « ${PIECE.nom} » en pièce jointe.\n\n`
-        : `AUCUNE PIÈCE JOINTE : le message partira en texte seul. Pour ` +
-          `y joindre la convocation en PDF, annulez, enregistrez-la en PDF, ` +
-          `puis « 📎 Joindre la convocation en PDF ».\n\n`) +
+      `Chacun recevra « ${PIECE.nom} » en pièce jointe.\n\n` +
       `Rien ne s'annule après.`)) return;
     b.disabled = true; const libelle = b.textContent; b.textContent = 'Remise en cours…';
     remettreParLePoste('tous',
-      'Convocation — Tenue du ' + dateLongue(E.tenue.date), corpsConvocation(), true)
+      erratum ? ERRATUM_SUJET : 'Convocation — Tenue du ' + dateLongue(E.tenue.date),
+      erratum ? ERRATUM_CORPS : corpsConvocation(), true)
       .then(r => {
         b.disabled = false; b.textContent = libelle;
         if (r === null){
@@ -3501,14 +3689,21 @@ document.addEventListener('click', e => {
                 "Servez-vous du bouton d'or, qui ouvre votre messagerie.");
           dessiner(); return;
         }
-        if (r.erreur){ alert("L'envoi n'a pas abouti : " + r.erreur); return; }
-        /* On note la date sur les fiches, comme pour l'envoi à la main. */
-        const jour = new Date().toLocaleDateString('fr-FR');
-        convocables().filter(m => m.email).forEach(m => E.envoyes[m.id] = jour);
-        E.envoyesVisiteurs = E.envoyesVisiteurs || {};
-        (E.visiteurs || []).filter(v => v.email).forEach(v => E.envoyesVisiteurs[v.id] = jour);
-        garder(); dessiner();
-        alert(`${r.parties} convocation(s) remise(s) au service d'envoi.` +
+        if (r.erreur === 'piece_obligatoire'){
+          alert("La convocation doit être jointe en PDF. Rien n'a été envoyé."); return; }
+        if (r.erreur){ alert("L'envoi n'a pas abouti : " + r.erreur +
+                             (r.cause ? "\n\nCause : " + r.cause : "")); return; }
+        /* On note la date sur les fiches, comme pour l'envoi à la main —
+           sauf pour l'erratum, qui ne remplace pas la date du premier envoi. */
+        if (!erratum){
+          const jour = new Date().toLocaleDateString('fr-FR');
+          convocables().filter(m => m.email).forEach(m => E.envoyes[m.id] = jour);
+          E.envoyesVisiteurs = E.envoyesVisiteurs || {};
+          (E.visiteurs || []).filter(v => v.email).forEach(v => E.envoyesVisiteurs[v.id] = jour);
+          garder();
+        }
+        dessiner();
+        alert(`${r.parties} ${erratum ? 'erratum remis' : 'convocation(s) remise(s)'} au service d'envoi.` +
           (r.refusees && r.refusees.length
             ? `\n\n${r.refusees.length} REFUSÉE(S) :\n` +
               r.refusees.slice(0, 8).map(x => '• ' + x.adresse +
@@ -4017,6 +4212,28 @@ function vChamp(v,cle,label,type,aide){
 }
 const visiteursDeLaTenue = () => E.visiteurs.filter(v => v.presentTenue);
 
+/* ── CE QUE LE SITE A DÉPOSÉ, ET QU'ON PEUT DÉFAIRE ────────────────
+   Le site inscrit désormais des Visiteurs tout seul : une annonce de
+   venue crée une fiche sans que personne ne la relise. C'est le but —
+   et c'est aussi ce qui demande une sortie de secours. Un plaisantin,
+   un doublon, une annonce pour la mauvaise date, et le carnet de
+   l'Atelier porte ce que personne n'y a mis.
+
+   Ce relevé ne retient que ce qui est À LA FOIS venu du site, JAMAIS
+   TUILÉ et PAS ATTENDU ce soir. Les trois conditions comptent :
+
+   — tuilé, c'est qu'un Frère a répondu de lui : sa fiche n'est plus
+     celle d'un inconnu, et un bouton de masse n'y touche pas ;
+   — attendu ce soir, c'est que la Secrétaire l'a marqué, ou qu'il
+     s'est annoncé pour la bonne date : l'effacer la veille d'une
+     tenue ferait disparaître un couvert déjà commandé.
+
+   Ce qui reste, ce sont les fiches que personne n'a encore regardées.
+   Pour les autres, la croix de leur propre ligne est toujours là — et
+   elle, elle efface ce qu'on lui désigne. */
+const venusDuSite = () => E.visiteurs.filter(
+  v => v.venuDeLAnnuaire && !v.tuilePar && !v.presentTenue);
+
 /* ── LE COUVERT SE COMPTE SUR TOUS ─────────────────────────────────
    Le traiteur ne distingue pas un membre d'un visiteur : il compte des
    couverts. Le chiffre ne portait que sur les colonnes — les visiteurs
@@ -4196,7 +4413,9 @@ function listeVisiteurs(){
           >${v.presentTenue ? '✓ Attendu' : 'Marquer venu'}</button>
         ${!v.presentTenue && v.visites && v.visites.length
           ? `<div class="qual">${v.visites.length} visite${v.visites.length>1?'s':''}
-             — dernière : ${dateLongue(v.visites.at(-1).date)}</div>` : ''}</td>
+             — dernière : ${dateLongue(v.visites.at(-1).date)}</div>` : ''}
+        ${v.annonces && v.annonces.length
+          ? `<div class="qual">✉ annoncé pour le ${v.annonces.map(a => dateLongue(a.date)).join(', ')}</div>` : ''}</td>
       <td style="text-align:right"><button class="btn btn-mini"
           data-vis-retirer="${v.id}"
           title="Retirer ${ech(v.prenom)} ${ech(v.nom)} du carnet">✕</button></td>
@@ -4225,6 +4444,9 @@ function listeVisiteurs(){
     <button class="btn" id="annuaire-verifier"
       title="Ce que l’annuaire du site a déposé au registre"
       >⚭ L’annuaire du site arrive-t-il ?</button>
+    ${(() => { const n = venusDuSite().length; return n ? `<button class="btn"
+      id="vis-effacer-site" title="Retirer d’un coup les fiches déposées depuis le site"
+      >✕ Effacer les ${n} fiche${n>1?'s':''} venue${n>1?'s':''} du site</button>` : ''; })()}
     ${E.visiteurs.length?`<button class="btn" id="imp-carnet">Imprimer le carnet</button>`:''}
   </div></header>
   ${E.visiteurs.length ? `<div class="enveloppe"><table class="tab">
@@ -4375,6 +4597,29 @@ document.addEventListener('click', e => {
     E.visiteurs = E.visiteurs.filter(x => x.id !== id);
     if (E.agapesVisiteurs) delete E.agapesVisiteurs[id];
     if (E.envoyesVisiteurs) delete E.envoyesVisiteurs[id];
+    garder(); dessiner(); return;
+  }
+  if (b.id === 'vis-effacer-site'){
+    const lot = venusDuSite();
+    if (!lot.length) return;
+    const noms = lot.map(v => (v.prenom + ' ' + v.nom).trim() || v.email || '(sans nom)');
+    /* On les NOMME avant d'effacer. « Effacer 7 fiches ? » ne dit pas
+       lesquelles, et l'on dit oui sans savoir ce qu'on perd. */
+    if (!confirm(`Retirer du carnet les ${lot.length} fiche(s) déposées depuis ` +
+                 `le site et jamais tuilées ?\n\n` + noms.map(n => '  — ' + n).join('\n') +
+                 `\n\nLes fiches tuilées et celles attendues à la tenue du jour ` +
+                 `ne sont pas touchées.`)) return;
+    const ids = new Set(lot.map(v => v.id));
+    E.visiteurs = E.visiteurs.filter(v => !ids.has(v.id));
+    for (const id of ids){
+      if (E.agapesVisiteurs) delete E.agapesVisiteurs[id];
+      if (E.envoyesVisiteurs) delete E.envoyesVisiteurs[id];
+    }
+    /* Une trace, parce qu'un effacement en lot ne se voit nulle part
+       ailleurs : le carnet est simplement plus court qu'avant. */
+    const h = new Date().toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
+    E.journal.unshift(`${h} — <b>${ids.size} fiche(s) de Visiteurs</b> venues du ` +
+      `site, jamais tuilées, retirées du carnet`);
     garder(); dessiner(); return;
   }
   if (b.dataset.amiRetirer){
@@ -5347,9 +5592,27 @@ function verserUneConvocation(fiche){
   return dej ? 'completee' : 'neuve';
 }
 
+/* ── UNE VENUE ANNONCÉE LAISSE UNE TRACE ─────────────────────────────
+   Un Frère qui s'annonce pour une tenue (onglet « Annoncer ma venue »
+   de l'Espace Membres) dépose une date. On la garde dans sa fiche, au
+   rang des annonces : c'est la trace, et elle reste après la tenue.
+
+   ► Il est « attendu » seulement si la date est celle de la tenue en
+     cours. Une annonce pour une autre date ne doit pas le faire
+     compter ce soir.
+   ► Deux annonces pour la même date n'en font qu'une. */
+function noterVenue(v, fiche, source, recuLe){
+  if (source !== 'espace-membres-venue' || !fiche.tenue_date) return false;
+  v.annonces = v.annonces || [];
+  if (v.annonces.some(a => a.date === fiche.tenue_date)) return false;
+  v.annonces.push({ date: fiche.tenue_date, recu: recuLe || '' });
+  if (E.tenue && E.tenue.date === fiche.tenue_date) v.presentTenue = true;
+  return true;
+}
+
 function verserAuCarnet(recues){
   let neuves = 0, completees = 0;
-  for (const { fiche } of recues){
+  for (const { fiche, source, recu_le } of recues){
     if (fiche && fiche.type === 'convocation'){
       const r = verserUneConvocation(fiche);
       if (r === 'neuve') neuves++;
@@ -5367,6 +5630,7 @@ function verserAuCarnet(recues){
       let touche = false;
       for (const [de, vers] of Object.entries(CHAMPS_RECUS))
         if (fiche[de] && !dej[vers]){ dej[vers] = fiche[de]; touche = true; }
+      if (noterVenue(dej, fiche, source, recu_le)) touche = true;
       if (touche) completees++;
       continue;
     }
@@ -5376,6 +5640,7 @@ function verserAuCarnet(recues){
                 presentTenue:false, visites:[], venuDeLAnnuaire:true };
     for (const [de, vers] of Object.entries(CHAMPS_RECUS))
       if (fiche[de]) v[vers] = fiche[de];
+    noterVenue(v, fiche, source, recu_le);
     E.visiteurs.push(v); neuves++;
   }
   return { neuves, completees };
