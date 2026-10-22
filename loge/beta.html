@@ -864,9 +864,19 @@ function majPied(){
       '<b>Tout s’enregistre tout seul.</b> Chaque mot que vous écrivez part au ' +
       'registre de l’Atelier à la seconde où vous le tapez : il n’y a aucun ' +
       'bouton « enregistrer », et il n’y en a pas besoin. <b>Changez d’onglet, ' +
-      'fermez la page, rechargez : vous retrouvez tout.</b> Vos Officiers voient ' +
-      'la même chose depuis leur appareil. La pastille, en haut, dit à chaque ' +
-      'instant où en est l’enregistrement — et le dit aussi quand il échoue.';
+      'fermez la page, rechargez : vous retrouvez tout.</b><br><br>' +
+      /* Ce paragraphe était une promesse à moitié tenue : « vos Officiers
+         voient la même chose » était vrai de ce qu'ils rechargeaient, non
+         de ce qu'ils faisaient pendant qu'on travaillait. À deux, l'un des
+         deux s'entendait demander de renoncer à son travail. */
+      '<b>Et vous pouvez travailler à plusieurs en même temps.</b> Si un autre ' +
+      'Officier écrit pendant que vous écrivez, les deux travaux se rangent ' +
+      'côte à côte : rien ne vous est demandé, rien n’est perdu. Ce qu’il vient ' +
+      'de saisir apparaît sur votre écran tout seul, sans recharger. Dans le ' +
+      'seul cas où vous auriez touché <i>la même case</i> tous les deux, c’est ' +
+      'la dernière saisie qui tient — et le journal, en bas, dit laquelle. ' +
+      'La pastille, en haut, dit à chaque instant où en est l’enregistrement — ' +
+      'et le dit aussi quand il échoue.';
   }
 
   if (typeof SERVEUR === 'object' && (SERVEUR.actif || SERVEUR.dernierEchec)){
@@ -925,7 +935,7 @@ function pierrePlate(m){ const c=Math.round(m*100), kg=Math.floor(c/100), g=c%10
 /* La date de ce programme. Changée à chaque livraison, elle permet de
    savoir en un coup d'œil si le navigateur a bien pris la nouvelle
    version — ou s'il ressert celle d'hier. */
-const VERSION = '22 octobre 2026 · 12h00';
+const VERSION = '22 octobre 2026 · 14h00';
 
 const $ = s => document.querySelector(s);
 
@@ -5388,7 +5398,7 @@ document.addEventListener('click', e => {
      stockage local reprend la main, et l'on DIT que le partage est
      hors service plutôt que de le laisser croire.
 ═══════════════════════════════════════════════════════════════════ */
-const SERVEUR = { actif: false, version: 0, nom: null, charge: null,
+const SERVEUR = { actif: false, version: 0, socle: null, nom: null, charge: null,
                   enCours: false, aRenvoyer: false, dernierEchec: null,
                   repli: false };
 
@@ -5502,8 +5512,89 @@ async function reprendreSession(){
   SERVEUR.version = r.corps.version || 0;
   if (r.corps.qui) SERVEUR.nom = r.corps.qui;
   if (r.corps.charge) SERVEUR.charge = r.corps.charge;
+  /* Le socle, dès l'entrée : c'est l'état sur lequel on va travailler,
+     et celui que le serveur comparera au nôtre quand un autre aura
+     écrit entre-temps. */
+  poserLeSocle(r.corps.donnees || null);
   adopterOuDemander(r.corps);
   return 'ok';
+}
+
+/* ── ON VA VOIR CE QUE LES AUTRES ONT ÉCRIT ────────────────────────
+   La fusion fait tenir les deux travaux — mais elle ne se déclenche
+   qu'au moment où l'on écrit. Tant qu'on ne tape rien, l'écran reste
+   sur ce qu'il avait : la Sœur Secrétaire ne voit pas le règlement que
+   le Trésorier vient de saisir, et croit qu'il n'a rien fait.
+
+   On relève donc le registre toutes les vingt secondes.
+
+   ► ON NE REDESSINE PAS SOUS LES DOIGTS DE QUELQU'UN. Redessiner
+     pendant qu'une Sœur tape dans une case lui enlève le curseur et
+     avale sa frappe. Tant qu'un champ a le foyer, ou qu'un document
+     est ouvert par-dessus, on attend le tour suivant : vingt secondes
+     ne pressent personne.
+
+   ► S'IL Y A DU TRAVAIL NON ENVOYÉ, ON ENVOIE PLUTÔT QUE D'ADOPTER.
+     Adopter le registre écraserait ce qui n'est pas encore parti. On
+     déclenche l'envoi : c'est lui qui fusionne, et le fondu revient
+     avec le travail des deux. */
+let veilleRegistre = null;
+
+function doigtsSurLeClavier(){
+  const a = document.activeElement;
+  if (a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) return true;
+  const voile = document.getElementById('voile');
+  return !!(voile && !voile.hidden);
+}
+
+async function releverRegistre(){
+  if (!SERVEUR.actif || SERVEUR.enCours) return;
+  if (document.hidden || doigtsSurLeClavier()) return;
+  let r;
+  try { r = await appelServeur('etat'); } catch (e) { return; }
+  if (r.statut !== 200 || !r.corps || !r.corps.donnees) return;
+  if (!(r.corps.version > SERVEUR.version)) return;
+
+  let aNous;
+  try { aNous = JSON.stringify(sansNavigation(E)) !== JSON.stringify(SERVEUR.socle); }
+  catch (e) { aNous = true; }
+  if (aNous){ pousserEtat(); return; }
+
+  SERVEUR.version = r.corps.version;
+  E = complet(r.corps.donnees);
+  poserLeSocle(r.corps.donnees);
+  persister(); dessiner();
+}
+
+function veillerLeRegistre(){
+  if (veilleRegistre) return;
+  veilleRegistre = setInterval(releverRegistre, 20000);
+  /* Et au retour sur l'onglet : on a pu le laisser une heure, et la
+     première chose qu'on veut voir est ce qui a bougé depuis. */
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) releverRegistre();
+  });
+}
+
+/* ── CE QUI A ÉTÉ TRANCHÉ, ET QU'IL FAUT DIRE ──────────────────────
+   La fusion range les deux travaux côte à côte tant qu'ils portent sur
+   des champs différents. Quand les deux ont changé LE MÊME champ,
+   aucune règle ne devine lequel a raison : le dernier qui écrit
+   l'emporte.
+
+   Ce n'est pas une panne, et cela n'arrête rien — mais c'est le seul
+   endroit où quelque chose se perd. On le dit, discrètement, sans
+   interrompre : une boîte de dialogue à chaque frappe serait vite
+   fermée sans être lue. */
+function direLArbitrage(chemins){
+  const n = chemins.length;
+  const ou = chemins.slice(0, 4).map(c => c.replace(/\./g, ' › ')).join(', ');
+  const h = new Date().toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
+  E.journal = E.journal || [];
+  E.journal.unshift(`${h} — <b>${n} champ${n>1?'s':''} tranché${n>1?'s':''}</b> ` +
+    `en faveur de votre saisie : ${ou}${n>4?'…':''}. ` +
+    `Quelqu'un les avait modifiés en même temps.`);
+  majPied();
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -5812,18 +5903,49 @@ function envoyerAuServeur(){
   minuterieEnvoi = setTimeout(pousserEtat, 900);
 }
 
+/* ── LE SOCLE : CE SUR QUOI ON TRAVAILLAIT EN COMMENÇANT ───────────
+   Le registre tel qu'il était à la dernière fois qu'on s'est entendu
+   avec le serveur. Il part avec chaque enregistrement, et c'est lui qui
+   permet au serveur de FUSIONNER au lieu de refuser : avec le socle, le
+   leur et le mien, on sait qui a changé quoi.
+
+   Sans lui, le serveur ne voyait que deux documents qui diffèrent — et
+   la seule chose qu'il pouvait faire était de demander à l'un des deux
+   de renoncer à son travail. */
+function poserLeSocle(donnees){
+  try { SERVEUR.socle = JSON.parse(JSON.stringify(donnees)); }
+  catch (e) { SERVEUR.socle = null; }
+}
+
 async function pousserEtat(){
   if (!SERVEUR.actif) return;
   if (SERVEUR.enCours){ SERVEUR.aRenvoyer = true; return; }
   SERVEUR.enCours = true;
   try {
+    const envoi = sansNavigation(E);
     const { statut, corps } = await appelServeur('etat', {
       method: 'PUT',
-      body: JSON.stringify({ donnees: sansNavigation(E), version: SERVEUR.version })
+      body: JSON.stringify({ donnees: envoi, version: SERVEUR.version,
+                             socle: SERVEUR.socle })
     });
     if (statut === 200 && corps){
       SERVEUR.version = corps.version;
       SERVEUR.dernierEchec = null;
+      /* ── LE SERVEUR A FUSIONNÉ ──────────────────────────────────
+         Il rend alors le document fondu : celui de l'autre et le nôtre
+         ensemble. On l'adopte, pour que le travail de l'autre
+         apparaisse à l'écran sans recharger — et pour que le socle
+         reparte de là, faute de quoi la fusion suivante se fonderait
+         sur un passé qui n'existe plus. */
+      if (corps.donnees){
+        E = complet(corps.donnees);
+        poserLeSocle(corps.donnees);
+        persister(); dessiner();
+        if (corps.fusion && corps.fusion.ecrases && corps.fusion.ecrases.length)
+          direLArbitrage(corps.fusion.ecrases);
+      } else {
+        poserLeSocle(envoi);
+      }
       mettreAlAbri();
     } else if (statut === 409 && corps){
       SERVEUR.dernierEchec = 'conflit';
@@ -6063,6 +6185,7 @@ function annoncerConflit(corps, entete){
       reprendreSession().then(etat => {
         if (etat === 'ok'){
           dessiner(); majAlerteRepli(); majBoutonMdp();
+          veillerLeRegistre();
           releverAnnuaire().then(b => { if (b && (b.neuves || b.completees)) dessiner(); });
           interrogerPoste().then(() => { if (POSTE.configure) dessiner(); });
           releverReponses().then(rp => { if (rp && rp.combien) dessiner(); });

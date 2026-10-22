@@ -30,6 +30,7 @@ sont inventés.
 node loge/serveur/essai-api.mjs          # le serveur seul, sur SQLite
 node loge/serveur/essai-outil-mdp.mjs    # le SQL imprimé ouvre-t-il vraiment ?
 node loge/serveur/essai-gps.mjs          # la lecture du point du Temple
+node loge/serveur/essai-fusion.mjs       # fusionner deux travaux, au lieu d'en refuser un
 
 node loge/serveur/faux-tableau.mjs > /tmp/tableau.json
 node loge/serveur/faux-page.mjs    > /tmp/page-epreuve.html
@@ -59,6 +60,7 @@ RBI_PORT=8805 RBI_LECTURE=1 RBI_LECTURE_ECHEC=1 \
   node loge/serveur/faux-serveur.mjs &   # le service de lecture refuse la clé
 RBI_PORT=8806 node loge/serveur/faux-serveur.mjs &   # la page en accès libre
 RBI_PORT=8810 RBI_COURRIEL=1 node loge/serveur/faux-serveur.mjs &   # le Tableau de la Loge
+RBI_PORT=8811 node loge/serveur/faux-serveur.mjs &   # le travail à deux
 
 RBI_URL=http://127.0.0.1:8787/ python3 loge/serveur/essai-documents.py
 RBI_URL=http://127.0.0.1:8789/ python3 loge/serveur/essai-partage.py
@@ -77,6 +79,7 @@ RBI_URL=http://127.0.0.1:8800/ python3 loge/serveur/essai-tuilage.py
 RBI_URL=http://127.0.0.1:8801/ python3 loge/serveur/essai-odj.py
 RBI_URL=http://127.0.0.1:8806/ python3 loge/serveur/essai-loges-amies.py
 RBI_URL=http://127.0.0.1:8810/ python3 loge/serveur/essai-tableau.py
+RBI_URL=http://127.0.0.1:8811/ python3 loge/serveur/essai-adeux.py
 python3 loge/serveur/essai-lecture.py
 ```
 

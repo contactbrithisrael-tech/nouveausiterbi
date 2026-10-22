@@ -28,6 +28,24 @@ CLE = os.environ.get("RBI_CLE", "cleSecretariatEpreuve")
 ko = []
 
 
+# LA CONVOCATION NE PART PLUS SANS PIECE JOINTE : regle posee sur main.
+# L'epreuve doit s'y plier comme la Secretaire s'y plie — sans cela
+# elle cliquait « Envoyer » les mains vides, et tout ce qui suit
+# tombait sans que le programme y soit pour rien.
+def faux_pdf():
+    return (b"%PDF-1.4\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n"
+            b"2 0 obj<</Type/Pages/Kids[]/Count 0>>endobj\n"
+            b"trailer<</Root 1 0 R>>\n%%EOF\n")
+
+
+def joindre(page, nom="Convocation epreuve.pdf"):
+    import os as _os, tempfile as _tf
+    f = _os.path.join(_tf.gettempdir(), nom)
+    open(f, "wb").write(faux_pdf())
+    page.set_input_files("#fichier-piece", f); page.wait_for_timeout(1500)
+
+
+
 def v(c, n, d=''):
     print(f"  {'OK ' if c else 'NON'}  {n}{'' if c else '  <- ' + str(d)[:240]}")
     if not c:
@@ -95,7 +113,8 @@ with sync_playwright() as pw:
     # ══ 3. ON ENVOIE ════════════════════════════════════════════════
     pg.evaluate("async () => { await fetch('/__courriels/vider'); }")
     dlg.clear()
-    pg.click("#poste-tous"); pg.wait_for_timeout(3000)
+    joindre(pg)
+    pg.click("#poste-tous"); pg.wait_for_timeout(3500)
     ensemble = " ".join(dlg)
     v("POUR DE BON" in ensemble, "on previent que l'envoi est irreversible", ensemble[:200])
     v("Rien ne s'annule" in ensemble, "et qu'il ne s'annule pas", ensemble[:220])
@@ -196,6 +215,7 @@ with sync_playwright() as pw:
     v(ec.locator("#poste-tous").count() == 1,
       "le service repond, donc le bouton parait")
     d3.clear()
+    joindre(ec)
     ec.click("#poste-tous"); ec.wait_for_timeout(3500)
     dit = " ".join(d3)
     v("0 convocation(s) remise" in dit,
@@ -219,12 +239,18 @@ with sync_playwright() as pw:
     entrer(mu, MUET)
     mu.click("#t-tableau"); mu.wait_for_timeout(400)
     mu.set_input_files("#fichier-sauvegarde", TABLEAU); mu.wait_for_timeout(2500)
-    rep = mu.evaluate("""async () => {
+    # LA PIECE EST JOINTE ICI AUSSI. Cet appel va droit a la route, sans
+    # passer par l'ecran : depuis que la convocation ne part plus sans
+    # PDF, la route refusait AVANT d'ecrire le moindre jeton — et
+    # l'epreuve ne pouvait plus atteindre la panne qu'elle vient
+    # verifier. Elle mesurait un refus pour un autre.
+    rep = mu.evaluate("""async (b64) => {
       const r = await fetch('/api/envoyer', { method:'POST',
         headers:{'content-type':'application/json'},
         body: JSON.stringify({ sujet:'Convocation', corps:'Texte',
-          groupe:'tous', reponse:true, tenue: E.tenue.date }) });
-      return { statut: r.status, corps: await r.text() }; }""")
+          groupe:'tous', reponse:true, tenue: E.tenue.date,
+          piece: { nom: 'Convocation.pdf', contenu: b64 } }) });
+      return { statut: r.status, corps: await r.text() }; }""", "JVBERi0xLjQKMSAwIG9iajw8L1R5cGUvQ2F0YWxvZy9QYWdlcyAyIDAgUj4+ZW5kb2JqCjIgMCBvYmo8PC9UeXBlL1BhZ2VzL0tpZHNbXS9Db3VudCAwPj5lbmRvYmoKdHJhaWxlcjw8L1Jvb3QgMSAwIFI+PgolJUVPRgo=")
     v(rep["statut"] == 500,
       "QUAND LES JETONS NE S'ENREGISTRENT PAS, LA ROUTE REFUSE", rep)
     v("jetons_non_enregistres" in rep["corps"],
@@ -286,3 +312,9 @@ with sync_playwright() as pw:
     b.close()
 
 print(f"\n  {len(ko)} echec(s)" if ko else "\n  tout passe")
+
+# ── UNE ÉPREUVE QUI ÉCHOUE DOIT LE DIRE À QUI LA LANCE ──────────────
+# Elle imprimait son bilan et rendait 0 : un lanceur qui regarde le code
+# de sortie la comptait donc PASSÉE, échecs compris. C'est pire qu'une
+# épreuve absente — une épreuve absente ne rassure personne.
+raise SystemExit(1 if ko else 0)

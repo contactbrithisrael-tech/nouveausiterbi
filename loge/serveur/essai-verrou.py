@@ -134,3 +134,9 @@ with sync_playwright() as p:
     b.close()
 
 print(f"\n  {len(ko)} échec(s)" if ko else "\n  tout passe")
+
+# ── UNE ÉPREUVE QUI ÉCHOUE DOIT LE DIRE À QUI LA LANCE ──────────────
+# Elle imprimait son bilan et rendait 0 : un lanceur qui regarde le code
+# de sortie la comptait donc PASSÉE, échecs compris. C'est pire qu'une
+# épreuve absente — une épreuve absente ne rassure personne.
+raise SystemExit(1 if ko else 0)
