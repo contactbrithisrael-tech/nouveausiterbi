@@ -938,7 +938,7 @@ function pierrePlate(m){ const c=Math.round(m*100), kg=Math.floor(c/100), g=c%10
 /* La date de ce programme. Changée à chaque livraison, elle permet de
    savoir en un coup d'œil si le navigateur a bien pris la nouvelle
    version — ou s'il ressert celle d'hier. */
-const VERSION = '27 octobre 2026 · 10h00';
+const VERSION = '27 octobre 2026 · 16h00';
 
 const $ = s => document.querySelector(s);
 
@@ -2453,7 +2453,18 @@ function vueConvocation(){
         <select id="f-type" data-t="type">${Object.entries(TYPES).map(([k,v])=>
           `<option value="${k}"${T.type===k?' selected':''}>${v}</option>`).join('')}</select></div>
     </div>
-    <p class="aide" id="echo-date" style="margin-top:9px">${relireDate(T.date)}</p></fieldset>
+    <p class="aide" id="echo-date" style="margin-top:9px">${relireDate(T.date)}</p>
+    <div class="groupe" style="margin-top:10px">
+      <button class="btn" id="tenue-suivante"
+        title="Classe celle-ci et ouvre la suivante au premier lundi du mois">
+        ▸ Tenue suivante — ${relireDate(premierLundiSuivant(T.date))}</button>
+    </div>
+    ${estPremierLundi(T.date) ? '' : `<p class="note" style="margin-top:10px">
+      <b>Cette date n’est pas un premier lundi.</b> Les tenues de l’Atelier le
+      sont ; celle-ci a peut-être été déplacée à dessein, ou tapée de travers.
+      Le programme ne sait pas lequel des deux — il vous le montre. Le premier
+      lundi de ce mois-là serait le ${relireDate(premierLundi(+T.date.slice(0,4),
+      +T.date.slice(5,7)))}.</p>`}</fieldset>
 
     <fieldset><legend>2. Ordre du jour</legend>
       <p class="aide" style="margin:0 0 11px"><b>La convocation range d'elle-même
@@ -2737,6 +2748,19 @@ document.addEventListener('click', e => {
     setTimeout(()=>{const l=document.querySelectorAll('[data-k="t"]');
       if(l.length) l[l.length-1].focus();},0); return; }
   if (b.dataset.odjSup !== undefined){ E.odj.splice(+b.dataset.odjSup,1); dessiner(); return; }
+  if (b.id === 'tenue-suivante'){
+    const suivante = premierLundiSuivant(E.tenue.date);
+    /* On NOMME ce qu'on s'apprête à faire : classer une tenue n'est pas
+       rien, et le mot « suivante » ne dit pas que la précédente part à
+       l'archive. */
+    if (!confirm(`Classer la tenue du ${dateLongue(E.tenue.date)} et ouvrir ` +
+                 `celle du ${dateLongue(suivante)} ?\n\n` +
+                 `La tenue qui s’achève rejoint les Tenues passées, avec sa ` +
+                 `convocation, sa planche à tracer et son émargement. Les ` +
+                 `présences repartent à blanc.`)) return;
+    passerALaTenueSuivante();
+    return;
+  }
   if (b.id === 'imp-convoc'){ ouvrir(convocation(), 'Convocation ' + E.tenue.date); return; }
 });
 </script>
@@ -4852,6 +4876,83 @@ function enregistrerVisites(){
 ═══════════════════════════════════════════════════════════════════ */
 
 /* Ce qui fait qu'une tenue a eu lieu, ou du moins qu'on y a travaillé. */
+/* ═══════════════════════════════════════════════════════════════════
+   LA TENUE EST LE PREMIER LUNDI DU MOIS
+
+   C'est la règle de l'Atelier, et elle était dans la tête du Souverain
+   Grand Commandeur, nulle part ailleurs. La date se tapait donc à la
+   main, chaque mois — et une date tapée à la main se tape un jour de
+   travers. On l'a déjà vu dans ce programme : une date figée dans une
+   page du site, et le formulaire des Visiteurs qui disparaissait au
+   lendemain sans que rien ne le dise.
+
+   Une règle connue qui reste dans une tête est une règle qu'on
+   appliquera presque toujours. « Presque » est le mot qui coûte.
+
+   ► ON PROPOSE, ON N'IMPOSE PAS. Le bouton pose la date du premier
+     lundi suivant ; le champ reste libre. Un Atelier qui déplace une
+     tenue pour une fête ou un deuil n'a pas à se battre contre son
+     programme.
+
+   ► ET L'ON SIGNALE CE QUI S'EN ÉCARTE, sans le corriger : une date
+     qui n'est pas un premier lundi est peut-être voulue — et c'est
+     peut-être une faute de frappe. Le programme ne sait pas lequel ;
+     il sait dire laquelle des deux il a sous les yeux.
+═══════════════════════════════════════════════════════════════════ */
+
+/* Le premier lundi d'un mois donné. On part du 1er et l'on avance
+   jusqu'au lundi : getDay() rend 0 pour dimanche, 1 pour lundi. */
+function premierLundi(annee, mois){
+  const d = new Date(Date.UTC(annee, mois - 1, 1));
+  d.setUTCDate(1 + ((1 - d.getUTCDay()) + 7) % 7);
+  return d.toISOString().slice(0, 10);
+}
+
+/* Le premier lundi du mois QUI SUIT celui de la date donnée. On passe
+   par les nombres plutôt que par une addition de trente jours : un mois
+   ne fait pas trente jours, et décembre est suivi de janvier. */
+function premierLundiSuivant(iso){
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(iso || ''));
+  const d = m ? new Date(Date.UTC(+m[1], +m[2] - 1, +m[3])) : new Date();
+  let annee = d.getUTCFullYear(), mois = d.getUTCMonth() + 2;
+  if (mois > 12){ mois = 1; annee += 1; }
+  return premierLundi(annee, mois);
+}
+
+function estPremierLundi(iso){
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(iso || ''));
+  return !!m && premierLundi(+m[1], +m[2]) === iso;
+}
+
+/* Combien de jours séparent deux dates, sans se soucier des heures. */
+function ecartJours(a, b){
+  const p = x => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(x || ''));
+                   return m ? Date.UTC(+m[1], +m[2] - 1, +m[3]) : null; };
+  const x = p(a), y = p(b);
+  return (x === null || y === null) ? null : Math.round((y - x) / 86400000);
+}
+
+/* ── PASSER À LA TENUE SUIVANTE ─────────────────────────────────────
+   Un seul geste : la tenue qui s'achève est classée, la suivante prend
+   la date du premier lundi du mois d'après, et la limite d'inscription
+   aux agapes GARDE SON ÉCART.
+
+   Cet écart n'est pas une règle que j'invente : c'est celui que la
+   Secrétaire a choisi la dernière fois. Le reconduire, c'est respecter
+   son usage sans prétendre le connaître. */
+function passerALaTenueSuivante(){
+  const ancienne = E.tenue.date;
+  const ecart = ecartJours(ancienne, E.tenue.agapesLimite);
+  classerLaTenue();
+  E.tenue.date = premierLundiSuivant(ancienne);
+  if (ecart !== null){
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(E.tenue.date);
+    const d = new Date(Date.UTC(+m[1], +m[2] - 1, +m[3]) + ecart * 86400000);
+    E.tenue.agapesLimite = d.toISOString().slice(0, 10);
+  }
+  garder(); dessiner();
+}
+
 function tenueVecue(){
   if (E.convoquee) return true;
   for (const k in (E.presences || {})) if (E.presences[k]) return true;

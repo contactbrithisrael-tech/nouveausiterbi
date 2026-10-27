@@ -180,6 +180,55 @@ with sync_playwright() as pw:
       "ET QU'IL EST ALLE VERIFIER : une promesse qu'on peut verifier n'est "
       "plus une promesse", dit[:260])
 
+
+    # ══ 9. LE PREMIER LUNDI DU MOIS, D'UN SEUL GESTE ════════════════
+    # « Les tenues et les agapes sont toujours le 1er lundi du mois. »
+    # La regle etait dans une tete ; la date se tapait a la main chaque
+    # mois, et une date tapee a la main se tape un jour de travers.
+    pg.evaluate("""() => { E.tenue.date = '2026-11-02';
+      E.tenue.agapesLimite = '2026-10-30';
+      E.convoquee = true;
+      E.presences[convocables()[0].id] = 'present';
+      garder(); dessiner(); }""")
+    pg.wait_for_timeout(1200)
+    pg.click("#t-convoc"); pg.wait_for_timeout(900)
+    v(pg.locator("#tenue-suivante").count() == 1,
+      "la Convocation porte un bouton « Tenue suivante »")
+    v("7 décembre" in pg.inner_text("#tenue-suivante"),
+      "ET IL ANNONCE LA DATE QU'IL POSERA, non « suivante » tout court",
+      pg.inner_text("#tenue-suivante"))
+
+    combien = pg.evaluate("(E.tenuesPassees||[]).length")
+    pg.click("#tenue-suivante"); pg.wait_for_timeout(1800)
+    v(pg.evaluate("E.tenue.date") == "2026-12-07",
+      "LE PREMIER LUNDI DE DECEMBRE EST POSE", pg.evaluate("E.tenue.date"))
+    v(pg.evaluate("(E.tenuesPassees||[]).length") == combien + 1,
+      "et la tenue de novembre est classee du meme geste",
+      pg.evaluate("(E.tenuesPassees||[]).map(a => a.tenue.date)"))
+    v(pg.evaluate("E.tenue.agapesLimite") == "2026-12-04",
+      "LA LIMITE D'INSCRIPTION GARDE SON ECART — trois jours avant, comme "
+      "la Secretaire l'avait choisi : on reconduit son usage, on n'invente "
+      "pas une regle", pg.evaluate("E.tenue.agapesLimite"))
+    v(pg.evaluate("Object.keys(E.presences).length") == 0,
+      "et les presences repartent a blanc")
+
+    # UNE DATE QUI S'ECARTE DE LA REGLE EST SIGNALEE, NON CORRIGEE.
+    # Elle est peut-etre voulue — un deuil, une fete — et peut-etre une
+    # faute de frappe. Le programme ne sait pas lequel ; il le montre.
+    v("n’est pas un premier lundi" not in pg.inner_text("#v-convoc"),
+      "un premier lundi ne declenche aucun avis")
+    pg.fill("[data-t='date']", "2026-12-14"); pg.wait_for_timeout(1500)
+    pg.click("#t-tableau"); pg.wait_for_timeout(400)
+    pg.click("#t-convoc"); pg.wait_for_timeout(800)
+    t = pg.inner_text("#v-convoc")
+    v("n’est pas un premier lundi" in t,
+      "UNE DATE QUI S'EN ECARTE EST SIGNALEE", t[:400])
+    v("7 décembre" in t,
+      "et l'avis dit quel serait le premier lundi de ce mois-la", t[:400])
+    v(pg.evaluate("E.tenue.date") == "2026-12-14",
+      "MAIS ELLE N'EST PAS CORRIGEE : un Atelier qui deplace une tenue n'a "
+      "pas a se battre contre son programme", pg.evaluate("E.tenue.date"))
+
     v(not e, "aucune erreur JavaScript", e)
     b.close()
 
