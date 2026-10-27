@@ -27,6 +27,7 @@ aucun vrai mot de passe. Les comptes, la page et le tableau d'épreuve
 sont inventés.
 
 ```sh
+node loge/serveur/essai-miroir.mjs       # beta.html est-il encore le miroir de secretariat.html ?
 node loge/serveur/essai-api.mjs          # le serveur seul, sur SQLite
 node loge/serveur/essai-outil-mdp.mjs    # le SQL imprimé ouvre-t-il vraiment ?
 node loge/serveur/essai-gps.mjs          # la lecture du point du Temple
