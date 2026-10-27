@@ -138,6 +138,58 @@ with sync_playwright() as pw:
       "le journal dit ce qui a ete tranche", B.evaluate("(E.journal || [])[0]"))
     v(not dB, "et cela n'interrompt personne : aucune boite de dialogue", dB)
 
+    # ══ LA SECONDE PORTE : CELLE DE L'OUVERTURE ═════════════════════
+    # La fusion ne couvrait que l'ECRITURE. A L'OUVERTURE, le programme
+    # comparait encore deux documents et demandait lequel sacrifier :
+    # « OK : je reprends la version du registre. Ce qui n'est que sur
+    # cet appareil sera perdu. » C'est le cas ordinaire — on rouvre son
+    # ecran le lendemain, l'autre a travaille entre-temps.
+    #
+    # On eprouve donc : A ecrit sans envoyer, ferme, B ecrit et envoie,
+    # A rouvre. Les deux doivent tenir, SANS QU'AUCUNE QUESTION ne soit
+    # posee.
+    ID2 = A.evaluate("E.membres[1].id")
+
+    # A ecrit SANS envoyer : on enregistre dans le navigateur seulement,
+    # comme une saisie faite juste avant de fermer l'ecran.
+    A.evaluate("""(id) => { const m = E.membres.find(x => x.id === id);
+      m.ville = 'Ventabren'; persister(); }""", ID2)
+    A.wait_for_timeout(400)
+    v(A.evaluate("SERVEUR.socle !== null && Number.isInteger(SERVEUR.socleVersion)"),
+      "le socle porte le numero de version auquel il correspond",
+      A.evaluate("SERVEUR.socleVersion"))
+
+    # B, pendant ce temps, ecrit AUTRE CHOSE et l'envoie.
+    B.evaluate("""(id) => { const m = E.membres.find(x => x.id === id);
+      m.naissance = '1962-03-14'; garder(); }""", ID2)
+    B.wait_for_timeout(3000)
+
+    # A rouvre son ecran.
+    dA.clear()
+    A.reload(); A.wait_for_timeout(4000)
+
+    v(not dA,
+      "A L'OUVERTURE, AUCUNE QUESTION N'EST POSEE : on ne demande plus de "
+      "choisir entre son travail et celui de l'autre", dA)
+    apres = A.evaluate("""(id) => { const m = E.membres.find(x => x.id === id);
+      return m ? { ville: m.ville, naissance: m.naissance } : null; }""", ID2)
+    v(apres and apres.get("ville") == "Ventabren",
+      "CE QU'IL AVAIT SAISI SANS L'ENVOYER EST LA", apres)
+    v(apres and apres.get("naissance") == "1962-03-14",
+      "ET CE QUE L'AUTRE AVAIT ENVOYE AUSSI : les deux travaux tiennent",
+      apres)
+
+    registre2 = B.evaluate("""async (id) => {
+      const r = await fetch('/api/etat', { credentials: 'same-origin' });
+      const c = await r.json();
+      const m = (c.donnees.membres || []).find(x => x.id === id);
+      return m ? { ville: m.ville, naissance: m.naissance } : null; }""", ID2)
+    v(registre2 and registre2.get("ville") == "Ventabren"
+      and registre2.get("naissance") == "1962-03-14",
+      "ET LE REGISTRE PORTE LES DEUX : la fusion s'est faite a l'ouverture",
+      registre2)
+
+
     # ══ ON NE REDESSINE PAS SOUS LES DOIGTS DE QUELQU'UN ════════════
     # Redessiner pendant qu'une Soeur tape dans une case lui enleve le
     # curseur et avale sa frappe.
