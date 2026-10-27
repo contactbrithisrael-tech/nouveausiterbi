@@ -935,7 +935,7 @@ function pierrePlate(m){ const c=Math.round(m*100), kg=Math.floor(c/100), g=c%10
 /* La date de ce programme. Changée à chaque livraison, elle permet de
    savoir en un coup d'œil si le navigateur a bien pris la nouvelle
    version — ou s'il ressert celle d'hier. */
-const VERSION = '22 octobre 2026 · 14h00';
+const VERSION = '27 octobre 2026 · 10h00';
 
 const $ = s => document.querySelector(s);
 
@@ -4497,6 +4497,19 @@ function listeVisiteurs(){
       de celle des membres, et plus courte : un visiteur n’appartient pas au Rite.</p>
   </div><div class="groupe">
     <button class="btn btn-or" id="vis-nouveau">＋ Nouveau visiteur</button>
+    <!-- ── « ENREGISTRER LES VISITEURS », DEMANDÉ ───────────────────
+         Tout s'enregistre déjà tout seul, et le programme le dit — mais
+         le dire n'est pas le montrer. Une pastille de deux millimètres
+         dans un coin de l'écran ne vaut pas, le soir d'une tenue, la
+         certitude que les visiteurs sont bien chez la Secrétaire.
+
+         Ce bouton ne fait donc PAS que pousser : il pousse, puis il
+         RELIT le registre et compte ce qu'il y trouve. Il annonce les
+         deux nombres. Une promesse qu'on peut vérifier n'est plus une
+         promesse. -->
+    <button class="btn btn-or" id="vis-pousser"
+      title="Envoyer maintenant au registre, et vérifier qu'ils y sont"
+      >⤴ Enregistrer les visiteurs pour tous</button>
     <button class="btn" id="vis-annuaire">Coller depuis l’annuaire</button>
     <button class="btn" id="annuaire-verifier"
       title="Ce que l’annuaire du site a déposé au registre"
@@ -4937,6 +4950,68 @@ document.addEventListener('click', e => {
     if (v){ v.presentTenue = !v.presentTenue; garder(); dessiner(); }
     return;
   }
+  /* ── ENREGISTRER LES VISITEURS, ET LE VÉRIFIER ────────────────────
+     On n'attend pas les neuf dixièmes de seconde de l'enregistrement
+     ordinaire : on envoie tout de suite. Puis ON RELIT le registre et
+     l'on compte. Dire « c'est enregistré » sans être allé voir est
+     exactement ce que ce programme reproche aux autres. */
+  if (b.id === 'vis-pousser'){
+    const libelle = b.textContent;
+    b.disabled = true; b.textContent = 'J’enregistre…';
+    const rendre = () => { b.disabled = false; b.textContent = libelle; };
+
+    if (!SERVEUR.actif){
+      rendre();
+      alert("CE PROGRAMME NE TIENT PAS DE REGISTRE EN LIGNE.\n\n" +
+            "Vos " + E.visiteurs.length + " visiteur(s) sont sur CET APPAREIL " +
+            "seulement : personne d'autre ne les voit, et vider le navigateur " +
+            "les perdrait.\n\n" +
+            "Servez-vous de « ⤓ Sauvegarder mes données », en bas de page, et " +
+            "gardez le fichier.");
+      return;
+    }
+
+    (async () => {
+      try {
+        clearTimeout(minuterieEnvoi);
+        await pousserEtat();
+        const r = await appelServeur('etat');
+        rendre();
+        if (r.statut !== 200 || !r.corps || !r.corps.donnees){
+          alert("L’ENREGISTREMENT N’A PAS PU ÊTRE VÉRIFIÉ.\n\n" +
+                "Le registre n’a pas répondu. Vos visiteurs sont sur cet " +
+                "appareil ; réessayez dans un moment, et si cela dure, " +
+                "sauvegardez le fichier en bas de page.");
+          return;
+        }
+        const auRegistre = (r.corps.donnees.visiteurs || []).length;
+        const ici = E.visiteurs.length;
+        if (auRegistre === ici){
+          alert(`LES ${ici} VISITEUR(S) SONT AU REGISTRE DE L’ATELIER.\n\n` +
+                `Je viens de le relire pour en être sûr : il en porte ${auRegistre}.\n\n` +
+                `Vos Officiers les voient depuis leur propre appareil — ` +
+                `ils n’ont rien à faire, leur écran se met à jour tout seul.`);
+        } else {
+          /* Deux nombres différents ne sont pas forcément une panne :
+             quelqu'un a pu en ajouter à l'instant. On dit les deux et
+             ce qu'il faut en penser, plutôt que de trancher. */
+          alert(`LE REGISTRE EN PORTE ${auRegistre}, VOTRE ÉCRAN EN MONTRE ${ici}.\n\n` +
+                `Ce n’est pas forcément une panne : un autre Officier vient ` +
+                `peut-être d’en ajouter ou d’en retirer. Son travail et le ` +
+                `vôtre se rangent ensemble.\n\n` +
+                `Touchez de nouveau ce bouton dans un instant : si les deux ` +
+                `nombres se rejoignent, tout va bien.`);
+        }
+      } catch (e) {
+        rendre();
+        alert("L’ENREGISTREMENT N’A PAS ABOUTI.\n\n" +
+              "Vos visiteurs sont sur cet appareil. Réessayez, et si cela " +
+              "dure, sauvegardez le fichier en bas de page.");
+      }
+    })();
+    return;
+  }
+
   if (b.id === 'vis-enregistrer'){ enregistrerVisites(); return; }
   if (b.id === 'imp-registre'){ ouvrir(registrePapier(), 'Registre des visiteurs'); return; }
 
