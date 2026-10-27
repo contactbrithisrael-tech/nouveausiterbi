@@ -101,7 +101,7 @@ with sync_playwright() as p:
     # sans dédoublonnage, le même Frère entrerait deux fois au carnet.
     F.evaluate("""async () => { await fetch('/api/annuaire', { method:'POST',
       headers:{'content-type':'application/json'},
-      body: JSON.stringify({ prenom:'Reouven', nom:'MISHPAT',
+      body: JSON.stringify({ prenom:'Reouven', nom:'MISHPAT', grade:'Maître',
         email:'reouven.mishpat@exemple.test', obedience:'Obédience d’épreuve' }) }); }""")
     M.wait_for_timeout(300)
     bilan = M.evaluate("async () => await releverAnnuaire()")
@@ -119,13 +119,18 @@ with sync_playwright() as p:
             body: JSON.stringify(c) });
           return { s: r.status, c: await r.json() }; }""", corps)
 
-    r = deposer({"nom": "SANSPRENOM", "email": "x@exemple.test"})
+    r = deposer({"nom": "SANSPRENOM", "grade": "Maître", "email": "x@exemple.test"})
     v(r["s"] == 400 and r["c"]["erreur"] == "nom_manquant",
       "une fiche sans prénom est refusée", r)
-    r = deposer({"prenom": "A", "nom": "B", "email": "pas-une-adresse"})
+    r = deposer({"prenom": "A", "nom": "B", "grade": "Maître"})
+    v(r["s"] == 200, "sans courriel ni téléphone ni rite, la fiche passe", r)
+    r = deposer({"prenom": "A", "nom": "B", "email": "c@exemple.test"})
+    v(r["s"] == 400 and r["c"]["erreur"] == "grade_manquant",
+      "sans grade, la fiche est refusée", r)
+    r = deposer({"prenom": "A", "nom": "B", "grade": "Maître", "email": "pas-une-adresse"})
     v(r["s"] == 400 and r["c"]["erreur"] == "courriel_manquant",
       "une adresse qui n'en est pas une est refusée", r)
-    r = deposer({"prenom": "A", "nom": "B", "email": "c@exemple.test",
+    r = deposer({"prenom": "A", "nom": "B", "grade": "Maître", "email": "c@exemple.test",
                  "versee": 1, "loge_id": 99, "id": 1,
                  "mechant": "<script>alert(1)</script>"})
     v(r["s"] == 200, "une fiche valable passe", r)
@@ -142,13 +147,12 @@ with sync_playwright() as p:
     M.click("#t-visiteurs"); M.wait_for_timeout(500)
     M.click("#vis-nouveau"); M.wait_for_timeout(600)
     for champ, val in [("prenom", "Chimon"), ("nom", "EDOUT"),
-                       ("grade", "Compagnon"),
-                       ("email", "chimon.edout@exemple.test")]:
+                       ("grade", "Compagnon")]:
         M.fill("#v-" + champ, val); M.wait_for_timeout(100)
     M.wait_for_timeout(900)
-    neuf = M.evaluate("E.visiteurs.find(v=>v.email==='chimon.edout@exemple.test')")
+    neuf = M.evaluate("E.visiteurs.find(v=>v.nom==='EDOUT')")
     v(neuf is not None,
-      "LE VISITEUR EST ENREGISTRE AVEC QUATRE CHAMPS, SANS SA LOGE", neuf)
+      "LE VISITEUR EST ENREGISTRE AVEC TROIS CHAMPS, SANS COURRIEL NI LOGE", neuf)
     # il y a bien une note au bas de la fiche, mais elle explique ce
     # qu'est un visiteur — elle ne reclame rien.
     notes = M.inner_text("#v-visiteurs")
@@ -172,7 +176,7 @@ with sync_playwright() as p:
 
     # les champs facultatifs le disent, les cinq autres non
     for cle, facultatif in [("prenom", False), ("nom", False), ("grade", False),
-                            ("email", False),
+                            ("email", True),
                             ("loge", True), ("orient", True), ("obedience", True),
                             ("rite", True), ("tel", True), ("invitePar", True),
                             ("tuilePar", True)]:
