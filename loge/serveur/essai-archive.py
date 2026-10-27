@@ -180,6 +180,146 @@ with sync_playwright() as pw:
       "ET QU'IL EST ALLE VERIFIER : une promesse qu'on peut verifier n'est "
       "plus une promesse", dit[:260])
 
+
+    # ══ 10. LE MEME BOUTON, DANS LA FICHE ═══════════════════════════
+    # Il etait dans la liste. Or c'est DANS LA FICHE qu'on travaille :
+    # on y tape un nom, un grade, on y coche « attendu a la prochaine
+    # tenue » — et il fallait remonter a la liste pour savoir si
+    # c'etait bien chez la Secretaire. Un bouton qui rassure doit etre
+    # la ou l'on doute, c'est-a-dire la ou l'on vient d'ecrire.
+    pg.click("#t-visiteurs"); pg.wait_for_timeout(700)
+    pg.evaluate("() => { E.visiteurOuvert = E.visiteurs[0].id; dessiner(); }")
+    pg.wait_for_timeout(800)
+    v(pg.locator("#vis-pousser").count() == 1,
+      "LA FICHE D'UN VISITEUR PORTE AUSSI LE BOUTON D'ENREGISTREMENT")
+
+    # Attendu a la prochaine tenue : c'est ce qu'on vient de cocher, et
+    # c'est donc ce qu'on veut s'entendre confirmer.
+    pg.evaluate("""() => { const x = E.visiteurs.find(y => y.id === E.visiteurOuvert);
+      x.presentTenue = true; garder(); dessiner(); }""")
+    pg.wait_for_timeout(1500)
+    nom = pg.evaluate("""() => { const x = E.visiteurs.find(y => y.id === E.visiteurOuvert);
+      return (x.prenom + ' ' + x.nom).trim(); }""")
+    d.clear()
+    pg.click("#vis-pousser"); pg.wait_for_timeout(2500)
+    ditF = " ".join(d)
+    v(nom.upper() in ditF,
+      "ET LA CONFIRMATION LE NOMME : un nombre seul ne rassure pas celui qui "
+      "vient d'ecrire un nom", ditF[:260])
+    v("émargement" in ditF,
+      "en disant ce que cela change : son nom sera sur la feuille", ditF[:260])
+
+    # Et quand il n'est PAS attendu, on dit quoi faire pour qu'il le soit.
+    pg.evaluate("""() => { const x = E.visiteurs.find(y => y.id === E.visiteurOuvert);
+      x.presentTenue = false; garder(); dessiner(); }""")
+    pg.wait_for_timeout(1500)
+    d.clear()
+    pg.click("#vis-pousser"); pg.wait_for_timeout(2500)
+    ditG = " ".join(d)
+    v("Attendu à la prochaine tenue" in ditG,
+      "ET S'IL N'EST PAS ATTENDU, ON DIT OU CLIQUER — non « c'est enregistre » "
+      "tout court", ditG[:280])
+
+
+    # ══ 11. AUX AGAPES — S'IL MANGE ═════════════════════════════════
+    # La fiche disait qui venait, non s'il restait a table. Le chiffre
+    # des couverts se faisait donc sans les Visiteurs saisis a la main.
+    # Un couvert manquant, c'est quelqu'un debout le soir de la tenue ;
+    # un couvert de trop, c'est un repas paye pour personne.
+    pg.click("#t-visiteurs"); pg.wait_for_timeout(600)
+    pg.evaluate("() => { E.visiteurOuvert = E.visiteurs[0].id; dessiner(); }")
+    pg.wait_for_timeout(800)
+    v(pg.locator("#v-agapes").count() == 1,
+      "LA FICHE D'UN VISITEUR PORTE LA QUESTION DES AGAPES")
+
+    # LA QUESTION NE SE POSE QU'A QUI VIENT.
+    pg.evaluate("""() => { const x = E.visiteurs.find(y => y.id === E.visiteurOuvert);
+      x.presentTenue = false; garder(); dessiner(); }""")
+    pg.wait_for_timeout(1200)
+    v(pg.get_attribute("#v-agapes", "disabled") is not None,
+      "ELLE EST INERTE TANT QU'IL N'EST PAS ATTENDU : on ne commande pas un "
+      "couvert pour un absent")
+    v("absent" in pg.inner_text("#v-visiteurs"),
+      "et la fiche dit pourquoi, au lieu d'une case grisee sans explication")
+
+    # Attendu, puis a table : le couvert est compte.
+    pg.select_option("#v-presentTenue", "1"); pg.wait_for_timeout(1200)
+    v(pg.get_attribute("#v-agapes", "disabled") is None,
+      "une fois attendu, la question s'ouvre")
+    avantCouverts = pg.evaluate("auxAgapesTous()")
+    pg.select_option("#v-agapes", "1"); pg.wait_for_timeout(1200)
+    vid = pg.evaluate("E.visiteurOuvert")
+    v(pg.evaluate(f"(E.agapesVisiteurs||{{}})[{vid}] === true"),
+      "DIRE OUI COMPTE SON COUVERT", pg.evaluate("E.agapesVisiteurs"))
+    v(pg.evaluate("auxAgapesTous()") == avantCouverts + 1,
+      "et le compte des couverts le suit",
+      (avantCouverts, pg.evaluate("auxAgapesTous()")))
+
+    # TROIS ETATS, NON DEUX : « pas encore dit » n'est pas « non ».
+    pg.select_option("#v-agapes", "0"); pg.wait_for_timeout(1000)
+    v(pg.evaluate(f"(E.agapesVisiteurs||{{}})[{vid}] === false"),
+      "dire non se garde aussi", pg.evaluate("E.agapesVisiteurs"))
+    pg.select_option("#v-agapes", ""); pg.wait_for_timeout(1000)
+    v(pg.evaluate(f"!({vid} in (E.agapesVisiteurs||{{}}))"),
+      "ET « PAS ENCORE DIT » N'EST PAS « NON » : la Secretaire doit savoir a "
+      "qui il reste a demander", pg.evaluate("E.agapesVisiteurs"))
+
+    # NE PLUS ETRE ATTENDU, C'EST NE PLUS AVOIR DE COUVERT.
+    pg.select_option("#v-agapes", "1"); pg.wait_for_timeout(1000)
+    pg.select_option("#v-presentTenue", ""); pg.wait_for_timeout(1200)
+    v(pg.evaluate(f"!({vid} in (E.agapesVisiteurs||{{}}))"),
+      "LE RETIRER DE LA TENUE RETIRE SON COUVERT : le garder ferait payer un "
+      "repas pour quelqu'un qui ne vient pas", pg.evaluate("E.agapesVisiteurs"))
+
+
+    # ══ 9. LE PREMIER LUNDI DU MOIS, D'UN SEUL GESTE ════════════════
+    # « Les tenues et les agapes sont toujours le 1er lundi du mois. »
+    # La regle etait dans une tete ; la date se tapait a la main chaque
+    # mois, et une date tapee a la main se tape un jour de travers.
+    pg.evaluate("""() => { E.tenue.date = '2026-11-02';
+      E.tenue.agapesLimite = '2026-10-30';
+      E.convoquee = true;
+      E.presences[convocables()[0].id] = 'present';
+      garder(); dessiner(); }""")
+    pg.wait_for_timeout(1200)
+    pg.click("#t-convoc"); pg.wait_for_timeout(900)
+    v(pg.locator("#tenue-suivante").count() == 1,
+      "la Convocation porte un bouton « Tenue suivante »")
+    v("7 décembre" in pg.inner_text("#tenue-suivante"),
+      "ET IL ANNONCE LA DATE QU'IL POSERA, non « suivante » tout court",
+      pg.inner_text("#tenue-suivante"))
+
+    combien = pg.evaluate("(E.tenuesPassees||[]).length")
+    pg.click("#tenue-suivante"); pg.wait_for_timeout(1800)
+    v(pg.evaluate("E.tenue.date") == "2026-12-07",
+      "LE PREMIER LUNDI DE DECEMBRE EST POSE", pg.evaluate("E.tenue.date"))
+    v(pg.evaluate("(E.tenuesPassees||[]).length") == combien + 1,
+      "et la tenue de novembre est classee du meme geste",
+      pg.evaluate("(E.tenuesPassees||[]).map(a => a.tenue.date)"))
+    v(pg.evaluate("E.tenue.agapesLimite") == "2026-12-04",
+      "LA LIMITE D'INSCRIPTION GARDE SON ECART — trois jours avant, comme "
+      "la Secretaire l'avait choisi : on reconduit son usage, on n'invente "
+      "pas une regle", pg.evaluate("E.tenue.agapesLimite"))
+    v(pg.evaluate("Object.keys(E.presences).length") == 0,
+      "et les presences repartent a blanc")
+
+    # UNE DATE QUI S'ECARTE DE LA REGLE EST SIGNALEE, NON CORRIGEE.
+    # Elle est peut-etre voulue — un deuil, une fete — et peut-etre une
+    # faute de frappe. Le programme ne sait pas lequel ; il le montre.
+    v("n’est pas un premier lundi" not in pg.inner_text("#v-convoc"),
+      "un premier lundi ne declenche aucun avis")
+    pg.fill("[data-t='date']", "2026-12-14"); pg.wait_for_timeout(1500)
+    pg.click("#t-tableau"); pg.wait_for_timeout(400)
+    pg.click("#t-convoc"); pg.wait_for_timeout(800)
+    t = pg.inner_text("#v-convoc")
+    v("n’est pas un premier lundi" in t,
+      "UNE DATE QUI S'EN ECARTE EST SIGNALEE", t[:400])
+    v("7 décembre" in t,
+      "et l'avis dit quel serait le premier lundi de ce mois-la", t[:400])
+    v(pg.evaluate("E.tenue.date") == "2026-12-14",
+      "MAIS ELLE N'EST PAS CORRIGEE : un Atelier qui deplace une tenue n'a "
+      "pas a se battre contre son programme", pg.evaluate("E.tenue.date"))
+
     v(not e, "aucune erreur JavaScript", e)
     b.close()
 

@@ -28,6 +28,7 @@ sont inventés.
 
 ```sh
 node loge/serveur/essai-miroir.mjs       # beta.html est-il encore le miroir de secretariat.html ?
+node loge/serveur/essai-lundi.mjs        # la tenue tombe-t-elle au premier lundi ?
 node loge/serveur/essai-api.mjs          # le serveur seul, sur SQLite
 node loge/serveur/essai-outil-mdp.mjs    # le SQL imprimé ouvre-t-il vraiment ?
 node loge/serveur/essai-gps.mjs          # la lecture du point du Temple
