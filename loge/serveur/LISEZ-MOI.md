@@ -27,6 +27,7 @@ aucun vrai mot de passe. Les comptes, la page et le tableau d'épreuve
 sont inventés.
 
 ```sh
+node loge/serveur/essai-miroir.mjs       # beta.html est-il encore le miroir de secretariat.html ?
 node loge/serveur/essai-api.mjs          # le serveur seul, sur SQLite
 node loge/serveur/essai-outil-mdp.mjs    # le SQL imprimé ouvre-t-il vraiment ?
 node loge/serveur/essai-gps.mjs          # la lecture du point du Temple
@@ -61,6 +62,7 @@ RBI_PORT=8805 RBI_LECTURE=1 RBI_LECTURE_ECHEC=1 \
 RBI_PORT=8806 node loge/serveur/faux-serveur.mjs &   # la page en accès libre
 RBI_PORT=8810 RBI_COURRIEL=1 node loge/serveur/faux-serveur.mjs &   # le Tableau de la Loge
 RBI_PORT=8811 node loge/serveur/faux-serveur.mjs &   # le travail à deux
+RBI_PORT=8812 node loge/serveur/faux-serveur.mjs &   # les Tenues passées
 
 RBI_URL=http://127.0.0.1:8787/ python3 loge/serveur/essai-documents.py
 RBI_URL=http://127.0.0.1:8789/ python3 loge/serveur/essai-partage.py
@@ -80,6 +82,7 @@ RBI_URL=http://127.0.0.1:8801/ python3 loge/serveur/essai-odj.py
 RBI_URL=http://127.0.0.1:8806/ python3 loge/serveur/essai-loges-amies.py
 RBI_URL=http://127.0.0.1:8810/ python3 loge/serveur/essai-tableau.py
 RBI_URL=http://127.0.0.1:8811/ python3 loge/serveur/essai-adeux.py
+RBI_URL=http://127.0.0.1:8812/ python3 loge/serveur/essai-archive.py
 python3 loge/serveur/essai-lecture.py
 ```
 
