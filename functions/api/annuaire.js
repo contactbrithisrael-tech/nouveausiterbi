@@ -163,24 +163,18 @@ export async function onRequestPost(context){
     if (!fiche.contact_email || !courrielPlausible(fiche.contact_email))
       return json({ erreur: 'courriel_manquant' }, 400);
   } else {
-    /* De quoi savoir de qui il s'agit et comment le joindre. Sans cela,
-       la fiche n'apprend rien et n'encombre que la base. */
+    /* Un visiteur s'enregistre avec l'essentiel : grade, nom, prénom.
+       Le grade est indispensable au tuilage. Courriel, téléphone et rite
+       sont facultatifs : le visiteur les donnera le jour de sa venue.
+       Un courriel saisi doit toutefois être plausible. */
     if (!fiche.nom || !fiche.prenom) return json({ erreur: 'nom_manquant' }, 400);
-    if (!fiche.email || !courrielPlausible(fiche.email))
+    if (!fiche.grade) return json({ erreur: 'grade_manquant' }, 400);
+    if (fiche.email && !courrielPlausible(fiche.email))
       return json({ erreur: 'courriel_manquant' }, 400);
 
-    /* ── L'ANNONCE DE VENUE À UNE TENUE ───────────────────────────
-       La page l'exige déjà, mais une page se contourne : c'est ici
-       qu'on tient la règle. Il faut de quoi savoir qui vient (grade,
-       rite), comment le joindre (téléphone) et à quelle tenue — une
-       date lisible, qui permet de la rattacher à la convocation en
-       cours. Loge, obédience et Orient restent facultatifs : certains
-       n'ont plus d'obédience, ou ne peuvent officiellement pas nous
-       visiter, et n'ont pas à s'en justifier. */
+    /* Pour l'annonce de venue, on garde une date lisible : elle rattache
+       la fiche à la convocation en cours. */
     if (texte(corps.source) === 'espace-membres-venue'){
-      if (!fiche.grade)     return json({ erreur: 'grade_manquant' }, 400);
-      if (!fiche.rite)      return json({ erreur: 'rite_manquant' }, 400);
-      if (!fiche.telephone) return json({ erreur: 'telephone_manquant' }, 400);
       if (!dateLisible(fiche.tenue_date || ''))
         return json({ erreur: 'date_manquante' }, 400);
     }
