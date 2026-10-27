@@ -85,16 +85,22 @@ with sync_playwright() as pw:
     # Sur la premiere convocation lue en service — R. Loge BASTET n°901
     # — le modele a range sous le Secretaire un numero qui etait celui
     # d'une Soeur chargee des repas : « reserver par SMS aupres de notre
-    # Soeur Marie au 06 76 00 61 66 ». Il a vu un numero, il a vu un
+    # Soeur Myriam au 06 00 00 00 00 ». Il a vu un numero, il a vu un
     # contact, il les a maries. Un champ vide se remplit d'un coup de
     # telephone ; un mauvais numero se decouvre le soir de la tenue.
     consigne = A.evaluate("""async () => {
       const r = await fetch('/__lectures'); const l = await r.json();
       const c = l[0].corps.messages[0].content.find(x => x.type === 'text');
       return c ? c.text : ''; }""")
-    v("Sœur Marie" in consigne or "Soeur Marie" in consigne,
-      "LA CONSIGNE PORTE LE CAS REEL QU'ON A VU SE TROMPER, non une "
-      "recommandation en l'air", consigne[-400:])
+    # ON N'EPROUVE PAS UNE IDENTITE. L'ancienne version cherchait le
+    # prenom qui figurait dans la consigne — celui d'une Soeur d'un
+    # autre Atelier, lu sur sa convocation et recopie tel quel, avec son
+    # portable, dans un depot PUBLIC. Les deux ont ete remplaces par des
+    # inventes, ici comme dans la consigne. L'epreuve cherche donc LA
+    # FORME DU CAS : c'est elle qui instruit, et elle seule.
+    v("par SMS" in consigne and "les agapes" in consigne,
+      "LA CONSIGNE PORTE LE CAS QU'ON A VU SE TROMPER, non une "
+      "recommandation en l'air", consigne[-500:])
     # le texte est replie sur plusieurs lignes : on cherche un fragment
     # qui n'enjambe pas une coupure
     v("donne, non au secrétariat" in consigne,

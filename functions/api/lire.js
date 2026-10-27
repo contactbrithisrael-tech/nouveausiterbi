@@ -85,12 +85,18 @@ vraisemblable passe inaperçue et entre au registre.
   à qui l'on écrit pour cet Atelier — son Secrétaire d'ordinaire. Ne
   marie pas un nom trouvé ici avec un numéro trouvé là.
 
-  CAS RÉEL : une convocation nomme son Secrétaire et son courriel en
-  bas de page, et porte ailleurs « réserver votre repas par SMS auprès
-  de notre Sœur Marie au 06 76 00 61 66 ». Ce numéro est celui de Sœur
-  Marie ; il n'a rien à faire dans "contactTel". Un numéro donné pour
-  les agapes, les transports ou l'hébergement appartient à qui le
-  donne, non au secrétariat.
+  LE CAS QUI S'EST PRÉSENTÉ : une convocation nomme son Secrétaire et
+  son courriel en bas de page, et porte ailleurs « réserver votre repas
+  par SMS auprès de notre Sœur Myriam au 06 00 00 00 00 ». Ce numéro
+  est celui de Sœur Myriam ; il n'a rien à faire dans "contactTel". Un
+  numéro donné pour les agapes, les transports ou l'hébergement
+  appartient à qui le donne, non au secrétariat.
+
+  (Le nom et le numéro ci-dessus sont inventés. Les vrais figuraient
+  ici : j'avais recopié tels quels le prénom et le portable d'une Sœur
+  d'un autre Atelier, lus sur sa convocation, dans un dépôt PUBLIC. Un
+  exemple n'a jamais besoin des coordonnées de quelqu'un pour
+  instruire.)
 
   Si le seul numéro de la page est rattaché à quelqu'un d'autre que le
   contact, "contactTel" reste null. Un champ vide se remplit d'un coup
