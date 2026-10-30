@@ -309,7 +309,7 @@ var RBI_CONFIG = {
         nom:    "Jean-Michel RAUX",
         grade:  "32°",
         titre:  "Grand Maître Adjoint",
-        role:   "Lieutenant Souverain Grand Commandeur —  Grand Trésorier",
+        role:   "Lieutenant Souverain Grand Commandeur",
         img_id: "photo-raux",
         rang:   "gma"
       },
@@ -354,6 +354,14 @@ var RBI_CONFIG = {
         img_id: "photo-jourdan",
         // À sa demande, pas de photographie : silhouette anonyme.
         img_data: RBI_AVATAR_ANONYME,
+        rang:   "agm"
+      },
+      {
+        nom:    "Sam GASMI KHANAFER",
+        grade:  "32°",
+        titre:  "Assistant Grand Maître",
+        role:   " Grand Trésorier",
+        img_id: "photo-gasmi",
         rang:   "agm"
       },
       /* ── Membre d'honneur ── */
