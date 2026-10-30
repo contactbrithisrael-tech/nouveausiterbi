@@ -1479,7 +1479,7 @@
     <strong>Pour les Loges amies qui nous invitent.</strong>
     Vous êtes Sœur ou Frère de BERESHIT ? Votre convocation est dans l'onglet
     <a href="#" onclick="afficherSection('convocation-membre');return false;">« Convocation
-    de ma Loge (membre) »</a>.
+    de ma Loge membre »</a>.
   </div>
 
   <div class="annuaire-intro">
@@ -1494,6 +1494,95 @@
     Nous n'en conservons pas de copie — donnez-nous son adresse s'il est en ligne,
     et chacun ira le lire chez vous.
   </div>
+
+  <!-- Dépôt simple : une image ou un PDF + le nom de la Loge -> /api/depot.
+       Le Secrétariat les voit tous, valide ou refuse, puis envoie aux membres. -->
+  <div class="annuaire-intro" id="depot-bloc">
+    <strong style="color:var(--or);">Le plus simple : déposez l'image de votre convocation.</strong>
+    Photo, capture d'écran ou PDF, avec le nom de votre Loge. Le Secrétariat la reçoit,
+    la vérifie, puis la transmet à nos Sœurs et Frères. Rien d'autre à remplir.
+    <form id="form-depot" style="margin-top:1rem;">
+      <label for="depot-loge">Nom de votre Loge *</label>
+      <input type="text" id="depot-loge" maxlength="120" required>
+      <label for="depot-fichier" style="margin-top:.8rem;display:block;">Votre convocation (image ou PDF) *</label>
+      <input type="file" id="depot-fichier" accept="image/*,.pdf,application/pdf" required>
+      <button type="submit" class="btn btn-or" id="depot-bouton" style="margin-top:1rem;">Déposer ma convocation</button>
+      <p id="depot-msg" role="status" style="margin-top:.8rem;"></p>
+    </form>
+  </div>
+  <script>
+  (function () {
+    var MAX = 1250000; // octets : sous la limite de 1300 Kio du serveur
+    var f = document.getElementById('form-depot');
+    if (!f) return;
+    var msg = document.getElementById('depot-msg');
+    var bouton = document.getElementById('depot-bouton');
+    function dire(t) { msg.textContent = t; }
+
+    function lireBase64(blob) {
+      return new Promise(function (ok, ko) {
+        var r = new FileReader();
+        r.onload = function () { ok(String(r.result).split(',')[1] || ''); };
+        r.onerror = ko;
+        r.readAsDataURL(blob);
+      });
+    }
+    // Réduit une photo : côté 1600 px puis qualité décroissante jusqu'à MAX octets.
+    function reduire(fichier) {
+      return new Promise(function (ok, ko) {
+        var img = new Image(), url = URL.createObjectURL(fichier);
+        img.onerror = function () { ko(new Error('image_illisible')); };
+        img.onload = function () {
+          var k = Math.min(1, 1600 / Math.max(img.width, img.height));
+          var c = document.createElement('canvas');
+          c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+          c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+          URL.revokeObjectURL(url);
+          (function essai(q) {
+            c.toBlob(function (b) {
+              if (!b) return ko(new Error('image_illisible'));
+              if (b.size <= MAX || q <= 0.3) return b.size <= MAX ? ok(b) : ko(new Error('trop_lourd'));
+              essai(q - 0.15);
+            }, 'image/jpeg', q);
+          })(0.85);
+        };
+        img.src = url;
+      });
+    }
+    var ERREURS = {
+      trop_de_depots: "Trop de dépôts depuis cette connexion. Réessayez dans une heure.",
+      type_refuse: "Ce type de fichier n'est pas accepté : envoyez une photo ou un PDF.",
+      fichier_trop_lourd: "Le fichier est trop lourd. Envoyez une photo plutôt qu'un gros PDF.",
+      fichier_illisible: "Le fichier n'a pas pu être lu. Essayez-en un autre.",
+      loge_manquante: "Indiquez le nom de votre Loge."
+    };
+    f.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      var fichier = document.getElementById('depot-fichier').files[0];
+      var loge = document.getElementById('depot-loge').value.trim();
+      if (!fichier || !loge) return dire('Indiquez le nom de la Loge et choisissez le fichier.');
+      bouton.disabled = true; dire('Envoi en cours…');
+      try {
+        var pdf = fichier.type === 'application/pdf' || /\.pdf$/i.test(fichier.name);
+        var blob = pdf ? fichier : await reduire(fichier);
+        if (blob.size > MAX) throw new Error('trop_lourd');
+        var rep = await fetch('/api/depot', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ loge_nom: loge, nom_fichier: fichier.name, contenu: await lireBase64(blob) })
+        });
+        var j = await rep.json().catch(function () { return {}; });
+        if (!rep.ok) throw new Error(j.erreur || 'echec');
+        f.reset();
+        dire("Merci : votre convocation est partie au Secrétariat, qui la vérifiera avant de la transmettre.");
+      } catch (err) {
+        var m = err.message;
+        dire(ERREURS[m] || (m === 'trop_lourd' ? ERREURS.fichier_trop_lourd
+          : "L'envoi a échoué. Réessayez, ou écrivez-nous à " + (window.RBI_FORM_EMAIL || 'contact.brith.israel@gmail.com') + "."));
+      }
+      bouton.disabled = false;
+    });
+  })();
+  </script>
 
   <form id="form-convocation" onsubmit="soumettre(event, 'form-convocation', 'msg-convocation')">
     <input type="hidden" name="type" value="convocation">
