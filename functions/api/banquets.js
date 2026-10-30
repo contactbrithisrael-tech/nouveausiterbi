@@ -103,6 +103,58 @@ async function marques(context, tenue){
   } catch (e) { return new Set(); }
 }
 
+/* ── LES NOMS AJOUTÉS À LA MAIN, ET LE NOMBRE ATTENDU ─────────────
+   Le Maître des banquets complète la liste : un nom, une catégorie, par Tenue.
+   Il fixe aussi le nombre attendu. Pour la Tenue du 2 novembre 2026 : 22,
+   tant qu'il n'en a pas fixé un autre. */
+const ATTENDUS_DEFAUT = { '2026-11-02': 22 };
+
+async function tables(context){
+  await context.env.DB.prepare(
+    "CREATE TABLE IF NOT EXISTS banquets_noms (loge_id INTEGER NOT NULL, tenue TEXT NOT NULL, " +
+    "cle TEXT NOT NULL, nom TEXT NOT NULL, qualite TEXT NOT NULL, " +
+    "PRIMARY KEY (loge_id, tenue, cle))").run();
+  await context.env.DB.prepare(
+    "CREATE TABLE IF NOT EXISTS banquets_prevus (loge_id INTEGER NOT NULL, tenue TEXT NOT NULL, " +
+    "n INTEGER NOT NULL, PRIMARY KEY (loge_id, tenue))").run();
+}
+async function manuels(context, tenue){
+  try {
+    await tables(context);
+    const { results } = await context.env.DB.prepare(
+      "SELECT cle, nom, qualite FROM banquets_noms WHERE loge_id = ? AND tenue = ?")
+      .bind(LOGE, tenue).all();
+    return results || [];
+  } catch (e) { return []; }
+}
+async function attendus(context, tenue){
+  try {
+    await tables(context);
+    const r = await context.env.DB.prepare(
+      "SELECT n FROM banquets_prevus WHERE loge_id = ? AND tenue = ?").bind(LOGE, tenue).first();
+    if (r && Number.isInteger(r.n)) return r.n;
+  } catch (e) { /* on retombe sur la valeur par défaut */ }
+  return ATTENDUS_DEFAUT[tenue] ?? null;
+}
+async function ecrire(context, tenue, corps){
+  await tables(context);
+  const db = context.env.DB;
+  const a = corps.ajouter;
+  if (a && typeof a === 'object'){
+    const nom = propre(a.nom).slice(0, 80);
+    if (nom && ['membre', 'visiteur'].includes(a.qualite))
+      await db.prepare("INSERT OR REPLACE INTO banquets_noms (loge_id, tenue, cle, nom, qualite) VALUES (?, ?, ?, ?, ?)")
+        .bind(LOGE, tenue, cle(nom), nom, a.qualite).run();
+  }
+  if (corps.retirer && typeof corps.retirer === 'object')
+    await db.prepare("DELETE FROM banquets_noms WHERE loge_id = ? AND tenue = ? AND cle = ?")
+      .bind(LOGE, tenue, String(corps.retirer.cle || '')).run();
+  const n = Number(corps.prevus);
+  if (corps.prevus !== undefined && Number.isInteger(n) && n >= 0 && n <= 1000)
+    await db.prepare("INSERT INTO banquets_prevus (loge_id, tenue, n) VALUES (?, ?, ?) " +
+      "ON CONFLICT (loge_id, tenue) DO UPDATE SET n = excluded.n").bind(LOGE, tenue, n).run();
+}
+
 async function cocher(context, tenue, cleP, paye){
   await context.env.DB.prepare(
     "INSERT INTO banquets_paye (loge_id, tenue, cle, paye) VALUES (?, ?, ?, ?) " +
@@ -162,6 +214,10 @@ async function lesGens(context, tenue, fiches){
     const g = gens[i];
     if (!(g.agapes === 'oui' || (g.qualite === 'visiteur' && g.agapes !== 'non'))) gens.splice(i, 1);
   }
+  const deja = new Set(gens.map(g => cle(g.nom)));
+  for (const m of await manuels(context, tenue)){
+    if (!deja.has(m.cle)) gens.push({ nom: m.nom, qualite: m.qualite, agapes: 'oui', annonce: false, manuel: true });
+  }
   const payes = await marques(context, tenue);
   for (const g of gens){
     g.cle = cle(g.nom);
@@ -213,6 +269,12 @@ export async function onRequestPost(context){
 
   let gens = await lesGens(context, tenue, fiches).catch(() => []);
 
+  /* Compléter la liste : ajouter ou retirer un nom, fixer le nombre attendu. */
+  if (corps.ajouter || corps.retirer || corps.prevus !== undefined){
+    await ecrire(context, tenue, corps).catch(() => {});
+    gens = await lesGens(context, tenue, fiches).catch(() => []);
+  }
+
   /* Cocher « payé » : seulement un Visiteur de cette Tenue, repéré par
      sa clé. Une clé inconnue n'écrit rien. */
   const m = corps.marquer;
@@ -230,5 +292,5 @@ export async function onRequestPost(context){
     if (g.paiement === 'paye') compte.paye++;
     if (g.paiement === 'a_payer') compte.a_payer++;
   }
-  return json({ tenue, prevue, tenues, gens, compte });
+  return json({ tenue, prevue, tenues, gens, compte, attendus: await attendus(context, tenue) });
 }
