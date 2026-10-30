@@ -2422,7 +2422,8 @@
 
    ► CE QUE LE SERVEUR RENDRA (module 2) — les noms de champs sont
      ceux du registre de la Secrétaire :
-     { tenue: 'AAAA-MM-JJ',
+     { tenue: 'AAAA-MM-JJ', prevue: 'AAAA-MM-JJ', tenues: [dates],
+       odj_conserve: bool,
        convocation: { titre, degre, date, heureConv, heureOuv,
                       lieuNom, lieuAdresse, lieuCp, lieuVille, adage,
                       agapesOui, agapesPrix, agapesLimite,
@@ -2446,6 +2447,7 @@
     trop_dessais: "Trop d'adresses ont été essayées depuis une heure. Réessayez tout à l'heure."
   };
   var DEGRE = { 1: 'Premier', 2: 'Deuxième', 3: 'Troisième' };
+  var COURRIEL = '';          // le temps de la visite, et rien de plus
 
   function ennui(mot) { var e = $('convmembre-ennui'); e.textContent = mot; e.hidden = false; }
 
@@ -2460,13 +2462,23 @@
       ech(t) + '</span> ' + ech(v) + '</p>' : '';
   }
 
-  function peindre(c) {
+  function selecteur(d) {   // plusieurs Tenues connues : on peut relire les précédentes
+    if (!d.tenues || d.tenues.length < 2) return '';
+    return '<label for="convmembre-date">Tenue</label><select id="convmembre-date">' +
+      d.tenues.map(function (t) {
+        return '<option value="' + ech(t) + '"' + (t === d.tenue ? ' selected' : '') + '>' +
+          ech(dateLongue(t)) + (t === d.prevue ? ' — Tenue prévue' : '') + '</option>'; }).join('') +
+      '</select>';
+  }
+
+  function peindre(d) {
+    var c = d.convocation;
     var lieu = [c.lieuNom, [c.lieuAdresse, [c.lieuCp, c.lieuVille].filter(Boolean).join(' ')]
                 .filter(Boolean).join(' — ')].filter(Boolean).join(', ');
     var odj = (c.odj || []).map(function (o) {
       return '<tr><td style="color:var(--or2);white-space:nowrap;padding-right:1rem;">' +
         ech(o.h) + '</td><td>' + ech(o.t) + '</td></tr>'; }).join('');
-    $('convmembre-vu').innerHTML =
+    $('convmembre-vu').innerHTML = selecteur(d) +
       '<div class="annuaire-intro">' +
       '<p style="color:var(--or);font-size:1.15rem;margin:0 0 .4rem;"><strong>' +
         ech(c.titre) + '</strong></p>' +
@@ -2478,6 +2490,7 @@
              'Ordre du jour</h3><table class="tableau-loge">' + odj + '</table>' : '') +
       (c.agapesOui ? '<div class="annuaire-intro" style="margin-top:1rem;">' +
         '<strong style="color:var(--or);">Agapes.</strong> ' + ech(c.agapesQuiPaie) + '</div>' : '') +
+      (d.odj_conserve === false ? '<p class="confidentialite">L\u2019ordre du jour d\u2019une Tenue passée n\u2019est pas conservé au registre.</p>' : '') +
       (c.motFin ? '<p style="margin-top:1rem;">' + ech(c.motFin) + '</p>' : '') +
       (c.adage ? '<p style="font-style:italic;text-align:center;margin-top:1rem;">« ' +
                  ech(c.adage) + ' »</p>' : '') +
@@ -2487,12 +2500,11 @@
     $('convmembre-vu').hidden = false;
   }
 
-  $('form-convmembre').addEventListener('submit', function (e) {
-    e.preventDefault();
-    $('convmembre-ennui').hidden = true;
+  function demander(date) {
+    var corps = { courriel: COURRIEL };
+    if (date) corps.date = date;
     fetch('/api/convocation', { method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ courriel: $('cm-courriel').value.trim() }) })
+      headers: { 'content-type': 'application/json' }, body: JSON.stringify(corps) })
       .then(function (r) {
         return r.json().catch(function () { return {}; })
           .then(function (c) { return { ok: r.ok, c: c }; }); })
@@ -2502,11 +2514,22 @@
             "La convocation n'a pas pu être lue. Réessayez dans un moment.");
           return;
         }
-        peindre(rep.c.convocation);
+        $('convmembre-ennui').hidden = true;
+        peindre(rep.c);
       })
       .catch(function () {
         ennui("Le serveur de l'Atelier n'a pas répondu. Réessayez dans un moment.");
       });
+  }
+
+  $('form-convmembre').addEventListener('submit', function (e) {
+    e.preventDefault();
+    COURRIEL = $('cm-courriel').value.trim();
+    $('convmembre-ennui').hidden = true;
+    demander();
+  });
+  $('convmembre-vu').addEventListener('change', function (e) {
+    if (e.target && e.target.id === 'convmembre-date') demander(e.target.value);
   });
 })();
 
