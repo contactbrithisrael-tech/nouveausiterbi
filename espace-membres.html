@@ -2779,9 +2779,9 @@
       (att == null ? '' : ' sur ' + att + ' attendus') + ' à table</strong> — ' + (c.membre || 0) + ' membre(s), ' + (c.visiteur || 0) +
       ' visiteur(s).<br>Visiteurs : ' + (c.paye || 0) + ' payé(s), ' + (c.a_payer || 0) +
       ' à payer · ' + (c.a_confirmer || 0) + ' à confirmer · ' + (c.non || 0) + ' pas à table.';
-    $('banq-liste').innerHTML = '<tr><th>Nom</th><th>Catégorie</th><th>Agapes</th><th>Paiement</th></tr>' +
-      (d.gens || []).map(function (g) {
-        return '<tr><td>' + ech(g.nom) + '</td><td>' + ech(QUALITE[g.qualite] || g.qualite) +
+    $('banq-liste').innerHTML = '<tr><th>N°</th><th>Nom</th><th>Catégorie</th><th>Agapes</th><th>Paiement</th></tr>' +
+      (d.gens || []).map(function (g, i) {
+        return '<tr><td>' + (i + 1) + '</td><td>' + ech(g.nom) + '</td><td>' + ech(QUALITE[g.qualite] || g.qualite) +
           '</td><td>' + (ETAT[g.agapes] || '') + '</td><td>' + casePaiement(g) +
           (g.manuel ? ' <button type="button" class="btn" data-retirer="' + ech(g.cle) +
             '" style="padding:.1rem .5rem;font-size:.75rem;">Retirer</button>' : '') + '</td></tr>'; }).join('');
