@@ -42,7 +42,10 @@ const catalogue = [
   { id: "gadlu", titre: "GADLU, peux-tu répéter la question ?" },
   { id: "michlei-vekohelet", titre: "Michlei veKohelet (Proverbes et Ecclésiaste)" },
   { id: "shaarei-orah", titre: "Shaarei Orah (Les Portes de la Lumière)" },
-  { id: "tome-5", titre: "Tome V" }
+  { id: "tome-5", titre: "Tome V" },
+  { id: "shir-hashirim", titre: "Shir HaShirim (Le Cantique des Cantiques)" },
+  { id: "dix-degres", titre: "Les 10 Degrés" },
+  { id: "encyclopedie-rbi", titre: "Encyclopédie RBI" }
 ];
 
 async function membre(context, courriel){
