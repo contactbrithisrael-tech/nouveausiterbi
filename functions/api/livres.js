@@ -27,6 +27,7 @@ const valable = a => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(a);
 
 /* Tiré de joshua/corpus.json (ouvrages), sans lien, source ni degré. « Recueil intégral », « Guide de Survie »,
    « L'Alliance de Lumière », « Du Pétrin au Compas » et les documents de travail n'y figurent pas, à la demande du Souverain Grand Commandeur. */
+/* Le secret LIVRES_COURRIEL est lu au déploiement : tout changement du secret demande un nouveau déploiement. */
 const catalogue = [
   { id: "oved-1", titre: "RBI OVED — 1er degré complet" },
   { id: "boneh-2", titre: "RBI BONEH — 2e degré complet" },
