@@ -113,8 +113,27 @@ async function cocher(context, tenue, cleP, paye){
 const statut = r => r.reponse === 'excuse' ? 'non'
   : r.agapes === 1 ? 'oui' : r.agapes === 0 ? 'non' : 'a_confirmer';
 
+/* Qui n'est plus de l'Atelier : démissionnaire, radié ou décédé au registre.
+   On ne compte pas à table quelqu'un qui n'en fait plus partie, même s'il
+   avait répondu avant. Repérés par l'adresse ou par le nom (sans accent ni ordre). */
+async function sortis(context){
+  const mails = new Set(), noms = new Set();
+  try {
+    const r = await context.env.DB.prepare(
+      'SELECT donnees FROM etat WHERE loge_id = ?').bind(LOGE).first();
+    const membres = (r ? JSON.parse(r.donnees)?.membres : null) || [];
+    for (const m of membres){
+      if (!m || !['demission', 'radiation', 'decede'].includes(m.statut)) continue;
+      const e = propre(m.email).toLowerCase();
+      if (e) mails.add(e);
+      noms.add(cle(propre((m.prenoms || '') + ' ' + (m.nom || ''))));
+    }
+  } catch (e) { /* registre illisible : on ne retire personne */ }
+  return { mails, noms };
+}
+
 async function lesGens(context, tenue, fiches){
-  const gens = [], parMail = new Map(), parNom = new Map();
+  const gens = [], parMail = new Map(), parNom = new Map(), mailDe = new Map();
   const { results } = await context.env.DB.prepare(
     "SELECT qui_type, nom, courriel, reponse, agapes FROM reponses " +
     "WHERE loge_id = ? AND tenue = ?").bind(LOGE, tenue).all();
@@ -122,7 +141,7 @@ async function lesGens(context, tenue, fiches){
     const p = { nom: propre(r.nom), qualite: categorie(r.qui_type), agapes: statut(r), annonce: false };
     gens.push(p);
     const m = propre(r.courriel).toLowerCase();
-    if (m) parMail.set(m, p);
+    if (m){ parMail.set(m, p); mailDe.set(p, m); }
     parNom.set(cle(p.nom), p);
   }
   for (const f of fiches.filter(x => x.tenue_date === tenue)){
@@ -130,6 +149,11 @@ async function lesGens(context, tenue, fiches){
     const deja = (m && parMail.get(m)) || parNom.get(cle(nom));
     if (deja){ deja.annonce = true; continue; }
     gens.push({ nom, qualite: 'visiteur', agapes: 'a_confirmer', annonce: true });
+  }
+  const hors = await sortis(context);
+  for (let i = gens.length - 1; i >= 0; i--){
+    const g = gens[i];
+    if (g.qualite === 'membre' && (hors.noms.has(cle(g.nom)) || hors.mails.has(mailDe.get(g)))) gens.splice(i, 1);
   }
   const payes = await marques(context, tenue);
   for (const g of gens){
