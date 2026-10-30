@@ -213,7 +213,7 @@ with sync_playwright() as b0:
       "L'AGENDA PARAIT DES QU'IL Y A UNE LOGE AU CARNET, meme sans date")
     v("Aucune tenue n’est annoncée" in t,
       "et il dit qu'il est vide plutot que de disparaitre", t[:200])
-    v("Convocation de ma Loge" in t,
+    v("Convocation à déposer (visiteur)" in t,
       "ET D'OU VIENNENT LES DATES : la Loge les depose depuis le site",
       t[:400])
     v("3 Loges inscrites n’ont annoncé aucune date" in t,

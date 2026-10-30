@@ -303,9 +303,9 @@ with sync_playwright() as p:
         C.fill("#porte-q1", "de midi a minuit")
         C.fill("#porte-q2", "7 ans")
         C.click("#porte-form button[type=submit]"); C.wait_for_timeout(700)
-    C.click("button.onglet:has-text('Convocation de ma Loge')"); C.wait_for_timeout(600)
+    C.click("button.onglet:has-text('Convocation à déposer (visiteur)')"); C.wait_for_timeout(600)
     v(C.locator("#convocation-loge").is_visible(),
-      "l'Espace Membres porte un onglet « Convocation de ma Loge »")
+      "l'Espace Membres porte un onglet « Convocation à déposer (visiteur) »")
     for champ, valeur in (("loge_nom", "Les Trois Colonnes"),
                           ("loge_numero", "142"),
                           ("contact_email", "secretariat@trois-colonnes.test"),
