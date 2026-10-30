@@ -2215,6 +2215,35 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
+  /* « Sortir » : de n'importe quel onglet, on revient à l'accueil de
+     l'Espace Membres — l'onglet Joshua, celui qui s'ouvre par défaut. */
+  function sortirEspace() {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('actif'));
+    document.querySelectorAll('.onglet').forEach(o => o.classList.remove('actif'));
+    document.getElementById('joshua').classList.add('actif');
+    var premier = document.querySelector('.nav-onglets .onglet');
+    if (premier) premier.classList.add('actif');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  (function () {
+    function bouton() {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'btn btn-sortir';
+      b.textContent = '↩ Sortir';
+      b.title = "Revenir à l'accueil de l'Espace Membres";
+      b.addEventListener('click', sortirEspace);
+      var d = document.createElement('div');
+      d.style.cssText = 'text-align:right;margin:.4rem 0 1rem;';
+      d.appendChild(b);
+      return d;
+    }
+    document.querySelectorAll('.section:not(#joshua)').forEach(function (s) {
+      s.insertBefore(bouton(), s.firstChild);   // en haut
+      s.appendChild(bouton());                  // et en bas, pour les pages longues
+    });
+  })();
+
   // ── Upload fichier — afficher nom ──
   function afficherNomFichier(input, idLabel) {
     var label = document.getElementById(idLabel);
