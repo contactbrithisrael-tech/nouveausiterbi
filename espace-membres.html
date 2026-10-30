@@ -2029,31 +2029,20 @@
     </div>
   </div>
 
-  <!-- TOME II -->
-  <div class="livre-carte" style="opacity:.7;">
-    <div class="livre-carte__cover">📜</div>
-    <div class="livre-carte__info">
-      <div class="livre-carte__titre">Tome II — Loges de Perfection (Degrés 4-14)</div>
-      <div class="livre-carte__sous">Mickaël DARMON · En cours de rédaction</div>
-      <div class="livre-carte__desc">
-        Le second tome des rituels couvre les Loges de Perfection du Rite Brith Israël, 
-        degrés 4 à 14 correspondant aux Sephiroth Tiphereth à Kether sur l'Arbre de Vie.
-      </div>
-      <span class="badge-bientot">⏳ Publication prévue 2025-2026</span>
-    </div>
-  </div>
-
-  <!-- TOME III -->
-  <div class="livre-carte" style="opacity:.5;">
-    <div class="livre-carte__cover">📜</div>
-    <div class="livre-carte__info">
-      <div class="livre-carte__titre">Tome III — Les 22 Sentiers (Degrés 11-32)</div>
-      <div class="livre-carte__sous">Mickaël DARMON · En préparation</div>
-      <div class="livre-carte__desc">
-        Les degrés 11 à 32 correspondent aux 22 Sentiers et lettres hébraïques de l'Aleph au Tav.
-      </div>
-      <span class="badge-bientot">⏳ En préparation</span>
-    </div>
+  <!-- DEMANDER UN LIVRE : à son degré, par courriel à Jean-Michel RAUX.
+       La liste vient du serveur (route « livres ») : elle n'est pas écrite ici. -->
+  <div class="annuaire-intro" id="livres-bloc" style="margin-top:2rem;">
+    <strong style="color:var(--or);">Demander un livre du Rite</strong><br>
+    Donnez l'adresse où vous recevez vos convocations pour voir la liste des ouvrages. Votre
+    demande part à Jean-Michel RAUX : c'est lui qui décide si vous y avez droit, puis voit avec
+    vous l'impression et le paiement.
+    <form id="form-livres" autocomplete="on" style="margin-top:1rem;">
+      <label for="livres-courriel">Votre courriel *</label>
+      <input id="livres-courriel" type="email" required autocomplete="email">
+      <div class="form-footer"><button type="submit" class="btn btn-or">Voir mes livres</button></div>
+    </form>
+    <p id="livres-ennui" style="color:var(--or);" hidden></p>
+    <div id="livres-liste" hidden></div>
   </div>
 
 </section>
@@ -2790,6 +2779,52 @@
   $('banq-liste').addEventListener('change', function (e) {
     var k = e.target && e.target.getAttribute && e.target.getAttribute('data-cle');
     if (k) demander($('banq-tenue').value, { cle: k, paye: e.target.checked });
+  });
+})();
+
+
+/* ── DEMANDER UN LIVRE : la liste et l'envoi se font sur le serveur ── */
+(function () {
+  var COURRIEL = '';
+  var $ = function (i) { return document.getElementById(i); };
+  var ech = function (t) { return String(t).replace(/[&<>"']/g, function (c) {
+    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
+  var ENNUIS = {
+    inconnu: "Cette adresse n'est pas reconnue. Utilisez celle de vos convocations.",
+    non_configure: "La demande de livre n'est pas encore ouverte.",
+    trop_dessais: "Trop d'essais depuis une heure. Réessayez tout à l'heure.",
+    envoi_refuse: "La demande n'a pas pu partir. Réessayez dans un moment."
+  };
+  function ennui(t) { var e = $('livres-ennui'); e.textContent = t; e.hidden = !t; }
+  function appeler(corps) {
+    return fetch('/api/livres', { method: 'POST', headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(corps) }).then(function (r) {
+        return r.json().catch(function () { return {}; }).then(function (c) { return { ok: r.ok, c: c }; }); });
+  }
+  function liste(d) {
+    var z = $('livres-liste'); z.hidden = false;
+    z.innerHTML = d.livres.length ? '<p>Ouvrages du Rite :</p>' + d.livres.map(function (l) {
+      return '<p style="margin:.6rem 0;">' + ech(l.titre) +
+        ' <button type="button" class="btn btn-or" data-livre="' + ech(l.id) + '">Demander ce livre</button></p>'; }).join('')
+      : "<p>Aucun ouvrage n'est proposé pour le moment.</p>";
+  }
+  $('form-livres').addEventListener('submit', function (e) {
+    e.preventDefault(); COURRIEL = $('livres-courriel').value.trim(); ennui('');
+    appeler({ courriel: COURRIEL }).then(function (r) {
+      if (!r.ok || !r.c.livres) { ennui(ENNUIS[r.c.erreur] || 'La liste n\u2019a pas pu être lue.'); return; }
+      liste(r.c); })
+      .catch(function () { ennui("Le serveur n'a pas répondu. Réessayez dans un moment."); });
+  });
+  $('livres-liste').addEventListener('click', function (e) {
+    var id = e.target && e.target.getAttribute && e.target.getAttribute('data-livre');
+    if (!id) return;
+    e.target.disabled = true; ennui('');
+    appeler({ courriel: COURRIEL, livre: id }).then(function (r) {
+      if (!r.ok) { e.target.disabled = false; ennui(ENNUIS[r.c.erreur] || "La demande n'a pas pu partir."); return; }
+      e.target.textContent = 'Demandé ✓';
+      $('livres-liste').insertAdjacentHTML('beforeend',
+        '<p style="color:var(--or2);">Votre demande est partie à Jean-Michel RAUX.</p>'); })
+      .catch(function () { e.target.disabled = false; ennui("Le serveur n'a pas répondu."); });
   });
 })();
 
