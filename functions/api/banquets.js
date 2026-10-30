@@ -155,6 +155,13 @@ async function lesGens(context, tenue, fiches){
     const g = gens[i];
     if (g.qualite === 'membre' && (hors.noms.has(cle(g.nom)) || hors.mails.has(mailDe.get(g)))) gens.splice(i, 1);
   }
+  /* La liste n'est que celle des INSCRITS : un membre qui a dit « oui » aux agapes ;
+     un visiteur qui s'est annoncé (c'est lui que l'on suit pour le paiement), sauf s'il a dit non.
+     Les absents et ceux qui n'ont rien confirmé n'y figurent pas. */
+  for (let i = gens.length - 1; i >= 0; i--){
+    const g = gens[i];
+    if (!(g.agapes === 'oui' || (g.qualite === 'visiteur' && g.agapes !== 'non'))) gens.splice(i, 1);
+  }
   const payes = await marques(context, tenue);
   for (const g of gens){
     g.cle = cle(g.nom);
