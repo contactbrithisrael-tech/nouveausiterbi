@@ -38,7 +38,11 @@ const catalogue = [
   { id: "bible-du-rite", titre: "RBI — Bible du Rite, Tomes I & II" },
   { id: "bible-du-rite-t3", titre: "La Bible du Rite, Tome III — Les 22 Sentiers, grades 11ᵉ–18ᵉ" },
   { id: "trente-deux-voies", titre: "Les Trente-Deux Voies — Sefer Yetsirah commenté" },
-  { id: "pirke-avot", titre: "Pirké Avot — édition RBI" }
+  { id: "pirke-avot", titre: "Pirké Avot — édition RBI" },
+  { id: "gadlu", titre: "GADLU, peux-tu répéter la question ?" },
+  { id: "michlei-vekohelet", titre: "Michlei veKohelet (Proverbes et Ecclésiaste)" },
+  { id: "shaarei-orah", titre: "Shaarei Orah (Les Portes de la Lumière)" },
+  { id: "tome-5", titre: "Tome V" }
 ];
 
 async function membre(context, courriel){
