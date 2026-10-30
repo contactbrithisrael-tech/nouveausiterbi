@@ -34,7 +34,7 @@
    téléphone, ni Loge ni obédience d'un visiteur, ni jeton.
 ═══════════════════════════════════════════════════════════════════ */
 
-import { json, noter } from './_commun.js';
+import { json, noter, sessionCourante } from './_commun.js';
 
 const LOGE = 1;                      // un seul Atelier pour l'instant
 const ESSAIS_MAX = 30;               // adresses essayées par heure
@@ -153,11 +153,15 @@ export async function onRequestPost(context){
   if (!courrielPlausible(courriel)) return json({ erreur: 'courriel_manquant' }, 400);
 
   /* Aucune adresse autorisée n'est posée : on le dit, sans rien montrer. */
+  /* Le Souverain Grand Commandeur entre par sa session du Secrétariat (compte nommé « SGC »),
+     sans figurer dans la liste des adresses. */
+  const moi = await sessionCourante(context).catch(() => null);
+  const estSGC = !!moi && /^sgc$/i.test(String(moi.nom || '').trim());
   const permis = autorises(context.env);
-  if (!permis.length) return json({ erreur: 'non_configure' }, 503);
+  if (!permis.length && !estSGC) return json({ erreur: 'non_configure' }, 503);
 
   if (await tropDEssais(context)) return json({ erreur: 'trop_dessais' }, 429);
-  if (!permis.includes(courriel)){
+  if (!estSGC && !permis.includes(courriel)){
     await noter(context, LOGE, null, MARQUE);
     return json({ erreur: 'refuse' }, 403);
   }
