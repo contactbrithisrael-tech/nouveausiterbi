@@ -29,7 +29,8 @@
 
    ── CE QUI SORT D'ICI, ET RIEN DE PLUS ────────────────────────────
 
-   Un nom, une qualité, et où en est le couvert. Ni courriel, ni
+   Un nom, une qualité (membre ou visiteur), où en est le couvert et, pour
+   un visiteur, s'il a payé. Ni courriel, ni
    téléphone, ni Loge ni obédience d'un visiteur, ni jeton.
 ═══════════════════════════════════════════════════════════════════ */
 
@@ -39,7 +40,9 @@ const LOGE = 1;                      // un seul Atelier pour l'instant
 const ESSAIS_MAX = 30;               // adresses essayées par heure
 const MARQUE = 'banquets : adresse refusee';
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
-const ORDRE = { membre: 0, visiteur: 1, ami: 2 };
+const ORDRE = { membre: 0, visiteur: 1 };
+/* Deux cases seulement : les Amis de la Loge sont des Visiteurs connus. */
+const categorie = q => q === 'membre' ? 'membre' : 'visiteur';
 
 const courrielPlausible = a => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(a);
 const propre = v => String(v == null ? '' : v).replace(/\s+/g, ' ').trim().slice(0, 200);
@@ -81,6 +84,32 @@ async function annonces(context){
   } catch (e) { return []; }
 }
 
+/* ── LE « PAYÉ » : coché à la main ────────────────────────────────
+   Le Visiteur règle chez HelloAsso ou Weezevent, hors de cette base.
+   Le Maître des banquets coche donc lui-même qui a payé. On garde la
+   marque par Tenue et par personne (nom sans accent ni ordre), et
+   rien d'autre : ni courriel, ni montant. Les membres ne paient pas :
+   leurs agapes sont comprises dans la capitation. */
+async function marques(context, tenue){
+  try {
+    await context.env.DB.prepare(
+      "CREATE TABLE IF NOT EXISTS banquets_paye (loge_id INTEGER NOT NULL, " +
+      "tenue TEXT NOT NULL, cle TEXT NOT NULL, paye INTEGER NOT NULL, " +
+      "le TEXT DEFAULT (datetime('now')), PRIMARY KEY (loge_id, tenue, cle))").run();
+    const { results } = await context.env.DB.prepare(
+      "SELECT cle FROM banquets_paye WHERE loge_id = ? AND tenue = ? AND paye = 1")
+      .bind(LOGE, tenue).all();
+    return new Set((results || []).map(r => r.cle));
+  } catch (e) { return new Set(); }
+}
+
+async function cocher(context, tenue, cleP, paye){
+  await context.env.DB.prepare(
+    "INSERT INTO banquets_paye (loge_id, tenue, cle, paye) VALUES (?, ?, ?, ?) " +
+    "ON CONFLICT (loge_id, tenue, cle) DO UPDATE SET paye = excluded.paye, " +
+    "le = datetime('now')").bind(LOGE, tenue, cleP, paye ? 1 : 0).run();
+}
+
 const statut = r => r.reponse === 'excuse' ? 'non'
   : r.agapes === 1 ? 'oui' : r.agapes === 0 ? 'non' : 'a_confirmer';
 
@@ -90,7 +119,7 @@ async function lesGens(context, tenue, fiches){
     "SELECT qui_type, nom, courriel, reponse, agapes FROM reponses " +
     "WHERE loge_id = ? AND tenue = ?").bind(LOGE, tenue).all();
   for (const r of (results || [])){
-    const p = { nom: propre(r.nom), qualite: r.qui_type, agapes: statut(r), annonce: false };
+    const p = { nom: propre(r.nom), qualite: categorie(r.qui_type), agapes: statut(r), annonce: false };
     gens.push(p);
     const m = propre(r.courriel).toLowerCase();
     if (m) parMail.set(m, p);
@@ -101,6 +130,13 @@ async function lesGens(context, tenue, fiches){
     const deja = (m && parMail.get(m)) || parNom.get(cle(nom));
     if (deja){ deja.annonce = true; continue; }
     gens.push({ nom, qualite: 'visiteur', agapes: 'a_confirmer', annonce: true });
+  }
+  const payes = await marques(context, tenue);
+  for (const g of gens){
+    g.cle = cle(g.nom);
+    /* Membre : agapes comprises. Visiteur inscrit : payé ou à payer. */
+    g.paiement = g.qualite === 'membre' ? (g.agapes === 'non' ? null : 'incluses')
+      : g.agapes === 'non' ? null : (payes.has(g.cle) ? 'paye' : 'a_payer');
   }
   gens.sort((a, b) => (ORDRE[a.qualite] ?? 9) - (ORDRE[b.qualite] ?? 9)
     || a.nom.localeCompare(b.nom, 'fr'));
@@ -140,11 +176,24 @@ export async function onRequestPost(context){
     ? corps.tenue : (prevue || tenues[0] || null);
   if (!tenue) return json({ erreur: 'aucune_tenue' }, 404);
 
-  const gens = await lesGens(context, tenue, fiches).catch(() => []);
-  const compte = { oui: 0, non: 0, a_confirmer: 0, membre: 0, visiteur: 0, ami: 0 };
+  let gens = await lesGens(context, tenue, fiches).catch(() => []);
+
+  /* Cocher « payé » : seulement un Visiteur de cette Tenue, repéré par
+     sa clé. Une clé inconnue n'écrit rien. */
+  const m = corps.marquer;
+  if (m && typeof m === 'object' && typeof m.paye === 'boolean'){
+    const cible = gens.find(g => g.cle === String(m.cle || '') && g.paiement && g.qualite === 'visiteur');
+    if (!cible) return json({ erreur: 'inconnu' }, 404);
+    await cocher(context, tenue, cible.cle, m.paye);
+    gens = await lesGens(context, tenue, fiches).catch(() => []);
+  }
+
+  const compte = { oui: 0, non: 0, a_confirmer: 0, membre: 0, visiteur: 0, paye: 0, a_payer: 0 };
   for (const g of gens){
     compte[g.agapes]++;
-    if (g.agapes === 'oui' && g.qualite in compte) compte[g.qualite]++;
+    if (g.agapes === 'oui') compte[g.qualite]++;
+    if (g.paiement === 'paye') compte.paye++;
+    if (g.paiement === 'a_payer') compte.a_payer++;
   }
   return json({ tenue, prevue, tenues, gens, compte });
 }

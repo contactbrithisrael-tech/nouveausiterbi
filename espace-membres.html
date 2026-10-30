@@ -570,6 +570,29 @@
   <p class="header__sous">Suprême Conseil du Rite Brith Israël</p>
 </div>
 
+<!-- MODE D'EMPLOI : deux colonnes, une par public. Les phrases reprennent
+     celles des onglets eux-mêmes ; rien n'est ajouté au Rite. -->
+<style>#mode-emploi p{margin:0 0 .9rem;}</style>
+<details class="annuaire-intro" id="mode-emploi" open style="max-width:1100px;margin:1.5rem auto;">
+  <summary style="color:var(--or);cursor:pointer;font-variant:small-caps;letter-spacing:.1em;">Mode d'emploi — quel onglet pour qui ?</summary>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;margin-top:1rem;line-height:1.7;">
+    <div>
+      <p style="color:var(--or);margin-bottom:.5rem;"><strong>Vous êtes membre ?</strong></p>
+      <p><strong>Tableau de la Loge membre</strong><br>Donnez l'adresse où vous recevez vos convocations. Elle vous reconnaît : sans elle, rien ne s'affiche.</p>
+      <p><strong>Convocation de ma Loge membre</strong><br>Lisez la convocation de la prochaine Tenue, et les précédentes.</p>
+      <p><strong>Secrétariat &amp; Trésorerie</strong><br>Réservé au Secrétaire, au Trésorier et au Maître des banquets.</p>
+      <p><strong>Maître des banquets</strong><br>Réservé au Maître des banquets et à son adjoint : la liste de ceux qui sont aux agapes de chaque Tenue.</p>
+    </div>
+    <div>
+      <p style="color:var(--or);margin-bottom:.5rem;"><strong>Vous êtes visiteur ?</strong></p>
+      <p><strong>Inscrire ma Loge visiteur</strong><br>Pour que votre Loge reçoive nos convocations. À remplir par le Secrétaire, le Vénérable Maître ou un Officier : c'est l'inscription de la Loge, pas d'une personne.</p>
+      <p><strong>Convocation de ma Loge visiteur</strong><br>Déposez ici la convocation de votre Loge.</p>
+      <p><strong>Annoncer ma venue visiteur</strong><br>Dites que vous viendrez à une Tenue, puis réglez les agapes (15 €) sur HelloAsso ou Weezevent.</p>
+      <p><strong>Annuaire visiteur</strong><br>Pour vous inscrire comme visiteur et recevoir régulièrement les convocations du Rite Brith Israël.</p>
+    </div>
+  </div>
+</details>
+
 <!-- NAVIGATION ONGLETS -->
 <nav class="nav-onglets">
   <!-- Joshua en premier, et actif par défaut : c'est l'outil qu'un Frère
@@ -580,12 +603,12 @@
   <button class="onglet" onclick="afficherSection('adhesion')">Adhésion individuelle</button>
   <button class="onglet" onclick="afficherSection('patente')">Demande de patente</button>
   <button class="onglet" onclick="afficherSection('documents')">Documents & Téléchargements</button>
-  <button class="onglet" onclick="afficherSection('annuaire')">Annuaire F∴M∴</button>
-  <button class="onglet" onclick="afficherSection('inscrire-loge')">Inscrire ma Loge</button>
-  <button class="onglet" onclick="afficherSection('convocation-membre')">Convocation de ma Loge (membre)</button>
-  <button class="onglet" onclick="afficherSection('convocation-loge')">Convocation à déposer (visiteur)</button>
-  <button class="onglet" onclick="afficherSection('venue')">Annoncer ma venue</button>
-  <button class="onglet" onclick="afficherSection('tableau-loge')">Tableau de la Loge</button>
+  <button class="onglet" onclick="afficherSection('annuaire')">Annuaire visiteur</button>
+  <button class="onglet" onclick="afficherSection('inscrire-loge')">Inscrire ma Loge visiteur</button>
+  <button class="onglet" onclick="afficherSection('convocation-membre')">Convocation de ma Loge membre</button>
+  <button class="onglet" onclick="afficherSection('convocation-loge')">Convocation de ma Loge visiteur</button>
+  <button class="onglet" onclick="afficherSection('venue')">Annoncer ma venue visiteur</button>
+  <button class="onglet" onclick="afficherSection('tableau-loge')">Tableau de la Loge membre</button>
   <button class="onglet" onclick="afficherSection('constitutions')">Constitutions</button>
   <button class="onglet" onclick="afficherSection('rituels')">Rituels & Commandes</button>
   <button class="onglet" onclick="afficherSection('secretariat')">Secrétariat & Trésorerie</button>
@@ -1205,7 +1228,7 @@
        nom inscrit ici serait publié.
 ═══════════════════════════════════════════ -->
 <section class="section" id="tableau-loge">
-  <h2 class="section__titre">Tableau de la Loge</h2>
+  <h2 class="section__titre">Tableau de la Loge membre</h2>
   <div class="section__sep"></div>
 
   <div class="avis-rituels">
@@ -1275,7 +1298,7 @@
        parmi les convoqués — comme le Tableau de la Loge.
 ═══════════════════════════════════════════ -->
 <section class="section" id="convocation-membre">
-  <h2 class="section__titre">Convocation de ma Loge (membre)</h2>
+  <h2 class="section__titre">Convocation de ma Loge membre</h2>
   <div class="section__sep"></div>
 
   <div class="avis-rituels">
@@ -1327,7 +1350,7 @@
      coordonnées en les cherchant à la main.
 ═══════════════════════════════════════════ -->
 <section class="section" id="inscrire-loge">
-  <h2 class="section__titre">Inscrire ma Loge</h2>
+  <h2 class="section__titre">Inscrire ma Loge visiteur</h2>
   <div class="section__sep"></div>
 
   <div class="annuaire-intro">
@@ -1437,7 +1460,7 @@
 
 <!-- ═══════════════════════════════════════════
      CONVOCATION À DÉPOSER (VISITEUR)
-     — onglet « Convocation de ma Loge (membre) » : section précédente.
+     — onglet « Convocation de ma Loge membre » : section précédente.
 
      Un Atelier qui nous invite dépose ce qui se met à l'agenda : une
      date, une heure, un degré, un objet. LE FEUILLET RESTE CHEZ LUI —
@@ -1449,7 +1472,7 @@
      même feuillet.
 ═══════════════════════════════════════════ -->
 <section class="section" id="convocation-loge">
-  <h2 class="section__titre">Convocation à déposer (visiteur)</h2>
+  <h2 class="section__titre">Convocation de ma Loge visiteur</h2>
   <div class="section__sep"></div>
 
   <div class="avis-rituels">
@@ -1573,7 +1596,7 @@
        dans la zone de texte libre du registre (voir deposerAuRegistre).
 ═══════════════════════════════════════════ -->
 <section class="section" id="venue">
-  <h2 class="section__titre">Annoncer ma venue</h2>
+  <h2 class="section__titre">Annoncer ma venue visiteur</h2>
   <div class="section__sep"></div>
 
   <div class="annuaire-intro">
@@ -1618,6 +1641,8 @@
       </ul>
       <a class="btn btn-or" href="https://www.helloasso.com/associations/les-enfants-de-nostradamus/evenements/agapes-visiteurs"
          target="_blank" rel="noopener" style="text-decoration:none;">S'inscrire aux agapes et payer (15 €)</a>
+      <a class="btn btn-or" href="https://my.weezevent.com/agapes-rl-bereshit"
+         target="_blank" rel="noopener" style="text-decoration:none;margin-left:.5rem;">Ou via Weezevent (15 €)</a>
       <p style="margin-top:.7rem;font-size:.85rem;opacity:.9;">
         Sur la page de paiement, pensez à ramener le <strong>don à 0 €</strong> : la plateforme
         en propose un, qui s'ajoute au triangle.
@@ -2607,7 +2632,7 @@
     aucune_tenue: "Aucune Tenue n'est encore connue. Ce n'est pas une panne.",
     trop_dessais: "Trop d'adresses ont été essayées depuis une heure. Réessayez tout à l'heure."
   };
-  var QUALITE = { membre: 'Membre', visiteur: 'Visiteur', ami: 'Ami de la Loge' };
+  var QUALITE = { membre: 'Membre', visiteur: 'Visiteur' };
   var ETAT = { oui: '<span style="color:var(--or2)">À table</span>',
                non: '<span style="color:var(--gris)">Pas à table</span>',
                a_confirmer: '<span style="color:var(--or)">À confirmer</span>' };
@@ -2629,19 +2654,27 @@
     var c = d.compte || {};
     $('banq-compte').innerHTML = '<strong style="color:var(--or);">' + (c.oui || 0) +
       ' à table</strong> — ' + (c.membre || 0) + ' membre(s), ' + (c.visiteur || 0) +
-      ' visiteur(s), ' + (c.ami || 0) + ' ami(s) de la Loge.<br>' +
-      (c.a_confirmer || 0) + ' à confirmer · ' + (c.non || 0) + ' pas à table.';
-    $('banq-liste').innerHTML = '<tr><th>Nom</th><th>Qualité</th><th>Agapes</th></tr>' +
+      ' visiteur(s).<br>Visiteurs : ' + (c.paye || 0) + ' payé(s), ' + (c.a_payer || 0) +
+      ' à payer · ' + (c.a_confirmer || 0) + ' à confirmer · ' + (c.non || 0) + ' pas à table.';
+    $('banq-liste').innerHTML = '<tr><th>Nom</th><th>Catégorie</th><th>Agapes</th><th>Paiement</th></tr>' +
       (d.gens || []).map(function (g) {
         return '<tr><td>' + ech(g.nom) + '</td><td>' + ech(QUALITE[g.qualite] || g.qualite) +
-          '</td><td>' + (ETAT[g.agapes] || '') + '</td></tr>'; }).join('');
-    $('banq-note').textContent = 'Un visiteur annoncé qui n’a pas répondu à sa convocation reste ' +
-      '« à confirmer » : il s’inscrit et paie chez HelloAsso, hors de ce site.';
+          '</td><td>' + (ETAT[g.agapes] || '') + '</td><td>' + casePaiement(g) + '</td></tr>'; }).join('');
+    $('banq-note').textContent = 'Les membres ont leurs agapes comprises dans la capitation. Un visiteur ' +
+      'règle 15 € chez HelloAsso ou Weezevent, hors de ce site : cochez « payé » quand vous avez vu son règlement.';
   }
 
-  function demander(tenue) {
+  function casePaiement(g) {
+    if (g.paiement === 'incluses') return '<span style="color:var(--gris)">Comprises</span>';
+    if (!g.paiement) return '';
+    return '<label style="cursor:pointer;"><input type="checkbox" data-cle="' + ech(g.cle) + '"' +
+      (g.paiement === 'paye' ? ' checked' : '') + '> ' + (g.paiement === 'paye' ? 'Payé' : 'À payer') + '</label>';
+  }
+
+  function demander(tenue, marquer) {
     var corps = { courriel: COURRIEL };
     if (tenue) corps.tenue = tenue;
+    if (marquer) corps.marquer = marquer;
     fetch('/api/banquets', { method: 'POST',
       headers: { 'content-type': 'application/json' }, body: JSON.stringify(corps) })
       .then(function (r) {
@@ -2665,6 +2698,10 @@
     demander();
   });
   $('banq-tenue').addEventListener('change', function () { demander(this.value); });
+  $('banq-liste').addEventListener('change', function (e) {
+    var k = e.target && e.target.getAttribute && e.target.getAttribute('data-cle');
+    if (k) demander($('banq-tenue').value, { cle: k, paye: e.target.checked });
+  });
 })();
 
   // Les couvertures sont injectées par assets/images.js, qui les pose sur
