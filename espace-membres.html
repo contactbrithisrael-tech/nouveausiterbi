@@ -1497,6 +1497,14 @@
 
   <form id="form-convocation" onsubmit="soumettre(event, 'form-convocation', 'msg-convocation')">
     <input type="hidden" name="type" value="convocation">
+    <div class="annuaire-intro" style="margin-bottom:1.2rem;">
+      <strong style="color:var(--or);">Le plus simple : déposez l'image de votre convocation.</strong>
+      Photo, capture ou PDF (5 Mo au plus), avec le nom de votre Loge ci-dessous. Le Secrétariat la
+      reçoit telle quelle et la met à l'agenda : vous n'avez rien d'autre à remplir.
+      <br><input type="file" name="attachment" id="conv-fichier" accept="image/*,.pdf,application/pdf"
+        style="margin-top:.6rem;">
+      <span id="conv-fichier-ennui" style="display:none;color:var(--or);"></span>
+    </div>
     <div class="form-grid">
 
       <div class="form-full">
@@ -2229,6 +2237,16 @@
                       RBI_FORM_EMAIL + ".";
       msg.appendChild(p);
     }
+    var img = form.id === 'form-convocation' && form.querySelector('#conv-fichier').files.length;
+    if (img && !msg.querySelector('.msg-image')) {
+      var q = document.createElement('p');
+      q.className = 'msg-image';
+      q.style.cssText = 'margin-top:1rem;';
+      q.textContent = parCourriel
+        ? "L'image n'a pas pu partir d'ici : écrivez-nous à " + RBI_FORM_EMAIL + " en la joignant."
+        : "Votre image est partie au Secrétariat, qui la mettra à l'agenda.";
+      msg.appendChild(q);
+    }
     form.style.display = 'none';
     msg.classList.add('visible');
     avertirRegistre(form, msg);
@@ -2252,7 +2270,24 @@
      ► L'ÉCHEC NE SE VOIT PAS. Le Frère qui remplit ce formulaire n'a
        rien à faire d'un ennui de serveur : son envoi lui est confirmé
        dès que le courriel est parti. */
+  /* Un dépôt par image n'a pas de date lisible par la machine : il part par
+     courriel avec son pièce jointe, et le Secrétariat la met à l'agenda. */
+  (function () {
+    var f = document.getElementById('conv-fichier');
+    if (!f) return;
+    var date = document.querySelector('#form-convocation [name=conv_date]');
+    var ennui = document.getElementById('conv-fichier-ennui');
+    f.addEventListener('change', function () {
+      var gros = f.files[0] && f.files[0].size > 5 * 1024 * 1024;
+      ennui.style.display = gros ? 'block' : 'none';
+      ennui.textContent = gros ? 'Ce fichier dépasse 5 Mo : réduisez-le, ou remplissez les champs.' : '';
+      if (gros) f.value = '';
+      date.required = !(f.files && f.files[0]);
+    });
+  })();
+
   function deposerAuRegistre(form) {
+    if (form.id === 'form-convocation' && form.querySelector('#conv-fichier').files.length) return;
     if (form.id !== 'form-annuaire' && form.id !== 'form-loge' &&
         form.id !== 'form-convocation' && form.id !== 'form-venue') return;
     var d = new FormData(form);
