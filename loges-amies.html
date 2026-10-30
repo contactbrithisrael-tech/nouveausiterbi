@@ -7,33 +7,20 @@
   <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192.png">
   <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
   <title>Loges amies — inscrire son Atelier, déposer une convocation — Rite Brith Israël</title>
-  <meta name="description" content="Ateliers de toutes obédiences : inscrivez votre Loge pour recevoir nos convocations, et déposez les vôtres à notre agenda des visites. Sans tuilage, sans compte à créer.">
+  <meta name="description" content="Ateliers de toutes obédiences : inscrivez votre Loge pour recevoir nos convocations, et déposez les vôtres à notre agenda des visites. Réservé aux Sœurs et aux Frères, après tuilage.">
 
 <!-- ═══════════════════════════════════════════════════════════════
-     LOGES AMIES — ET POURQUOI CETTE PAGE N'A PAS DE TUILAGE
+     LOGES AMIES — DERRIÈRE LE TUILAGE
 
-     Les deux formulaires qui suivent existaient déjà, dans l'Espace
-     Membres, DERRIÈRE le tuilage. Ils n'y servaient à rien : un
-     Atelier qu'on ne connaît pas encore ne peut pas franchir un
-     tuilage pour se faire connaître. La fonction existait, et
-     personne au dehors ne pouvait l'atteindre.
+     Cette page était d'abord en accès libre. Elle ne l'est plus : ceux
+     qui s'y présentent sont des Sœurs et des Frères, et elle passe par
+     la même porte que l'Espace Membres. Les mêmes questions, et la même
+     reconnaissance : l'onglet du navigateur qui a franchi l'une franchit
+     l'autre (clé « rbi-tuilage-membres »).
 
-     ► LE TUILAGE SE FAIT AU TEMPLE. C'est la règle, et elle ne se
-       délègue pas à un formulaire : le Rite a prévu qui répond de
-       l'introduction d'un Visiteur, et ce n'est pas une page web.
-       Ce qui se dépose ici n'ouvre donc aucune porte — cela pose un
-       nom sur un registre, que la Secrétaire relèvera.
-
-     ► RIEN DE MAÇONNIQUE N'EST DEMANDÉ ICI. Le nom d'un Atelier, son
-       Orient, l'adresse de son secrétariat, la date d'une Tenue :
-       tout cela figure déjà sur les planches qui circulent entre
-       Ateliers. Ce qui relève du Temple est resté dans l'Espace
-       Membres, et derrière son tuilage.
-
-     ► CE QUI EST DÉPOSÉ N'EST PUBLIÉ NULLE PART. Cette page écrit
-       dans une boîte aux lettres que seul un Officier connecté peut
-       relever. Aucune des fiches déposées ne s'affiche ici, ni
-       ailleurs sur le site.
+     ► Le tuilage de cette page écarte le curieux, pas quelqu'un qui sait
+       lire le code d'une page : il est fait en JavaScript. Rien de secret
+       n'est demandé ici. Le véritable tuilage se fait au Temple.
 ═══════════════════════════════════════════════════════════════ -->
 
   <style>
@@ -47,6 +34,42 @@
       background: var(--fond); color: var(--texte);
       font-family: 'Georgia', serif; min-height: 100vh;
     }
+
+    /* ── Porte de tuilage ── */
+    .porte {
+      position: fixed; inset: 0; z-index: 500;
+      background: radial-gradient(ellipse at center, rgba(201,168,76,.07) 0%, var(--fond) 70%);
+      display: flex; align-items: center; justify-content: center;
+      padding: 1.5rem; overflow-y: auto;
+    }
+    .porte[hidden] { display: none; }
+    .porte__cadre {
+      max-width: 460px; width: 100%; text-align: center;
+      border: 1px solid rgba(201,168,76,.3);
+      background: rgba(13,13,13,.85);
+      padding: 2.5rem 2rem;
+    }
+    .porte__etoile { font-size: 2rem; color: var(--or); margin-bottom: .8rem; }
+    .porte__titre {
+      font-size: 1.8rem; font-variant: small-caps; letter-spacing: .18em;
+      color: var(--or); margin-bottom: .8rem;
+    }
+    .porte__intro { font-size: .9rem; line-height: 1.8; color: var(--texte); }
+    .porte__sep { width: 60px; height: 1px; background: var(--or); opacity: .5; margin: 1.5rem auto; }
+    .porte__label {
+      display: block; text-align: left; margin-bottom: .4rem;
+      font-size: .78rem; letter-spacing: .1em; text-transform: uppercase; color: var(--or);
+    }
+    .porte__champ { margin-bottom: 1.2rem; text-align: center; }
+    .porte__btn { width: 100%; margin-top: .4rem; }
+    .porte__erreur {
+      color: #d98b8b; font-size: .88rem; font-style: italic;
+      margin-bottom: 1rem; line-height: 1.6;
+    }
+    .porte__erreur[hidden] { display: none; }
+    .porte__pied { margin-top: 1.6rem; font-size: .8rem; }
+    .porte__pied a { color: var(--gris); text-decoration: none; }
+    .porte__pied a:hover { color: var(--or); }
 
     /* ── EN-TÊTE ── */
     .header { text-align: center; padding: 3rem 1.5rem 2rem;
@@ -160,8 +183,31 @@
 </head>
 <body>
 
+<div id="tuilage-porte" class="porte" hidden>
+  <div class="porte__cadre">
+    <div class="porte__etoile">✡</div>
+    <h1 class="porte__titre">Tuilage</h1>
+    <p class="porte__intro">
+      Cette page est réservée aux Frères et aux Sœurs.<br>
+      Avant d'entrer, veuillez répondre aux questions d'usage.
+    </p>
+    <div class="porte__sep"></div>
+    <form id="porte-form" autocomplete="off">
+      <label class="porte__label" for="porte-q1">À quelle heure commencez-vous à travailler ?</label>
+      <input class="porte__champ" id="porte-q1" type="text" required>
+      <label class="porte__label" for="porte-q2">Quel âge avez-vous ?</label>
+      <input class="porte__champ" id="porte-q2" type="text" required>
+      <p class="porte__erreur" id="porte-erreur" hidden></p>
+      <button class="btn btn-or porte__btn" type="submit">Entrer</button>
+    </form>
+    <p class="porte__pied"><a href="index.html">← Retour à l'accueil</a></p>
+  </div>
+</div>
+
+<div id="contenu-loges" hidden>
+
 <div class="header">
-  <div class="header__badge">✡ Accès libre — sans tuilage, sans compte</div>
+  <div class="header__badge">✡ Réservé aux Sœurs et aux Frères — après tuilage</div>
   <h1 class="header__titre">Loges amies</h1>
   <p class="header__sous">Suprême Conseil du Rite Brith Israël</p>
 </div>
@@ -395,6 +441,8 @@
   <a href="espace-membres.html">Espace Membres</a>
 </p>
 
+</div><!-- /#contenu-loges -->
+
 <noscript>
   <p class="pied">
     Cette page a besoin de JavaScript pour déposer votre fiche. S'il est
@@ -404,6 +452,69 @@
     de votre prochaine Tenue suffisent.
   </p>
 </noscript>
+
+<script>
+/* Porte de tuilage : mêmes questions et même reconnaissance que l'Espace Membres. */
+  (function () {
+    var porte   = document.getElementById('tuilage-porte');
+    var contenu = document.getElementById('contenu-loges');
+    var CLE     = 'rbi-tuilage-membres';
+
+    /* On reconnaît la réponse à ce qu'elle contient, non à sa forme exacte.
+       Une liste de formulations closes rejetterait « de midi à minuit »
+       parce qu'elle n'aurait prévu que « à midi » — un Frère se verrait
+       refuser l'entrée sur une tournure.
+
+       « minuit » seul ne contient pas « midi » : c'est l'heure de
+       fermer les travaux, non de les ouvrir, et elle ne passe pas. */
+    var ATTENDU = {
+      q1: /midi/,
+      q2: /(^| )(3|5|7|trois|cinq|sept)( |$)/
+    };
+
+    // Insensible à la casse, aux accents, à la ponctuation et aux apostrophes.
+    function normaliser(v) {
+      return (v || '').toLowerCase()
+        .normalize('NFD').replace(/[̀-ͯ]/g, '')
+        .replace(/[.,;:!?'’·∴’-]/g, ' ')
+        .replace(/\s+/g, ' ').trim();
+    }
+
+    function ouvrir() {
+      porte.hidden = true;
+      contenu.hidden = false;
+    }
+
+    var reconnu = false;
+    try { reconnu = sessionStorage.getItem(CLE) === 'oui'; } catch (e) { /* navigation privée */ }
+
+    if (reconnu) { ouvrir(); }
+    else { porte.hidden = false; }
+
+    var form = document.getElementById('porte-form');
+    var erreur = document.getElementById('porte-erreur');
+    var essais = 0;
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var r1 = normaliser(document.getElementById('porte-q1').value);
+      var r2 = normaliser(document.getElementById('porte-q2').value);
+      var ok = ATTENDU.q1.test(r1) && ATTENDU.q2.test(r2);
+
+      if (ok) {
+        try { sessionStorage.setItem(CLE, 'oui'); } catch (e2) { /* sans mémoire, tant pis */ }
+        ouvrir();
+        return;
+      }
+
+      essais++;
+      erreur.hidden = false;
+      erreur.textContent = essais >= 3
+        ? "Je ne saurais vous reconnaître, Profane. Si vous êtes Frère ou Sœur et que l'accès vous est refusé, écrivez à contact.brith.israel@gmail.com."
+        : "Ce n'est pas la réponse attendue. Reprenez, F∴.";
+    });
+  })();
+</script>
 
 <script>
 /* ═══════════════════════════════════════════════════════════════
