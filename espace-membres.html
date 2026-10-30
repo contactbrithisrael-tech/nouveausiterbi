@@ -588,6 +588,7 @@
   <button class="onglet" onclick="afficherSection('constitutions')">Constitutions</button>
   <button class="onglet" onclick="afficherSection('rituels')">Rituels & Commandes</button>
   <button class="onglet" onclick="afficherSection('secretariat')">Secrétariat & Trésorerie</button>
+  <button class="onglet" onclick="afficherSection('maitre-banquets')">Maître des banquets</button>
 </nav>
 
 
@@ -1924,6 +1925,53 @@
   </p>
 </section>
 
+<!-- ═══════════════════════════════════════════
+     MAÎTRE DES BANQUETS
+
+     Qui reste à table, Tenue par Tenue : membres, visiteurs, Amis.
+     Réservé au Maître des banquets et à son adjoint.
+
+     ► RIEN N'EST ÉCRIT DANS CETTE PAGE : ni les noms, ni les adresses
+       autorisées. Le dépôt est servi en clair par Cloudflare ; la liste
+       vient du serveur (/api/banquets), contre une adresse qui figure
+       dans le secret BANQUETS_COURRIELS.
+═══════════════════════════════════════════ -->
+<section class="section" id="maitre-banquets">
+  <h2 class="section__titre">Maître des banquets</h2>
+  <div class="section__sep"></div>
+
+  <div class="avis-rituels">
+    <strong>Réservé au Maître des banquets et à son adjoint.</strong>
+    La liste de celles et ceux qui restent aux agapes, Tenue par Tenue.
+  </div>
+
+  <div class="annuaire-intro" id="banq-mot">
+    Donnez l'adresse que le secrétariat a enregistrée pour vous. Rien ne s'affiche sans elle.
+  </div>
+
+  <form id="form-banquets" autocomplete="on">
+    <div class="form-grid">
+      <div class="form-full">
+        <label for="banq-courriel">Votre courriel *</label>
+        <input id="banq-courriel" type="email" name="courriel" required autocomplete="email">
+      </div>
+    </div>
+    <div class="form-footer">
+      <button type="submit" class="btn btn-or">Voir la liste</button>
+    </div>
+  </form>
+
+  <div class="ennui-tableau" id="banq-ennui" hidden></div>
+
+  <div id="banq-vu" hidden>
+    <label for="banq-tenue">Tenue</label>
+    <select id="banq-tenue"></select>
+    <div class="annuaire-intro" id="banq-compte" style="margin-top:1rem;"></div>
+    <table class="tableau-loge" id="banq-liste"></table>
+    <p class="confidentialite" id="banq-note"></p>
+  </div>
+</section>
+
 
 </div><!-- /#contenu-membres -->
 
@@ -2355,6 +2403,87 @@
   function telechargerPDF(type) {
     alert('Le formulaire PDF ' + type + ' sera disponible prochainement.\nContactez contact.brith.israel@gmail.com pour l\'obtenir.');
   }
+
+/* ═══════════════════════════════════════════════════════════════
+   MAÎTRE DES BANQUETS
+
+   Rien de la liste n'est écrit dans cette page : elle vient de
+   /api/banquets. L'adresse ne reste que le temps de la visite.
+═══════════════════════════════════════════════════════════════ */
+(function () {
+  'use strict';
+  var COURRIEL = '';
+  function $(id) { return document.getElementById(id); }
+  function ech(t) {
+    return String(t == null ? '' : t).replace(/[&<>"]/g, function (c) {
+      return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]; });
+  }
+  var ENNUIS = {
+    courriel_manquant: "Cette adresse n'a pas été reconnue comme une adresse de courriel.",
+    refuse: "Cette adresse n'est pas autorisée. Si c'est la vôtre, demandez au secrétariat de l'enregistrer.",
+    non_configure: "L'accès n'est pas encore ouvert : aucune adresse n'a été enregistrée pour le Maître des banquets.",
+    aucune_tenue: "Aucune Tenue n'est encore connue. Ce n'est pas une panne.",
+    trop_dessais: "Trop d'adresses ont été essayées depuis une heure. Réessayez tout à l'heure."
+  };
+  var QUALITE = { membre: 'Membre', visiteur: 'Visiteur', ami: 'Ami de la Loge' };
+  var ETAT = { oui: '<span style="color:var(--or2)">À table</span>',
+               non: '<span style="color:var(--gris)">Pas à table</span>',
+               a_confirmer: '<span style="color:var(--or)">À confirmer</span>' };
+
+  function ennui(mot) { var e = $('banq-ennui'); e.textContent = mot; e.hidden = false; }
+  function dateLongue(iso) {
+    try { return new Date(iso + 'T12:00:00').toLocaleDateString('fr-FR',
+      { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }); }
+    catch (e) { return iso; }
+  }
+
+  function peindre(d) {
+    $('form-banquets').style.display = 'none';
+    $('banq-mot').style.display = 'none';
+    $('banq-vu').hidden = false;
+    $('banq-tenue').innerHTML = (d.tenues || []).map(function (t) {
+      return '<option value="' + ech(t) + '"' + (t === d.tenue ? ' selected' : '') + '>' +
+        ech(dateLongue(t)) + (t === d.prevue ? ' — Tenue prévue' : '') + '</option>'; }).join('');
+    var c = d.compte || {};
+    $('banq-compte').innerHTML = '<strong style="color:var(--or);">' + (c.oui || 0) +
+      ' à table</strong> — ' + (c.membre || 0) + ' membre(s), ' + (c.visiteur || 0) +
+      ' visiteur(s), ' + (c.ami || 0) + ' ami(s) de la Loge.<br>' +
+      (c.a_confirmer || 0) + ' à confirmer · ' + (c.non || 0) + ' pas à table.';
+    $('banq-liste').innerHTML = '<tr><th>Nom</th><th>Qualité</th><th>Agapes</th></tr>' +
+      (d.gens || []).map(function (g) {
+        return '<tr><td>' + ech(g.nom) + '</td><td>' + ech(QUALITE[g.qualite] || g.qualite) +
+          '</td><td>' + (ETAT[g.agapes] || '') + '</td></tr>'; }).join('');
+    $('banq-note').textContent = 'Un visiteur annoncé qui n’a pas répondu à sa convocation reste ' +
+      '« à confirmer » : il s’inscrit et paie chez HelloAsso, hors de ce site.';
+  }
+
+  function demander(tenue) {
+    var corps = { courriel: COURRIEL };
+    if (tenue) corps.tenue = tenue;
+    fetch('/api/banquets', { method: 'POST',
+      headers: { 'content-type': 'application/json' }, body: JSON.stringify(corps) })
+      .then(function (r) {
+        return r.json().catch(function () { return {}; })
+          .then(function (c) { return { ok: r.ok, c: c }; }); })
+      .then(function (rep) {
+        if (!rep.ok || !rep.c.gens) {
+          ennui(ENNUIS[rep.c.erreur] || "La liste n'a pas pu être lue. Réessayez dans un moment.");
+          return;
+        }
+        $('banq-ennui').hidden = true;
+        peindre(rep.c);
+      })
+      .catch(function () { ennui("Le serveur de l'Atelier n'a pas répondu. Réessayez dans un moment."); });
+  }
+
+  $('form-banquets').addEventListener('submit', function (e) {
+    e.preventDefault();
+    COURRIEL = $('banq-courriel').value.trim();
+    $('banq-ennui').hidden = true;
+    demander();
+  });
+  $('banq-tenue').addEventListener('change', function () { demander(this.value); });
+})();
 
   // Les couvertures sont injectées par assets/images.js, qui les pose sur
   // les identifiants cover-tome1-membres, cover-guide-membres et
