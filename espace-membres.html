@@ -580,12 +580,12 @@
   <button class="onglet" onclick="afficherSection('adhesion')">Adhésion individuelle</button>
   <button class="onglet" onclick="afficherSection('patente')">Demande de patente</button>
   <button class="onglet" onclick="afficherSection('documents')">Documents & Téléchargements</button>
-  <button class="onglet" onclick="afficherSection('annuaire')">Annuaire F∴M∴</button>
-  <button class="onglet" onclick="afficherSection('inscrire-loge')">Inscrire ma Loge</button>
-  <button class="onglet" onclick="afficherSection('convocation-membre')">Convocation de ma Loge (membre)</button>
-  <button class="onglet" onclick="afficherSection('convocation-loge')">Convocation à déposer (visiteur)</button>
-  <button class="onglet" onclick="afficherSection('venue')">Annoncer ma venue</button>
-  <button class="onglet" onclick="afficherSection('tableau-loge')">Tableau de la Loge</button>
+  <button class="onglet" onclick="afficherSection('annuaire')">Annuaire F∴M∴ visiteur</button>
+  <button class="onglet" onclick="afficherSection('inscrire-loge')">Inscrire ma Loge visiteur</button>
+  <button class="onglet" onclick="afficherSection('convocation-membre')">Convocation de ma Loge membre</button>
+  <button class="onglet" onclick="afficherSection('convocation-loge')">Convocation de ma Loge visiteur</button>
+  <button class="onglet" onclick="afficherSection('venue')">Annoncer ma venue visiteur</button>
+  <button class="onglet" onclick="afficherSection('tableau-loge')">Tableau de la Loge membre</button>
   <button class="onglet" onclick="afficherSection('constitutions')">Constitutions</button>
   <button class="onglet" onclick="afficherSection('rituels')">Rituels & Commandes</button>
   <button class="onglet" onclick="afficherSection('secretariat')">Secrétariat & Trésorerie</button>
@@ -1205,7 +1205,7 @@
        nom inscrit ici serait publié.
 ═══════════════════════════════════════════ -->
 <section class="section" id="tableau-loge">
-  <h2 class="section__titre">Tableau de la Loge</h2>
+  <h2 class="section__titre">Tableau de la Loge membre</h2>
   <div class="section__sep"></div>
 
   <div class="avis-rituels">
@@ -1275,7 +1275,7 @@
        parmi les convoqués — comme le Tableau de la Loge.
 ═══════════════════════════════════════════ -->
 <section class="section" id="convocation-membre">
-  <h2 class="section__titre">Convocation de ma Loge (membre)</h2>
+  <h2 class="section__titre">Convocation de ma Loge membre</h2>
   <div class="section__sep"></div>
 
   <div class="avis-rituels">
@@ -1327,7 +1327,7 @@
      coordonnées en les cherchant à la main.
 ═══════════════════════════════════════════ -->
 <section class="section" id="inscrire-loge">
-  <h2 class="section__titre">Inscrire ma Loge</h2>
+  <h2 class="section__titre">Inscrire ma Loge visiteur</h2>
   <div class="section__sep"></div>
 
   <div class="annuaire-intro">
@@ -1437,7 +1437,7 @@
 
 <!-- ═══════════════════════════════════════════
      CONVOCATION À DÉPOSER (VISITEUR)
-     — onglet « Convocation de ma Loge (membre) » : section précédente.
+     — onglet « Convocation de ma Loge membre » : section précédente.
 
      Un Atelier qui nous invite dépose ce qui se met à l'agenda : une
      date, une heure, un degré, un objet. LE FEUILLET RESTE CHEZ LUI —
@@ -1449,7 +1449,7 @@
      même feuillet.
 ═══════════════════════════════════════════ -->
 <section class="section" id="convocation-loge">
-  <h2 class="section__titre">Convocation à déposer (visiteur)</h2>
+  <h2 class="section__titre">Convocation de ma Loge visiteur</h2>
   <div class="section__sep"></div>
 
   <div class="avis-rituels">
@@ -1573,7 +1573,7 @@
        dans la zone de texte libre du registre (voir deposerAuRegistre).
 ═══════════════════════════════════════════ -->
 <section class="section" id="venue">
-  <h2 class="section__titre">Annoncer ma venue</h2>
+  <h2 class="section__titre">Annoncer ma venue visiteur</h2>
   <div class="section__sep"></div>
 
   <div class="annuaire-intro">
@@ -1618,6 +1618,8 @@
       </ul>
       <a class="btn btn-or" href="https://www.helloasso.com/associations/les-enfants-de-nostradamus/evenements/agapes-visiteurs"
          target="_blank" rel="noopener" style="text-decoration:none;">S'inscrire aux agapes et payer (15 €)</a>
+      <a class="btn btn-or" href="https://my.weezevent.com/agapes-rl-bereshit"
+         target="_blank" rel="noopener" style="text-decoration:none;margin-left:.5rem;">Ou via Weezevent (15 €)</a>
       <p style="margin-top:.7rem;font-size:.85rem;opacity:.9;">
         Sur la page de paiement, pensez à ramener le <strong>don à 0 €</strong> : la plateforme
         en propose un, qui s'ajoute au triangle.
@@ -2636,7 +2638,7 @@
         return '<tr><td>' + ech(g.nom) + '</td><td>' + ech(QUALITE[g.qualite] || g.qualite) +
           '</td><td>' + (ETAT[g.agapes] || '') + '</td></tr>'; }).join('');
     $('banq-note').textContent = 'Un visiteur annoncé qui n’a pas répondu à sa convocation reste ' +
-      '« à confirmer » : il s’inscrit et paie chez HelloAsso, hors de ce site.';
+      '« à confirmer » : il s’inscrit et paie chez HelloAsso ou Weezevent, hors de ce site.';
   }
 
   function demander(tenue) {
