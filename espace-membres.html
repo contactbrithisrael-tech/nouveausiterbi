@@ -582,7 +582,8 @@
   <button class="onglet" onclick="afficherSection('documents')">Documents & Téléchargements</button>
   <button class="onglet" onclick="afficherSection('annuaire')">Annuaire F∴M∴</button>
   <button class="onglet" onclick="afficherSection('inscrire-loge')">Inscrire ma Loge</button>
-  <button class="onglet" onclick="afficherSection('convocation-loge')">Convocation de ma Loge</button>
+  <button class="onglet" onclick="afficherSection('convocation-membre')">Convocation de ma Loge (membre)</button>
+  <button class="onglet" onclick="afficherSection('convocation-loge')">Convocation à déposer (visiteur)</button>
   <button class="onglet" onclick="afficherSection('venue')">Annoncer ma venue</button>
   <button class="onglet" onclick="afficherSection('tableau-loge')">Tableau de la Loge</button>
   <button class="onglet" onclick="afficherSection('constitutions')">Constitutions</button>
@@ -1261,6 +1262,58 @@
 </section>
 
 <!-- ═══════════════════════════════════════════
+     CONVOCATION DE MA LOGE (MEMBRE)
+
+     La convocation de la prochaine Tenue, pour les Sœurs et Frères de
+     BERESHIT. Elle porte des noms (intervenants, vote d'affiliation) et
+     le téléphone du secrétariat.
+
+     ► RIEN N'EST ÉCRIT DANS CETTE PAGE. Le dépôt est servi en clair par
+       Cloudflare : un nom inscrit ici serait publié. La convocation
+       vient du serveur, à la demande, contre une adresse qui figure
+       parmi les convoqués — comme le Tableau de la Loge.
+═══════════════════════════════════════════ -->
+<section class="section" id="convocation-membre">
+  <h2 class="section__titre">Convocation de ma Loge (membre)</h2>
+  <div class="section__sep"></div>
+
+  <div class="avis-rituels">
+    <strong>Réservé aux Sœurs et Frères de BERESHIT</strong>, convoqués à la Tenue en cours.
+    <br><br>
+    <strong>Votre Loge nous invite ?</strong> L'onglet
+    <a href="#" onclick="afficherSection('convocation-loge');return false;">« Convocation
+    à déposer (visiteur) »</a> est le vôtre.
+  </div>
+
+  <div class="annuaire-intro" id="convmembre-mot">
+    Donnez l'adresse à laquelle vous recevez vos convocations. C'est elle qui vous
+    reconnaît : rien ne s'affiche sans elle.
+  </div>
+
+  <form id="form-convmembre" autocomplete="on">
+    <div class="form-grid">
+      <div class="form-full">
+        <label for="cm-courriel">Votre courriel *</label>
+        <input id="cm-courriel" type="email" name="courriel" required
+               autocomplete="email">
+      </div>
+    </div>
+    <div class="form-footer">
+      <button type="submit" class="btn btn-or">Voir la convocation</button>
+    </div>
+  </form>
+
+  <div class="ennui-tableau" id="convmembre-ennui" hidden></div>
+
+  <div id="convmembre-vu" hidden></div>
+
+  <p class="confidentialite">
+    Conformément au RGPD, vous disposez d'un droit d'accès, de rectification et de
+    suppression de vos données. Contact : contact.brith.israel@gmail.com
+  </p>
+</section>
+
+<!-- ═══════════════════════════════════════════
      INSCRIRE MA LOGE
 
      Une Loge n'est pas une personne. Celle qui s'inscrit ici ne vient
@@ -1382,7 +1435,8 @@
 
 
 <!-- ═══════════════════════════════════════════
-     CONVOCATION DE MA LOGE
+     CONVOCATION À DÉPOSER (VISITEUR)
+     — onglet « Convocation de ma Loge (membre) » : section précédente.
 
      Un Atelier qui nous invite dépose ce qui se met à l'agenda : une
      date, une heure, un degré, un objet. LE FEUILLET RESTE CHEZ LUI —
@@ -1394,8 +1448,15 @@
      même feuillet.
 ═══════════════════════════════════════════ -->
 <section class="section" id="convocation-loge">
-  <h2 class="section__titre">Convocation de ma Loge</h2>
+  <h2 class="section__titre">Convocation à déposer (visiteur)</h2>
   <div class="section__sep"></div>
+
+  <div class="avis-rituels">
+    <strong>Pour les Loges amies qui nous invitent.</strong>
+    Vous êtes Sœur ou Frère de BERESHIT ? Votre convocation est dans l'onglet
+    <a href="#" onclick="afficherSection('convocation-membre');return false;">« Convocation
+    de ma Loge (membre) »</a>.
+  </div>
 
   <div class="annuaire-intro">
     <strong style="color:var(--or);">Cette page existe aussi en accès libre :</strong>
@@ -2348,6 +2409,104 @@
     if (!b) return;
     if (b.hasAttribute('data-rep')) demander({ reponse: b.getAttribute('data-rep') });
     else demander({ agapes: b.getAttribute('data-agapes') === 'oui' });
+  });
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   CONVOCATION DE MA LOGE (MEMBRE)
+
+   Même principe que le Tableau : rien de la convocation n'est écrit
+   dans cette page. Elle vient de /api/convocation, contre une adresse
+   qui figure parmi les convoqués, et l'adresse ne reste pas dans le
+   navigateur.
+
+   ► CE QUE LE SERVEUR RENDRA (module 2) — les noms de champs sont
+     ceux du registre de la Secrétaire :
+     { tenue: 'AAAA-MM-JJ',
+       convocation: { titre, degre, date, heureConv, heureOuv,
+                      lieuNom, lieuAdresse, lieuCp, lieuVille, adage,
+                      agapesOui, agapesPrix, agapesLimite,
+                      agapesQuiPaie, motFin, contact,
+                      odj: [{ h, t }] } }
+═══════════════════════════════════════════════════════════════ */
+(function () {
+  'use strict';
+  function $(id) { return document.getElementById(id); }
+  function ech(t) {
+    return String(t == null ? '' : t).replace(/[&<>"]/g, function (c) {
+      return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]; });
+  }
+  var ENNUIS = {
+    courriel_manquant: "Cette adresse n'a pas été reconnue comme une adresse de courriel.",
+    inconnu: "Cette adresse ne figure pas parmi les convoqués de la Tenue en cours. " +
+             "Si vos convocations arrivent à une autre adresse, donnez celle-là. " +
+             "Sinon, écrivez au secrétariat.",
+    aucune_convocation: "Aucune convocation n'est encore partie pour une prochaine " +
+             "Tenue. Ce n'est pas une panne.",
+    trop_dessais: "Trop d'adresses ont été essayées depuis une heure. Réessayez tout à l'heure."
+  };
+  var DEGRE = { 1: 'Premier', 2: 'Deuxième', 3: 'Troisième' };
+
+  function ennui(mot) { var e = $('convmembre-ennui'); e.textContent = mot; e.hidden = false; }
+
+  function dateLongue(iso) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(iso || '')) return '';
+    try { return new Date(iso + 'T12:00:00').toLocaleDateString('fr-FR',
+      { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }); }
+    catch (e) { return iso; }
+  }
+  function ligne(t, v) {   // une ligne n'existe que si elle a un contenu
+    return v ? '<p style="margin:.2rem 0;"><span style="color:var(--gris);">' +
+      ech(t) + '</span> ' + ech(v) + '</p>' : '';
+  }
+
+  function peindre(c) {
+    var lieu = [c.lieuNom, [c.lieuAdresse, [c.lieuCp, c.lieuVille].filter(Boolean).join(' ')]
+                .filter(Boolean).join(' — ')].filter(Boolean).join(', ');
+    var odj = (c.odj || []).map(function (o) {
+      return '<tr><td style="color:var(--or2);white-space:nowrap;padding-right:1rem;">' +
+        ech(o.h) + '</td><td>' + ech(o.t) + '</td></tr>'; }).join('');
+    $('convmembre-vu').innerHTML =
+      '<div class="annuaire-intro">' +
+      '<p style="color:var(--or);font-size:1.15rem;margin:0 0 .4rem;"><strong>' +
+        ech(c.titre) + '</strong></p>' +
+      ligne('Degré :', DEGRE[c.degre] ? DEGRE[c.degre] + ' degré' : '') +
+      ligne('Date :', dateLongue(c.date)) +
+      ligne('Convocation :', c.heureConv) + ligne('Ouverture :', c.heureOuv) +
+      ligne('Lieu :', lieu) + '</div>' +
+      (odj ? '<h3 style="color:var(--or);font-variant:small-caps;letter-spacing:.1em;">' +
+             'Ordre du jour</h3><table class="tableau-loge">' + odj + '</table>' : '') +
+      (c.agapesOui ? '<div class="annuaire-intro" style="margin-top:1rem;">' +
+        '<strong style="color:var(--or);">Agapes.</strong> ' + ech(c.agapesQuiPaie) + '</div>' : '') +
+      (c.motFin ? '<p style="margin-top:1rem;">' + ech(c.motFin) + '</p>' : '') +
+      (c.adage ? '<p style="font-style:italic;text-align:center;margin-top:1rem;">« ' +
+                 ech(c.adage) + ' »</p>' : '') +
+      (c.contact ? '<p class="confidentialite">' + ech(c.contact) + '</p>' : '');
+    $('form-convmembre').style.display = 'none';
+    $('convmembre-mot').style.display = 'none';
+    $('convmembre-vu').hidden = false;
+  }
+
+  $('form-convmembre').addEventListener('submit', function (e) {
+    e.preventDefault();
+    $('convmembre-ennui').hidden = true;
+    fetch('/api/convocation', { method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ courriel: $('cm-courriel').value.trim() }) })
+      .then(function (r) {
+        return r.json().catch(function () { return {}; })
+          .then(function (c) { return { ok: r.ok, c: c }; }); })
+      .then(function (rep) {
+        if (!rep.ok || !rep.c.convocation) {
+          ennui(ENNUIS[rep.c.erreur] ||
+            "La convocation n'a pas pu être lue. Réessayez dans un moment.");
+          return;
+        }
+        peindre(rep.c.convocation);
+      })
+      .catch(function () {
+        ennui("Le serveur de l'Atelier n'a pas répondu. Réessayez dans un moment.");
+      });
   });
 })();
 
