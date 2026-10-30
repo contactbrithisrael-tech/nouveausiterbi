@@ -1944,9 +1944,9 @@
        La liste vient du serveur (route « livres ») : elle n'est pas écrite ici. -->
   <div class="annuaire-intro" id="livres-bloc" style="margin-top:2rem;">
     <strong style="color:var(--or);">Demander un livre du Rite</strong><br>
-    Donnez l'adresse où vous recevez vos convocations : la liste n'affiche que les ouvrages de
-    votre degré. Votre demande part à Jean-Michel RAUX, qui voit avec vous l'impression et le
-    paiement.
+    Donnez l'adresse où vous recevez vos convocations pour voir la liste des ouvrages. Votre
+    demande part à Jean-Michel RAUX : c'est lui qui décide si vous y avez droit, puis voit avec
+    vous l'impression et le paiement.
     <form id="form-livres" autocomplete="on" style="margin-top:1rem;">
       <label for="livres-courriel">Votre courriel *</label>
       <input id="livres-courriel" type="email" required autocomplete="email">
@@ -2704,7 +2704,6 @@
     inconnu: "Cette adresse n'est pas reconnue. Utilisez celle de vos convocations.",
     non_configure: "La demande de livre n'est pas encore ouverte.",
     trop_dessais: "Trop d'essais depuis une heure. Réessayez tout à l'heure.",
-    livre_interdit: "Ce livre n'est pas de votre degré.",
     envoi_refuse: "La demande n'a pas pu partir. Réessayez dans un moment."
   };
   function ennui(t) { var e = $('livres-ennui'); e.textContent = t; e.hidden = !t; }
@@ -2715,10 +2714,10 @@
   }
   function liste(d) {
     var z = $('livres-liste'); z.hidden = false;
-    z.innerHTML = d.livres.length ? '<p>Ouvrages de votre degré :</p>' + d.livres.map(function (l) {
+    z.innerHTML = d.livres.length ? '<p>Ouvrages du Rite :</p>' + d.livres.map(function (l) {
       return '<p style="margin:.6rem 0;">' + ech(l.titre) +
         ' <button type="button" class="btn btn-or" data-livre="' + ech(l.id) + '">Demander ce livre</button></p>'; }).join('')
-      : "<p>Aucun ouvrage n'est ouvert à votre degré pour le moment.</p>";
+      : "<p>Aucun ouvrage n'est proposé pour le moment.</p>";
   }
   $('form-livres').addEventListener('submit', function (e) {
     e.preventDefault(); COURRIEL = $('livres-courriel').value.trim(); ennui('');
