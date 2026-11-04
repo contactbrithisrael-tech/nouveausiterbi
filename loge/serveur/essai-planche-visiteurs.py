@@ -22,6 +22,8 @@ with sync_playwright() as p:
     v("Visiteurs venus" in h, "la feuille porte son titre")
     v(h.count("EDOUT") >= 2, "le visiteur coché présent y figure (liste + feuille)", h.count("EDOUT"))
     v("ABSENT" not in h, "le visiteur non coché n'y figure pas")
+    v("Ont été présents à la tenue" in h and "Obédience" in h, "l'encart des présents est dans la planche")
+    v("Sont présents les SS" not in h, "l'ancienne liste des membres n'est plus doublée")
     # planche retouchée à la main : la feuille se refait quand même
     pg.evaluate("() => { E.plancheTexte = corpsPlanche().replace('Aucun.', 'Retouché'); }")
     pg.evaluate("() => { E.visiteurs.push({id:3,prenom:'Nouveau',nom:'COCHE',grade:'Compagnon',presentTenue:true,visites:[]}); }")
