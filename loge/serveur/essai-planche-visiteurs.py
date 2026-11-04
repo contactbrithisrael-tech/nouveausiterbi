@@ -24,6 +24,13 @@ with sync_playwright() as p:
     v("ABSENT" not in h, "le visiteur non coché n'y figure pas")
     v("Ont été présents à la tenue" in h and "Obédience" in h, "l'encart des présents est dans la planche")
     v("Sont présents les SS" not in h, "l'ancienne liste des membres n'est plus doublée")
+    # excusés en permanence, y compris « en sommeil »
+    pg.evaluate("""() => { E.membres.push(
+      {id:9101, prenoms:'Philippe', nom:'NAKACHE', statut:'actif', excusePermanent:true, motifExcuse:''},
+      {id:9102, prenoms:'Laurent', nom:'NOTARIANI', statut:'sommeil', excusePermanent:true, motifExcuse:'Réside au loin'}); }""")
+    hx = pg.evaluate("corpsPlanche()")
+    v("NAKACHE" in hx and "NOTARIANI" in hx, "les deux excusés permanents figurent à la planche")
+    v("excusé en permanence" in hx, "avec la mention « excusé en permanence »")
     # planche retouchée à la main : la feuille se refait quand même
     pg.evaluate("() => { E.plancheTexte = corpsPlanche().replace('Aucun.', 'Retouché'); }")
     pg.evaluate("() => { E.visiteurs.push({id:3,prenom:'Nouveau',nom:'COCHE',grade:'Compagnon',presentTenue:true,visites:[]}); }")
