@@ -29,6 +29,13 @@ with sync_playwright() as p:
     v("MEMBRE" in t and "EDOUT" in t, "membre et visiteur inscrits y figurent")
     v("INSCRIT" not in t and "AGAPES Rien" not in t, "les non-inscrits n'y figurent pas", t)
     v("VENUE" in t and "À confirmer" in t, "un visiteur attendu, qui n'a pas dit s'il mange, y figure « à confirmer »", t)
+    pg.evaluate("""() => { const d = E.tenue.date;
+      E.visiteurs.push({id:4,prenom:'Futur',nom:'ANNONCE',grade:'Maître',presentTenue:false,visites:[],annonces:[{date:'2099-01-01'}]},
+                       {id:5,prenom:'Ancien',nom:'PASSE',grade:'Maître',presentTenue:false,visites:[],annonces:[{date:'2001-01-01'}]});
+      dessiner(); }""")
+    t = pg.inner_text("#v-listeagapes")
+    v("ANNONCE" in t, "un visiteur qui a annoncé sa venue figure sur la liste", t)
+    v("Annoncés pour une autre date" in t and "PASSE" in t, "un visiteur annoncé pour une date passée est signalé en dessous")
     v(pg.locator("#v-listeagapes table").count() == 1, "une seule liste, pas trois tableaux")
     v(pg.locator("button[data-agp-paye='m9301']").inner_text().strip().endswith("Payé") and "Pas" not in pg.locator("button[data-agp-paye='m9301']").inner_text(),
       "le membre est payé d'office")
