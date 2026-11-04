@@ -35,8 +35,13 @@ with sync_playwright() as p:
     v("R∴L∴ Bereshit n°00</td><td>l’Alliance</td>" in pg.evaluate("corpsPlanche()"),
       "les membres présents portent la Loge Bereshit et l'obédience l'Alliance")
     # visiteur sans obédience : une phrase avec son nom
-    v("Est venu nous visiter le Maître Chimon EDOUT" in h,
+    v("Est venu nous visiter la Sœur ou le Frère Maître Chimon EDOUT" in h,
       "sans obédience, « Est venu nous visiter le Maître » + son nom", h[h.find("EDOUT")-50:h.find("EDOUT")+250])
+    pg.evaluate("() => { E.visiteurs[0].civilite='soeur'; E.visiteurs[0].grade='Compagnon'; }")
+    v("Est venu nous visiter la Sœur Compagnon Chimon EDOUT" in pg.evaluate("corpsPlanche()"), "une Sœur Compagnon")
+    pg.evaluate("() => { E.visiteurs[0].civilite='frere'; E.visiteurs[0].grade='A'; }")
+    v("Est venu nous visiter le Frère Apprenti Chimon EDOUT" in pg.evaluate("corpsPlanche()"), "un Frère Apprenti")
+    pg.evaluate("() => { E.visiteurs[0].civilite=''; E.visiteurs[0].grade='Maître'; }")
     # planche retouchée à la main : la feuille se refait quand même
     pg.evaluate("() => { E.plancheTexte = corpsPlanche().replace('Aucun.', 'Retouché'); }")
     pg.evaluate("() => { E.visiteurs.push({id:3,prenom:'Nouveau',nom:'COCHE',grade:'Compagnon',presentTenue:true,visites:[]}); }")
