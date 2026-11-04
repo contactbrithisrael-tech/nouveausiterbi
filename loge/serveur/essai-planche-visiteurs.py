@@ -31,6 +31,9 @@ with sync_playwright() as p:
     hx = pg.evaluate("corpsPlanche()")
     v("NAKACHE" in hx and "NOTARIANI" in hx, "les deux excusés permanents figurent à la planche")
     v("excusé en permanence" in hx, "avec la mention « excusé en permanence »")
+    pg.evaluate("() => { E.membres.push({id:9201, prenoms:'Test', nom:'PRESENT', statut:'actif'}); E.presences[9201]='present'; }")
+    v("R∴L∴ Bereshit n°00</td><td>l’Alliance</td>" in pg.evaluate("corpsPlanche()"),
+      "les membres présents portent la Loge Bereshit et l'obédience l'Alliance")
     # planche retouchée à la main : la feuille se refait quand même
     pg.evaluate("() => { E.plancheTexte = corpsPlanche().replace('Aucun.', 'Retouché'); }")
     pg.evaluate("() => { E.visiteurs.push({id:3,prenom:'Nouveau',nom:'COCHE',grade:'Compagnon',presentTenue:true,visites:[]}); }")
