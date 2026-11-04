@@ -37,13 +37,34 @@ with sync_playwright() as p:
     v("ANNONCE" in t, "un visiteur qui a annoncé sa venue figure sur la liste", t)
     v("Annoncés pour une autre date" in t and "PASSE" in t, "un visiteur annoncé pour une date passée est signalé en dessous")
     v(pg.locator("#v-listeagapes table").count() == 1, "une seule liste, pas trois tableaux")
-    v(pg.locator("button[data-agp-paye='m9301']").inner_text().strip().endswith("Payé") and "Pas" not in pg.locator("button[data-agp-paye='m9301']").inner_text(),
-      "le membre est payé d'office")
-    v("Pas payé" in pg.locator("button[data-agp-paye='v1']").inner_text(), "le visiteur est pas payé d'abord")
-    pg.click("button[data-agp-paye='v1']"); pg.wait_for_timeout(300)
-    v("Pas" not in pg.locator("button[data-agp-paye='v1']").inner_text(), "un clic le marque payé")
-    pg.click("button[data-agp-paye='m9301']"); pg.wait_for_timeout(300)
-    v("Pas payé" in pg.locator("button[data-agp-paye='m9301']").inner_text(), "un membre peut être marqué pas payé")
+    v("capitation" in t and pg.locator("button[data-agp-paye='membre paul']").count() == 0,
+      "un membre est payé d'office, sans bouton (agapes comprises dans la capitation)")
+    v("Pas payé" in pg.locator("button[data-agp-paye='chimon edout']").inner_text(), "le visiteur est pas payé d'abord")
+    pg.click("button[data-agp-paye='chimon edout']"); pg.wait_for_timeout(600)
+    v("Pas" not in pg.locator("button[data-agp-paye='chimon edout']").inner_text(), "un clic le marque payé")
+    srv = pg.evaluate("async () => await (await fetch('/api/agapes')).json()")
+    v("chimon edout" in srv.get("payes", []), "le serveur l'a retenu (tables du Maître des banquets)", srv)
+    # le Maître des banquets coche un autre visiteur et ajoute un nom : le Secrétariat le voit
+    pg.evaluate("""async () => { await fetch('/api/agapes', {method:'POST', headers:{'content-type':'application/json'},
+        body: JSON.stringify({marquer:{cle:'chimon edout', paye:false}}) });
+      await fetch('/api/agapes', {method:'POST', headers:{'content-type':'application/json'},
+        body: JSON.stringify({ajouter:{nom:'Zacharie AJOUTE', qualite:'visiteur'}}) }); }""")
+    pg.evaluate("releverAgapes()"); pg.wait_for_timeout(800)
+    t2 = pg.inner_text("#v-listeagapes")
+    v("AJOUTE" in t2 and "Maître des banquets" in t2, "un nom ajouté par le Maître des banquets figure au Secrétariat")
+    v("Pas payé" in pg.locator("button[data-agp-paye='chimon edout']").inner_text(),
+      "le paiement décoché là-bas est décoché ici")
+    # le Secrétariat → le Maître des banquets
+    pg.evaluate("garder()"); pg.wait_for_timeout(2500)
+    ban = pg.evaluate("""async () => { const r = await fetch('/api/banquets', {method:'POST',
+        headers:{'content-type':'application/json'}, body: JSON.stringify({courriel:'a@b.test'}) });
+      return { s: r.status, c: await r.json() }; }""")
+    if ban["s"] == 200:
+        noms = [g["nom"] for g in ban["c"].get("gens", [])]
+        v(any("EDOUT" in n.upper() for n in noms) and any("MEMBRE" in n.upper() for n in noms),
+          "les inscrits du Secrétariat sont sur la liste du Maître des banquets", noms)
+    else:
+        print("  (banquets : accès refusé en épreuve, statut", ban["s"], ")")
     pg.evaluate("() => { courante='tenue'; dessiner(); }"); pg.wait_for_timeout(300)
     v(not err, "aucune erreur JavaScript", err)
     b.close()
