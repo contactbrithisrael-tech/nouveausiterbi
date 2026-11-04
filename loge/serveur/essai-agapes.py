@@ -21,12 +21,15 @@ with sync_playwright() as p:
       E.visiteurs.length = 0;
       E.visiteurs.push({id:1,prenom:'Chimon',nom:'EDOUT',grade:'Maître',loge:'GLTF',presentTenue:true,visites:[]},
                        {id:2,prenom:'Rien',nom:'AGAPES',grade:'Apprenti',presentTenue:true,visites:[]});
+      E.visiteurs.push({id:3,prenom:'Annonce',nom:'VENUE',grade:'Compagnon',presentTenue:true,visites:[]});
       E.agapesVisiteurs = {1:true, 2:false}; E.reponsesAmis = {}; }""")
     v(pg.locator("#t-listeagapes").count() == 1, "l'onglet Agapes existe")
     pg.click("#t-listeagapes"); pg.wait_for_timeout(500)
     t = pg.inner_text("#v-listeagapes")
     v("MEMBRE" in t and "EDOUT" in t, "membre et visiteur inscrits y figurent")
     v("INSCRIT" not in t and "AGAPES Rien" not in t, "les non-inscrits n'y figurent pas", t)
+    v("VENUE" in t and "À confirmer" in t, "un visiteur attendu, qui n'a pas dit s'il mange, y figure « à confirmer »", t)
+    v(pg.locator("#v-listeagapes table").count() == 1, "une seule liste, pas trois tableaux")
     v(pg.locator("button[data-agp-paye='m9301']").inner_text().strip().endswith("Payé") and "Pas" not in pg.locator("button[data-agp-paye='m9301']").inner_text(),
       "le membre est payé d'office")
     v("Pas payé" in pg.locator("button[data-agp-paye='v1']").inner_text(), "le visiteur est pas payé d'abord")
