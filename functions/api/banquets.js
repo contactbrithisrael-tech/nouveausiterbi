@@ -45,8 +45,8 @@ const ORDRE = { membre: 0, visiteur: 1 };
 const categorie = q => q === 'membre' ? 'membre' : 'visiteur';
 
 const courrielPlausible = a => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(a);
-const propre = v => String(v == null ? '' : v).replace(/\s+/g, ' ').trim().slice(0, 200);
-const cle = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '')
+export const propre = v => String(v == null ? '' : v).replace(/\s+/g, ' ').trim().slice(0, 200);
+export const cle = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '')
   .toLowerCase().replace(/[^a-z0-9 ]+/g, ' ').split(/\s+/).filter(Boolean).sort().join(' ');
 
 const autorises = env => String(env.BANQUETS_COURRIELS || '').toLowerCase()
@@ -62,7 +62,7 @@ async function tropDEssais(context){
 }
 
 /* La Tenue prévue : celle que la Secrétaire a saisie au registre. */
-async function tenuePrevue(context){
+export async function tenuePrevue(context){
   try {
     const r = await context.env.DB.prepare(
       'SELECT donnees FROM etat WHERE loge_id = ?').bind(LOGE).first();
@@ -90,7 +90,7 @@ async function annonces(context){
    marque par Tenue et par personne (nom sans accent ni ordre), et
    rien d'autre : ni courriel, ni montant. Les membres ne paient pas :
    leurs agapes sont comprises dans la capitation. */
-async function marques(context, tenue){
+export async function marques(context, tenue){
   try {
     await context.env.DB.prepare(
       "CREATE TABLE IF NOT EXISTS banquets_paye (loge_id INTEGER NOT NULL, " +
@@ -118,7 +118,7 @@ async function tables(context){
     "CREATE TABLE IF NOT EXISTS banquets_prevus (loge_id INTEGER NOT NULL, tenue TEXT NOT NULL, " +
     "n INTEGER NOT NULL, PRIMARY KEY (loge_id, tenue))").run();
 }
-async function manuels(context, tenue){
+export async function manuels(context, tenue){
   try {
     await tables(context);
     const { results } = await context.env.DB.prepare(
@@ -127,7 +127,7 @@ async function manuels(context, tenue){
     return results || [];
   } catch (e) { return []; }
 }
-async function attendus(context, tenue){
+export async function attendus(context, tenue){
   try {
     await tables(context);
     const r = await context.env.DB.prepare(
@@ -136,7 +136,7 @@ async function attendus(context, tenue){
   } catch (e) { /* on retombe sur la valeur par défaut */ }
   return ATTENDUS_DEFAUT[tenue] ?? null;
 }
-async function ecrire(context, tenue, corps){
+export async function ecrire(context, tenue, corps){
   await tables(context);
   const db = context.env.DB;
   const a = corps.ajouter;
@@ -155,7 +155,7 @@ async function ecrire(context, tenue, corps){
       "ON CONFLICT (loge_id, tenue) DO UPDATE SET n = excluded.n").bind(LOGE, tenue, n).run();
 }
 
-async function cocher(context, tenue, cleP, paye){
+export async function cocher(context, tenue, cleP, paye){
   await context.env.DB.prepare(
     "INSERT INTO banquets_paye (loge_id, tenue, cle, paye) VALUES (?, ?, ?, ?) " +
     "ON CONFLICT (loge_id, tenue, cle) DO UPDATE SET paye = excluded.paye, " +
@@ -184,6 +184,38 @@ async function sortis(context){
   return { mails, noms };
 }
 
+/* Les inscrits aux agapes tels que le programme du Secrétariat les tient. */
+export async function depuisSecretariat(context, tenue){
+  let d;
+  try {
+    const r = await context.env.DB.prepare(
+      'SELECT donnees FROM etat WHERE loge_id = ?').bind(LOGE).first();
+    d = r ? JSON.parse(r.donnees) : null;
+  } catch (e) { return []; }
+  if (!d || !d.tenue || d.tenue.date !== tenue) return [];
+  const sortie = [], pres = d.presences || {}, agp = d.agapes || {};
+  const avis = d.agapesVisiteurs || {};
+  for (const m of (d.membres || [])){
+    if (!m || !['actif', 'honoraire'].includes(m.statut)) continue;
+    const rep = pres[m.id] || (m.excusePermanent ? 'excuse' : 'attendu');
+    if (rep === 'present' && agp[m.id])
+      sortie.push({ nom: propre((m.prenoms || '') + ' ' + (m.nom || '')), qualite: 'membre', agapes: 'oui' });
+  }
+  for (const v of (d.visiteurs || [])){
+    if (!v) continue;
+    const nom = propre((v.prenom || '') + ' ' + (v.nom || ''));
+    if (!nom) continue;
+    const annonce = !!v.presentTenue || (v.annonces || []).some(a => a && a.date >= tenue);
+    if (avis[v.id] === true) sortie.push({ nom, qualite: 'visiteur', agapes: 'oui', annonce });
+    else if (avis[v.id] === false) sortie.push({ nom, qualite: 'visiteur', agapes: 'non' });
+    else if (annonce) sortie.push({ nom, qualite: 'visiteur', agapes: 'a_confirmer', annonce: true });
+  }
+  for (const r of Object.values(d.reponsesAmis || {}))
+    if (r && r.agapes && propre(r.nom))
+      sortie.push({ nom: propre(r.nom), qualite: 'visiteur', agapes: 'oui' });
+  return sortie;
+}
+
 async function lesGens(context, tenue, fiches){
   const gens = [], parMail = new Map(), parNom = new Map(), mailDe = new Map();
   const { results } = await context.env.DB.prepare(
@@ -206,6 +238,19 @@ async function lesGens(context, tenue, fiches){
   for (let i = gens.length - 1; i >= 0; i--){
     const g = gens[i];
     if (g.qualite === 'membre' && (hors.noms.has(cle(g.nom)) || hors.mails.has(mailDe.get(g)))) gens.splice(i, 1);
+  }
+  /* ── LE SECRÉTARIAT, MÊME LISTE ─────────────────────────────────
+     Ce que la Secrétaire a coché dans son programme (membres aux agapes,
+     visiteurs annoncés ou venus, Amis) alimente cette liste : une seule
+     liste des deux côtés. Un nom déjà connu n'est pas compté deux fois. */
+  const parCle = new Map(gens.map(g => [cle(g.nom), g]));
+  for (const s of await depuisSecretariat(context, tenue)){
+    const k = cle(s.nom), g = parCle.get(k);
+    if (g){
+      if (s.agapes === 'oui' || (s.agapes === 'non' && g.agapes !== 'oui')) g.agapes = s.agapes;
+      if (s.annonce) g.annonce = true;
+    } else { const n = { nom: s.nom, qualite: s.qualite, agapes: s.agapes,
+                         annonce: !!s.annonce }; gens.push(n); parCle.set(k, n); }
   }
   /* La liste n'est que celle des INSCRITS : un membre qui a dit « oui » aux agapes ;
      quiconque (visiteur ou membre) s'est ANNONCÉ via l'Espace Membres (c'est lui que l'on suit pour le paiement), sauf s'il a dit non.

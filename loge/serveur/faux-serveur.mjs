@@ -144,6 +144,8 @@ const F = {
   tableau: await import(RACINE + 'functions/api/tableau.js'),
   sortir: await import(RACINE + 'functions/api/sortir.js'),
   etat:   await import(RACINE + 'functions/api/etat.js'),
+  agapes: await import(RACINE + 'functions/api/agapes.js'),
+  banquets: await import(RACINE + 'functions/api/banquets.js'),
 };
 
 createServer(async (req, res) => {
@@ -213,7 +215,7 @@ createServer(async (req, res) => {
     res.writeHead(200, {'content-type':'application/json'});
     return res.end('[]');
   }
-  const m = u.pathname.match(/^\/api\/(entrer|sortir|etat|porte|mdp|annuaire|envoyer|reponses?|lire|tableau)$/);
+  const m = u.pathname.match(/^\/api\/(entrer|sortir|etat|porte|mdp|annuaire|envoyer|reponses?|lire|tableau|agapes|banquets)$/);
   if (!m){ res.writeHead(404); return res.end('non'); }
 
   const corps = await new Promise(ok => { let d=''; req.on('data',c=>d+=c); req.on('end',()=>ok(d)); });
@@ -235,6 +237,7 @@ createServer(async (req, res) => {
   /* RBI_LECTURE pose une fausse cle : la route se croit configuree, et
      l'appel est intercepte plus haut. Aucune vraie clé n'existe ici. */
   if (process.env.RBI_LECTURE) env.CLE_ANTHROPIC = 'cle-epreuve-sans-valeur';
+  env.BANQUETS_COURRIELS = 'a@b.test';        // le Maître des banquets d'épreuve
   if (process.env.RBI_COURRIEL){
     env.BREVO_CLE = 'cle-d-epreuve';
     env.COURRIEL_EXPEDITEUR = 'epreuve@exemple.test';
@@ -242,8 +245,8 @@ createServer(async (req, res) => {
     env.COURRIEL_REPONSE = 'reponses@exemple.test';
   }
   const mod = F[m[1]];
-  const fn = req.method === 'GET' ? mod.onRequestGet
-           : req.method === 'PUT' ? mod.onRequestPut : mod.onRequestPost;
+  const fn = (req.method === 'GET' ? mod.onRequestGet
+           : req.method === 'PUT' ? mod.onRequestPut : mod.onRequestPost) || mod.onRequest;
   if (!fn){ res.writeHead(405); return res.end(); }
   try {
     const r = await fn({ env, request: requete });
